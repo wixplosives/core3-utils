@@ -1,6 +1,5 @@
 name: npm (latest)
-on:
-  workflow_dispatch:
+on: [push]
 jobs:
   npm:
     runs-on: ubuntu-latest
