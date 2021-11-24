@@ -1,9 +1,10 @@
-name: npm (latest)
-on: [push]
+name: npm
+on:
+  push:
+    branches: [master]
 jobs:
   npm:
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/master' }}
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 14
@@ -14,6 +15,8 @@ jobs:
           cache: yarn
       - run: npm i -g yarn@1
       - run: yarn config set network-timeout 300000
-      - run: yarn --frozen-lockfile
+      - run: yarn
       - run: yarn build
       - run: npx pleb@4 publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
