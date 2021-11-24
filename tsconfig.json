@@ -1,0 +1,7 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/wait-for-call/src" },
+    { "path": "./packages/create-disposables/src" },
+  ]
+}

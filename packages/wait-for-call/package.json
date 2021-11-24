@@ -1,0 +1,26 @@
+{
+  "name": "@wixc3/wait-for-call",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "mocha \"dist/test/**/*.unit.js\""
+  },
+  "peerDependencies": {
+    "mocha": ">=9",
+    "sinon": "*"
+  },
+  "dependencies": {
+    "promise-assist": "^1.3.0"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!dist/test",
+    "!dist/tsconfig.tsbuildinfo"
+  ],
+  "license": "MIT",
+  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "publishConfig": {
+    "access": "public"
+  }
+}

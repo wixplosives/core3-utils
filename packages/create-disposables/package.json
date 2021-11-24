@@ -1,0 +1,17 @@
+{
+  "name": "@wixc3/create-disposables",
+  "version": "1.0.0",
+  "description": "A utility for saving objects to be disposed",
+  "main": "dist/index.js",
+  "author": "",
+  "files": [
+    "dist",
+    "src",
+    "!dist/tsconfig.tsbuildinfo"
+  ],
+  "license": "MIT",
+  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "publishConfig": {
+    "access": "public"
+  }
+}
