@@ -1,5 +1,5 @@
 {
-  "name": "sample-monorepo",
+  "name": "core3-utils",
   "workspaces": [
     "packages/*"
   ],
@@ -22,14 +22,14 @@
     "@typescript-eslint/parser": "^5.4.0",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^8.2.0",
+    "eslint": "^8.3.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-no-only-tests": "^2.6.0",
     "lerna": "^4.0.0",
     "mocha": "^9.1.3",
     "rimraf": "^3.0.2",
     "sinon": "^12.0.1",
-    "typescript": "~4.4.4"
+    "typescript": "~4.5.2"
   },
   "license": "MIT",
   "private": true

@@ -19,6 +19,7 @@
     "!dist/tsconfig.tsbuildinfo"
   ],
   "license": "MIT",
+  "author": "Wix.com",
   "repository": "git@github.com:wixplosives/core3-utils.git",
   "publishConfig": {
     "access": "public"

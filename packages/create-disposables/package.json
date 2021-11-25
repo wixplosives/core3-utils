@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A utility for saving objects to be disposed",
   "main": "dist/index.js",
-  "author": "",
+  "author": "Wix.com",
   "files": [
     "dist",
     "src",
