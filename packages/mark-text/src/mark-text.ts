@@ -1,38 +1,54 @@
-export interface MarkedString {
-  name: string;
-  content: Array<string | MarkedString>;
-}
+export type MarkedString<NAME extends string> = {
+  name: NAME;
+  content: Array<string | MarkedString<string>>;
+};
 
-type Marker = (str: TemplateStringsArray, ...replacement: Array<string | number | MarkedString>) => MarkedString;
-type Markers<KEYS extends string> = { [key in KEYS]: Marker };
+type Marker<NAME extends string> = (
+  str: TemplateStringsArray,
+  ...replacement: Array<string | number | MarkedString<string>>
+) => MarkedString<NAME>;
+type Markers = { [key in string]: Marker<key> };
 
+type NonPartial<T extends Record<string, unknown>> = {
+  [key in keyof T]: NonNullable<T[key]>;
+};
+
+const a: NonPartial<Record<string, number>> = {};
+
+const b: number = a['a'];
+
+b.toString();
 export interface Pos {
   start: number;
   end: number;
 }
 
-const createMarkers = <KEYS extends string>(markKeys: KEYS[]): Markers<KEYS> => {
-  return markKeys.reduce((acc, key) => {
-    acc[key] = (content: TemplateStringsArray, ...replacement: Array<string | number | MarkedString>) => {
-      return {
-        name: key,
-        content: replacement.map((item) => {
-          if (typeof item === 'number') {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            return content[item]!;
-          }
-          return item;
-        }),
-      };
-    };
-
-    return acc;
-  }, {} as Markers<KEYS>);
+const createMarkers = (): Markers => {
+  const proxy = new Proxy(
+    {},
+    {
+      get(_t, name) {
+        return (content: TemplateStringsArray, ...replacement: Array<string | number | MarkedString<string>>) => {
+          return {
+            name,
+            content: replacement.map((item) => {
+              if (typeof item === 'number') {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                return content[item]!;
+              }
+              return item;
+            }),
+          };
+        };
+      },
+    }
+  );
+  return proxy as Markers;
 };
 
 export type Mark = (
   text: TemplateStringsArray,
-  ...replacement: Array<string | number | MarkedString>
+  ...replacement: Array<string | number | MarkedString<string>>
 ) => {
   result: string;
   indexes: Record<string, Pos>;
@@ -59,7 +75,7 @@ export const mark: Mark = (text, ...replacement) => {
   return { result, indexes };
 };
 
-const innerMark = (item: MarkedString, indexes: Record<string, Pos>, curentPos: number) => {
+const innerMark = (item: MarkedString<string>, indexes: Record<string, Pos>, curentPos: number) => {
   let result = '';
   for (const r of item.content) {
     if (typeof r === 'string') {
@@ -82,14 +98,13 @@ const innerMark = (item: MarkedString, indexes: Record<string, Pos>, curentPos: 
 export const textAndIndexes = <KEYS extends string>(
   factory: (
     mark: Mark,
-    markers: Markers<KEYS>
+    markers: Markers
   ) => {
     result: string;
     indexes: Record<string, Pos>;
-  },
-  markKeys: KEYS[]
+  }
 ) => {
-  const res = factory(mark, createMarkers(markKeys));
+  const res = factory(mark, createMarkers());
   return res as {
     result: string;
     indexes: Record<KEYS, Pos>;

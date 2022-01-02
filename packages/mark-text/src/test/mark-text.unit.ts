@@ -8,18 +8,15 @@ describe('mark text', () => {
     const {
       result,
       indexes: { div },
-    } = textAndIndexes(
-      (mark, { div, span }) => {
-        return mark`
+    } = textAndIndexes((mark, { div, span }) => {
+      return mark`
         const a = ()=>{
           return ${div`<div>
             ${span`<span/>`}
           </div>`}
         }
       `;
-      },
-      ['div', 'span']
-    );
+    });
     expect(div.start).to.equal(result.indexOf('<div/>'));
   });
 });
