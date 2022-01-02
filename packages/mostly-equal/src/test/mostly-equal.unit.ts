@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect } from 'chai';
-import { expectValue, expectValues } from '../index';
+import { expectValue, expectValues, mostlyEqlChaiPlugin } from '../index';
 import { clearMatchedValues, getMatchedValues } from '../mostly-equal';
 import type { ExpandedValues } from '../types';
+chai.use(mostlyEqlChaiPlugin);
 
 describe('mostly equal', () => {
   describe('simple matching', () => {
@@ -21,7 +22,7 @@ describe('mostly equal', () => {
             withAnotherField: 'aasd',
           },
         });
-      }).not.to.throw();
+      }).to.not.throw();
     });
     it('should throw an error when expected has extra field', () => {
       expect(() => {
@@ -177,7 +178,7 @@ describe('mostly equal', () => {
           a: myExpectValue,
           b: myExpectValue,
         });
-      }).not.to.throw();
+      }).to.not.throw();
     });
     it('should call user matcher with undefined items from expected if allow undefined is set to true', () => {
       const expectedInstances = ['a', undefined];
@@ -205,7 +206,7 @@ describe('mostly equal', () => {
           a: myExpectValue,
           b: myExpectValue,
         });
-      }).not.to.throw();
+      }).to.not.throw();
     });
     it('if user matcher throws, print error in every occurance', () => {
       const myExpectValue = expectValues<string>(() => {
@@ -256,7 +257,7 @@ describe('mostly equal', () => {
           b: myExpectValue,
           c: myExpectValue,
         });
-      }).not.to.throw();
+      }).to.not.throw();
       const values = getMatchedValues(myExpectValue);
       const expectedMatched: ExpandedValues<string> = [
         {

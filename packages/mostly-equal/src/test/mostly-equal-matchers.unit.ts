@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect } from 'chai';
-import { notImportant, equal, defined, defineUnique, defineSame, thumbsUp } from '../index';
+import { notImportant, equal, defined, defineUnique, defineSame, thumbsUp, mostlyEqlChaiPlugin } from '../index';
+chai.use(mostlyEqlChaiPlugin);
 
 describe('mostly equal matchers', () => {
   describe('notImportant', () => {
@@ -12,7 +13,7 @@ describe('mostly equal matchers', () => {
           a: notImportant,
           b: notImportant,
         });
-      }).not.to.throw();
+      }).to.not.throw();
     });
   });
   describe('defined', () => {
@@ -23,7 +24,7 @@ describe('mostly equal matchers', () => {
         }).to.mostlyEqual({
           a: defined,
         });
-      }).not.to.throw();
+      }).to.not.throw();
     });
     it('should throw for fields marked with defined if value is undefined', () => {
       expect(() => {
@@ -134,7 +135,7 @@ describe('mostly equal matchers', () => {
     });
   });
   describe('equal', () => {
-    it('should throw if not values are not stickly equal', () => {
+    it('should throw if not values are not strictly equal', () => {
       expect(() => {
         expect({
           a: {},
@@ -143,7 +144,7 @@ describe('mostly equal matchers', () => {
         });
       }).to.throw('expected {} to equal {}');
     });
-    it('should ot throw if not values are strictly equal', () => {
+    it('should not throw if not values are strictly equal', () => {
       const obj = {};
 
       expect(() => {
@@ -152,9 +153,9 @@ describe('mostly equal matchers', () => {
         }).to.mostlyEqual({
           a: equal(obj),
         });
-      }).not.to.throw();
+      }).to.not.throw();
     });
-    it('if stricly equal and truncateData is set to true returns a thumbs up instead of content', () => {
+    it('if stricly equal and truncateData is not set prints a thumbs up instead of content', () => {
       const obj = {};
       expect(() => {
         expect({
@@ -164,6 +165,17 @@ describe('mostly equal matchers', () => {
           b: 'something',
         });
       }).to.throw(thumbsUp);
+    });
+    it('if stricly equal and truncateData is set to true, prints content', () => {
+      const obj = {};
+      expect(() => {
+        expect({
+          a: obj,
+        }).to.mostlyEqual({
+          a: equal(obj, false),
+          b: 'something',
+        });
+      }).to.throw('{}');
     });
   });
 });

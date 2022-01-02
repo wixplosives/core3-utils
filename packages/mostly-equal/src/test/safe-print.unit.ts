@@ -16,7 +16,7 @@ describe('safe print', () => {
         anEmptyArray: [],
       };
       const actual = safePrint(obj);
-      const expected = JSON.stringify(obj, null, 4);
+      const expected = JSON.stringify(obj, null, 2);
       expect(actual).to.equal(expected);
     });
 
@@ -28,10 +28,10 @@ describe('safe print', () => {
       obj.b.push(obj as never);
       const expected = {
         a: 'a string',
-        b: ['circular data removed, path: actual.b[0]'],
+        b: ['circular data removed, path: actual["b"][0]'],
       };
       const actual = safePrint(obj);
-      expect(actual).to.equal(JSON.stringify(expected, null, 4));
+      expect(actual).to.equal(JSON.stringify(expected, null, 2));
     });
 
     it('should print repeating non circular data', () => {
@@ -41,7 +41,7 @@ describe('safe print', () => {
       };
 
       const actual = safePrint(obj);
-      expect(actual).to.equal(JSON.stringify(obj, null, 4));
+      expect(actual).to.equal(JSON.stringify(obj, null, 2));
     });
   });
 });
