@@ -1,6 +1,7 @@
-import { checkExpectValues, errorString, stringify } from './mostly-equal';
+import { checkExpectValues, errorString } from './mostly-equal';
 
 import chai from 'chai';
+import { safePrint } from './safe-print';
 export const mostlyEqlChaiPlugin: Chai.ChaiPlugin = (c) => {
   c.Assertion.addMethod('mostlyEqual', function (this, expected) {
     const res = checkExpectValues(errorString(expected, this._obj, 0));
@@ -17,13 +18,7 @@ ${item.message}
       }
       return item;
     });
-    this.assert(
-      !error,
-      message.join(''),
-      `expected ${stringify(this._obj, 0)} to not eql expected`,
-      this._obj,
-      expected
-    );
+    this.assert(!error, message.join(''), `expected ${safePrint(this._obj)} to not eql expected`, this._obj, expected);
   });
 };
 

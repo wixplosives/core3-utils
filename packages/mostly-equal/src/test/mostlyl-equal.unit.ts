@@ -2,9 +2,9 @@
 import { expect } from 'chai';
 import { expectValue, expectValues, notImportant, equal, defined, defineUnique, defineSame, thumbsUp } from '../index';
 
-describe('mostlyEql', () => {
+describe('mostly equal', () => {
   describe('simple matching', () => {
-    it('should not throw an error when values match', () => {
+    it('should not throw if objects are eql', () => {
       expect(() => {
         expect({
           a: 'a string',
