@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect } from 'chai';
-import { expectValue, expectValues } from '../index';
+import { expectValue, expectValues, mostlyEqlChaiPlugin } from '../index';
 import { clearMatchedValues, getMatchedValues } from '../mostly-equal';
 import type { ExpandedValues } from '../types';
+chai.use(mostlyEqlChaiPlugin);
 
 describe('mostly equal', () => {
   describe('simple matching', () => {

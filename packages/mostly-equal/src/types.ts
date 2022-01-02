@@ -9,3 +9,5 @@ export type ExpectMultiMatcher<T> = (
   values: readonly T[],
   expandedValues: ExpandedValues<T>
 ) => void | Array<undefined | Error>;
+
+export type UnknownObjectRecord = Record<string | number, unknown>;

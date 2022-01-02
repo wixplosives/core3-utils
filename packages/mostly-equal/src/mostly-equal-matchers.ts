@@ -10,46 +10,44 @@ import { expectValue, expectValues } from './mostly-equal';
 
 export const thumbsUp = '👍';
 
-export const notImportant = expectValue(() => {
-  //
-});
+export const notImportant = expectValue(() => undefined);
+
 export const defined = expectValue((val) => {
-  expect(val).to.not.be.undefined;
+  expect(val).to.not.equal(undefined);
 });
 
-export const equal = (value: any, truncateData = true) =>
+export const equal = (value: unknown, truncateData = true) =>
   expectValue((val) => {
     expect(val).equal(value);
-    if (truncateData) {
-      return `"${thumbsUp}"`;
-    }
-    return undefined;
+    return truncateData ? `"${thumbsUp}"` : undefined;
   });
 
-export const defineUnique = (name: string, allowUndefined = false) =>
+export const defineUnique = (name: string, skipUndefined = false) =>
   expectValues((vals) => {
-    const valMap = new Set<any>();
-    const errMap = new Set<any>();
+    const seenValues = new Set<unknown>();
+    const nonUniquValues = new Set<unknown>();
     for (const val of vals) {
-      if (allowUndefined && val === undefined) {
+      if (skipUndefined && val === undefined) {
         continue;
       }
-      if (valMap.has(val)) {
-        errMap.add(val);
+      if (seenValues.has(val)) {
+        nonUniquValues.add(val);
       }
-      valMap.add(val);
+      seenValues.add(val);
     }
-    return vals.map((item) => (errMap.has(item) ? new Error(`${name} - is not unique`) : undefined));
-  }, allowUndefined);
-export const defineSame = (name: string, allowUndefined = false) =>
+    return vals.map((item) => (nonUniquValues.has(item) ? new Error(`${name} - is not unique`) : undefined));
+  }, skipUndefined);
+
+export const defineSame = (name: string, skipUndefined = false) =>
   expectValues((vals) => {
-    if (allowUndefined) {
-      vals = vals.filter((val) => val !== undefined);
+    let values = [...vals];
+    if (skipUndefined) {
+      values = values.filter((val) => val !== undefined);
     }
-    const firstVal = vals.shift();
-    for (const val of vals) {
+    const firstVal = values.shift();
+    for (const val of values) {
       if (val !== firstVal) {
         throw new Error(`${name} - are not equal`);
       }
     }
-  }, allowUndefined);
+  }, skipUndefined);

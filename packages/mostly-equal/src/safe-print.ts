@@ -1,36 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import type { LookupPath, UnknownObjectRecord } from './types';
 
-import type { LookupPath } from './types';
-
-export const spaces = (indent: number) => {
-  const arr = new Array(indent);
-  arr.fill('    ');
-  return arr.join('');
-};
+export const spaces = (indent: number) => ' '.repeat(indent * 2);
 
 export const printPath = (p: LookupPath) => {
-  return `actual${p.map((item) => (typeof item === 'number' ? `[${item.toString()}]` : `.${item}`)).join('')}`;
+  return `actual${p
+    .map((item) => (typeof item === 'number' ? `[${item.toString()}]` : `[${JSON.stringify(item)}]`))
+    .join('')}`;
 };
 
-export const safePrint = (
-  target: any,
-  depth = 0,
-  passedMap = new Map<any, LookupPath>(),
-  passedSet = new Set<any>(),
-  path: Array<string | number> = []
-) => {
-  return safePrintRecurse(target, depth, passedMap, passedSet, path);
+export const isPlainObj = (value: unknown): value is UnknownObjectRecord => {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 };
 
 export const registerChildSet = (
-  target: any,
+  target: unknown,
   path: Array<string | number>,
-  passedMap: Map<any, LookupPath>,
-  passedSet = new Set<any>()
+  passedMap: Map<unknown, LookupPath>,
+  passedSet = new Set<unknown>()
 ) => {
   const childSet = new Set(passedSet);
   childSet.add(target);
@@ -38,12 +24,12 @@ export const registerChildSet = (
   return childSet;
 };
 
-export const safePrintRecurse = (
-  target: any,
-  depth: number,
-  passedMap: Map<any, LookupPath>,
-  passedSet = new Set<any>(),
-  path: Array<string | number>
+export const safePrint = (
+  target: unknown,
+  depth = 0,
+  passedMap = new Map<unknown, LookupPath>(),
+  passedSet = new Set<unknown>(),
+  path: LookupPath = []
 ): string => {
   if (passedSet.has(target)) {
     return `"circular data removed, path: ${printPath(path)}"`;
@@ -55,12 +41,12 @@ export const safePrintRecurse = (
 
     const childSet = registerChildSet(target, path, passedMap, passedSet);
     const arrContent = target.map((item, idx) => {
-      return safePrintRecurse(item, depth + 1, passedMap, childSet, [...path, idx]);
+      return safePrint(item, depth + 1, passedMap, childSet, [...path, idx]);
     });
     return `[\n${spaces(depth + 1)}${arrContent.join(`,\n${spaces(depth + 1)}`)}\n${spaces(depth)}]`;
   }
 
-  if (target instanceof Object) {
+  if (isPlainObj(target)) {
     const entries = Object.entries(target);
     if (entries.length === 0) {
       return '{}';
@@ -70,7 +56,7 @@ export const safePrintRecurse = (
     const objContent = entries
       .map(
         ([key, val]) =>
-          `\n${spaces(depth + 1)}"${key}": ${safePrintRecurse(val, depth + 1, passedMap, childSet, [...path, key])}`
+          `\n${spaces(depth + 1)}"${key}": ${safePrint(val, depth + 1, passedMap, childSet, [...path, key])}`
       )
       .join(',');
     return `{${objContent}\n${spaces(depth)}}`;

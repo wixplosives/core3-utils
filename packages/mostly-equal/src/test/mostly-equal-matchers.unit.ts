@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect } from 'chai';
-import { notImportant, equal, defined, defineUnique, defineSame, thumbsUp } from '../index';
+import { notImportant, equal, defined, defineUnique, defineSame, thumbsUp, mostlyEqlChaiPlugin } from '../index';
+chai.use(mostlyEqlChaiPlugin);
 
 describe('mostly equal matchers', () => {
   describe('notImportant', () => {
@@ -134,7 +135,7 @@ describe('mostly equal matchers', () => {
     });
   });
   describe('equal', () => {
-    it('should throw if not values are not stickly equal', () => {
+    it('should throw if not values are not strictly equal', () => {
       expect(() => {
         expect({
           a: {},

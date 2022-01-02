@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { registerChildSet, safePrint, spaces } from './safe-print';
+import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print';
 import type { LookupPath, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
 
 const expectValueSymb = Symbol('expect');
@@ -172,12 +171,12 @@ const tryExpectVal = (
 };
 
 export const errorString: (
-  expected: any,
-  actual: any,
+  expected: unknown,
+  actual: unknown,
   depth: number,
   path: LookupPath,
-  passedMap: Map<any, LookupPath>,
-  passedSet: Set<any>
+  passedMap: Map<unknown, LookupPath>,
+  passedSet: Set<unknown>
 ) => ErrorOrTextOrExpect = (expected, actual, depth, path, passedMap, passedSet) => {
   if (isExpectVal(expected)) {
     return tryExpectVal(expected, actual, depth, path, passedMap, passedSet, true);
@@ -229,12 +228,12 @@ export const errorString: (
     }
   }
 
-  if (expected instanceof Object) {
-    if (actual instanceof Object) {
+  if (isPlainObj(expected)) {
+    if (isPlainObj(actual)) {
       const res: ErrorOrTextOrExpect = [`\n${spaces(depth)}{`];
       const childSet = registerChildSet(actual, path, passedMap, passedSet);
 
-      const allNames = [...new Set([...Object.keys(expected), ...Object.keys(actual)])];
+      const allNames = new Set([...Object.keys(expected), ...Object.keys(actual)]);
       const addPropToRes = (name: string, value: ErrorOrTextOrExpect, errorMessage?: string) =>
         res.push(
           `\n ${spaces(depth + 1)}${name}: `,
