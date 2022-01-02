@@ -5,19 +5,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { safePrint, spaces } from './safe-print';
+import { registerChildSet, safePrint, spaces } from './safe-print';
+import type { Path, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
 
 const expectValueSymb = Symbol('expect');
 const expectValuesSymb = Symbol('expect-values');
 interface ExpectValue<T> {
   expectMethod: ExpectSingleMatcher<T>;
   _brand: typeof expectValueSymb;
+  getMatchInfo: () => ExpandedValues<T>;
+  clear: () => void;
 }
-interface ExpectValues {
-  expectMethod: ExpectMultiMatcher<any>;
+interface ExpectValues<T = any> {
+  expectMethod: ExpectMultiMatcher<T>;
   allowUndefined: boolean;
   _brand: typeof expectValuesSymb;
-  getValues: () => any[][];
+  getMatchInfo: () => ExpandedValues<T>;
 }
 function isExpectVal(val: any): val is ExpectValue<any> {
   return !!val && val._brand === expectValueSymb;
@@ -27,38 +30,59 @@ function isExpectValues(val: any): val is ExpectValues {
   return !!val && val._brand === expectValuesSymb;
 }
 
-type ExpectSingleMatcher<T> = (value: T, isDefinedInParent: boolean) => void | string;
 export const expectValue = <T>(expectMethod: ExpectSingleMatcher<T>): any => {
+  let values: ExpandedValues<T> = [];
+
+  const wrapMethod: ExpectSingleMatcher<T> = (value, fieldDefinedInParent, path) => {
+    values.push({
+      fieldDefinedInParent,
+      path,
+      value,
+    });
+    return expectMethod(value, fieldDefinedInParent, path);
+  };
   return {
-    expectMethod,
+    expectMethod: wrapMethod,
     _brand: expectValueSymb,
+    getMatchInfo: () => values,
+    clear: () => (values = []),
   };
 };
-type ExpectMultiMatcher<T> = (values: T[]) => void | Array<undefined | Error>;
 
 export const expectValues = <T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): any => {
-  const values: T[][] = [];
-  const wrapMethod: ExpectMultiMatcher<T> = (vals) => {
-    values.push(vals);
-    return expectMethod(vals);
+  let values: ExpandedValues<T> = [];
+  const wrapMethod: ExpectMultiMatcher<T> = (vals, valInfos) => {
+    values = valInfos;
+    return expectMethod(vals, valInfos);
   };
   return {
     expectMethod: wrapMethod,
     allowUndefined,
     _brand: expectValuesSymb,
-    getValues: () => values,
+    getMatchInfo: () => values,
   };
 };
 
 export const getMatchedValues = <T>(expectValues: any) => {
   if (isExpectValues(expectValues)) {
-    expectValues.getValues() as T[][];
+    return expectValues.getMatchInfo() as ExpandedValues<T>;
   }
-  return [] as T[][];
+  if (isExpectVal(expectValues)) {
+    return expectValues.getMatchInfo() as ExpandedValues<T>;
+  }
+  return [] as ExpandedValues<T>;
+};
+
+export const clearMatchedValues = (subMatcher: any) => {
+  if (isExpectVal(subMatcher)) {
+    subMatcher.clear();
+  }
 };
 interface ExpectValuesInfo {
   uniqueSymb: ExpectValues;
   value: any;
+  path: Path;
+  fieldDefinedInParent: boolean;
 }
 type ErrorOrTextOrExpect = Array<string | Error | ExpectValuesInfo>;
 type ErrorOrText = Array<string | Error>;
@@ -84,9 +108,17 @@ export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
       values.get(item.uniqueSymb)?.push(item);
     }
   }
+
   const valueErrors = [...values.entries()].reduce((errors, [expecter, values]) => {
     try {
-      const res = expecter.expectMethod(values.map((val) => val.value));
+      const res = expecter.expectMethod(
+        values.map((val) => val.value),
+        values.map((item) => ({
+          fieldDefinedInParent: item.fieldDefinedInParent,
+          path: item.path,
+          value: item.value,
+        }))
+      );
       if (res && Array.isArray(res)) {
         const errorMap = new Map<ExpectValuesInfo, Error>();
         for (let i = 0; i < values.length; i++) {
@@ -122,27 +154,33 @@ const tryExpectVal = (
   expected: ExpectValue<any>,
   actual: any,
   depth: number,
+  path: Path,
+  passedMap: Map<any, Path>,
+  passedSet: Set<any>,
   existsInParent: boolean
 ): ErrorOrTextOrExpect => {
   let matcherRes: undefined | string | void = undefined;
   try {
-    matcherRes = expected.expectMethod(actual, existsInParent);
+    matcherRes = expected.expectMethod(actual, existsInParent, path);
   } catch (err) {
-    return [safePrint(actual, depth), anyToError(err)];
+    return [safePrint(actual, depth, passedMap, passedSet, path), anyToError(err)];
   }
   if (matcherRes !== undefined && matcherRes !== null) {
     return [matcherRes.toString()];
   }
-  return [safePrint(actual, depth)];
+  return [safePrint(actual, depth, passedMap, passedSet, path)];
 };
 
-export const errorString: (expected: any, actual: any, depth: number) => ErrorOrTextOrExpect = (
-  expected,
-  actual,
-  depth
-) => {
+export const errorString: (
+  expected: any,
+  actual: any,
+  depth: number,
+  path: Path,
+  passedMap: Map<any, Path>,
+  passedSet: Set<any>
+) => ErrorOrTextOrExpect = (expected, actual, depth, path, passedMap, passedSet) => {
   if (isExpectVal(expected)) {
-    return tryExpectVal(expected, actual, depth, true);
+    return tryExpectVal(expected, actual, depth, path, passedMap, passedSet, true);
   }
 
   if (isExpectValues(expected)) {
@@ -150,28 +188,42 @@ export const errorString: (expected: any, actual: any, depth: number) => ErrorOr
       {
         uniqueSymb: expected,
         value: actual,
+        fieldDefinedInParent: true,
+        path,
       },
     ];
   }
 
   if (expected === actual) {
-    return [safePrint(actual, depth)];
+    return [safePrint(actual, depth, passedMap, passedSet, path)];
   }
   if (Array.isArray(expected)) {
     if (Array.isArray(actual)) {
       if (actual.length !== expected.length) {
-        return [anyToError(`expected length ${expected.length} but got ${actual.length}`), safePrint(actual, depth)];
+        return [
+          anyToError(`expected length ${expected.length} but got ${actual.length}`),
+          safePrint(actual, depth, passedMap, passedSet, path),
+        ];
       }
 
       const res: ErrorOrTextOrExpect = ['[ \n', spaces(depth)];
+      const childSet = registerChildSet(actual, path, passedMap, passedSet);
       for (let i = 0; i < actual.length; i++) {
-        res.push(...errorString(expected[i], actual[i], depth + 1), ',');
+        res.push(...errorString(expected[i], actual[i], depth + 1, [...path, i], passedMap, childSet), ',');
       }
       res.push(`\n${spaces(depth)}]\n${spaces(depth)}`);
       return res;
     } else {
       return [
-        anyToError(`expected ${safePrint(expected, 0)} but got ${safePrint(actual, 0)}`),
+        anyToError(
+          `expected ${safePrint(expected, 0, passedMap, passedSet, path)} but got ${safePrint(
+            actual,
+            0,
+            passedMap,
+            passedSet,
+            path
+          )}`
+        ),
         safePrint(actual, depth),
       ];
     }
@@ -180,6 +232,7 @@ export const errorString: (expected: any, actual: any, depth: number) => ErrorOr
   if (expected instanceof Object) {
     if (actual instanceof Object) {
       const res: ErrorOrTextOrExpect = [`\n${spaces(depth)}{`];
+      const childSet = registerChildSet(actual, path, passedMap, passedSet);
 
       const allNames = [...new Set([...Object.keys(expected), ...Object.keys(actual)])];
       const addPropToRes = (name: string, value: ErrorOrTextOrExpect, errorMessage?: string) =>
@@ -194,9 +247,16 @@ export const errorString: (expected: any, actual: any, depth: number) => ErrorOr
         const expectedField = expected[name];
 
         if (isExpectValues(expectedField) && expectedField.allowUndefined && name in actual === false) {
-          addPropToRes(name, stringProp);
+          addPropToRes(name, [
+            {
+              uniqueSymb: expectedField,
+              value: undefined,
+              fieldDefinedInParent: false,
+              path: [...path, name],
+            },
+          ]);
         } else if (isExpectVal(expectedField) && name in actual === false) {
-          const fieldRes = tryExpectVal(expectedField, undefined, depth + 1, false);
+          const fieldRes = tryExpectVal(expectedField, undefined, depth + 1, path, passedMap, passedSet, false);
           addPropToRes(name, fieldRes);
         } else {
           if (!(name in expected)) {
@@ -204,7 +264,10 @@ export const errorString: (expected: any, actual: any, depth: number) => ErrorOr
           } else if (!(name in actual)) {
             addPropToRes(name, stringProp, `${name} exists in expected but not in actual`);
           } else {
-            addPropToRes(name, errorString(expected[name], actual[name], depth + 1));
+            addPropToRes(
+              name,
+              errorString(expected[name], actual[name], depth + 1, [...path, name], passedMap, childSet)
+            );
           }
         }
       }

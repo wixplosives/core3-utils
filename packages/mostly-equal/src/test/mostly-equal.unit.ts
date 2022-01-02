@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect } from 'chai';
-import { expectValue, expectValues, notImportant, equal, defined, defineUnique, defineSame, thumbsUp } from '../index';
+import { expectValue, expectValues } from '../index';
+import { clearMatchedValues, getMatchedValues } from '../mostly-equal';
+import type { ExpandedValues } from '../types';
 
 describe('mostly equal', () => {
   describe('simple matching', () => {
@@ -62,171 +64,9 @@ describe('mostly equal', () => {
       }).to.throw('expected "b" but got "a"');
     });
   });
-  describe('notImportant', () => {
-    it('should not throw for fields marked with not important', () => {
-      expect(() => {
-        expect({
-          a: 1,
-        }).to.mostlyEqual({
-          a: notImportant,
-          b: notImportant,
-        });
-      }).not.to.throw();
-    });
-  });
-  describe('defined', () => {
-    it('should not throw for fields marked with defined if value is defined', () => {
-      expect(() => {
-        expect({
-          a: 1,
-        }).to.mostlyEqual({
-          a: defined,
-        });
-      }).not.to.throw();
-    });
-    it('should throw for fields marked with defined if value is undefined', () => {
-      expect(() => {
-        expect({
-          a: undefined,
-        }).to.mostlyEqual({
-          a: defined,
-        });
-      }).to.throw('expected undefined not to be undefined');
-    });
-    it('should throw for fields marked with defined if field is not defined', () => {
-      expect(() => {
-        expect({}).to.mostlyEqual({
-          a: defined,
-        });
-      }).to.throw('expected undefined not to be undefined');
-    });
-  });
 
-  describe('defineUnique', () => {
-    it('should throw if value is not unique', () => {
-      const id = defineUnique('id');
-      expect(() => {
-        expect({
-          a: 'a',
-          b: 'b',
-          c: 'a',
-        }).to.mostlyEqual({
-          a: id,
-          b: id,
-          c: id,
-        });
-      }).to.throw('id - is not unique');
-    });
-    it('should not throw if value is unique', () => {
-      const id = defineUnique('id');
-      expect(() => {
-        expect({
-          a: 'a',
-          b: 'b',
-          c: 'c',
-        }).to.mostlyEqual({
-          a: id,
-          b: id,
-          c: id,
-        });
-      }).to.not.throw();
-    });
-    it('should allow undefined if allowUndefined is set to true', () => {
-      const id = defineUnique('id', true);
-      expect(() => {
-        expect({
-          a: 'a',
-          b: 'b',
-          c: undefined,
-        }).to.mostlyEqual({
-          a: id,
-          b: id,
-          c: id,
-          d: id,
-        });
-      }).to.not.throw();
-    });
-  });
-  describe('defineSame', () => {
-    it('should throw if value is not equal', () => {
-      const id = defineSame('ids');
-      expect(() => {
-        expect({
-          a: 'a',
-          b: 'c',
-          c: 'a',
-        }).to.mostlyEqual({
-          a: id,
-          b: id,
-          c: id,
-        });
-      }).to.throw('ids - are not equal');
-    });
-    it('should not throw if value is equal', () => {
-      const id = defineSame('id');
-      expect(() => {
-        expect({
-          a: 'a',
-          b: 'a',
-          c: 'a',
-        }).to.mostlyEqual({
-          a: id,
-          b: id,
-          c: id,
-        });
-      }).to.not.throw();
-    });
-    it('should allow undefined if allowUndefined is set to true', () => {
-      const id = defineSame('ids', true);
-      expect(() => {
-        expect({
-          a: 'a',
-          b: 'a',
-          c: undefined,
-        }).to.mostlyEqual({
-          a: id,
-          b: id,
-          c: id,
-          d: id,
-        });
-      }).to.not.throw();
-    });
-  });
-  describe('equal', () => {
-    it('should throw if not values are not stickly equal', () => {
-      expect(() => {
-        expect({
-          a: {},
-        }).to.mostlyEqual({
-          a: equal({}),
-        });
-      }).to.throw('expected {} to equal {}');
-    });
-    it('should ot throw if not values are strictly equal', () => {
-      const obj = {};
-
-      expect(() => {
-        expect({
-          a: obj,
-        }).to.mostlyEqual({
-          a: equal(obj),
-        });
-      }).not.to.throw();
-    });
-    it('if stricly equal and truncateData is set to true returns a thumbs up instead of content', () => {
-      const obj = {};
-      expect(() => {
-        expect({
-          a: obj,
-        }).to.mostlyEqual({
-          a: equal(obj),
-          b: 'something',
-        });
-      }).to.throw(thumbsUp);
-    });
-  });
   describe('expectValue', () => {
-    it('should throw if the user matcher throws', () => {
+    xit('should throw if the user matcher throws', () => {
       expect(() => {
         expect({
           a: 1,
@@ -235,7 +75,7 @@ describe('mostly equal', () => {
             expect(val).to.equal(2);
           }),
         });
-      }).to.throw('expected 1 to equal 2');
+      }, 'user matcher run').to.throw('expected 1 to equal 2');
     });
     it('should work when nested', () => {
       expect(() => {
@@ -274,22 +114,96 @@ describe('mostly equal', () => {
         });
       }).to.throw('"baga"');
     });
+    describe('getting matched values', () => {
+      it('should allow getting matched values', () => {
+        const matcher = expectValue((val) => {
+          expect(val).to.equal(2);
+        });
+        expect(() => {
+          expect({
+            a: 1,
+            b: 2,
+          }).to.mostlyEqual({
+            a: matcher,
+            b: matcher,
+          });
+        }, 'user matcher run').to.throw('expected 1 to equal 2');
+
+        const actualMatched = getMatchedValues(matcher);
+        const expectedMatched: ExpandedValues<number> = [
+          {
+            fieldDefinedInParent: true,
+            path: ['a'],
+            value: 1,
+          },
+          {
+            fieldDefinedInParent: true,
+            path: ['b'],
+            value: 2,
+          },
+        ];
+        expect(actualMatched, 'matched values').eql(expectedMatched);
+
+        clearMatchedValues(matcher);
+
+        expect(getMatchedValues(matcher), 'matched values').eql([]);
+      });
+    });
   });
   describe('expectValues', () => {
     it('should call user matcher for with all instances at once', () => {
-      const expectedInstances = ['a', 'b', 'c'];
-      const myExpectValue = expectValues<string>((instances) => {
+      const expectedInstances = ['a', 'b'];
+      const expectedInstancesInfo: ExpandedValues<string> = [
+        {
+          path: ['a'],
+          fieldDefinedInParent: true,
+          value: 'a',
+        },
+        {
+          path: ['b'],
+          fieldDefinedInParent: true,
+          value: 'b',
+        },
+      ];
+      const myExpectValue = expectValues<string>((instances, infos) => {
         expect(instances).to.eql(expectedInstances);
+        expect(infos).to.eql(expectedInstancesInfo);
       });
       expect(() => {
         expect({
           a: expectedInstances[0],
           b: expectedInstances[1],
-          c: expectedInstances[2],
         }).to.mostlyEqual({
           a: myExpectValue,
           b: myExpectValue,
-          c: myExpectValue,
+        });
+      }).not.to.throw();
+    });
+    it('should call user matcher with undefined items from expected if allow undefined is set to true', () => {
+      const expectedInstances = ['a', undefined];
+      const expectedInstancesInfo: ExpandedValues<string> = [
+        {
+          path: ['a'],
+          fieldDefinedInParent: true,
+          value: 'a',
+        },
+        {
+          path: ['b'],
+          fieldDefinedInParent: false,
+          value: undefined,
+        },
+      ];
+
+      const myExpectValue = expectValues<string>((instances, infos) => {
+        expect(instances).to.eql(expectedInstances);
+        expect(infos).to.eql(expectedInstancesInfo);
+      }, true);
+      expect(() => {
+        expect({
+          a: expectedInstances[0],
+        }).to.mostlyEqual({
+          a: myExpectValue,
+          b: myExpectValue,
         });
       }).not.to.throw();
     });
@@ -326,6 +240,42 @@ describe('mostly equal', () => {
           });
         }).to.throw('error-text');
       });
+    });
+  });
+  describe('expectValues - getting matched values', () => {
+    it('getMatchedValues should allow getting the matched values', () => {
+      const myExpectValue = expectValues<string>(() => {
+        //noop
+      }, true);
+      expect(() => {
+        expect({
+          a: 'a',
+          b: 'b',
+        }).to.mostlyEqual({
+          a: myExpectValue,
+          b: myExpectValue,
+          c: myExpectValue,
+        });
+      }).not.to.throw();
+      const values = getMatchedValues(myExpectValue);
+      const expectedMatched: ExpandedValues<string> = [
+        {
+          fieldDefinedInParent: true,
+          path: ['a'],
+          value: 'a',
+        },
+        {
+          fieldDefinedInParent: true,
+          path: ['b'],
+          value: 'b',
+        },
+        {
+          fieldDefinedInParent: false,
+          path: ['c'],
+          value: undefined,
+        },
+      ];
+      expect(values).to.eql(expectedMatched);
     });
   });
 });

@@ -4,7 +4,7 @@ import chai from 'chai';
 import { safePrint } from './safe-print';
 export const mostlyEqlChaiPlugin: Chai.ChaiPlugin = (c) => {
   c.Assertion.addMethod('mostlyEqual', function (this, expected) {
-    const res = checkExpectValues(errorString(expected, this._obj, 0));
+    const res = checkExpectValues(errorString(expected, this._obj, 0, [], new Map(), new Set()));
     let error = false;
     const message = res.map((item) => {
       if (typeof item !== 'string') {

@@ -4,18 +4,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
+import type { Path } from './types';
+
 export const spaces = (indent: number) => {
   const arr = new Array(indent);
   arr.fill('    ');
   return arr.join('');
 };
 
-export interface SafePrintResults {
-  main: string;
-  refs: Record<string, string>;
-}
-
-type Path = Array<string | number>;
 export const printPath = (p: Path) => {
   return `actual${p.map((item) => (typeof item === 'number' ? `[${item.toString()}]` : `.${item}`)).join('')}`;
 };
@@ -28,6 +24,18 @@ export const safePrint = (
   path: Array<string | number> = []
 ) => {
   return safePrintRecurse(target, depth, passedMap, passedSet, path);
+};
+
+export const registerChildSet = (
+  target: any,
+  path: Array<string | number>,
+  passedMap: Map<any, Path>,
+  passedSet = new Set<any>()
+) => {
+  const childSet = new Set(passedSet);
+  childSet.add(target);
+  passedMap.set(target, path);
+  return childSet;
 };
 
 export const safePrintRecurse = (
@@ -44,13 +52,11 @@ export const safePrintRecurse = (
     if (target.length === 0) {
       return '[]';
     }
-    const childSet = new Set(passedSet);
-    childSet.add(target);
-    passedMap.set(target, path);
 
-    const arrContent = target.map((item, idx) =>
-      safePrintRecurse(item, depth + 1, passedMap, childSet, [...path, idx])
-    );
+    const childSet = registerChildSet(target, path, passedMap, passedSet);
+    const arrContent = target.map((item, idx) => {
+      return safePrintRecurse(item, depth + 1, passedMap, childSet, [...path, idx]);
+    });
     return `[\n${spaces(depth + 1)}${arrContent.join(`,\n${spaces(depth + 1)}`)}\n${spaces(depth)}]`;
   }
 
@@ -59,9 +65,7 @@ export const safePrintRecurse = (
     if (entries.length === 0) {
       return '{}';
     }
-    const childSet = new Set(passedSet);
-    childSet.add(target);
-    passedMap.set(target, path);
+    const childSet = registerChildSet(target, path, passedMap, passedSet);
 
     const objContent = entries
       .map(
