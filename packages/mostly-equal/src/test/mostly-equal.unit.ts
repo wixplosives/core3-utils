@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 import { expectValue, expectValues, mostlyEqlChaiPlugin } from '../index';
 import { clearMatchedValues, getMatchedValues } from '../mostly-equal';
 import type { ExpandedValues } from '../types';
