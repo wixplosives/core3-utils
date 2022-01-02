@@ -1,13 +1,9 @@
 {
-  "name": "@wixc3/mostly-equal",
+  "name": "@wixc3/mark-text",
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
     "test": "mocha \"dist/test/**/*.unit.js\""
-  },
-  "peerDependencies": {
-    "mocha": ">=9",
-    "sinon": "*"
   },
   "files": [
     "dist",
@@ -17,22 +13,8 @@
   ],
   "license": "MIT",
   "author": "Wix.com",
-  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "repository": "https://github.com/wixplosives/core3-utils/tree/master/packages/mark-text",
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "@types/chai": "^4.3.0",
-    "@types/mocha": "^9.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.8.1",
-    "@typescript-eslint/parser": "^5.8.1",
-    "chai": "^4.3.4",
-    "eslint": "^8.5.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-no-only-tests": "^2.6.0",
-    "lerna": "^4.0.0",
-    "mocha": "^9.1.3",
-    "rimraf": "^3.0.2",
-    "typescript": "~4.5.4"
   }
 }
