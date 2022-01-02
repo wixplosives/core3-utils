@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
-import type { Path } from './types';
+import type { LookupPath } from './types';
 
 export const spaces = (indent: number) => {
   const arr = new Array(indent);
@@ -12,14 +12,14 @@ export const spaces = (indent: number) => {
   return arr.join('');
 };
 
-export const printPath = (p: Path) => {
+export const printPath = (p: LookupPath) => {
   return `actual${p.map((item) => (typeof item === 'number' ? `[${item.toString()}]` : `.${item}`)).join('')}`;
 };
 
 export const safePrint = (
   target: any,
   depth = 0,
-  passedMap = new Map<any, Path>(),
+  passedMap = new Map<any, LookupPath>(),
   passedSet = new Set<any>(),
   path: Array<string | number> = []
 ) => {
@@ -29,7 +29,7 @@ export const safePrint = (
 export const registerChildSet = (
   target: any,
   path: Array<string | number>,
-  passedMap: Map<any, Path>,
+  passedMap: Map<any, LookupPath>,
   passedSet = new Set<any>()
 ) => {
   const childSet = new Set(passedSet);
@@ -41,7 +41,7 @@ export const registerChildSet = (
 export const safePrintRecurse = (
   target: any,
   depth: number,
-  passedMap: Map<any, Path>,
+  passedMap: Map<any, LookupPath>,
   passedSet = new Set<any>(),
   path: Array<string | number>
 ): string => {
@@ -84,7 +84,7 @@ export const safePrintRecurse = (
     return 'null';
   }
   if (typeof target === 'string') {
-    return `"${target}"`;
+    return JSON.stringify(target, null, 4);
   }
-  return target.toString();
+  return String(target);
 };

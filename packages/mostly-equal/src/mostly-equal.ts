@@ -6,7 +6,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { registerChildSet, safePrint, spaces } from './safe-print';
-import type { Path, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
+import type { LookupPath, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
 
 const expectValueSymb = Symbol('expect');
 const expectValuesSymb = Symbol('expect-values');
@@ -81,7 +81,7 @@ export const clearMatchedValues = (subMatcher: any) => {
 interface ExpectValuesInfo {
   uniqueSymb: ExpectValues;
   value: any;
-  path: Path;
+  path: LookupPath;
   fieldDefinedInParent: boolean;
 }
 type ErrorOrTextOrExpect = Array<string | Error | ExpectValuesInfo>;
@@ -154,8 +154,8 @@ const tryExpectVal = (
   expected: ExpectValue<any>,
   actual: any,
   depth: number,
-  path: Path,
-  passedMap: Map<any, Path>,
+  path: LookupPath,
+  passedMap: Map<any, LookupPath>,
   passedSet: Set<any>,
   existsInParent: boolean
 ): ErrorOrTextOrExpect => {
@@ -175,8 +175,8 @@ export const errorString: (
   expected: any,
   actual: any,
   depth: number,
-  path: Path,
-  passedMap: Map<any, Path>,
+  path: LookupPath,
+  passedMap: Map<any, LookupPath>,
   passedSet: Set<any>
 ) => ErrorOrTextOrExpect = (expected, actual, depth, path, passedMap, passedSet) => {
   if (isExpectVal(expected)) {
