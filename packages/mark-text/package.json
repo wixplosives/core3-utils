@@ -1,0 +1,20 @@
+{
+  "name": "@wixc3/mark-text",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "mocha \"dist/test/**/*.unit.js\""
+  },
+  "files": [
+    "dist",
+    "src",
+    "!dist/test",
+    "!dist/tsconfig.tsbuildinfo"
+  ],
+  "license": "MIT",
+  "author": "Wix.com",
+  "repository": "https://github.com/wixplosives/core3-utils/tree/master/packages/mark-text",
+  "publishConfig": {
+    "access": "public"
+  }
+}
