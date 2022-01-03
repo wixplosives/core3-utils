@@ -67,7 +67,7 @@ describe('mostly equal', () => {
   });
 
   describe('expectValue', () => {
-    xit('should throw if the user matcher throws', () => {
+    it('should throw if the user matcher throws', () => {
       expect(() => {
         expect({
           a: 1,

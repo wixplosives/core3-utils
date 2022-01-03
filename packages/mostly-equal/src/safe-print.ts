@@ -3,11 +3,9 @@ import type { LookupPath, UnknownObjectRecord } from './types';
 export const spaces = (indent: number) => ' '.repeat(indent * 2);
 
 export const printPath = (p: LookupPath) => {
-  return JSON.stringify(
-    `actual${p
-      .map((item) => (typeof item === 'number' ? `[${item.toString()}]` : `[${JSON.stringify(item)}]`))
-      .join('')}`
-  );
+  return `actual${p
+    .map((item) => (typeof item === 'number' ? `[${item.toString()}]` : `[${JSON.stringify(item)}]`))
+    .join('')}`;
 };
 
 export const isPlainObj = (value: unknown): value is UnknownObjectRecord => {
@@ -34,7 +32,7 @@ export const safePrint = (
   path: LookupPath = []
 ): string => {
   if (passedSet.has(target)) {
-    return `"circular data removed, path: ${printPath(path)}"`;
+    return JSON.stringify(`circular data removed, path: ${printPath(path)}`);
   }
   if (Array.isArray(target)) {
     if (target.length === 0) {

@@ -28,7 +28,8 @@ describe('safe print', () => {
       obj.b.push(obj as never);
       const expected = {
         a: 'a string',
-        b: ['"circular data removed, path: "actual[\\"b\\"][0]"'],
+        // eslint-disable-next-line no-useless-escape
+        b: ['circular data removed, path: actual["b"][0]'],
       };
       const actual = safePrint(obj);
       expect(actual).to.equal(JSON.stringify(expected, null, 2));
