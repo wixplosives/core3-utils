@@ -1,3 +1,2 @@
-# mostly equal
-
-a chai matcher for matching big data trees
+# mark-text
+utility for writing multi line strings and getting specific locations in it.
