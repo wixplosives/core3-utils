@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 import { notImportant, equal, defined, defineUnique, defineSame, thumbsUp, mostlyEqlChaiPlugin } from '../index';
 chai.use(mostlyEqlChaiPlugin);
 
@@ -33,14 +33,14 @@ describe('mostly equal matchers', () => {
         }).to.mostlyEqual({
           a: defined,
         });
-      }).to.throw('expected undefined not to be undefined');
+      }).to.throw('expected undefined to not equal undefined');
     });
     it('should throw for fields marked with defined if field is not defined', () => {
       expect(() => {
         expect({}).to.mostlyEqual({
           a: defined,
         });
-      }).to.throw('expected undefined not to be undefined');
+      }).to.throw('expected undefined to not equal undefined');
     });
   });
 

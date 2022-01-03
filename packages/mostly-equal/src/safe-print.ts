@@ -32,7 +32,7 @@ export const safePrint = (
   path: LookupPath = []
 ): string => {
   if (passedSet.has(target)) {
-    return `"circular data removed, path: ${printPath(path)}"`;
+    return JSON.stringify(`circular data removed, path: ${printPath(path)}`);
   }
   if (Array.isArray(target)) {
     if (target.length === 0) {
@@ -70,7 +70,7 @@ export const safePrint = (
     return 'null';
   }
   if (typeof target === 'string') {
-    return JSON.stringify(target, null, 4);
+    return JSON.stringify(target, null, 2);
   }
   return String(target);
 };

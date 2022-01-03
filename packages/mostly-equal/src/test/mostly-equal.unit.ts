@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 import { expectValue, expectValues, mostlyEqlChaiPlugin } from '../index';
 import { clearMatchedValues, getMatchedValues } from '../mostly-equal';
 import type { ExpandedValues } from '../types';
@@ -67,7 +67,7 @@ describe('mostly equal', () => {
   });
 
   describe('expectValue', () => {
-    xit('should throw if the user matcher throws', () => {
+    it('should throw if the user matcher throws', () => {
       expect(() => {
         expect({
           a: 1,
