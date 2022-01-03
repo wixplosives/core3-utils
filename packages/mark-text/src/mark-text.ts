@@ -1,9 +1,13 @@
 export interface MarkedString {
   name: string;
   content: Array<string | MarkedString>;
+  marker: Marker;
 }
 
-type Marker = (str: TemplateStringsArray, ...replacement: Array<string | number | MarkedString>) => MarkedString;
+type Marker = { getPos: () => Pos; pos?: Pos } & ((
+  str: TemplateStringsArray,
+  ...replacement: Array<string | number | MarkedString>
+) => MarkedString);
 type Markers<KEYS extends string> = { [key in KEYS]: Marker };
 
 export interface Pos {
@@ -11,87 +15,81 @@ export interface Pos {
   end: number;
 }
 
-const createMarkers = <KEYS extends string>(markKeys: KEYS[]): Markers<KEYS> => {
+const mergeTemplateArrs = <T1, T2>(content: readonly T1[], subs: readonly T2[]): Array<T1 | T2> => {
+  return content.reduce((acc, contentItem, idx) => {
+    acc.push(contentItem);
+    const sub = subs[idx];
+    if (sub) {
+      acc.push(sub);
+    }
+    return acc;
+  }, [] as Array<T1 | T2>);
+};
+
+export const createMarkers = <KEYS extends string>(...markKeys: KEYS[]): Markers<KEYS> => {
   return markKeys.reduce((acc, key) => {
-    acc[key] = (content: TemplateStringsArray, ...replacement: Array<string | number | MarkedString>) => {
+    const marker: Marker = (content: TemplateStringsArray, ...replacement: Array<string | number | MarkedString>) => {
+      const merged = mergeTemplateArrs(content.raw, replacement);
       return {
         name: key,
-        content: replacement.map((item) => {
+        content: merged.map((item) => {
           if (typeof item === 'number') {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return content[item]!;
           }
           return item;
         }),
+        marker,
       };
     };
+    marker.getPos = function () {
+      if (!this.pos) {
+        throw new Error('position was not set, use marker inside markText to set it');
+      }
+      return this.pos;
+    };
+
+    acc[key] = marker;
 
     return acc;
   }, {} as Markers<KEYS>);
 };
 
-export type Mark = (
-  text: TemplateStringsArray,
-  ...replacement: Array<string | number | MarkedString>
-) => {
-  result: string;
-  indexes: Record<string, Pos>;
-};
-export const mark: Mark = (text, ...replacement) => {
+export type Mark = (text: TemplateStringsArray, ...replacement: Array<string | number | MarkedString>) => string;
+export const markText: Mark = (text, ...replacement) => {
   let result = '';
-  const indexes: Record<string, Pos> = {};
-  for (const r of replacement) {
+  const merged = mergeTemplateArrs(text.raw, replacement);
+
+  for (const r of merged) {
     if (typeof r === 'number') {
       result += text[r];
     } else if (typeof r === 'string') {
       result += r;
     } else {
-      const childRes = innerMark(r, indexes, result.length);
-      indexes[r.name] = {
+      const childRes = innerMark(r, result.length);
+      r.marker.pos = {
         start: result.length,
-        end: result.length + childRes.result.length,
+        end: result.length + childRes.length,
       };
-      for (const [index, value] of Object.entries(childRes.indexes)) {
-        indexes[index] = value;
-      }
+      result += childRes;
     }
   }
-  return { result, indexes };
+  return result;
 };
 
-const innerMark = (item: MarkedString, indexes: Record<string, Pos>, curentPos: number) => {
+const innerMark = (item: MarkedString, curentPos: number) => {
   let result = '';
   for (const r of item.content) {
     if (typeof r === 'string') {
       result += r;
     } else {
-      const childRes = innerMark(r, indexes, curentPos + result.length);
-
-      indexes[r.name] = {
+      const childRes = innerMark(r, curentPos + result.length);
+      r.marker.pos = {
         start: result.length + curentPos,
-        end: result.length + childRes.result.length + curentPos,
+        end: result.length + childRes.length + curentPos,
       };
-      for (const [index, value] of Object.entries(childRes.indexes)) {
-        indexes[index] = value;
-      }
+      result += childRes;
     }
   }
-  return { result, indexes };
-};
-
-export const textAndIndexes = <KEYS extends string>(
-  factory: (
-    mark: Mark,
-    markers: Markers<KEYS>
-  ) => {
-    result: string;
-    indexes: Record<string, Pos>;
-  },
-  markKeys: KEYS[]
-) => {
-  const res = factory(mark, createMarkers(markKeys));
-  return res as {
-    result: string;
-    indexes: Record<KEYS, Pos>;
-  };
+  return result;
 };
