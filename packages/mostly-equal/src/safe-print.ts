@@ -54,10 +54,13 @@ export const safePrint = (
     const childSet = registerChildSet(target, path, passedMap, passedSet);
 
     const objContent = entries
-      .map(
-        ([key, val]) =>
-          `\n${spaces(depth + 1)}"${key}": ${safePrint(val, depth + 1, passedMap, childSet, [...path, key])}`
-      )
+      .map(([key, val]) => {
+        const desc = Object.getOwnPropertyDescriptor(target, key);
+        if (desc && desc.get) {
+          return `\n${spaces(depth + 1)}"${key}": "getter value removed"`;
+        }
+        return `\n${spaces(depth + 1)}"${key}": ${safePrint(val, depth + 1, passedMap, childSet, [...path, key])}`;
+      })
       .join(',');
     return `{${objContent}\n${spaces(depth)}}`;
   }

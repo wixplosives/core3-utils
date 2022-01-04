@@ -35,6 +35,23 @@ describe('safe print', () => {
       expect(actual).to.equal(JSON.stringify(expected, null, 2));
     });
 
+    it('should handle infinte data created by getters', () => {
+      const createObj = () => ({
+        a: 'a string',
+        get createObj() {
+          return createObj();
+        },
+      });
+
+      const expected = {
+        a: 'a string',
+        // eslint-disable-next-line no-useless-escape
+        createObj: 'getter value removed',
+      };
+      const actual = safePrint(createObj());
+      expect(actual).to.equal(JSON.stringify(expected, null, 2));
+    });
+
     it('should print repeating non circular data', () => {
       const internalObj = { a: 'hello' };
       const obj = {
