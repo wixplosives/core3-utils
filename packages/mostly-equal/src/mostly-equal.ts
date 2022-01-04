@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { isGetter } from '.';
 import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print';
 import type { LookupPath, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
 
@@ -257,7 +258,7 @@ export const errorString: (
         } else if (isExpectVal(expectedField) && name in actual === false) {
           const fieldRes = tryExpectVal(expectedField, undefined, depth + 1, path, passedMap, passedSet, false);
           addPropToRes(name, fieldRes);
-        } else {
+        } else if (!isGetter(actual, name)) {
           if (!(name in expected)) {
             addPropToRes(name, stringProp, `${name} exists in actual but not in expected`);
           } else if (!(name in actual)) {

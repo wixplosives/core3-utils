@@ -23,7 +23,10 @@ export const registerChildSet = (
   passedMap.set(target, path);
   return childSet;
 };
-
+export const isGetter = (target: Record<string, unknown>, key: string) => {
+  const desc = Object.getOwnPropertyDescriptor(target, key);
+  return !!desc && !!desc.get;
+};
 export const safePrint = (
   target: unknown,
   depth = 0,
@@ -55,8 +58,7 @@ export const safePrint = (
 
     const objContent = entries
       .map(([key, val]) => {
-        const desc = Object.getOwnPropertyDescriptor(target, key);
-        if (desc && desc.get) {
+        if (isGetter(target, key)) {
           return `\n${spaces(depth + 1)}"${key}": "getter value removed"`;
         }
         return `\n${spaces(depth + 1)}"${key}": ${safePrint(val, depth + 1, passedMap, childSet, [...path, key])}`;
