@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { isGetter } from '.';
+import { isGetter } from './safe-print';
 import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print';
 import type { LookupPath, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
 
