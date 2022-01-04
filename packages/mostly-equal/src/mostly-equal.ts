@@ -288,5 +288,8 @@ export const errorString: (
     }
   }
 
-  return [safePrint(actual, depth), anyToError(`expected ${safePrint(expected, 0)} but got ${safePrint(actual, 0)}`)];
+  return [
+    safePrint(actual, maxDepth, depth),
+    anyToError(`expected ${safePrint(expected, maxDepth, 0)} but got ${safePrint(actual, maxDepth, 0)}`),
+  ];
 };

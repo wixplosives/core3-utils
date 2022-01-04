@@ -7,7 +7,7 @@ export interface MostlyEqualOptions {
 
 export const mostlyEqlChaiPlugin: Chai.ChaiPlugin = (c) => {
   c.Assertion.addMethod('mostlyEqual', function (this, expected, options) {
-    const maxDepth = (options as MostlyEqualOptions).maxDepth || 10;
+    const maxDepth = (options as MostlyEqualOptions)?.maxDepth || 10;
     const res = checkExpectValues(errorString(expected, this._obj, maxDepth, 0, [], new Map(), new Set()));
     let error = false;
     const message = res.map((item) => {

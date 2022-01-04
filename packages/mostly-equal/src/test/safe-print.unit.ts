@@ -71,8 +71,8 @@ describe('safe print', () => {
       };
 
       const actual = safePrint(obj, 2);
-      expect(JSON.parse(actual)).to.eql({
-        b: [{ a: 'hello' }],
+      expect(eval('(' + actual + ')')).to.eql({
+        b: [{}],
       });
       expect(actual).to.include('{ /* object content truncated, max depth reached */ }');
     });
