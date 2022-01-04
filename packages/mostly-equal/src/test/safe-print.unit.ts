@@ -65,6 +65,17 @@ describe('safe print', () => {
       const actual = safePrint(obj);
       expect(actual).to.equal(JSON.stringify(expected, null, 2));
     });
+    it('should stop printing at maxDepth', () => {
+      const obj = {
+        b: [{ a: 'hello' }],
+      };
+
+      const actual = safePrint(obj, 2);
+      expect(JSON.parse(actual)).to.eql({
+        b: [{ a: 'hello' }],
+      });
+      expect(actual).to.include('{ /* object content truncated, max depth reached */ }');
+    });
 
     it('should print repeating non circular data', () => {
       const internalObj = { a: 'hello' };
