@@ -50,18 +50,21 @@ export const safePrint = (
   }
 
   if (isPlainObj(target)) {
-    const entries = Object.entries(target);
-    if (entries.length === 0) {
+    const names = Object.getOwnPropertyNames(target);
+    if (names.length === 0) {
       return '{}';
     }
     const childSet = registerChildSet(target, path, passedMap, passedSet);
 
-    const objContent = entries
-      .map(([key, val]) => {
+    const objContent = names
+      .map((key) => {
         if (isGetter(target, key)) {
           return `\n${spaces(depth + 1)}"${key}": "getter value removed"`;
         }
-        return `\n${spaces(depth + 1)}"${key}": ${safePrint(val, depth + 1, passedMap, childSet, [...path, key])}`;
+        return `\n${spaces(depth + 1)}"${key}": ${safePrint(target[key], depth + 1, passedMap, childSet, [
+          ...path,
+          key,
+        ])}`;
       })
       .join(',');
     return `{${objContent}\n${spaces(depth)}}`;
