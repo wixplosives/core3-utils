@@ -45,10 +45,24 @@ describe('safe print', () => {
 
       const expected = {
         a: 'a string',
-        // eslint-disable-next-line no-useless-escape
         createObj: 'getter value removed',
       };
       const actual = safePrint(createObj());
+      expect(actual).to.equal(JSON.stringify(expected, null, 2));
+    });
+    it('should ignore properties from prototype', () => {
+      const proto = {
+        b: 5,
+      };
+      const obj = {
+        a: 'a string',
+      };
+
+      Object.setPrototypeOf(obj, proto);
+      const expected = {
+        a: 'a string',
+      };
+      const actual = safePrint(obj);
       expect(actual).to.equal(JSON.stringify(expected, null, 2));
     });
 
