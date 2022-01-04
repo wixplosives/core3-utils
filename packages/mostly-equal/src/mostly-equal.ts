@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { isGetter } from './safe-print';
 import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print';
 import type { LookupPath, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
 
@@ -152,6 +153,7 @@ export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
 const tryExpectVal = (
   expected: ExpectValue<any>,
   actual: any,
+  maxDepth: number,
   depth: number,
   path: LookupPath,
   passedMap: Map<any, LookupPath>,
@@ -162,24 +164,25 @@ const tryExpectVal = (
   try {
     matcherRes = expected.expectMethod(actual, existsInParent, path);
   } catch (err) {
-    return [safePrint(actual, depth, passedMap, passedSet, path), anyToError(err)];
+    return [safePrint(actual, maxDepth, depth, passedMap, passedSet, path), anyToError(err)];
   }
   if (matcherRes !== undefined && matcherRes !== null) {
     return [matcherRes.toString()];
   }
-  return [safePrint(actual, depth, passedMap, passedSet, path)];
+  return [safePrint(actual, maxDepth, depth, passedMap, passedSet, path)];
 };
 
 export const errorString: (
   expected: unknown,
   actual: unknown,
+  maxDepth: number,
   depth: number,
   path: LookupPath,
   passedMap: Map<unknown, LookupPath>,
   passedSet: Set<unknown>
-) => ErrorOrTextOrExpect = (expected, actual, depth, path, passedMap, passedSet) => {
+) => ErrorOrTextOrExpect = (expected, actual, maxDepth, depth, path, passedMap, passedSet) => {
   if (isExpectVal(expected)) {
-    return tryExpectVal(expected, actual, depth, path, passedMap, passedSet, true);
+    return tryExpectVal(expected, actual, maxDepth, depth, path, passedMap, passedSet, true);
   }
 
   if (isExpectValues(expected)) {
@@ -194,36 +197,37 @@ export const errorString: (
   }
 
   if (expected === actual) {
-    return [safePrint(actual, depth, passedMap, passedSet, path)];
+    return [safePrint(actual, maxDepth, depth, passedMap, passedSet, path)];
   }
   if (Array.isArray(expected)) {
     if (Array.isArray(actual)) {
       if (actual.length !== expected.length) {
         return [
           anyToError(`expected length ${expected.length} but got ${actual.length}`),
-          safePrint(actual, depth, passedMap, passedSet, path),
+          safePrint(actual, maxDepth, depth, passedMap, passedSet, path),
         ];
       }
 
       const res: ErrorOrTextOrExpect = ['[ \n', spaces(depth)];
       const childSet = registerChildSet(actual, path, passedMap, passedSet);
       for (let i = 0; i < actual.length; i++) {
-        res.push(...errorString(expected[i], actual[i], depth + 1, [...path, i], passedMap, childSet), ',');
+        res.push(...errorString(expected[i], actual[i], maxDepth, depth + 1, [...path, i], passedMap, childSet), ',');
       }
       res.push(`\n${spaces(depth)}]\n${spaces(depth)}`);
       return res;
     } else {
       return [
         anyToError(
-          `expected ${safePrint(expected, 0, passedMap, passedSet, path)} but got ${safePrint(
+          `expected ${safePrint(expected, maxDepth, 0, passedMap, passedSet, path)} but got ${safePrint(
             actual,
+            maxDepth,
             0,
             passedMap,
             passedSet,
             path
           )}`
         ),
-        safePrint(actual, depth),
+        safePrint(actual, maxDepth, depth),
       ];
     }
   }
@@ -255,9 +259,18 @@ export const errorString: (
             },
           ]);
         } else if (isExpectVal(expectedField) && name in actual === false) {
-          const fieldRes = tryExpectVal(expectedField, undefined, depth + 1, path, passedMap, passedSet, false);
+          const fieldRes = tryExpectVal(
+            expectedField,
+            undefined,
+            maxDepth,
+            depth + 1,
+            path,
+            passedMap,
+            passedSet,
+            false
+          );
           addPropToRes(name, fieldRes);
-        } else {
+        } else if (!isGetter(actual, name)) {
           if (!(name in expected)) {
             addPropToRes(name, stringProp, `${name} exists in actual but not in expected`);
           } else if (!(name in actual)) {
@@ -265,7 +278,7 @@ export const errorString: (
           } else {
             addPropToRes(
               name,
-              errorString(expected[name], actual[name], depth + 1, [...path, name], passedMap, childSet)
+              errorString(expected[name], actual[name], maxDepth, depth + 1, [...path, name], passedMap, childSet)
             );
           }
         }
@@ -275,5 +288,8 @@ export const errorString: (
     }
   }
 
-  return [safePrint(actual, depth), anyToError(`expected ${safePrint(expected, 0)} but got ${safePrint(actual, 0)}`)];
+  return [
+    safePrint(actual, maxDepth, depth),
+    anyToError(`expected ${safePrint(expected, maxDepth, 0)} but got ${safePrint(actual, maxDepth, 0)}`),
+  ];
 };

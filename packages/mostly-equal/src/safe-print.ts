@@ -23,9 +23,13 @@ export const registerChildSet = (
   passedMap.set(target, path);
   return childSet;
 };
-
+export const isGetter = (target: Record<string, unknown>, key: string) => {
+  const desc = Object.getOwnPropertyDescriptor(target, key);
+  return !!desc && !!desc.get;
+};
 export const safePrint = (
   target: unknown,
+  maxDepth = 10,
   depth = 0,
   passedMap = new Map<unknown, LookupPath>(),
   passedSet = new Set<unknown>(),
@@ -35,29 +39,40 @@ export const safePrint = (
     return JSON.stringify(`circular data removed, path: ${printPath(path)}`);
   }
   if (Array.isArray(target)) {
+    if (depth >= maxDepth) {
+      return `[ /* array content truncated, max depth reached */ ]`;
+    }
     if (target.length === 0) {
       return '[]';
     }
 
     const childSet = registerChildSet(target, path, passedMap, passedSet);
     const arrContent = target.map((item, idx) => {
-      return safePrint(item, depth + 1, passedMap, childSet, [...path, idx]);
+      return safePrint(item, maxDepth, depth + 1, passedMap, childSet, [...path, idx]);
     });
     return `[\n${spaces(depth + 1)}${arrContent.join(`,\n${spaces(depth + 1)}`)}\n${spaces(depth)}]`;
   }
 
   if (isPlainObj(target)) {
-    const entries = Object.entries(target);
-    if (entries.length === 0) {
+    if (depth >= maxDepth) {
+      return `{ /* object content truncated, max depth reached */ }`;
+    }
+    const names = Object.getOwnPropertyNames(target);
+    if (names.length === 0) {
       return '{}';
     }
     const childSet = registerChildSet(target, path, passedMap, passedSet);
 
-    const objContent = entries
-      .map(
-        ([key, val]) =>
-          `\n${spaces(depth + 1)}"${key}": ${safePrint(val, depth + 1, passedMap, childSet, [...path, key])}`
-      )
+    const objContent = names
+      .map((key) => {
+        if (isGetter(target, key)) {
+          return `\n${spaces(depth + 1)}"${key}": "getter value removed"`;
+        }
+        return `\n${spaces(depth + 1)}"${key}": ${safePrint(target[key], maxDepth, depth + 1, passedMap, childSet, [
+          ...path,
+          key,
+        ])}`;
+      })
       .join(',');
     return `{${objContent}\n${spaces(depth)}}`;
   }

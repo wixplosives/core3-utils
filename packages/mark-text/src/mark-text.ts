@@ -4,7 +4,7 @@ export interface MarkedString {
   marker: Marker;
 }
 
-type Marker = { getPos: () => Pos; pos?: Pos } & ((
+export type Marker = { getPos: () => Pos; pos?: Pos } & ((
   str: TemplateStringsArray,
   ...replacement: Array<string | number | MarkedString>
 ) => MarkedString);

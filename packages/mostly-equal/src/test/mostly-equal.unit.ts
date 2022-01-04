@@ -64,6 +64,16 @@ describe('mostly equal', () => {
         expect({ a: 'a' }).to.mostlyEqual({ a: 'b' });
       }).to.throw('expected "b" but got "a"');
     });
+    it('should ignore property getters', () => {
+      expect(() => {
+        expect({
+          a: 'a',
+          get b() {
+            return 'b';
+          },
+        }).to.mostlyEqual({ a: 'a' });
+      }).to.not.throw();
+    });
   });
 
   describe('expectValue', () => {
