@@ -1,3 +1,5 @@
+/// <reference types="chai" />
+
 import { checkExpectValues, errorString } from './mostly-equal';
 import { safePrint } from './safe-print';
 
