@@ -37,7 +37,7 @@ export function set<Value>(
   rec: Plugable,
   key: Key<Value>,
   value: Value,
-  isEqual = (prevues: Value | undefined, value: Value) => prevues === value
+  isEqual = (previous: Value | undefined, value: Value) => previous === value
 ) {
   if (!isEqual(get(rec, key), value)) {
     (rec as Record<Key<Value>, Value>)[key] = value;
