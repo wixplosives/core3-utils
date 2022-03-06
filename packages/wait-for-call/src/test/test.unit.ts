@@ -3,6 +3,8 @@ import chaiAsPromised from 'chai-as-promised';
 import { createWaitForCall } from '../wait-for-call';
 chai.use(chaiAsPromised);
 describe('Wait For Call', () => {
+  // TODO: check eslint flip
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   it('mocks a call', async () => {
     const myFunction = (arg: string) => arg;
     const { waitForCall } = createWaitForCall<typeof myFunction>('name', myFunction);

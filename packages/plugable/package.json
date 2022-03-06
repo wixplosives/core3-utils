@@ -1,0 +1,23 @@
+{
+  "name": "@wixc3/plugable-map",
+  "version": "1.0.1",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "mocha \"dist/test/**/*.unit.js\""
+  },
+  "peerDependencies": {
+    "react": "^17.0.2"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!dist/test",
+    "!dist/tsconfig.tsbuildinfo"
+  ],
+  "license": "MIT",
+  "author": "Wix.com",
+  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "publishConfig": {
+    "access": "public"
+  }
+}
