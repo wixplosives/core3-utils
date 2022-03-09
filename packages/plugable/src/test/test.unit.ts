@@ -72,6 +72,9 @@ describe('Plugable', () => {
     set(parent, key, 'hello');
 
     expect(res).to.be.empty;
+
+    const value = get(grandChild, key);
+    expect(value).to.equal('world');
   });
 
   it('emit on grandChild when set on parent (when there is no override on child)', () => {
