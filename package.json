@@ -28,7 +28,7 @@
     "lerna": "^4.0.0",
     "mocha": "^9.2.2",
     "rimraf": "^3.0.2",
-    "sinon": "^13.0.1",
+    "sinon": "^13.0.2",
     "typescript": "~4.6.3"
   },
   "license": "MIT",
