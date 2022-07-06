@@ -1,9 +1,10 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/wait-for-call/src" },
     { "path": "./packages/create-disposables/src" },
+    { "path": "./packages/isomorphic-fetch/src" },
+    { "path": "./packages/mark-text/src" },
     { "path": "./packages/mostly-equal/src" },
-    { "path": "./packages/mark-text/src" }
+    { "path": "./packages/wait-for-call/src" },
   ]
 }
