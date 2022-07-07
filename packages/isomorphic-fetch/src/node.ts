@@ -1,1 +1,2 @@
-export * from 'undici';
+import fetch from 'make-fetch-happen';
+export { fetch };
