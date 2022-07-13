@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect } from 'chai';
 import { safePrint } from '../safe-print';
 
@@ -21,14 +19,17 @@ describe('safe print', () => {
     });
 
     it('should handle circular data', () => {
-      const obj = {
+      interface Circular {
+        a: string;
+        b: Circular[];
+      }
+      const obj: Circular = {
         a: 'a string',
         b: [],
       };
-      obj.b.push(obj as never);
+      obj.b.push(obj);
       const expected = {
         a: 'a string',
-        // eslint-disable-next-line no-useless-escape
         b: ['circular data removed, path: actual["b"][0]'],
       };
       const actual = safePrint(obj);

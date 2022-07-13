@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import chai, { expect } from 'chai';
 import { expectValue, expectValues, mostlyEqlChaiPlugin } from '../index';
 import { clearMatchedValues, getMatchedValues } from '../mostly-equal';
@@ -24,46 +23,55 @@ describe('mostly equal', () => {
         });
       }).to.not.throw();
     });
+
     it('should throw an error when expected has extra field', () => {
       expect(() => {
         expect({ a: 'a' }).to.mostlyEqual({});
       }).to.throw('a exists in actual but not in expected');
     });
+
     it('should throw an error when actual has extra field', () => {
       expect(() => {
         expect({}).to.mostlyEqual({ a: 'a' });
       }).to.throw('a exists in expected but not in actual');
     });
+
     it('should throw an error when array length dont match', () => {
       expect(() => {
         expect({ a: ['a'] }).to.mostlyEqual({ a: [] });
       }).to.throw('expected length 0 but got 1');
     });
+
     it('should throw an error when actual is an array but expected isnt', () => {
       expect(() => {
         expect({ a: ['a'] }).to.mostlyEqual({ a: 'a' });
       }).to.throw('expected "a" but got [');
     });
+
     it('should throw an error when expected is an array but actual isnt', () => {
       expect(() => {
         expect({ a: 'a' }).to.mostlyEqual({ a: ['a'] });
       }).to.throw('] but got "a"');
     });
+
     it('should throw an error when actual is an object but expected isnt', () => {
       expect(() => {
         expect({ a: {} }).to.mostlyEqual({ a: 'a' });
       }).to.throw('expected "a" but got {');
     });
+
     it('should throw an error when expected is an object but actual isnt', () => {
       expect(() => {
         expect({ a: 'a' }).to.mostlyEqual({ a: {} });
       }).to.throw('expected {} but got "a"');
     });
+
     it('should throw an error when primitive values mismatch', () => {
       expect(() => {
         expect({ a: 'a' }).to.mostlyEqual({ a: 'b' });
       }).to.throw('expected "b" but got "a"');
     });
+
     it('should ignore property getters', () => {
       expect(() => {
         expect({
@@ -88,6 +96,7 @@ describe('mostly equal', () => {
         });
       }, 'user matcher run').to.throw('expected 1 to equal 2');
     });
+
     it('should work when nested', () => {
       expect(() => {
         expect({
@@ -105,6 +114,7 @@ describe('mostly equal', () => {
         });
       }).to.throw("expected 'gaga' to equal 'baga'");
     });
+
     it('should call user matcher with undefined if the field is missing', () => {
       expect(() => {
         expect({}).to.mostlyEqual({
@@ -114,6 +124,7 @@ describe('mostly equal', () => {
         });
       }).to.throw("expected undefined to equal 'baga'");
     });
+
     it('should print user matcher return value if it did not return void', () => {
       expect(() => {
         expect({ a: 'gaga' }).to.mostlyEqual({
@@ -125,6 +136,7 @@ describe('mostly equal', () => {
         });
       }).to.throw('"baga"');
     });
+
     describe('getting matched values', () => {
       it('should allow getting matched values', () => {
         const matcher = expectValue((val) => {
@@ -161,6 +173,7 @@ describe('mostly equal', () => {
       });
     });
   });
+
   describe('expectValues', () => {
     it('should call user matcher for with all instances at once', () => {
       const expectedInstances = ['a', 'b'];
@@ -190,6 +203,7 @@ describe('mostly equal', () => {
         });
       }).to.not.throw();
     });
+
     it('should call user matcher with undefined items from expected if allow undefined is set to true', () => {
       const expectedInstances = ['a', undefined];
       const expectedInstancesInfo: ExpandedValues<string> = [
@@ -218,6 +232,7 @@ describe('mostly equal', () => {
         });
       }).to.not.throw();
     });
+
     it('if user matcher throws, print error in every occurance', () => {
       const myExpectValue = expectValues<string>(() => {
         throw new Error('error-text');
@@ -234,6 +249,7 @@ describe('mostly equal', () => {
         });
       }).to.throw('error-text');
     });
+
     describe('expectValues - matcher returns array', () => {
       it('if user matcher returns an array of error objects or undefined, the errors should be shown by all the items', () => {
         const myExpectValue = expectValues<string>(() => {
@@ -253,6 +269,7 @@ describe('mostly equal', () => {
       });
     });
   });
+
   describe('expectValues - getting matched values', () => {
     it('getMatchedValues should allow getting the matched values', () => {
       const myExpectValue = expectValues<string>(() => {
