@@ -1,9 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { isGetter } from './safe-print';
 import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print';
 import type { LookupPath, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
@@ -16,21 +10,21 @@ interface ExpectValue<T> {
   getMatchInfo: () => ExpandedValues<T>;
   clear: () => void;
 }
-interface ExpectValues<T = any> {
+interface ExpectValues<T> {
   expectMethod: ExpectMultiMatcher<T>;
   allowUndefined: boolean;
   _brand: typeof expectValuesSymb;
   getMatchInfo: () => ExpandedValues<T>;
 }
-function isExpectVal(val: any): val is ExpectValue<any> {
-  return !!val && val._brand === expectValueSymb;
+function isExpectVal(val: unknown): val is ExpectValue<unknown> {
+  return !!val && (val as ExpectValue<unknown>)._brand === expectValueSymb;
 }
 
-function isExpectValues(val: any): val is ExpectValues {
-  return !!val && val._brand === expectValuesSymb;
+function isExpectValues(val: unknown): val is ExpectValues<unknown> {
+  return !!val && (val as ExpectValues<unknown>)._brand === expectValuesSymb;
 }
 
-export const expectValue = <T>(expectMethod: ExpectSingleMatcher<T>): any => {
+export const expectValue = <T>(expectMethod: ExpectSingleMatcher<T>): unknown => {
   let values: ExpandedValues<T> = [];
 
   const wrapMethod: ExpectSingleMatcher<T> = (value, fieldDefinedInParent, path) => {
@@ -49,7 +43,7 @@ export const expectValue = <T>(expectMethod: ExpectSingleMatcher<T>): any => {
   };
 };
 
-export const expectValues = <T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): any => {
+export const expectValues = <T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): unknown => {
   let values: ExpandedValues<T> = [];
   const wrapMethod: ExpectMultiMatcher<T> = (vals, valInfos) => {
     values = valInfos;
@@ -63,7 +57,7 @@ export const expectValues = <T>(expectMethod: ExpectMultiMatcher<T>, allowUndefi
   };
 };
 
-export const getMatchedValues = <T>(expectValues: any) => {
+export const getMatchedValues = <T>(expectValues: unknown) => {
   if (isExpectValues(expectValues)) {
     return expectValues.getMatchInfo() as ExpandedValues<T>;
   }
@@ -73,25 +67,25 @@ export const getMatchedValues = <T>(expectValues: any) => {
   return [] as ExpandedValues<T>;
 };
 
-export const clearMatchedValues = (subMatcher: any) => {
+export const clearMatchedValues = (subMatcher: unknown) => {
   if (isExpectVal(subMatcher)) {
     subMatcher.clear();
   }
 };
 interface ExpectValuesInfo {
-  uniqueSymb: ExpectValues;
-  value: any;
+  uniqueSymb: ExpectValues<unknown>;
+  value: unknown;
   path: LookupPath;
   fieldDefinedInParent: boolean;
 }
 type ErrorOrTextOrExpect = Array<string | Error | ExpectValuesInfo>;
 type ErrorOrText = Array<string | Error>;
 
-function isExpectValuesInfo(val: any): val is ExpectValuesInfo {
-  return !!val && isExpectValues(val.uniqueSymb);
+function isExpectValuesInfo(val: unknown): val is ExpectValuesInfo {
+  return !!val && isExpectValues((val as ExpectValuesInfo).uniqueSymb);
 }
 
-function anyToError(val: any): Error {
+function anyToError(val: unknown): Error {
   if (val instanceof Error) {
     return val;
   }
@@ -99,7 +93,7 @@ function anyToError(val: any): Error {
   return new Error(message);
 }
 export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
-  const values: Map<ExpectValues, Array<ExpectValuesInfo>> = new Map();
+  const values: Map<ExpectValues<unknown>, Array<ExpectValuesInfo>> = new Map();
   for (const item of input) {
     if (isExpectValuesInfo(item)) {
       if (!values.has(item.uniqueSymb)) {
@@ -123,6 +117,7 @@ export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
         const errorMap = new Map<ExpectValuesInfo, Error>();
         for (let i = 0; i < values.length; i++) {
           if (res[i] instanceof Error) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             errorMap.set(values[i]!, res[i]!);
           }
         }
@@ -136,11 +131,12 @@ export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
       errors.set(expecter, errorMap);
     }
     return errors;
-  }, new Map<ExpectValues, Map<ExpectValuesInfo, Error>>());
+  }, new Map<ExpectValues<unknown>, Map<ExpectValuesInfo, Error>>());
 
   return input.flatMap((item) => {
     if (isExpectValuesInfo(item)) {
       if (valueErrors.has(item.uniqueSymb) && valueErrors.get(item.uniqueSymb)?.has(item)) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return [safePrint(item.value, 0), valueErrors.get(item.uniqueSymb)!.get(item)!];
       } else {
         return [safePrint(item.value, 0)];
@@ -151,13 +147,13 @@ export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
 };
 
 const tryExpectVal = (
-  expected: ExpectValue<any>,
-  actual: any,
+  expected: ExpectValue<unknown>,
+  actual: unknown,
   maxDepth: number,
   depth: number,
   path: LookupPath,
-  passedMap: Map<any, LookupPath>,
-  passedSet: Set<any>,
+  passedMap: Map<unknown, LookupPath>,
+  passedSet: Set<unknown>,
   existsInParent: boolean
 ): ErrorOrTextOrExpect => {
   let matcherRes: undefined | string | void = undefined;
