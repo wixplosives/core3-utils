@@ -5,9 +5,7 @@ export function createDisposables() {
     async dispose() {
       const toDispose = Array.from(disposables).reverse();
       disposables.clear();
-      for (const dispose of toDispose) {
-        await dispose();
-      }
+      await Promise.all(toDispose.map(d => d()))     
     },
     add(disposable: Disposable) {
       if (typeof disposable === 'function') {
