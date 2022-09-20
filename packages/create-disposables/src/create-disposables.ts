@@ -17,7 +17,7 @@ export function createDisposables() {
         });
       } else {
         disposables.add({
-          dispose: () => (disposable.dispose(), disposable.id),
+          dispose: () => disposable.dispose(),
           blocking: false
         });
       }
