@@ -39,5 +39,5 @@ export function createDisposables() {
 }
 
 export type DisposeFunction = () => unknown;
-export type Disposable = { dispose: DisposeFunction, id: string } | DisposeFunction;
+export type Disposable = { dispose: DisposeFunction } | DisposeFunction;
 export type Disposables = ReturnType<typeof createDisposables>;
