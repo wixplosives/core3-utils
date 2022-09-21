@@ -2,7 +2,7 @@ import { timeout as _timeout} from 'promise-assist';
 
 export function createDisposables() {
   const disposables = new Set<{
-    disposable: Disposable, timeout: number, trace:string
+    disposable: Disposable, timeout: number, trace?:string
   }>();
 
   return {
@@ -10,7 +10,7 @@ export function createDisposables() {
       const toDispose = Array.from(disposables).reverse();
       disposables.clear();
       for (const { disposable, timeout, trace } of toDispose) {        
-        await _timeout(disposable.dispose(), timeout, `Timeout disposing of ${disposable.id}\n\t at ${trace}`)        
+        await _timeout(disposable.dispose(), timeout, `Timeout disposing of ${disposable.id}\n\t at ${trace||'<no trace>'}`)        
       }
     },
 
@@ -22,13 +22,13 @@ export function createDisposables() {
             id: disposable.toString()
           },
           timeout,
-          trace: new Error().stack!
+          trace: new Error().stack
         });
       } else {
         disposables.add({
           disposable,
           timeout,
-          trace: new Error().stack!
+          trace: new Error().stack
         });
       }
     }
