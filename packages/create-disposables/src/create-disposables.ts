@@ -1,19 +1,16 @@
+import { timeout as _timeout} from 'promise-assist';
+
 export function createDisposables() {
   const disposables = new Set<{
-    disposable: Disposable, timeout: number
+    disposable: Disposable, timeout: number, trace:string
   }>();
 
   return {
     async dispose() {
       const toDispose = Array.from(disposables).reverse();
       disposables.clear();
-      for (const { disposable, timeout } of toDispose) {
-        const start = performance.now()
-        await disposable.dispose()
-        const duration = performance.now() - start
-        if (duration > timeout) {
-          throw new Error(`Timeout disposing of ${disposable.id}`)
-        }
+      for (const { disposable, timeout, trace } of toDispose) {        
+        await _timeout(disposable.dispose(), timeout, `Timeout disposing of ${disposable.id}\n\t at ${trace}`)        
       }
     },
 
@@ -24,17 +21,19 @@ export function createDisposables() {
             dispose: () => disposable(),
             id: disposable.toString()
           },
-          timeout
+          timeout,
+          trace: new Error().stack!
         });
       } else {
         disposables.add({
           disposable,
-          timeout
+          timeout,
+          trace: new Error().stack!
         });
       }
     }
   };
-};
+}
 
-export type DisposeFunction = () => unknown;
+export type DisposeFunction = () => Promise<unknown>;
 export type Disposable = { dispose: DisposeFunction, id: string }
