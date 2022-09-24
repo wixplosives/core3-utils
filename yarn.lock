@@ -38,6 +38,33 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
+"@file-services/node@^7.0.1":
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/@file-services/node/-/node-7.0.1.tgz#b6d16ecacb2999af7bf447dd5c6f8e245619a3b7"
+  integrity sha512-jDdlHPaqm/QImo5wmb5xXcePacEedofHhDIhMvO/prYpZwm+rmfA+/jRM/cg15z9/DL5WgbrjuBD0+b9XQUmkg==
+  dependencies:
+    "@file-services/types" "^7.0.1"
+    "@file-services/utils" "^7.0.1"
+
+"@file-services/path@^7.0.1":
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/@file-services/path/-/path-7.0.1.tgz#e86c900592f9eb9b6f63e3dad3c29f8910706087"
+  integrity sha512-uTBrAG8hFoxlroX0cGqUYHvTPIZNhj2XoomJfplTT6c1s7hlxQT6qaMkIOnSJZju6YObS2xSfjzgEgY3XLnn/A==
+  dependencies:
+    "@file-services/types" "^7.0.1"
+
+"@file-services/types@^7.0.1":
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/@file-services/types/-/types-7.0.1.tgz#13d9f8fa54cce100a60e4b289556adf9c4671b75"
+  integrity sha512-Xe6u3qaOqUFAexQLi5NU+yehZ7HrlL561njL3Ki8zroOw5sBOcU33NPKNAe8zgnXqNwkGf2xu9b11bdKVWr4jg==
+
+"@file-services/utils@^7.0.1":
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/@file-services/utils/-/utils-7.0.1.tgz#525ef4c7ae0578b1c84254e2874f90e926275242"
+  integrity sha512-zPhNloT2YVfGlh2+VxzbGnV/OPo53VaVDwNW2cKLbAex97dF6lh9xHjYBUHnt3nFA0HPc3Xd6QkSAC/BXfGBNA==
+  dependencies:
+    "@file-services/types" "^7.0.1"
+
 "@gar/promisify@^1.1.3":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.3.tgz#555193ab2e3bb3b6adc3d551c9c030d9e860daf6"
@@ -1140,6 +1167,11 @@
   version "16.11.59"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.59.tgz#823f238b9063ccc3b3b7f13186f143a57926c4f6"
   integrity sha512-6u+36Dj3aDzhfBVUf/mfmc92OEdzQ2kx2jcXGdigfl70E/neV21ZHE6UCz4MDzTRcVqGAM27fk+DLXvyDsn3Jw==
+
+"@types/node@^18.7.19":
+  version "18.7.19"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.7.19.tgz#ad83aa9b7af470fab7e0f562be87e97dc8ffe08e"
+  integrity sha512-Sq1itGUKUX1ap7GgZlrzdBydjbsJL/NSQt/4wkAxUJ7/OS5c2WkoN6WSpWc2Yc5wtKMZOUA0VCs/j2XJadN3HA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -4876,6 +4908,11 @@ validate-npm-package-name@^4.0.0:
   integrity sha512-mzR0L8ZDktZjpX4OB46KT+56MAhl4EIazWP/+G/HPGuvfdaqg4YsCdtOm6U9+LOFyYDoh4dpnpxZRB9MQQns5Q==
   dependencies:
     builtins "^5.0.0"
+
+vscode-languageserver-types@^3.17.2:
+  version "3.17.2"
+  resolved "https://registry.yarnpkg.com/vscode-languageserver-types/-/vscode-languageserver-types-3.17.2.tgz#b2c2e7de405ad3d73a883e91989b850170ffc4f2"
+  integrity sha512-zHhCWatviizPIq9B7Vh9uvrH6x3sK8itC84HkamnBWoDFJtzBf7SWlpLCZUit72b3os45h6RWQNC9xHRDF8dRA==
 
 walk-up-path@^1.0.0:
   version "1.0.0"

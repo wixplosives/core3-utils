@@ -1,0 +1,22 @@
+{
+  "name": "@wixc3/browser",
+  "version": "2.0.0",
+  "description": "Common utils, usable in all environments",
+  "module": "dist/index.js",
+  "author": "Wix.com",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src",
+    "!dist/tsconfig.tsbuildinfo"
+  ],
+  "license": "MIT",
+  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@file-services/path": "^7.0.1",
+    "@file-services/types": "^7.0.1"
+  }
+}
