@@ -10,25 +10,43 @@ export function exclude<R>(...excluded: R[]) {
         return true;
     };
 }
-
-export const getObjectKeys = <O extends object>(obj: O) => Object.keys(obj) as Array<keyof O>;
-
-export function isRecord(value: unknown): value is Record<any, unknown> {
-    return value !== null && typeof value === 'object';
+/**
+ * returns an object composed of the picked object properties
+ * @example pick({ a: 1, b: 2 }, ['a']) // => { a: 1 }
+ */
+ export function pick<O extends object, K extends keyof O>(record: O, keys: Iterable<K>): Pick<O, K> {
+    const subset = {} as Pick<O, K>;
+    for (const key of keys) {
+        subset[key] = record[key];
+    }
+    return subset;
 }
 
-export function notNullish<T>(value: T | undefined): value is T {
+export const keys = <K,O extends object|Map<K,undefined>>(obj: O) => 
+    isPlainObject(obj) 
+    ? Object.keys(obj) as Iterable<keyof O>
+    : (obj as Map<K,undefined>).keys()
+
+export const values = <V,O extends Record<any, V>|Map<any, V>>(obj: O) => 
+    isPlainObject(obj) 
+    ? Object.values(obj) as Iterable<V>
+    : (obj as Map<undefined,V>).values()
+
+export function isPlainObject(value: unknown): value is object {
+    return value !== null 
+        && typeof value === 'object' 
+        && Object.getPrototypeOf(value) === Object.prototype
+}
+
+export function isNotNull<T>(value: T | undefined | null) : value is T {
     return value !== null && value !== undefined;
 }
 
-
-// eslint-disable-next-line no-console
-// @ts-ignore
+// eslint-disable-next-line no-console, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
 export const reportError = (ex: unknown) => console.error(ex);
 
-
 export function groupBy<T, K extends keyof T>(elements: T[], property: K): Map<T[K], T[]> {
-    return elements.reduce((acc, element) => {
+    return elements.reduce<Map<T[K], T[]>>((acc, element) => {
         const propertyValue = acc.get(element[property]);
 
         if (propertyValue) {
@@ -53,13 +71,12 @@ export async function awaitRecord<
     },
     Key extends string
 >(obj: In): Promise<Out> {
-    const out = {} as any;    
+    const out = {} as Record<string, any>;    
     for (const [key, promise] of Object.entries(obj) ) {
         out[key] = await promise
     }
     return out as Out;
 }
-
 
 export function getCartesianProductOfArrays<T>(arrays: T[][]): T[][] {
     if (arrays.length === 0) {

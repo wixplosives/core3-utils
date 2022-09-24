@@ -8,7 +8,7 @@ import type { IFileSystem } from '@file-services/types';
  */
 export function getPackageName(pathToPackageJson: string, fs: IFileSystem): string | undefined {
     try {
-        const { name } = JSON.parse(fs.readFileSync(pathToPackageJson, 'utf8'));
+        const { name } = JSON.parse(fs.readFileSync(pathToPackageJson, 'utf8')) as { name?: string };
         if (!name || typeof name !== 'string') {
             return undefined;
         }

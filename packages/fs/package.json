@@ -17,5 +17,8 @@
   "repository": "git@github.com:wixplosives/core3-utils.git",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@file-services/memory": "^7.0.1"
   }
 }

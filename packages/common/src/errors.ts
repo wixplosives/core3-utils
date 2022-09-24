@@ -1,4 +1,4 @@
-import { isRecord } from './objects';
+import { isPlainObject } from './objects';
 
 /**
  * Convert any kind of value to an error instance. Unless the value is already
@@ -52,7 +52,7 @@ export function stringifyErrorStack(error: unknown): string {
     return String(error);
 }
 
-export function errorToPlainObject<T extends Error>(error: T): T {
+export function errorToPlainObject<T extends Error>(error: T) {
     return {
         ...error,
         message: error.message,
@@ -62,5 +62,7 @@ export function errorToPlainObject<T extends Error>(error: T): T {
 }
 
 export function isErrorLikeObject(error: unknown): error is Error {
-    return isRecord(error) && typeof error.name === 'string' && typeof error.message === 'string';
+    return isPlainObject(error) 
+    && typeof (error as {name?:string}).name === 'string' 
+    && typeof (error as {message?:string}).message === 'string';
 }

@@ -1,12 +1,12 @@
 export const noop = () => undefined;
 export const asyncNoop = () => Promise.resolve();
-export const once = <T extends (...args:any[])=>any>(fn:T):T => {
+export const once = <T extends (...args:unknown[])=>unknown>(fn:T):T => {
     let run = false;
-    let result:any;
-    return ((...args:any[]) => {
+    let result:ReturnType<T>;
+    return ((...args:unknown[]) => {
         if (!run) {
             run = true;
-            result = fn(...args)
+            result = fn(...args) as ReturnType<T>
         }
         return result;
     }) as T
