@@ -1,9 +1,13 @@
+export type Mapping<S, T> = (src: S) => T
+export type Predicate<S, V = boolean> = (src: S) => V
+export type Flat<T> = T extends Iterable<infer A> ? A : T
+
 /**
  * @param iterable 
  * @returns the last element of iterable
  */
-export function last<I>(iterable: Iterable<I>): I | undefined {
-    let last!: I
+export function last<T>(iterable: Iterable<T>): T | undefined {
+    let last!: T
     for (const value of iterable) {
         last = value
     }
@@ -21,7 +25,7 @@ export const first = <T>(iterable: Iterable<T>): T | undefined =>
  * @param iterable 
  * @returns the first element of iterable
  */
-export function isEmpty(iterable:Iterable<unknown>):boolean {
+export function isEmpty(iterable: Iterable<unknown>): boolean {
     for (const _ of iterable) {
         return false
     }
@@ -32,8 +36,8 @@ export function isEmpty(iterable:Iterable<unknown>):boolean {
  * @param iterable 
  * @returns the elements count of iterable
  */
-export function size(iterable:Iterable<unknown>):number {
-    let size=0
+export function size(iterable: Iterable<unknown>): number {
+    let size = 0
     for (const _ of iterable) {
         size++;
     }
@@ -98,7 +102,7 @@ export function prev<T>(iterable: Iterable<T>, item: T): T | undefined {
  * @param by an element identifier function
  * @returns an iterable with unique elements
  */
-export function* unique<T>(iterable: Iterable<T>, by:(i:T)=>unknown=i=>i): Iterable<T> {
+export function* unique<T>(iterable: Iterable<T>, by: Predicate<T, unknown> = i => i): Iterable<T> {
     const known = new Set<unknown>()
     for (const v of iterable) {
         if (!known.has(by(v))) {
@@ -115,7 +119,7 @@ export function* unique<T>(iterable: Iterable<T>, by:(i:T)=>unknown=i=>i): Itera
  * @param mapFn 
  * @returns a mapped iterable
  */
-export function* map<S, T>(iterable: Iterable<S>, mapFn: (src: S) => T): Iterable<T> {
+export function* map<S, T>(iterable: Iterable<S>, mapFn: Mapping<S, T>): Iterable<T> {
     for (const v of iterable) {
         yield mapFn(v)
     }
@@ -127,7 +131,7 @@ export function* map<S, T>(iterable: Iterable<S>, mapFn: (src: S) => T): Iterabl
  * @param mapFn 
  * @returns a mapped, flattened iterables
  */
-export function* flatMap<S, T>(iterable: Iterable<S>, mapFn: (src: S) => T|Iterable<T>): Iterable<T> {
+export function* flatMap<S, T>(iterable: Iterable<S>, mapFn: Mapping<S, T | Iterable<T>>): Iterable<Flat<T>> {
     yield* flat(map(iterable, mapFn))
 }
 
@@ -137,7 +141,7 @@ export function* flatMap<S, T>(iterable: Iterable<S>, mapFn: (src: S) => T|Itera
  * @param predicate 
  * @returns a filtered iterable
  */
-export function* filter<SRC, I extends Iterable<SRC>,>(iterable: I, predicate: (src: SRC) => boolean): Iterable<SRC> {
+export function* filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
     for (const v of iterable) {
         if (predicate(v)) {
             yield v
@@ -150,7 +154,7 @@ export function* filter<SRC, I extends Iterable<SRC>,>(iterable: I, predicate: (
  * @param iterables 
  * @returns a concatenated iterable
  */
-export function* concat<T >(...iterables:Iterable<T>[]):Iterable<T>{
+export function* concat<T>(...iterables: Iterable<T>[]): Iterable<T> {
     for (const v of iterables) {
         yield* v;
     }
@@ -161,7 +165,7 @@ export function* concat<T >(...iterables:Iterable<T>[]):Iterable<T>{
  * @param iterable 
  * @param fn 
  */
-export function forEach<T>(iterable: Iterable<T>, fn: (src: T) => unknown): void {
+export function forEach<T>(iterable: Iterable<T>, fn: Mapping<T, unknown>): void {
     for (const v of iterable) {
         fn(v)
     }
@@ -173,7 +177,7 @@ export function forEach<T>(iterable: Iterable<T>, fn: (src: T) => unknown): void
  * @param predicate 
  * @returns the first element the satisfies the predicate
  */
-export function find<SRC, I extends Iterable<SRC>,>(iterable: I, predicate: (src: SRC) => boolean): SRC | undefined {
+export function find<T>(iterable: Iterable<T>, predicate: Predicate<T>): T | undefined {
     for (const v of iterable) {
         if (predicate(v)) {
             return v
@@ -198,7 +202,7 @@ export function includes<T>(iterable: Iterable<T>, item: T): boolean {
  * @param predicate 
  * @returns there is an element satisfies the predicate
  */
-export function some<SRC, I extends Iterable<SRC>,>(iterable: I, predicate: (src: SRC) => boolean): boolean {
+export function some<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolean {
     return !!find(iterable, predicate)
 }
 
@@ -208,7 +212,7 @@ export function some<SRC, I extends Iterable<SRC>,>(iterable: I, predicate: (src
  * @param predicate 
  * @returns true is all elements satisfy the predicate
  */
-export function every<SRC, I extends Iterable<SRC>>(iterable: I, predicate: (src: SRC) => boolean): boolean {
+export function every<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolean {
     for (const v of iterable) {
         if (!predicate(v)) {
             return false
@@ -219,16 +223,18 @@ export function every<SRC, I extends Iterable<SRC>>(iterable: I, predicate: (src
 
 /**
  * @see Array.flat
+ * @param deep if true, repeat the flattening until all elements are not iterable
  * @param iterable 
  * @returns a flattened iterable, 
  *      where elements that are iterable are spread into the result
  */
-export function* flat<T>(iterable:Iterable<T|Iterable<T>>):Iterable<T>{
+export function* flat<T>(iterable: Iterable<T | Iterable<T>>, deep = false): Iterable<Flat<T>> {
     for (const v of iterable) {
         if (v && typeof (v as Iterable<T>)[Symbol.iterator] === 'function') {
-            yield* v as Iterable<T>
+            // @ts-expect-error v is definitely iterable
+            yield* (deep ? flat(v) : v)
         } else {
-            yield v as T;
+            yield v as Flat<T>;
         }
     }
 }

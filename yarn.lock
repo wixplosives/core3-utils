@@ -2330,6 +2330,11 @@ execa@^5.0.0:
     signal-exit "^3.0.3"
     strip-final-newline "^2.0.0"
 
+expose-gc@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/expose-gc/-/expose-gc-1.0.0.tgz#ba0e825b390cc3e7ab38fc5b945cd2b4018584b3"
+  integrity sha512-ecOHrdm+zyOCGIwX18/1RHkUWgxDqGGRiGhaNC+42jReTtudbm2ID/DMa/wpaHwqy5YQHPZvsDqRM2F2iZ0uVA==
+
 external-editor@^3.0.3:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/external-editor/-/external-editor-3.1.0.tgz#cb03f740befae03ea4d283caed2741a83f335495"

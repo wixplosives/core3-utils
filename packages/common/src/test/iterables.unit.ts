@@ -1,6 +1,8 @@
 import { expect } from "chai"
 import { last, at, first, unique, next, prev, concat, flat, map, flatMap, filter, forEach, find, includes, some, every, isEmpty, size } from ".."
-
+import * as a from "../iterables"
+// eslint-disable-next-line no-console
+console.log(Object.keys(a))
 describe('iterables', () => {
     it('last', () => {
         expect(last([1, 2, 3])).to.equal(3)
@@ -41,6 +43,7 @@ describe('iterables', () => {
     describe('unique', () => {
         it('creates an array with no repeats', () => {
             expect([...unique(['1', 1, 1, true])]).to.eql(['1', 1, true]);
+            expect([...unique([0,1,2,3], i => i%2)]).to.eql([0,1]);
         });
     });
 
@@ -74,6 +77,7 @@ describe('iterables', () => {
 
     it(`flat`, () => {
         expect([...flat([0, [1, 2]])]).to.eql([0, 1, 2]);
+        expect([...flat([0, [1, [2]]], true)]).to.eql([0, 1, 2]);
     })
 
     it(`isEmpty`, () => {
