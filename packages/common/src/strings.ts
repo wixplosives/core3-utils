@@ -154,3 +154,5 @@ export function noIdents(modified: string, separator = '\n') {
         })
         .join(separator);
 }
+
+export const isString = (value: unknown): value is string => typeof value === 'string';

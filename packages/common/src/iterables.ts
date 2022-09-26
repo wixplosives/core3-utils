@@ -1,3 +1,5 @@
+import { isNotNull } from "./objects"
+
 export type Mapping<S, T> = (src: S) => T
 export type Predicate<S, V = boolean> = (src: S) => V
 export type Flat<T> = T extends Iterable<infer A> ? A : T
@@ -230,11 +232,43 @@ export function every<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolea
  */
 export function* flat<T>(iterable: Iterable<T | Iterable<T>>, deep = false): Iterable<Flat<T>> {
     for (const v of iterable) {
-        if (v && typeof (v as Iterable<T>)[Symbol.iterator] === 'function') {
+        if (isIterable(v)) {
             // @ts-expect-error v is definitely iterable
             yield* (deep ? flat(v) : v)
         } else {
             yield v as Flat<T>;
         }
     }
+}
+
+/**
+ * 
+ * @param iterable 
+ * @returns an histogram map (element=>count)
+ */
+export function histogram<T>(iterable:Iterable<T>) {
+    const histogram = new Map<T,number>()
+    forEach(iterable, i => {
+        const count = histogram.get(i) || 0
+        histogram.set(i, count +1)
+    })
+    return histogram;
+}
+
+/**
+ * 
+ * @param x 
+ * @returns true if x is iterable
+ */
+export function isIterable(x:any): x is Iterable<unknown> {
+    return isNotNull(x) && typeof x === 'object' && (Symbol.iterator in x)
+}
+
+/**
+ * 
+ * @param iterable 
+ * @param by comparator
+ */
+export function sort<T>(iterable:Iterable<T>, by?:(a:T,b:T)=>number) {
+    [...iterable].sort(by)
 }
