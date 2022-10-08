@@ -2,16 +2,14 @@
   "name": "@wixc3/fs-utils",
   "version": "2.0.0",
   "description": "Common utils, usable in all environments",
-  "main": "dist-cjs/index.js",
-  "module": "dist-esm/index.js",
+  "main": "dist/index.js",
   "author": "Wix.com",
   "sideEffects": false,
   "files": [
-    "dist-cjs",
-    "dist-esm",
+    "dist",
     "src",
-    "!dist-cjs/tsconfig.tsbuildinfo",
-    "!dist-esm/tsconfig.tsbuildinfo"
+    "test",
+    "!dist-cjs/tsconfig.tsbuildinfo"
   ],
   "license": "MIT",
   "repository": "git@github.com:wixplosives/core3-utils.git",

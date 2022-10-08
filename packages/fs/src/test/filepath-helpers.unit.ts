@@ -1,6 +1,6 @@
 import { createMemoryFs } from '@file-services/memory';
 import { expect } from 'chai';
-import { getFullExtname, getImportPath, getRelativeImportPath, isPathIncludesDir, isSubPath, rebaseRelativeModulePath } from '@wixc3/fs-utils';
+import { getFullExtname, getImportPath, getRelativeImportPath, isPathIncludesDir, isSubPath, rebaseRelativeModulePath } from '..';
 
 describe('getRelativeImportPath', () => {
     it('should create relative path', () => {
