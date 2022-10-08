@@ -1,8 +1,26 @@
-import { at, concat, every, filter, find, first, Flat, flat, flatMap, forEach, includes, isEmpty, last, map, Mapping, next, Predicate, prev, size, some, unique } from "./iterables"
+import { at, concat, every, filter, find, first, Flat, flat, flatMap, forEach, includes, isEmpty, last, map, Mapping, next, Predicate, prev, reduce, size, some, unique } from "./iterables"
 import { mapValue } from "./objects"
 
-export function chain<T>(iterable: Iterable<T>): IterChain<T>
-export function chain<T, V extends NotIterable<T>>(value: V): ElmChain<V>
+/**
+ * Chain iterable operations, each acting on the output of the previous step
+ * 
+ * @example <caption>When the action is per item, the result is accessible as *iterable*</caption>
+ * chain([0,1,2])
+ *      .filter(i => i)
+ *      .map(i => i**2)
+ *      .iterable => [1,4]
+ * @example <caption>When the action returns an element (as in first, next, reduce etc) the  the result is accessible as *value*</caption>
+ * chain([0,1,2]).filter(i => i).first().value => 1
+ * @example <caption>However, iterable is always accessible, as a single element iterable</caption>
+ * chain([0,1,2]).filter(i => i).first().iterable => [1]
+ * @example <caption>**Note** if the action returned undefined, iterable will be empty </caption>
+ * chain([]).first().iterable => []
+ * chain([]).first().value => undefined
+ * @param value 
+ * @returns 
+ */
+export function chain<T>(iterable: Iterable<T>): IterableChain<T>
+export function chain<T, V extends NotIterable<T>>(value: V): ValueChain<V>
 export function chain<T>(value: T) {
     const iterable = (value === undefined
         ? []
@@ -17,9 +35,9 @@ export function chain<T>(value: T) {
         : chainElement(value)
 }
 
-function chainIter<T>(iterable: Iterable<T>): IterChain<T> {
+function chainIter<T>(iterable: Iterable<T>): IterableChain<T> {
     const toIter = { map, flatMap, filter, concat, flat, unique }
-    const toElm = { last, first, isEmpty, size, at, next, prev, find, some, includes, every }
+    const toElm = { last, first, isEmpty, size, at, next, prev, find, some, includes, every, reduce }
     return {
         value: iterable,
         iterable,
@@ -29,10 +47,10 @@ function chainIter<T>(iterable: Iterable<T>): IterChain<T> {
             forEach(iterable, mapping)
             return chainIter(iterable)
         }
-    } as any as IterChain<T>
+    } as any as IterableChain<T>
 }
 
-function chainElement<T>(value: T|undefined): ElmChain<T> {
+function chainElement<T>(value: T): ValueChain<T> {
     const iterable = (value === undefined ? [] : [value]) as Iterable<T>
     return {
         ...chainIter(iterable),
@@ -40,28 +58,29 @@ function chainElement<T>(value: T|undefined): ElmChain<T> {
     }
 }
 
-type IterChain<T> = Chain<T> & {value:Iterable<T>}
-type ElmChain<T> = Chain<T> & {value?:T}
+type IterableChain<T> = Chain<T> & {value:Iterable<T>}
+type ValueChain<T> = Chain<T> & {value:T}
 type NotIterable<T> = T extends Iterable<unknown> ? never : T
 type Iter<T> = T extends Iterable<infer E> ? Iterable<E> : Iterable<T>
 type Chain<T> = {
-    last: () => ElmChain<T>
-    first: () => ElmChain<T>
-    isEmpty: () => ElmChain<boolean>
-    size: () => ElmChain<number>
-    at: (index: number) => ElmChain<T>
-    next: () => ElmChain<T>
-    prev: () => ElmChain<T>
-    unique: () => IterChain<T>
-    map: <S>(m: Mapping<T, S>) => IterChain<S>
-    flatMap: <S>(m: Mapping<T, S>) => IterChain<Flat<S>>
-    filter: (p: Predicate<T>) => IterChain<T>
-    concat: (...iterables: Iterable<T>[]) => IterChain<T>
-    forEach: (fn: Mapping<T, unknown>) => IterChain<T>
-    find: (p: Predicate<T>) => ElmChain<T>
-    includes: (element: T) => ElmChain<boolean>
-    some: (p: Predicate<T>) => ElmChain<boolean>
-    every: (p: Predicate<T>) => ElmChain<boolean>
-    flat: () => IterChain<Flat<T>>
+    last: () => ValueChain<T>
+    first: () => ValueChain<T>
+    isEmpty: () => ValueChain<boolean>
+    size: () => ValueChain<number>
+    at: (index: number) => ValueChain<T>
+    next: () => ValueChain<T>
+    prev: () => ValueChain<T>
+    unique: () => IterableChain<T>
+    map: <S>(m: Mapping<T, S>) => IterableChain<S>
+    flatMap: <S>(m: Mapping<T, S>) => IterableChain<Flat<S>>
+    filter: (p: Predicate<T>) => IterableChain<T>
+    concat: (...iterables: Iterable<T>[]) => IterableChain<T>
+    forEach: (fn: Mapping<T, unknown>) => IterableChain<T>
+    find: (p: Predicate<T>) => ValueChain<T>
+    includes: (element: T) => ValueChain<boolean>
+    some: (p: Predicate<T>) => ValueChain<boolean>
+    every: (p: Predicate<T>) => ValueChain<boolean>
+    flat: () => IterableChain<Flat<T>>
+    reduce: <A>(reducer:(acc:A, item:T)=>A, initial:A) => ValueChain<A>
     iterable: Iterable<T>
 }

@@ -6,9 +6,9 @@ import { isMap, isSet } from "./types"
  * deep comparison of two items
  * items are "the same" if:
  * - a === b (for anything other than iterables & POJO)
- * - a and b are POJO with same entries (order ignored, "same" used to compare values)
- * - a and b are Maps with same entries (order ignored, "same" used to compare keys & values)
- * - a and b are Sets with same values (order ignored, "same" used to compare values)
+ * - a and b are POJO with same entries (order ignored, *same* used to compare values)
+ * - a and b are Maps with same entries (order ignored, *same* used to compare keys & values)
+ * - a and b are Sets with same values (order ignored, *same* used to compare values)
  * - a and b are iterable (that are not Set or Map) with the same values, order checked if unordered=false (default)
  * @param a 
  * @param b 
@@ -60,7 +60,7 @@ function sameIgnoreOrder<T>(a: Iterable<T>, b: Iterable<T>, unordered:boolean) {
     for (const [key, count] of aa) {
         let wasFound = false
         for (const [bkey, bcount] of bb) {
-            if (sameInOrder(key,bkey, unordered)) {
+            if (same(key,bkey, unordered)) {
                 wasFound = true
                 if (bcount !== count) {
                     return false

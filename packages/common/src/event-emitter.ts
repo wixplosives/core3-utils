@@ -2,6 +2,7 @@ import { SetMultiMap } from './set-multi-map';
 
 export type EventListener<T> = (event: T) => void;
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export class EventEmitter<T extends {}> {
     public listeners = new SetMultiMap<keyof T, EventListener<any>>();
     public listenersOnce = new SetMultiMap<keyof T, EventListener<any>>();

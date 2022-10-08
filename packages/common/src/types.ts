@@ -12,3 +12,5 @@ export function isDefined<T>(value: T | undefined | null): value is T {
 }
 
 export const toMap = (a:object) => new Map(Object.entries(a))
+
+export type Nullable<T> = T|null|undefined

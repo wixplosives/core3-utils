@@ -194,3 +194,34 @@ export function defaults<S, D>(_source: S, _defaultValues: D, deep = true, shoul
     }
     return parseObj(_source, _defaultValues) as S & D
 }
+
+/**
+ * @param obj The object to query
+ * @param path The path of the property to get.
+ * @returns The value at `path` of `object` id exists, `undefined` otherwise
+ * @example
+ * getIn({ a: { b: 'c' } }, ['a', 'b'])
+ * // => c
+ */
+ function getIn(obj: Record<string, any>, path: string[]): unknown {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return path.reduce((value, key) => value?.[key], obj);
+}
+
+const templateReg = /\$\{(.+?)\}/g;
+/**
+ * @param context A context for the compiler
+ * @returns A template compiler function which accepts a template and compile it with `context`
+ * @example
+ * templateCompilerProvider({ greetings: 'Hello', person: { name: 'Elad' } })('${greetings} ${person.name}!')
+ * // => Hello Elad!
+ */
+export function templateCompilerProvider(context: Record<string, any>) {
+    return function templateCompiler(template: string) {
+        return template.replace(templateReg, (match, templateExpression: string) => {
+            const pathInContext = templateExpression.trim().split('.');
+            const valueInContext = getIn(context, pathInContext) as string;
+            return valueInContext !== undefined ? valueInContext : match;
+        });
+    };
+}
