@@ -1,3 +1,5 @@
+import { getIn } from "./objects";
+
 export function assertIsString(value: any, errorMessage = 'Value is not string'): asserts value is string {
     if (typeof value !== 'string') {
         throw Error(errorMessage);
@@ -156,3 +158,21 @@ export function noIdents(modified: string, separator = '\n') {
 }
 
 export const isString = (value: unknown): value is string => typeof value === 'string';
+
+const templateReg = /\$\{(.+?)\}/g;
+/**
+ * @param context A context for the compiler
+ * @returns A template compiler function which accepts a template and compile it with `context`
+ * @example
+ * templateCompilerProvider({ greetings: 'Hello', person: { name: 'Elad' } })('${greetings} ${person.name}!')
+ * // => Hello Elad!
+ */
+export function templateCompilerProvider(context: Record<string, any>) {
+    return function templateCompiler(template: string) {
+        return template.replace(templateReg, (match, templateExpression: string) => {
+            const pathInContext = templateExpression.trim().split('.');
+            const valueInContext = getIn(context, pathInContext) as string;
+            return valueInContext !== undefined ? valueInContext : match;
+        });
+    };
+}
