@@ -1,8 +1,5 @@
 import { expect } from "chai"
-import { last, at, first, unique, next, prev, concat, flat, map, flatMap, filter, forEach, find, includes, some, every, isEmpty, size } from ".."
-import * as a from "../iterables"
-// eslint-disable-next-line no-console
-console.log(Object.keys(a))
+import { last, at, first, unique, next, prev, concat, flat, map, flatMap, filter, forEach, find, includes, some, every, isEmpty, size, reduce } from ".."
 describe('iterables', () => {
     it('last', () => {
         expect(last([1, 2, 3])).to.equal(3)
@@ -58,7 +55,6 @@ describe('iterables', () => {
             expect(next([0, 1, 2], 2)).to.eql(undefined);
         });
     });
-
     describe('prev', () => {
         it('returns the previous element', () => {
             expect(prev([0, 1, 2], 1)).to.eql(0);
@@ -70,26 +66,21 @@ describe('iterables', () => {
             expect(prev([0, 1, 2], 0)).to.eql(undefined);
         });
     });
-
     it('concat', () => {
         expect([...concat([0, 1, 2], [3], [4, 5])]).to.eql([0, 1, 2, 3, 4, 5]);
     })
-
     it(`flat`, () => {
         expect([...flat([0, [1, 2]])]).to.eql([0, 1, 2]);
         expect([...flat([0, [1, [2]]], true)]).to.eql([0, 1, 2]);
     })
-
     it(`isEmpty`, () => {
         expect(isEmpty([])).to.eql(true);
         expect(isEmpty([1])).to.eql(false);
     })
-
     it(`size`, () => {
         expect(size([])).to.eql(0);
         expect(size([0, 1])).to.eql(2);
     })
-
     it(`map`, () => {
         expect([...map([0, 1, 2], i => i ** 2)]).to.eql([0, 1, 4]);
     })
@@ -99,12 +90,14 @@ describe('iterables', () => {
     it(`filter`, () => {
         expect([...filter([0, 1, 2], i => !!i)]).to.eql([1, 2]);
     })
-    it(`filter`, () => {
-        expect([...filter([0, 1, 2], i => !!i)]).to.eql([1, 2]);
-    })
     it(`forEach`, () => {
         const r = [] as number[]
         forEach([0, 1, 2], i => r.push(i))
         expect(r).to.eql([0, 1, 2]);
+    })
+    it('reduce', ()=>{
+        const input = [0,1,2,3]
+        const reducer = (acc:number, i:number) => acc + i
+        expect(reduce(input, reducer, 0)).to.equal(input.reduce(reducer, 0))
     })
 })
