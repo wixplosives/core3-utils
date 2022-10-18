@@ -7,6 +7,10 @@ export interface IDeferredPromise<T> {
     reject: PromiseRejectCb;
 }
 
+/**
+ * A closure-less alternative to new Promise(...)
+ * @returns 
+ */
 export function deferred<T = void>(): IDeferredPromise<T> {
     let resolve!: PromiseResolveCb<T>;
     let reject!: PromiseRejectCb;
