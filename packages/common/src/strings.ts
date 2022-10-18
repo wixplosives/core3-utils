@@ -20,7 +20,6 @@ export enum NamingConvention {
     CamelCase = 'camel-case',
 }
 
-
 export function isValidNamingConvention(namingConvention: string): namingConvention is NamingConvention {
     return Object.values(NamingConvention).some((value) => value === namingConvention);
 }
@@ -148,6 +147,7 @@ export function equalIdents(reference: string, modified: string, newline = '\n')
         })
         .join(newline);
 }
+
 export function noIdents(modified: string, separator = '\n') {
     const modifiedArr = modified.split(separator);
     return modifiedArr
@@ -175,4 +175,24 @@ export function templateCompilerProvider(context: Record<string, any>) {
             return valueInContext !== undefined ? valueInContext : match;
         });
     };
+}
+
+/**
+ * Ensure a single heading/trailing backslash (/) of a single line string
+ * @param str 
+ * @param type 'heading'|'trailing'|'both'|'none'
+ * @returns 
+ */
+export function backSlash(str:string, type:'heading'|'trailing'|'both'|'none') {
+    const s = str.replace(/^\/+|\/+$/,'')
+    switch(type){
+        case 'both':
+            return `/${s}/`;
+        case 'trailing':
+            return `${s}/`;
+        case 'heading':
+            return `/${s}`;
+        default:
+            return s      
+    }
 }
