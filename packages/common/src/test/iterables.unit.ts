@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { last, at, first, unique, next, prev, concat, flat, map, flatMap, filter, forEach, find, includes, some, every, isEmpty, size, reduce } from ".."
+import { last, at, first, unique, next, prev, concat, flat, map, flatMap, filter, forEach, find, includes, some, every, isEmpty, size, reduce, groupBy } from ".."
 describe('iterables', () => {
     it('last', () => {
         expect(last([1, 2, 3])).to.equal(3)
@@ -99,5 +99,13 @@ describe('iterables', () => {
         const input = [0,1,2,3]
         const reducer = (acc:number, i:number) => acc + i
         expect(reduce(input, reducer, 0)).to.equal(input.reduce(reducer, 0))
+    })
+    it('groupBy', ()=>{
+        expect(groupBy([{a:1, b:0},{a:1,b:1}, {a:2}], 'a')).to.eql(
+            new Map([
+                [1, [{a:1,b:0}, {a:1, b:1}]], 
+                [2, [{a:2}]]
+            ])
+        )
     })
 })

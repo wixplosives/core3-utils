@@ -1,5 +1,4 @@
-import { isNotNull } from "./objects"
-import type { Nullable } from "./types"
+import { isDefined, Nullable } from "./types"
 
 export type Mapping<S, T> = (src: S) => T
 export type Predicate<S, V = boolean> = (src: S) => V
@@ -284,7 +283,7 @@ export function histogram<T>(iterable: Iterable<T>) {
  * @returns true if x is iterable
  */
 export function isIterable(x: any): x is Iterable<unknown> {
-    return isNotNull(x) && typeof x === 'object' && (Symbol.iterator in x)
+    return isDefined(x) && typeof x === 'object' && (Symbol.iterator in x)
 }
 
 /**
@@ -314,3 +313,17 @@ export function reduce<T, A>(iterable: Nullable<Iterable<T>>, reducer: (acc: A, 
     }
     return acc;
 }
+
+
+export const groupBy = <T, K extends keyof T>(elements: Iterable<T>, property: K): Map<T[K], T[]> =>
+    reduce(elements, (acc, element) => {
+        const propertyValue = acc.get(element[property]);
+
+        if (propertyValue) {
+            propertyValue.push(element);
+        } else {
+            acc.set(element[property], [element]);
+        }
+
+        return acc;
+    }, new Map<T[K], T[]>());
