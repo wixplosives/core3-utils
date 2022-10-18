@@ -1,4 +1,5 @@
 import { sleep } from 'promise-assist';
+import { chain } from './chain';
 
 export function exclude<R>(...excluded: R[]) {
     return function <T>(t: T): t is Exclude<T, R> {
@@ -203,8 +204,39 @@ export function defaults<S, D>(_source: S, _defaultValues: D, deep = true, shoul
  * getIn({ a: { b: 'c' } }, ['a', 'b'])
  * // => c
  */
- export function getIn(obj: Record<string, any>, path: string[]): unknown {
+export function getIn(obj: Record<string, any>, path: string[]): unknown {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return path.reduce((value, key) => value?.[key], obj);
 }
 
+const DELETE = Symbol()
+type Remap<T> = Partial<Record<keyof T, string | typeof DELETE>>
+type UnionToIntersection<U> =
+    (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
+type Remapped<T extends object, R> =
+    UnionToIntersection<
+        R extends Partial<Record<keyof T, string | typeof DELETE>>
+        ? { [K in keyof T]: K extends keyof R
+            ? R[K] extends string
+            ? { [L in R[K]]: T[K] }
+            : never
+            : { [L in K]: T[L] }
+        }[keyof T]
+        : never>
+
+
+type Remapp = {
+    <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R> 
+    readonly DELETE: typeof DELETE
+}
+export const remap:Remapp = <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R> =>  Object.fromEntries(
+        chain(Object.entries(obj))
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            .filter(([key]) => (rename as any)[key] !== remap.DELETE)
+            .map(([key, value]) =>
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                [(rename as any)[key] || key, value] as [string, any])
+            .iterable
+    ) as Remapped<T, R>
+// @ts-expect-error setting the DELETE const
+remap.DELETE = DELETE

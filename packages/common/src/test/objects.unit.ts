@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { defaults, pick } from '..';
+import { defaults, pick, remap } from '../objects';
 
 describe('pick', () => {
     it('pick specified keys from an object', () => {
@@ -22,5 +22,18 @@ describe(`defaults`, ()=>{
     it(`shouldUseDefault arg`,()=>{
         expect(defaults({a:{a:10,b:20}},{a:{a:20,c:30}}, true, i=> i===10)).to.eql({a:{a:20,b:20,c:30}})
         expect(defaults({a:{a:10,b:20}},{a:{a:20,c:30}}, true, (_,key)=> key==='a.a')).to.eql({a:{a:20,b:20,c:30}})
+    })
+})
+
+describe('remap', ()=>{
+    it('changes given keys', ()=>{
+        const input = {a:0, b:1};
+        const output:{c:number, b:number} = remap(input, {a:'c'})
+        expect(output).to.eql({c:0, b:1})
+    })
+    it('removes keys mapped to remap.DELETE', ()=>{
+        const input = {a:0, b:1};
+        const output:{b:number} = remap(input, {a: remap.DELETE})
+        expect(output).to.eql({b:1})
     })
 })
