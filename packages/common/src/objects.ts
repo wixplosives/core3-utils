@@ -23,16 +23,6 @@ export function pick<O extends object, K extends keyof O>(record: O, keys: Itera
     return subset;
 }
 
-export const keys = <K, O extends object | Map<K, undefined>>(obj: O) =>
-    isPlainObject(obj)
-        ? Object.keys(obj) as Iterable<keyof O>
-        : (obj as Map<K, undefined>).keys()
-
-export const values = <V, O extends Record<any, V> | Map<any, V>>(obj: O) =>
-    isPlainObject(obj)
-        ? Object.values(obj) as Iterable<V>
-        : (obj as Map<undefined, V>).values()
-
 export const mapObject = (obj: object, mapping: (entry: [string, any]) => [string, any]) =>
     Object.fromEntries(
         Object.entries(obj)
@@ -56,26 +46,9 @@ export function isPlainObject(value: unknown): value is object {
         && Object.getPrototypeOf(value) === Object.prototype
 }
 
-export function isNotNull<T>(value: T | undefined | null): value is T {
-    return value !== null && value !== undefined;
-}
-
 // eslint-disable-next-line no-console, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
 export const reportError = (ex: unknown) => console.error(ex);
 
-export function groupBy<T, K extends keyof T>(elements: T[], property: K): Map<T[K], T[]> {
-    return elements.reduce<Map<T[K], T[]>>((acc, element) => {
-        const propertyValue = acc.get(element[property]);
-
-        if (propertyValue) {
-            propertyValue.push(element);
-        } else {
-            acc.set(element[property], [element]);
-        }
-
-        return acc;
-    }, new Map());
-}
 
 /**
  * Awaits a record of promises, and returns a record of their results.
@@ -114,8 +87,6 @@ export function getCartesianProductOfArrays<T>(arrays: T[][]): T[][] {
 }
 
 export const newMacrotask = () => sleep(0);
-
-
 
 /**
  * Reverses keys-values of an object, ignoring falsy values.
@@ -229,6 +200,12 @@ type Remapp = {
     <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R> 
     readonly DELETE: typeof DELETE
 }
+/**
+ * 
+ * @param obj 
+ * @param rename 
+ * @returns 
+ */
 export const remap:Remapp = <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R> =>  Object.fromEntries(
         chain(Object.entries(obj))
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
