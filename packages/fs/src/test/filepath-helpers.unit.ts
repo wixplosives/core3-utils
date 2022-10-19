@@ -1,6 +1,6 @@
 import { createMemoryFs } from '@file-services/memory';
 import { expect } from 'chai';
-import { getFullExtname, getImportPath, getRelativeImportPath, isPathIncludesDir, isSubPath, rebaseRelativeModulePath } from '..';
+import { backSlash, getFullExtname, getImportPath, getRelativeImportPath, isPathIncludesDir, isSubPath, rebaseRelativeModulePath } from '..';
 
 describe('getRelativeImportPath', () => {
     it('should create relative path', () => {
@@ -117,3 +117,30 @@ describe('rebaseRelativeModulePath()', () => {
         });
     })
 });
+
+describe('backSlash', () => {
+    it('removes multiple heading slashes', () => {
+        expect(backSlash('////file.name', 'none')).to.equal('file.name')
+        expect(backSlash('////file.name', 'heading')).to.equal('/file.name')
+        expect(backSlash('////file.name', 'trailing')).to.equal('file.name/')
+        expect(backSlash('////file.name', 'both')).to.equal('/file.name/')
+    })
+    it('removes multiple trailing slashes', () => {
+        expect(backSlash('file.name////', 'none')).to.equal('file.name')
+        expect(backSlash('file.name////', 'heading')).to.equal('/file.name')
+        expect(backSlash('file.name////', 'trailing')).to.equal('file.name/')
+        expect(backSlash('file.name////', 'both')).to.equal('/file.name/')
+    })
+    it('keeps slashes in the middle', () => {
+        expect(backSlash('file/name', 'none')).to.equal('file/name')
+        expect(backSlash('file/name', 'heading')).to.equal('/file/name')
+        expect(backSlash('file/name', 'trailing')).to.equal('file/name/')
+        expect(backSlash('file/name', 'both')).to.equal('/file/name/')
+    })
+    it('handles no slashes', () => {
+        expect(backSlash('file.name', 'none')).to.equal('file.name')
+        expect(backSlash('file.name', 'heading')).to.equal('/file.name')
+        expect(backSlash('file.name', 'trailing')).to.equal('file.name/')
+        expect(backSlash('file.name', 'both')).to.equal('/file.name/')
+    })
+})

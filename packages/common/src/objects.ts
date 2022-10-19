@@ -201,9 +201,9 @@ type Remapp = {
     readonly DELETE: typeof DELETE
 }
 /**
- * 
+ * remaps keys of obj based on rename map object, 
  * @param obj 
- * @param rename 
+ * @param rename key:key name in obj, value: new name (string) OR remap.DELETE
  * @returns 
  */
 export const remap:Remapp = <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R> =>  Object.fromEntries(

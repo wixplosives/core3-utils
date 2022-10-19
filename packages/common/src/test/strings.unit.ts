@@ -1,4 +1,4 @@
-import { backSlash, splitIntoWords, toCamelCase, toKebabCase, toPascalCase } from '..';
+import { splitIntoWords, toCamelCase, toKebabCase, toPascalCase } from '..';
 import { expect } from 'chai';
 
 describe('String Utils', () => {
@@ -33,31 +33,4 @@ describe('String Utils', () => {
         expect(toCamelCase('HTMLAcronymHTML')).to.equal('htmlAcronymHtml');
         expect(toCamelCase('HOW_BOUT_DAT')).to.equal('howBoutDat');
     });
-
-    describe('backSlash', () => {
-        it('removes multiple heading slashes', () => {
-            expect(backSlash('////file.name', 'none')).to.equal('file.name')
-            expect(backSlash('////file.name', 'heading')).to.equal('/file.name')
-            expect(backSlash('////file.name', 'trailing')).to.equal('file.name/')
-            expect(backSlash('////file.name', 'both')).to.equal('/file.name/')
-        })
-        it('removes multiple trailing slashes', () => {
-            expect(backSlash('file.name////', 'none')).to.equal('file.name')
-            expect(backSlash('file.name////', 'heading')).to.equal('/file.name')
-            expect(backSlash('file.name////', 'trailing')).to.equal('file.name/')
-            expect(backSlash('file.name////', 'both')).to.equal('/file.name/')
-        })
-        it('keeps slashes in the middle', () => {
-            expect(backSlash('file/name', 'none')).to.equal('file/name')
-            expect(backSlash('file/name', 'heading')).to.equal('/file/name')
-            expect(backSlash('file/name', 'trailing')).to.equal('file/name/')
-            expect(backSlash('file/name', 'both')).to.equal('/file/name/')
-        })
-        it('handles no slashes', () => {
-            expect(backSlash('file.name', 'none')).to.equal('file.name')
-            expect(backSlash('file.name', 'heading')).to.equal('/file.name')
-            expect(backSlash('file.name', 'trailing')).to.equal('file.name/')
-            expect(backSlash('file.name', 'both')).to.equal('/file.name/')
-        })
-    })
 });
