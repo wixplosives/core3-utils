@@ -1,6 +1,14 @@
 import { createMemoryFs } from '@file-services/memory';
 import { expect } from 'chai';
-import { backSlash, getFullExtname, getImportPath, getRelativeImportPath, isPathIncludesDir, isSubPath, rebaseRelativeModulePath } from '..';
+import {
+    backSlash,
+    getFullExtname,
+    getImportPath,
+    getRelativeImportPath,
+    isPathIncludesDir,
+    isSubPath,
+    rebaseRelativeModulePath,
+} from '..';
 
 describe('getRelativeImportPath', () => {
     it('should create relative path', () => {
@@ -49,7 +57,6 @@ describe('isPathIncludesDir', function () {
     });
 });
 
-
 describe('extensions and import paths', () => {
     it('gets correct file extensions', () => {
         expect(getFullExtname('@wixc3/some-package')).to.equal('');
@@ -81,66 +88,65 @@ describe('extensions and import paths', () => {
 });
 
 describe('rebaseRelativeModulePath()', () => {
-    describe('posix', () =>{
-
+    describe('posix', () => {
         it('rebase path from same folder', () => {
             expect(rebaseRelativeModulePath('/src/a.ts', '/src/b.ts')).to.equal('./b.ts');
         });
-    
+
         it('rebase path from sub folder', () => {
             expect(rebaseRelativeModulePath('/src/a.ts', '/src/dir/b.ts')).to.equal('./dir/b.ts');
         });
-    
+
         it('rebase path from parent folder', () => {
             expect(rebaseRelativeModulePath('/src/a.ts', '/b.ts')).to.equal('../b.ts');
         });
-    
+
         it('rebase module path', () => {
             expect(rebaseRelativeModulePath('/src/a.ts', '@wixc3/some-package')).to.equal('@wixc3/some-package');
         });
-    })
-    describe('windows',()=>{
+    });
+    describe('windows', () => {
         it('rebase path from same folder', () => {
             expect(rebaseRelativeModulePath('C:/src/a.ts', 'C:/src/b.ts')).to.equal('./b.ts');
         });
-    
+
         it('rebase path from sub folder', () => {
             expect(rebaseRelativeModulePath('C:/src/a.ts', 'C:/src/dir/b.ts')).to.equal('./dir/b.ts');
         });
-    
+
         it('rebase path from parent folder', () => {
             expect(rebaseRelativeModulePath('C:/src/a.ts', 'C:/b.ts')).to.equal('../b.ts');
         });
-    
+
         it('rebase module path', () => {
             expect(rebaseRelativeModulePath('C:/src/a.ts', '@wixc3/some-package')).to.equal('@wixc3/some-package');
         });
-    })
+    });
 });
 
 describe('backSlash', () => {
     it('removes multiple heading slashes', () => {
-        expect(backSlash('////file.name', 'none')).to.equal('file.name')
-        expect(backSlash('////file.name', 'heading')).to.equal('/file.name')
-        expect(backSlash('////file.name', 'trailing')).to.equal('file.name/')
-        expect(backSlash('////file.name', 'both')).to.equal('/file.name/')
-    })
+        expect(backSlash('////file.name', 'none')).to.equal('file.name');
+        expect(backSlash('////file.name', 'heading')).to.equal('/file.name');
+        expect(backSlash('////file.name', 'trailing')).to.equal('file.name/');
+        expect(backSlash('////file.name', 'both')).to.equal('/file.name/');
+    });
     it('removes multiple trailing slashes', () => {
-        expect(backSlash('file.name////', 'none')).to.equal('file.name')
-        expect(backSlash('file.name////', 'heading')).to.equal('/file.name')
-        expect(backSlash('file.name////', 'trailing')).to.equal('file.name/')
-        expect(backSlash('file.name////', 'both')).to.equal('/file.name/')
-    })
+        expect(backSlash('file.name////', 'none')).to.equal('file.name');
+        expect(backSlash('file.name////', 'heading')).to.equal('/file.name');
+        expect(backSlash('file.name////', 'trailing')).to.equal('file.name/');
+        expect(backSlash('file.name////', 'both')).to.equal('/file.name/');
+    });
     it('keeps slashes in the middle', () => {
-        expect(backSlash('file/name', 'none')).to.equal('file/name')
-        expect(backSlash('file/name', 'heading')).to.equal('/file/name')
-        expect(backSlash('file/name', 'trailing')).to.equal('file/name/')
-        expect(backSlash('file/name', 'both')).to.equal('/file/name/')
-    })
+        expect(backSlash('file/name', 'none')).to.equal('file/name');
+        expect(backSlash('file/name', 'heading')).to.equal('/file/name');
+        expect(backSlash('file/name', 'trailing')).to.equal('file/name/');
+        expect(backSlash('file/name', 'both')).to.equal('/file/name/');
+    });
     it('handles no slashes', () => {
-        expect(backSlash('file.name', 'none')).to.equal('file.name')
-        expect(backSlash('file.name', 'heading')).to.equal('/file.name')
-        expect(backSlash('file.name', 'trailing')).to.equal('file.name/')
-        expect(backSlash('file.name', 'both')).to.equal('/file.name/')
-    })
-})
+        expect(backSlash('file.name', 'none')).to.equal('file.name');
+        expect(backSlash('file.name', 'heading')).to.equal('/file.name');
+        expect(backSlash('file.name', 'trailing')).to.equal('file.name/');
+        expect(backSlash('file.name', 'both')).to.equal('/file.name/');
+    });
+});

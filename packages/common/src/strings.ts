@@ -1,9 +1,9 @@
-import { getIn } from "./objects";
+import { getIn } from './objects';
 
 /**
  * Throws if value is not a string
- * @param value 
- * @param errorMessage 
+ * @param value
+ * @param errorMessage
  */
 export function assertIsString(value: any, errorMessage = 'Value is not string'): asserts value is string {
     if (typeof value !== 'string') {
@@ -11,11 +11,11 @@ export function assertIsString(value: any, errorMessage = 'Value is not string')
     }
 }
 
-// 
+//
 /**
  * Replaced non alphanumeric character with CSS unicode representation
  * @see https://drafts.csswg.org/cssom/#escape-a-character-as-code-point
- * @param str 
+ * @param str
  * @returns CSS safe string
  */
 export const escapeCSS = (str: string) =>
@@ -24,7 +24,6 @@ export const escapeCSS = (str: string) =>
         return `\\${code.toString(16)} `;
     });
 
-
 export enum NamingConvention {
     KebabCase = 'kebab-case',
     PascalCase = 'pascal-case',
@@ -32,8 +31,8 @@ export enum NamingConvention {
 }
 
 /**
- * 
- * @param namingConvention 
+ *
+ * @param namingConvention
  * @returns true if namingConvention is a supported NamingConvention
  */
 export function isValidNamingConvention(namingConvention: string): namingConvention is NamingConvention {
@@ -42,8 +41,8 @@ export function isValidNamingConvention(namingConvention: string): namingConvent
 
 /**
  * Capitalize the first letter of a string
- * @param val 
- * @returns val with the first letter capitalized 
+ * @param val
+ * @returns val with the first letter capitalized
  */
 export function capitalizeFirstLetter(val: string): string {
     return val.length === 0 ? val : val.charAt(0).toUpperCase() + val.slice(1);
@@ -56,7 +55,7 @@ export function capitalizeFirstLetter(val: string): string {
  * @example <caption>Acronyms</caption> splitIntoWords("Hello WRL") => ["Hello", "WRL"]
  * @example <caption>Capitalized</caption> splitIntoWords("HelloWorld") => ["Hello", "World"]
  * @example <caption>Others characters</caption> splitIntoWords("Hello_world--"") => ["Hello", "world"]
- * @param str 
+ * @param str
  * @returns An array of words contained in str
  */
 export const splitIntoWords = (str: string): string[] => {
@@ -69,7 +68,7 @@ export const splitIntoWords = (str: string): string[] => {
 
 /**
  * Converts a string to kebab-case
- * @param str 
+ * @param str
  * @returns str in kebab-case-convention
  */
 export function toKebabCase(str: string): string {
@@ -78,7 +77,7 @@ export function toKebabCase(str: string): string {
 
 /**
  * Converts a string to PascalCase
- * @param str 
+ * @param str
  * @returns str in PascalCaseConvention
  */
 export function toPascalCase(str: string): string {
@@ -90,7 +89,7 @@ export function toPascalCase(str: string): string {
  * Similar to toPascalCase, but drops heading non-letters
  * @example toPascalCaseJsIdentifier("123helloWorld") => "HelloWorld"
  * @see toPascalCase
- * @param str 
+ * @param str
  * @returns str in PascalCaseConvention that starts with a letter
  */
 export function toPascalCaseJsIdentifier(str: string): string {
@@ -100,7 +99,7 @@ export function toPascalCaseJsIdentifier(str: string): string {
 
 /**
  * Converts a string to camelCase
- * @param str 
+ * @param str
  * @returns str in camelCaseConvention
  */
 export function toCamelCase(str: string): string {
@@ -112,9 +111,9 @@ export function toCamelCase(str: string): string {
 
 /**
  * Converts string formatting to a naming convention
- * @param str 
- * @param namingConvention 
- * @returns 
+ * @param str
+ * @param namingConvention
+ * @returns
  */
 export function toNamingConvention(str: string, namingConvention: NamingConvention): string {
     switch (namingConvention) {
@@ -150,7 +149,7 @@ export function toCSSCamelCase(str: string): string {
 }
 
 /**
- * Finds line an column by position index  
+ * Finds line an column by position index
  * @param content
  * @param pos
  * @param newline zero based line number and character
@@ -187,9 +186,9 @@ export function indexToLineAndColumn(
 }
 
 /**
- * 
- * @param str 
- * @param substr 
+ *
+ * @param str
+ * @param substr
  * @returns true is str contains substr, ignoring capitalization
  */
 export function includesCaseInsensitive(str: string, substr: string): boolean {
@@ -215,9 +214,9 @@ export function equalIdents(reference: string, modified: string, newline = '\n')
 
 /**
  * Remove line indentation (heading whitespace)
- * @param modified 
- * @param separator 
- * @returns 
+ * @param modified
+ * @param separator
+ * @returns
  */
 export function noIdents(modified: string, separator = '\n') {
     const modifiedArr = modified.split(separator);

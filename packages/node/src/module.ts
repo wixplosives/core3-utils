@@ -1,5 +1,5 @@
 import Module from 'module';
-type M = typeof Module & {_resolveFilename:(...args: unknown[])=>string}
+type M = typeof Module & { _resolveFilename: (...args: unknown[]) => string };
 
 const originalResolveFilename = (Module as M)._resolveFilename;
 let isMapperRegistered = originalResolveFilename === resolveWithMappings;

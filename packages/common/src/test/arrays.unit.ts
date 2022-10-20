@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { getCartesianProductOfArrays } from '..'
+import { getCartesianProductOfArrays } from '..';
 
 describe('getCartesianProductOfArrays', () => {
     describe('get all combinations of one from each array', () => {
@@ -37,4 +37,4 @@ describe('getCartesianProductOfArrays', () => {
             expect(combos).to.have.lengthOf(8);
         });
     });
-})
+});

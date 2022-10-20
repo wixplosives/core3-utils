@@ -18,7 +18,7 @@ export class ErrorWithCode extends Error {
     public code?: string;
 
     public constructor(message?: string, options?: { code?: string; cause?: unknown }) {
-        const { code, ...nativeErrorOptions } = options ?? {};        
+        const { code, ...nativeErrorOptions } = options ?? {};
         super(message, nativeErrorOptions);
         this.code = code;
     }
@@ -62,7 +62,9 @@ export function errorToPlainObject<T extends Error>(error: T) {
 }
 
 export function isErrorLikeObject(error: unknown): error is Error {
-    return isPlainObject(error) 
-    && typeof (error as {name?:string}).name === 'string' 
-    && typeof (error as {message?:string}).message === 'string';
+    return (
+        isPlainObject(error) &&
+        typeof (error as { name?: string }).name === 'string' &&
+        typeof (error as { message?: string }).message === 'string'
+    );
 }

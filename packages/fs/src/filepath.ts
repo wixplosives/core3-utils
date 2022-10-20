@@ -179,7 +179,6 @@ export function isPathIncludesDir(filePath: string, directoryName: string) {
     return false;
 }
 
-
 export function isWindowsStyleAbsolutePath(fsPath: string): boolean {
     return !posixPath.isAbsolute(fsPath) && win32Path.isAbsolute(fsPath);
 }
@@ -212,7 +211,6 @@ export function getImportPath(filePath: string) {
     return filePath;
 }
 
-
 export const isJsonFile = (filePath: string) => filePath.endsWith('.json');
 export const isTypeScriptFile = (filePath: string) => filePath.endsWith('.ts') || filePath.endsWith('.tsx');
 export const isJavaScriptFile = (filePath: string) =>
@@ -235,13 +233,13 @@ export const getDTSPath = (filePath: string) => {
 
 /**
  * Ensure a single heading/trailing backslash (/) of a single line string
- * @param str 
+ * @param str
  * @param type 'heading'|'trailing'|'both'|'none'
- * @returns 
+ * @returns
  */
- export function backSlash(str:string, type:'heading'|'trailing'|'both'|'none') {
-    const s = str.replace(/^\/+|\/+$/,'')
-    switch(type){
+export function backSlash(str: string, type: 'heading' | 'trailing' | 'both' | 'none') {
+    const s = str.replace(/^\/+|\/+$/, '');
+    switch (type) {
         case 'both':
             return `/${s}/`;
         case 'trailing':
@@ -249,6 +247,6 @@ export const getDTSPath = (filePath: string) => {
         case 'heading':
             return `/${s}`;
         default:
-            return s      
+            return s;
     }
 }

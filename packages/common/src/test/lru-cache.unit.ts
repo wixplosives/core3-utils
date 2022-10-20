@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { LRUCache } from '..'
+import { LRUCache } from '..';
 
 describe('LRU cache', () => {
     it('adds, deletes cache entries and limits cache size', () => {

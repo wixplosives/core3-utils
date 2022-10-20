@@ -9,7 +9,7 @@ export interface IDeferredPromise<T> {
 
 /**
  * A closure-less alternative to new Promise(...)
- * @returns 
+ * @returns
  */
 export function deferred<T = void>(): IDeferredPromise<T> {
     let resolve!: PromiseResolveCb<T>;

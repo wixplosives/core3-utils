@@ -5,7 +5,7 @@ export function enumValues<T extends string | number>(enumObj: {
 }): IterableIterator<Exclude<T, string>>;
 
 // TODO: validate
-export function* enumValues<T>(enumObj: Record<string,T>): IterableIterator<T> {
+export function* enumValues<T>(enumObj: Record<string, T>): IterableIterator<T> {
     let isStringEnum = true;
     for (const property in enumObj) {
         if (typeof enumObj[property] === 'number') {

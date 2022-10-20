@@ -1,18 +1,19 @@
-import { chain } from "./chain";
-import { forEach } from "./iterables";
+import { chain } from './chain';
+import { forEach } from './iterables';
 
 export class SetMultiMap<K, V> implements Iterable<[K, V]> {
     private map = new Map<K, Set<V>>();
 
     constructor(entries?: Iterable<[K, V]>) {
-        forEach(entries, ([key, val]) => { this.add(key, val) })
+        forEach(entries, ([key, val]) => {
+            this.add(key, val);
+        });
     }
 
     public get size(): number {
         return chain(this.map)
-            .map(([_,{size}])=>size)
-            .reduce((sum, size)=>sum+size, 0)
-            .value
+            .map(([_, { size }]) => size)
+            .reduce((sum, size) => sum + size, 0).value;
     }
 
     public get(key: K): ReadonlySet<V> | undefined {
@@ -75,7 +76,7 @@ export class SetMultiMap<K, V> implements Iterable<[K, V]> {
     public *values(): IterableIterator<V> {
         const { map } = this;
         for (const valueSet of map.values()) {
-            yield* valueSet.values()
+            yield* valueSet.values();
         }
     }
 
@@ -87,4 +88,3 @@ export class SetMultiMap<K, V> implements Iterable<[K, V]> {
 export function isSetMultiMap<K, V>(x: any): x is SetMultiMap<K, V> {
     return x instanceof SetMultiMap<K, V>;
 }
-

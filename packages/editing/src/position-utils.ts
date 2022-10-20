@@ -1,5 +1,5 @@
-import type { Range } from "vscode-languageserver-types";
-import { last } from '@wixc3/common'
+import type { Range } from 'vscode-languageserver-types';
+import { last } from '@wixc3/common';
 
 export function charPosToLinePos(fileSplitText: string[], pos: number): { line: number; char: number } {
     let currentPos = 0;
@@ -48,7 +48,6 @@ export function charPosToLinePosWithLineStarts(
     };
 }
 
-
 /**
  * recieves zero based line number and character returns 0 based index in file
  * @param content
@@ -80,7 +79,6 @@ export function lineAndColumnToIndex(
 
     return -1;
 }
-
 
 export const lspRangeToTS = (content: string, fileName: string, range: Range): { start: number; length: number } => {
     if (!content) {

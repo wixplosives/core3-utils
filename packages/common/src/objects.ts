@@ -24,31 +24,20 @@ export function pick<O extends object, K extends keyof O>(record: O, keys: Itera
 }
 
 export const mapObject = (obj: object, mapping: (entry: [string, any]) => [string, any]) =>
-    Object.fromEntries(
-        Object.entries(obj)
-            .map(mapping))
-
+    Object.fromEntries(Object.entries(obj).map(mapping));
 
 export const mapValue = (obj: object, mapping: (value: any) => any) =>
-    Object.fromEntries(
-        Object.entries(obj)
-            .map(([k, v]) => [k, mapping(v)]))
+    Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, mapping(v)]));
 
 export const mapKeys = (obj: object, mapping: (key: string) => string) =>
-    Object.fromEntries(
-        Object.entries(obj)
-            .map(([k, v]) => [mapping(k), v]))
+    Object.fromEntries(Object.entries(obj).map(([k, v]) => [mapping(k), v]));
 
-
-export function isPlainObject(value: unknown): value is Record<string|number|symbol, any>{
-    return value !== null
-        && typeof value === 'object'
-        && Object.getPrototypeOf(value) === Object.prototype
+export function isPlainObject(value: unknown): value is Record<string | number | symbol, any> {
+    return value !== null && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype;
 }
 
 // eslint-disable-next-line no-console, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
 export const reportError = (ex: unknown) => console.error(ex);
-
 
 /**
  * Awaits a record of promises, and returns a record of their results.
@@ -64,7 +53,7 @@ export async function awaitRecord<
 >(obj: In): Promise<Out> {
     const out = {} as Record<string, any>;
     for (const [key, promise] of Object.entries(obj)) {
-        out[key] = await promise
+        out[key] = await promise;
     }
     return out as Out;
 }
@@ -108,63 +97,66 @@ export const reverseObject = (obj: Record<string, string | false | undefined>) =
 };
 
 /**
- * Returns an object where missing keys and values/keys 
+ * Returns an object where missing keys and values/keys
  * that satisfy shouldUseDefault
- * to the value in shouldUseDefault. 
- * 
+ * to the value in shouldUseDefault.
+ *
  * @example
  * defaults({}, {a:0}) => {a:0}
  * defaults({a:1}, {a:0}) => {a:1}
  * defaults({a:{}}, {a:{b:1}}) => {a:{b:1}}
- * 
+ *
  * by default, any undefined value will be replaced
- * @param source 
- * @param defaultValues 
+ * @param source
+ * @param defaultValues
  * @param deep [true] perform a deep comparison
- * @example 
+ * @example
  * defaults({a:{}}, {a:{b:1}}, false) => {a:{}}
- * @param shouldUseDefault [(v,k)=>v===undefined] value/key for which shouldUseDefault returns true will be taken from defaultValues, ignoring source 
+ * @param shouldUseDefault [(v,k)=>v===undefined] value/key for which shouldUseDefault returns true will be taken from defaultValues, ignoring source
  *      k is provided as a dot separated path
- * @example 
+ * @example
  * defaults({a:{b:1}}, {a:{b:2}}, true, (_,k)=>k==='a.b') => {a:{b:2}}
  * defaults({a:1}, {a:2}, true, v=>v===1) => {a:2}
  * @returns a new object with merged source and defaultValues
  */
-export function defaults<S, D>(_source: S, _defaultValues: D, deep = true, shouldUseDefault = (v: unknown, _key: string) => v === undefined): S & D {
+export function defaults<S, D>(
+    _source: S,
+    _defaultValues: D,
+    deep = true,
+    shouldUseDefault = (v: unknown, _key: string) => v === undefined
+): S & D {
     const parseObj = (src: any, dft: any, parentKey = ''): any => {
         if (isPlainObject(src)) {
-            const result = {} as Record<string, any>
+            const result = {} as Record<string, any>;
             for (const [key, value] of Object.entries(src)) {
-                const fullKey = (parentKey ? parentKey + '.' : '') + key
+                const fullKey = (parentKey ? parentKey + '.' : '') + key;
                 const _default = isPlainObject(dft)
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    ? (dft as any)[key]
-                    : undefined
+                    ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                      (dft as any)[key]
+                    : undefined;
 
                 if (shouldUseDefault(value, fullKey)) {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    result[key] = _default
+                    result[key] = _default;
                 } else {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    result[key] = deep
-                        ? parseObj(value, _default, fullKey)
-                        : value
+                    result[key] = deep ? parseObj(value, _default, fullKey) : value;
                 }
             }
             if (isPlainObject(dft)) {
                 for (const [key, _default] of Object.entries(dft)) {
                     if (!(key in src)) {
-                        result[key] = _default
+                        result[key] = _default;
                     }
                 }
             }
-            return result
+            return result;
         } else {
             // @ts-expect-error non object values should only affect type when misused
             return shouldUseDefault(src) ? dft : src;
         }
-    }
-    return parseObj(_source, _defaultValues) as S & D
+    };
+    return parseObj(_source, _defaultValues) as S & D;
 }
 
 /**
@@ -180,40 +172,41 @@ export function getIn(obj: Record<string, any>, path: string[]): unknown {
     return path.reduce((value, key) => value?.[key], obj);
 }
 
-const DELETE = Symbol()
-type Remap<T> = Partial<Record<keyof T, string | typeof DELETE>>
-type UnionToIntersection<U> =
-    (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
-type Remapped<T extends object, R> =
-    UnionToIntersection<
-        R extends Partial<Record<keyof T, string | typeof DELETE>>
-        ? { [K in keyof T]: K extends keyof R
-            ? R[K] extends string
-            ? { [L in R[K]]: T[K] }
-            : never
-            : { [L in K]: T[L] }
-        }[keyof T]
-        : never>
-
+const DELETE = Symbol();
+type Remap<T> = Partial<Record<keyof T, string | typeof DELETE>>;
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
+type Remapped<T extends object, R> = UnionToIntersection<
+    R extends Partial<Record<keyof T, string | typeof DELETE>>
+        ? {
+              [K in keyof T]: K extends keyof R
+                  ? R[K] extends string
+                      ? { [L in R[K]]: T[K] }
+                      : never
+                  : { [L in K]: T[L] };
+          }[keyof T]
+        : never
+>;
 
 type Remapp = {
-    <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R> 
-    readonly DELETE: typeof DELETE
-}
+    <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R>;
+    readonly DELETE: typeof DELETE;
+};
 /**
- * remaps keys of obj based on rename map object, 
- * @param obj 
+ * remaps keys of obj based on rename map object,
+ * @param obj
  * @param rename key:key name in obj, value: new name (string) OR remap.DELETE
- * @returns 
+ * @returns
  */
-export const remap:Remapp = <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R> =>  Object.fromEntries(
+export const remap: Remapp = <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R> =>
+    Object.fromEntries(
         chain(Object.entries(obj))
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             .filter(([key]) => (rename as any)[key] !== remap.DELETE)
-            .map(([key, value]) =>
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                [(rename as any)[key] || key, value] as [string, any])
-            .iterable
-    ) as Remapped<T, R>
+            .map(
+                ([key, value]) =>
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    [(rename as any)[key] || key, value] as [string, any]
+            ).iterable
+    ) as Remapped<T, R>;
 // @ts-expect-error setting the DELETE const
-remap.DELETE = DELETE
+remap.DELETE = DELETE;

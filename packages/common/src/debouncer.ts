@@ -6,12 +6,12 @@ export class Debouncer<T extends (...args: unknown[]) => unknown> {
         private waitTime: number,
         private maxWaitTime: number,
         private _setTimeout: (cb: () => void, wait: number) => number = (...args) =>
-            // eslint-disable-next-line 
+            // eslint-disable-next-line
             setTimeout(...args),
         private _clearTimeout: (id: number) => void = (id) =>
-            // eslint-disable-next-line 
+            // eslint-disable-next-line
             clearTimeout(id)
-    ) { }
+    ) {}
     trigger(...args: Parameters<T>) {
         return new Promise<ReturnType<T>>((res, rej) => {
             if (this.timeout) {
