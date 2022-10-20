@@ -55,6 +55,7 @@ export function rebaseRelativeModulePath(filePath: string, modulePath: string): 
 }
 
 export function getRelativeModulePath(sourceAbsFilePath: string, targetAbsFilePath: string) {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     const { relative, dirname } = win32Path;
     return addRelativePrefix(replaceWinSlashes(relative(dirname(sourceAbsFilePath), targetAbsFilePath)));
 }
@@ -66,6 +67,7 @@ export function getRelativeModulePath(sourceAbsFilePath: string, targetAbsFilePa
  * @param filePathToImport the file path to be imported into the source file
  */
 export function getRelativeImportPath(sourceFilePath: string, filePathToImport: string): string {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     const { relative, dirname } = posixPath;
     const newImportPath = getImportPath(
         relative(dirname(replaceWinSlashes(sourceFilePath)), replaceWinSlashes(filePathToImport))
@@ -85,6 +87,7 @@ export function getBareImportSpecifier(
     packageJsonPath: string,
     packageJsonName: string
 ): string {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     const { dirname } = posixPath;
     return getImportPath(
         replaceWinSlashes(absoluteImportPath).replace(dirname(replaceWinSlashes(packageJsonPath)), packageJsonName)
@@ -229,3 +232,24 @@ export const getDTSPath = (filePath: string) => {
     }
     return filePath + '.d.ts';
 };
+
+
+/**
+ * Ensure a single heading/trailing backslash (/) of a single line string
+ * @param str 
+ * @param type 'heading'|'trailing'|'both'|'none'
+ * @returns 
+ */
+ export function backSlash(str:string, type:'heading'|'trailing'|'both'|'none') {
+    const s = str.replace(/^\/+|\/+$/,'')
+    switch(type){
+        case 'both':
+            return `/${s}/`;
+        case 'trailing':
+            return `${s}/`;
+        case 'heading':
+            return `/${s}`;
+        default:
+            return s      
+    }
+}
