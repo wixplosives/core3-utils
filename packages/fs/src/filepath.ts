@@ -233,7 +233,6 @@ export const getDTSPath = (filePath: string) => {
     return filePath + '.d.ts';
 };
 
-
 /**
  * Ensure a single heading/trailing backslash (/) of a single line string
  * @param str 

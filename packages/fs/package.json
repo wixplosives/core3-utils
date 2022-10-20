@@ -9,7 +9,7 @@
     "dist",
     "src",
     "test",
-    "!dist-cjs/tsconfig.tsbuildinfo"
+    "!dist/tsconfig.tsbuildinfo"
   ],
   "license": "MIT",
   "repository": "git@github.com:wixplosives/core3-utils.git",

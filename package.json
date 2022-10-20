@@ -34,11 +34,9 @@
     "rimraf": "^3.0.2",
     "sinon": "^14.0.0",
     "sinon-chai": "^3.7.0",
-    "typescript": "~4.8.3"
+    "typescript": "~4.8.3",
+    "expose-gc": "^1.0.0"
   },
   "license": "MIT",
-  "private": true,
-  "dependencies": {
-    "expose-gc": "^1.0.0"
-  }
+  "private": true
 }
