@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/performance",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Performance utils, usable in all environments",
   "main": "dist-cjs/index.js",
   "module": "dist-esm/index.js",
