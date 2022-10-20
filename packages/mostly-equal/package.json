@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/mostly-equal",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "main": "dist/index.js",
   "scripts": {
     "test": "mocha \"dist/test/**/*.unit.js\""
