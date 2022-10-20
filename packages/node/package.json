@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/node",
-  "version": "1.0.1",
+  "version": "2.2.0",
   "description": "Common utils, usable in all environments",
   "main": "dist/index.js",
   "author": "Wix.com",
