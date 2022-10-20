@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/browser",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "description": "Common utils, usable in all environments",
   "module": "dist/index.js",
   "author": "Wix.com",
