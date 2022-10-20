@@ -232,3 +232,24 @@ export const getDTSPath = (filePath: string) => {
     }
     return filePath + '.d.ts';
 };
+
+
+/**
+ * Ensure a single heading/trailing backslash (/) of a single line string
+ * @param str 
+ * @param type 'heading'|'trailing'|'both'|'none'
+ * @returns 
+ */
+ export function backSlash(str:string, type:'heading'|'trailing'|'both'|'none') {
+    const s = str.replace(/^\/+|\/+$/,'')
+    switch(type){
+        case 'both':
+            return `/${s}/`;
+        case 'trailing':
+            return `${s}/`;
+        case 'heading':
+            return `/${s}`;
+        default:
+            return s      
+    }
+}

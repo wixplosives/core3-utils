@@ -8,13 +8,13 @@
     { "path": "./packages/wait-for-call/src" },
     { "path": "./packages/browser/src" },
     { "path": "./packages/node/src" },
-    { "path": "./packages/common/src/tsconfig.esm.json" },
+    // { "path": "./packages/common/src/tsconfig.esm.json" },
     { "path": "./packages/common/src/tsconfig.cjs.json" },
-    { "path": "./packages/editing/src/tsconfig.esm.json" },
+    // { "path": "./packages/editing/src/tsconfig.esm.json" },
     { "path": "./packages/editing/src/tsconfig.cjs.json" },
-    { "path": "./packages/fs/src/tsconfig.esm.json" },
+    // { "path": "./packages/fs/src/tsconfig.esm.json" },
     { "path": "./packages/fs/src/tsconfig.cjs.json" },
-    { "path": "./packages/performance/src/tsconfig.esm.json" },
+    // { "path": "./packages/performance/src/tsconfig.esm.json" },
     { "path": "./packages/performance/src/tsconfig.cjs.json" }
   ]
 }
