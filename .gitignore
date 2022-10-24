@@ -123,4 +123,5 @@ dist
 .pnp.*
 .DS_Store
 temp/
+docs/
 tsdoc-metadata.json

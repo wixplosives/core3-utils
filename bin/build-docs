@@ -1,8 +1,0 @@
-#!/bin/bash
-for PKG in packages/*
-do
-    yarn api-extractor run --local -c $PKG/api-extractor.json
-done
-yarn api-documenter markdown -i ./temp -o docs
-cp README.base.md README.md
-sed 's|(./|(./docs/|g' docs/index.md >> README.md

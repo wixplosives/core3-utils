@@ -1,6 +1,6 @@
 import { posix as posixPath, win32 as win32Path, extname } from '@file-services/path';
 import type { IFileSystem } from '@file-services/types';
-import { getPackageName } from './get-package-name';
+import { getPackageJsonPath, getPackageName } from './package-json';
 
 export const replaceWinSlashes = (str: string) => str.replace(/\\/g, '/');
 export const formatToOSpaths = (str: string) => {
@@ -118,23 +118,6 @@ export function createImportPath({
     }
 }
 
-/**
- * Gets path to package.json file closest to the given file path.
- *
- * @param filePath - a file path
- * @param fs - file system
- */
-export function getPackageJsonPath(filePath: string, fs: IFileSystem): string | undefined {
-    return fs.findClosestFileSync(filePath, 'package.json');
-}
-
-/**
- * Gets path to package directory, closest to the given file path.
- */
-export function getPackagePath(filePath: string, fs: IFileSystem): string | undefined {
-    const packageJsonPath = getPackageJsonPath(filePath, fs);
-    return packageJsonPath ? fs.dirname(packageJsonPath) : undefined;
-}
 
 /**
  * Checks if a path is equal to or subpath of a given base path.

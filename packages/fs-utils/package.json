@@ -19,7 +19,9 @@
   },
   "dependencies": {
     "@file-services/memory": "^7.0.1",
-    "@file-services/path": "^7.0.1"
+    "@file-services/path": "^7.0.1",
+    "glob": "^8.0.3",
+    "type-fest": "^3.1.0"
   },
   "devDependencies": {
     "@file-services/types": "^7.0.1"
