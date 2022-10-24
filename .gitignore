@@ -122,3 +122,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .DS_Store
+temp/
+tsdoc-metadata.json

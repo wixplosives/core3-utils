@@ -49,10 +49,7 @@ export function charPosToLinePosWithLineStarts(
 }
 
 /**
- * recieves zero based line number and character returns 0 based index in file
- * @param content
- * @param pos
- * @param newline
+ * Receives zero based line number and character returns 0 based index in file
  */
 export function lineAndColumnToIndex(
     content: string,

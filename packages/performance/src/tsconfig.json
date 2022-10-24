@@ -1,9 +1,7 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../dist-cjs",
-    "module": "commonjs",
+    "outDir": "../dist/cjs",
     "lib": ["dom", "esnext"]
-  },
-  "references": []
+  }
 }

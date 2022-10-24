@@ -1,7 +1,7 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../dist"
-  },
-  "references": []
+    "outDir": "../dist/esm",
+    "module": "esnext"
+  }
 }

@@ -1,6 +1,17 @@
-import { chain } from './chain';
-import { forEach } from './iterables';
+import { forEach, chain } from '@wixc3/common';
 
+/**
+ * Maps keys to a set of values
+ * @example
+ * ```ts
+ * const m = new SetMultiMap([['a',1],['a',2]])
+ * m.add('a',3)
+ * m.has('a',1) // => true
+ * m.has('a',2) // => true
+ * m.has('a',3) // => true
+ * m.has('a',4) // => false
+ * ```
+ */
 export class SetMultiMap<K, V> implements Iterable<[K, V]> {
     private map = new Map<K, Set<V>>();
 

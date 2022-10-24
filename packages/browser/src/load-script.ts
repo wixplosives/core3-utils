@@ -1,3 +1,7 @@
+/**
+ * Loads a script in browser
+ * @returns
+ */
 export const loadScript = (src: string, document: Document): Promise<void> =>
     new Promise<void>((resolve, reject) => {
         const script = document.createElement('script');
