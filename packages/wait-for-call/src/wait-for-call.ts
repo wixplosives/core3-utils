@@ -1,10 +1,7 @@
 import { waitFor } from 'promise-assist';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import sinon from 'sinon';
 import { expect } from 'chai';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createWaitForCall<F extends (...args: any[]) => any>(name?: string, f?: F) {
     let callNum = 1;
     const spy = f ? sinon.spy<F>(f) : sinon.spy();
