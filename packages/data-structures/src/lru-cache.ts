@@ -1,11 +1,10 @@
-/**
- * BASIC (not optimal) implementation of the LRU cache
- */
-
 export interface LRUCacheConfig {
     maxSize?: number;
 }
 
+/**
+ * BASIC (not optimal) implementation of the LRU cache
+ */
 export class LRUCache<K, V> {
     private cache = new Map<K, V>();
     private keys: K[] = [];

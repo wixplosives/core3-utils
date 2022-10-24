@@ -8,7 +8,7 @@ export type Marker = { getPos: () => Pos; pos?: Pos } & ((
     str: TemplateStringsArray,
     ...replacement: Array<string | number | MarkedString>
 ) => MarkedString);
-type Markers<KEYS extends string> = { [key in KEYS]: Marker };
+export type Markers<KEYS extends string> = { [key in KEYS]: Marker };
 
 export interface Pos {
     start: number;

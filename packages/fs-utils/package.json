@@ -1,7 +1,7 @@
 {
-  "name": "@wixc3/common",
-  "version": "2.2.1",
-  "description": "Common utils, usable in all environments",
+  "name": "@wixc3/fs-utils",
+  "version": "2.2.0",
+  "description": "Filesystem utils, usable in all environments",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "author": "Wix.com",
@@ -18,10 +18,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@file-services/path": "^7.0.1",
-    "@file-services/types": "^7.0.1"
+    "@file-services/memory": "^7.0.1",
+    "@file-services/path": "^7.0.1"
   },
   "devDependencies": {
-    "@microsoft/api-documenter": "^7.19.22"
+    "@file-services/types": "^7.0.1"
   }
 }

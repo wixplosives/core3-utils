@@ -1,8 +1,8 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../dist/cjs",
+    "outDir": "../dist/esm",
+    "module": "ESNext",
     "types": ["mocha"]
-  },
-  "references": []
+  }
 }

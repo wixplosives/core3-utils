@@ -2,15 +2,14 @@
   "name": "@wixc3/performance",
   "version": "2.2.0",
   "description": "Performance utils, usable in all environments",
-  "main": "dist-cjs/index.js",
-  "module": "dist-esm/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "author": "Wix.com",
   "files": [
-    "dist-cjs",
-    "dist-esm",
+    "dist",
     "src",
-    "!dist-cjs/tsconfig.tsbuildinfo",
-    "!dist-esm/tsconfig.tsbuildinfo"
+    "!dist/*/test",
+    "!dist/*.tsconfig.tsbuildinfo"
   ],
   "license": "MIT",
   "repository": "git@github.com:wixplosives/core3-utils.git",

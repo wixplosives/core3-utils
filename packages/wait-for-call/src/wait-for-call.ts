@@ -1,4 +1,6 @@
 import { waitFor } from 'promise-assist';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import sinon from 'sinon';
 import { expect } from 'chai';
 

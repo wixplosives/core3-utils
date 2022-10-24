@@ -3,8 +3,8 @@ import type { IFileSystem } from '@file-services/types';
 /**
  * Gets package name.
  *
- * @param pathToPackageJson a package.json absolute path
- * @param fs file system
+ * @param pathToPackageJson - a package.json absolute path
+ * @param fs - file system
  */
 export function getPackageName(pathToPackageJson: string, fs: IFileSystem): string | undefined {
     try {

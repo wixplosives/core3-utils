@@ -1,3 +1,7 @@
+/**
+ * Disposables allow adding of disposal async functions,
+ * when dispose is called, these functions will be run sequentially
+ */
 export function createDisposables() {
     const disposables = new Set<() => unknown>();
 
