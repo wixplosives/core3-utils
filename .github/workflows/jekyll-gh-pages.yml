@@ -39,7 +39,7 @@ jobs:
       - run: yarn build
       - run: yarn docs
       - name: Setup Pages
-        uses:  api-documenter markdown@v2
+        uses:  api-documenter/markdown@v2
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
