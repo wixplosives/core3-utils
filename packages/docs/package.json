@@ -1,0 +1,25 @@
+{
+    "name": "@wixc3/docs",
+    "version": "2.2.8",
+    "description": "API ",
+    "main": "dist/index.js",
+    "author": "Wix.com",
+    "files": [
+        "dist",
+        "src",
+        "!dist/test",
+        "!dist/tsconfig.tsbuildinfo"
+    ],
+    "license": "MIT",
+    "repository": "git@github.com:wixplosives/core3-utils.git",
+    "publishConfig": {
+        "access": "public"
+    },
+    "bin": {
+        "docs":"bin/build-docs"
+    },
+    "dependencies": {
+        "@microsoft/api-documenter": "^7.19.22",
+        "@microsoft/api-extractor": "^7.33.4"
+    }
+}
