@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "./packages/docs/src" },
+    { "path": "./packages/docs/src/tsconfig.esm.json" },
     { "path": "./packages/common/src" },
     { "path": "./packages/common/src/tsconfig.esm.json" },
     { "path": "./packages/data-structures/src" },

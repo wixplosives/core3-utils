@@ -124,5 +124,5 @@ dist
 .DS_Store
 # Autodocs
 temp/
-.docs/
+_docs/
 tsdoc-metadata.json
