@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * FS Path and package.json utils 
+ * FS Path and package.json utils
  */
 export * from './filepath';
 export * from './package-json';

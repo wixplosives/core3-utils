@@ -118,7 +118,6 @@ export function createImportPath({
     }
 }
 
-
 /**
  * Checks if a path is equal to or subpath of a given base path.
  */

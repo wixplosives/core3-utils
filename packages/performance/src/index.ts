@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * Performance measuring 
+ * Performance measuring
  */
 export * from './performance';
 export * from './performance-measures';

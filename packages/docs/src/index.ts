@@ -5,7 +5,7 @@
  * ```bash
  * yarn add [[[packageName]]]
  * yarn docs init
- * git push 
+ * git push
  * ```
  * @example <caption>build documentation locally</caption>
  * ```bash
@@ -13,8 +13,7 @@
  * yarn docs build
  * ```
  */
-export * from './build-docs' 
-export * from './create-readme' 
-export * from './init'
-export {cli} from './cli' 
-
+export * from './build-docs';
+export * from './create-readme';
+export * from './init';
+export { cli } from './cli';
