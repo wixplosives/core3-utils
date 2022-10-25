@@ -1,8 +1,6 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/docs/src" },
-    { "path": "./packages/docs/src/tsconfig.esm.json" },
     { "path": "./packages/common/src" },
     { "path": "./packages/common/src/tsconfig.esm.json" },
     { "path": "./packages/data-structures/src" },
@@ -23,6 +21,8 @@
     { "path": "./packages/fs-utils/src" },
     { "path": "./packages/fs-utils/src/tsconfig.esm.json" },
     { "path": "./packages/performance/src" },
-    { "path": "./packages/performance/src/tsconfig.esm.json" }
+    { "path": "./packages/performance/src/tsconfig.esm.json" },
+    { "path": "./packages/docs/src" },
+    { "path": "./packages/docs/src/tsconfig.esm.json" }
   ]
 }
