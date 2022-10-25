@@ -1,6 +1,6 @@
 {
     "name": "@wixc3/docs",
-    "version": "2.2.8",
+    "version": "2.2.9",
     "description": "API ",
     "main": "dist/index.js",
     "author": "Wix.com",
