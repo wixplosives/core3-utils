@@ -9,12 +9,12 @@ Browser utilities
 
 ## Classes
 
-| Class                                                                                                | Description |
-| ---------------------------------------------------------------------------------------------------- | ----------- |
+| Class                                                           | Description |
+| --------------------------------------------------------------- | ----------- |
 | [AnimationFrameScheduler](https://wixplosives.github.io/core3-utils/browser.animationframescheduler) |             |
 
 ## Variables
 
-| Variable                                                                   | Description               |
-| -------------------------------------------------------------------------- | ------------------------- |
+| Variable                              | Description               |
+| ------------------------------------- | ------------------------- |
 | [loadScript](https://wixplosives.github.io/core3-utils/browser.loadscript) | Loads a script in browser |

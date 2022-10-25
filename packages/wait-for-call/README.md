@@ -9,6 +9,6 @@ A handy way to test callbacks
 
 ## Functions
 
-| Function                                                                                                | Description |
-| ------------------------------------------------------------------------------------------------------- | ----------- |
+| Function                                                           | Description |
+| ------------------------------------------------------------------ | ----------- |
 | [createWaitForCall(name, f)](https://wixplosives.github.io/core3-utils/wait-for-call.createwaitforcall) |             |

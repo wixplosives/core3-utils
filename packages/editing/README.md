@@ -9,14 +9,14 @@ Code editing and parsing
 
 ## Enumerations
 
-| Enumeration                                                                | Description |
-| -------------------------------------------------------------------------- | ----------- |
+| Enumeration                           | Description |
+| ------------------------------------- | ----------- |
 | [SymbolKind](https://wixplosives.github.io/core3-utils/editing.symbolkind) |             |
 
 ## Functions
 
-| Function                                                                                                                                         | Description                                                                 |
-| ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| Function                                                                                                    | Description                                                                 |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | [charPosToLinePos(fileSplitText, pos)](https://wixplosives.github.io/core3-utils/editing.charpostolinepos)                                       |                                                                             |
 | [charPosToLinePosWithLineStarts(lineStarts, totalLength, pos)](https://wixplosives.github.io/core3-utils/editing.charpostolineposwithlinestarts) |                                                                             |
 | [lineAndColumnToIndex(content, pos, newline)](https://wixplosives.github.io/core3-utils/editing.lineandcolumntoindex)                            | Receives zero based line number and character returns 0 based index in file |
@@ -25,8 +25,8 @@ Code editing and parsing
 
 ## Interfaces
 
-| Interface                                                                                                      | Description |
-| -------------------------------------------------------------------------------------------------------------- | ----------- |
+| Interface                                                                 | Description |
+| ------------------------------------------------------------------------- | ----------- |
 | [Color](https://wixplosives.github.io/core3-utils/editing.color)                                               |             |
 | [CompletionDetails](https://wixplosives.github.io/core3-utils/editing.completiondetails)                       |             |
 | [CompletionItemLabel](https://wixplosives.github.io/core3-utils/editing.completionitemlabel)                   |             |
@@ -52,14 +52,14 @@ Code editing and parsing
 
 ## Variables
 
-| Variable                                                                       | Description |
-| ------------------------------------------------------------------------------ | ----------- |
+| Variable                                  | Description |
+| ----------------------------------------- | ----------- |
 | [lspRangeToTS](https://wixplosives.github.io/core3-utils/editing.lsprangetots) |             |
 
 ## Type Aliases
 
-| Type Alias                                                                         | Description |
-| ---------------------------------------------------------------------------------- | ----------- |
+| Type Alias                                    | Description |
+| --------------------------------------------- | ----------- |
 | [Delimiters](https://wixplosives.github.io/core3-utils/editing.delimiters)         |             |
 | [Descriptors](https://wixplosives.github.io/core3-utils/editing.descriptors)       |             |
 | [ProviderResult](https://wixplosives.github.io/core3-utils/editing.providerresult) |             |

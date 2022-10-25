@@ -7,8 +7,8 @@
 
 ## Interfaces
 
-| Interface                                                                                       | Description |
-| ----------------------------------------------------------------------------------------------- | ----------- |
+| Interface                                                  | Description |
+| ---------------------------------------------------------- | ----------- |
 | [ExpectValue](https://wixplosives.github.io/core3-utils/mostly-equal.expectvalue)               |             |
 | [ExpectValues](https://wixplosives.github.io/core3-utils/mostly-equal.expectvalues)             |             |
 | [ExpectValuesInfo](https://wixplosives.github.io/core3-utils/mostly-equal.expectvaluesinfo)     |             |
@@ -16,8 +16,8 @@
 
 ## Variables
 
-| Variable                                                                                          | Description  |
-| ------------------------------------------------------------------------------------------------- | ------------ |
+| Variable                                                     | Description  |
+| ------------------------------------------------------------ | ------------ |
 | [checkExpectValues](https://wixplosives.github.io/core3-utils/mostly-equal.checkexpectvalues)     |              |
 | [clearMatchedValues](https://wixplosives.github.io/core3-utils/mostly-equal.clearmatchedvalues)   |              |
 | [defined](https://wixplosives.github.io/core3-utils/mostly-equal.defined)                         |              |
@@ -40,8 +40,8 @@
 
 ## Type Aliases
 
-| Type Alias                                                                                        | Description |
-| ------------------------------------------------------------------------------------------------- | ----------- |
+| Type Alias                                                   | Description |
+| ------------------------------------------------------------ | ----------- |
 | [ErrorOrText](https://wixplosives.github.io/core3-utils/mostly-equal.errorortext)                 |             |
 | [ErrorOrTextOrExpect](https://wixplosives.github.io/core3-utils/mostly-equal.errorortextorexpect) |             |
 | [ExpandedValues](https://wixplosives.github.io/core3-utils/mostly-equal.expandedvalues)           |             |

@@ -28,8 +28,8 @@ yarn docs build
 
 ## Functions
 
-| Function                                                                                                 | Description |
-| -------------------------------------------------------------------------------------------------------- | ----------- |
+| Function                                                            | Description |
+| ------------------------------------------------------------------- | ----------- |
 | [buildDocs(packagesPath, docs, headers)](https://wixplosives.github.io/core3-utils/docs.builddocs)       |             |
 | [cli()](https://wixplosives.github.io/core3-utils/docs.cli)                                              |             |
 | [createReadme(siteUrl, docs, packagesPath)](https://wixplosives.github.io/core3-utils/docs.createreadme) |             |

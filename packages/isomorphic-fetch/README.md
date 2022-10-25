@@ -9,6 +9,6 @@ An isomorphic way to use fetch (i.e works the same in browser and node environme
 
 ## Variables
 
-| Variable                                                                      | Description                                                                          |
-| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Variable                                 | Description                                                                          |
+| ---------------------------------------- | ------------------------------------------------------------------------------------ |
 | [fetch_2](https://wixplosives.github.io/core3-utils/isomorphic-fetch.fetch_2) | An isomorphic way to use fetch (i.e works the same in browser and node environments) |

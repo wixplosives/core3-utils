@@ -7,8 +7,8 @@
 
 ## Functions
 
-| Function                                                                                                                  | Description |
-| ------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| Function                                                                             | Description |
+| ------------------------------------------------------------------------------------ | ----------- |
 | [readFolderSync(fs, folderPath)](https://wixplosives.github.io/core3-utils/node.readfoldersync)                           |             |
 | [readFolderSyncNode(fromFileName, relativeFolderPath)](https://wixplosives.github.io/core3-utils/node.readfoldersyncnode) |             |
 | [registerMappings(newMappings)](https://wixplosives.github.io/core3-utils/node.registermappings)                          |             |
@@ -16,6 +16,6 @@
 
 ## Interfaces
 
-| Interface                                                                               | Description |
-| --------------------------------------------------------------------------------------- | ----------- |
+| Interface                                          | Description |
+| -------------------------------------------------- | ----------- |
 | [ISpawnAsyncOptions](https://wixplosives.github.io/core3-utils/node.ispawnasyncoptions) |             |

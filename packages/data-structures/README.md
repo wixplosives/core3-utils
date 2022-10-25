@@ -9,8 +9,8 @@ Useful data structures such as LRU-Cache, set-multi-map, Signal, EventEmitter, D
 
 ## Classes
 
-| Class                                                                                  | Description                                             |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Class                                             | Description                                             |
+| ------------------------------------------------- | ------------------------------------------------------- |
 | [Debouncer](https://wixplosives.github.io/core3-utils/data-structures.debouncer)       | Cancelable debouncing of calls to trigger               |
 | [EventEmitter](https://wixplosives.github.io/core3-utils/data-structures.eventemitter) | A simple event emitter                                  |
 | [LRUCache](https://wixplosives.github.io/core3-utils/data-structures.lrucache)         | BASIC (not optimal) implementation of the LRU cache     |
@@ -19,21 +19,21 @@ Useful data structures such as LRU-Cache, set-multi-map, Signal, EventEmitter, D
 
 ## Functions
 
-| Function                                                                                           | Description                                                                                                            |
-| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Function                                                      | Description                                                                                                            |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | [createDisposables()](https://wixplosives.github.io/core3-utils/data-structures.createdisposables) | Disposables allow adding of disposal async functions, when dispose is called, these functions will be run sequentially |
 | [isSetMultiMap(x)](https://wixplosives.github.io/core3-utils/data-structures.issetmultimap)        |                                                                                                                        |
 
 ## Interfaces
 
-| Interface                                                                                  | Description |
-| ------------------------------------------------------------------------------------------ | ----------- |
+| Interface                                             | Description |
+| ----------------------------------------------------- | ----------- |
 | [LRUCacheConfig](https://wixplosives.github.io/core3-utils/data-structures.lrucacheconfig) |             |
 
 ## Type Aliases
 
-| Type Alias                                                                                   | Description |
-| -------------------------------------------------------------------------------------------- | ----------- |
+| Type Alias                                              | Description |
+| ------------------------------------------------------- | ----------- |
 | [Disposable](https://wixplosives.github.io/core3-utils/data-structures.disposable)           |             |
 | [Disposables](https://wixplosives.github.io/core3-utils/data-structures.disposables)         |             |
 | [DisposeFunction](https://wixplosives.github.io/core3-utils/data-structures.disposefunction) |             |

@@ -9,13 +9,13 @@ Performance measuring
 
 ## Interfaces
 
-| Interface                                                                          | Description |
-| ---------------------------------------------------------------------------------- | ----------- |
+| Interface                                     | Description |
+| --------------------------------------------- | ----------- |
 | [IPerformance](https://wixplosives.github.io/core3-utils/performance.iperformance) |             |
 
 ## Variables
 
-| Variable                                                                                         | Description |
-| ------------------------------------------------------------------------------------------------ | ----------- |
+| Variable                                                    | Description |
+| ----------------------------------------------------------- | ----------- |
 | [Performance_2](https://wixplosives.github.io/core3-utils/performance.performance_2)             |             |
 | [performanceMeasures](https://wixplosives.github.io/core3-utils/performance.performancemeasures) |             |

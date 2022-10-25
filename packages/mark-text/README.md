@@ -7,22 +7,22 @@
 
 ## Interfaces
 
-| Interface                                                                        | Description |
-| -------------------------------------------------------------------------------- | ----------- |
+| Interface                                   | Description |
+| ------------------------------------------- | ----------- |
 | [MarkedString](https://wixplosives.github.io/core3-utils/mark-text.markedstring) |             |
 | [Pos](https://wixplosives.github.io/core3-utils/mark-text.pos)                   |             |
 
 ## Variables
 
-| Variable                                                                           | Description |
-| ---------------------------------------------------------------------------------- | ----------- |
+| Variable                                      | Description |
+| --------------------------------------------- | ----------- |
 | [createMarkers](https://wixplosives.github.io/core3-utils/mark-text.createmarkers) |             |
 | [markText](https://wixplosives.github.io/core3-utils/mark-text.marktext)           |             |
 
 ## Type Aliases
 
-| Type Alias                                                             | Description |
-| ---------------------------------------------------------------------- | ----------- |
+| Type Alias                        | Description |
+| --------------------------------- | ----------- |
 | [Mark](https://wixplosives.github.io/core3-utils/mark-text.mark)       |             |
 | [Marker](https://wixplosives.github.io/core3-utils/mark-text.marker)   |             |
 | [Markers](https://wixplosives.github.io/core3-utils/mark-text.markers) |             |
