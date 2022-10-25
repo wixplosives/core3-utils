@@ -37,7 +37,7 @@ jobs:
       - run: yarn config set network-timeout 300000
       - run: yarn
       - run: yarn build
-      - run: yarn docs
+      - run: yarn docs build
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
