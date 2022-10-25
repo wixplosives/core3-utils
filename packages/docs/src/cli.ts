@@ -21,30 +21,31 @@ const conf = {
     describe: 'index/package/item headers and other configuration',
     string: true
 }
+export const siteUrl = {
+    alias: 's',
+    default: 'https://<org>.github.io/<repo>',
+    describe: `base URL of the project's github pages`,
+    string: true
+}
 
 export function cli() {
     yargs(process.argv.slice(2))
         .scriptName('docs')
         .usage('$0 <cmd> [args]')
         .command('build', 'Build doc markdown from packages TSDocs',
-            { output, packages, headers: conf },
-            async ({ output, packages, headers }) => {
-                await buildDocs(packages, output, headers)
+            { output, packages, conf },
+             ({ output, packages, conf }) => {
+                buildDocs(packages, output, conf)
             })
         .command('init', 'initialize docs config and github pages action',
             { packages, headers: conf },
-            async ({ packages, headers} ) => {
-                await init(packages, headers)
+             ({ packages, headers} ) => {
+                 init(packages, headers)
             })
-        .command(['readme', '<siteUrl>'], 'create README.md for all the packages',
-            { docs: output, packages },
-            async (args) => {
-                if (!args._[1]) {
-                    // eslint-disable-next-line no-console
-                    console.error('siteUrl arg is required');
-                    process.exit(2);
-                }
-                await createReadme(args._[1] as string, args.docs, args.packages)
+        .command(['readme'], 'create README.md for all the packages',
+            { docs: output, packages, siteUrl },
+             ({ docs, packages, siteUrl }) => {
+                 createReadme(siteUrl, docs, packages)
             }
         )
         .demandCommand()

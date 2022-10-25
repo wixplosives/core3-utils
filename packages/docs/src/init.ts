@@ -1,11 +1,10 @@
-import { cp, readFile, writeFile } from "fs/promises";
 import { join } from "path";
 import { listPackages } from "./common";
-import { mkdirSync, readFileSync, writeFileSync } from "fs";
+import { cpSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 
 
 
-export async function init(packagesPath = 'packages', confPath: string) {
+export function init(packagesPath = 'packages', confPath: string) {
     const resources = join(__dirname, '..', '..', 'resources')
     const template = (resource: string) => {
         let base = readFileSync(join(resources, resource), 'utf8')
@@ -21,15 +20,14 @@ export async function init(packagesPath = 'packages', confPath: string) {
     template('api-extractor.base.json')
     template('api-extractor.json')
 
-    const actions = listPackages(packagesPath)
+    listPackages(packagesPath)
         .map(pkg => {
             const source = join(confPath, 'api-extractor.json')
             const target = join(packagesPath, pkg, 'api-extractor.json')
-            return cp(source, target)
+            return cpSync(source, target)
         })
 
-    actions.push(cp(join(resources, 'doc-headers'), confPath, { recursive: true, }))
+    cpSync(join(resources, 'doc-headers'), confPath, { recursive: true })
     mkdirSync('.github/workflows', { recursive: true })
-    actions.push(cp(join(resources, 'jekyll-gh-pages.yml'), join('.github/workflows', 'jekyll-gh-pages.yml')))
-    await Promise.all(actions)
+    cpSync(join(resources, 'jekyll-gh-pages.yml'), join('.github/workflows', 'jekyll-gh-pages.yml'))
 }

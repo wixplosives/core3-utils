@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import {  join } from 'path'
+import { join } from 'path'
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor'
 import { execSync } from 'child_process'
 import { readdirSync } from 'fs'
@@ -9,7 +9,7 @@ import { listPackages } from './common'
  * 
  * @param packagesPath 
  */
-export async function buildDocs(packagesPath:string, docs:string, headers:string) {
+export function buildDocs(packagesPath: string, docs: string, headers: string) {
     const temp = 'temp'
     console.time("Analyzing APIs...")
     listPackages(packagesPath).forEach(path => {
@@ -22,9 +22,8 @@ export async function buildDocs(packagesPath:string, docs:string, headers:string
     execSync(`yarn api-documenter markdown -i ${temp} -o ${docs}`)
     console.timeEnd("Building markdown files")
     console.time("Processing macros")
-    await Promise.all(
-        readdirSync(docs, { withFileTypes: true })
-            .filter(f => f.isFile())
-            .map(({ name }) => processMacros(docs, name, createHeadersModifier(headers))))
+    readdirSync(docs, { withFileTypes: true })
+        .filter(f => f.isFile())
+        .map(({ name }) => processMacros(docs, packagesPath, name, null, createHeadersModifier(headers)))
     console.timeEnd("Processing macros")
 }    

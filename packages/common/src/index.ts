@@ -1,7 +1,6 @@
 /**
  * @packageDocumentation
  * Useful utils for strings, iterables, objects, maps, promises and other commonly used structures
- * <a href="https://badge.fury.io/js/[[packasge]]"><img src="https://badge.fury.io/js/[[packasge]]n.svg" alt="npm version" height="18"></a>
  */
 export * from './strings';
 export * from './numbers';
