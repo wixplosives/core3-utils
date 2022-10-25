@@ -1,22 +1,26 @@
 /* eslint-disable @typescript-eslint/require-await */
+import { readPackageJson } from "@wixc3/fs-utils"
 import { execSync } from "child_process"
-import { cp, readFile, writeFile } from "fs/promises"
+import {  readFile, writeFile } from "fs/promises"
+import nodeFs from "@file-services/node"
 import { join } from "path"
-export type Macro = (filename: string, docsPath?: string, ...args: string[]) => Promise<{
-    text: string
-    afterWrite?: () => Promise<void>
-}>
+import { existsSync } from "fs"
+export type Macro = (filename: string, docsPath?: string, ...args: string[]) => string
 
 export const macros = {
-    packageName: async (name: string, _: string, prefix = '') =>
-        ({ text: `${prefix ? prefix + '/' : ''}${(await macros.unscopedPackageName(name)).text}` }),
+    rootPackageName:  () =>
+         readPackageJson('.', nodeFs).name,
 
-    unscopedPackageName: async (name: string) =>
-        ({ text: `${name.replace(/\..*/, '')}` }),
+    packageName:  (name: string, packages: string) =>
+       readPackageJson(join(packages, name), nodeFs).name,
 
-    packageNameUrl: async (name: string) => ({ text: encodeURIComponent(`@wixc3/${name.replace(/\..*/, '')}`) }),
+    unscopedPackageName:  (name: string, packages: string) =>
+       macros.packageName(name, packages)?.replace(/.*\//,'') ,
 
-    gitRepo: async () => {
+    packageNameUrl:  (name: string, packages:string) => 
+        encodeURIComponent(macros.packageName(name, packages) as string) ,
+
+    gitRepo:  () => {
         try {
             const res = execSync("git remote -v").toString().split('\n')[1]
             // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
@@ -27,59 +31,51 @@ export const macros = {
         }
     },
 
-    githubBuildStatus: async () => {
-        const repo = (await macros.gitRepo()).text;
+    githubBuildStatus:  () => {
+        const repo =  macros.gitRepo().text;
         return {
             text: `[![Build Status](${repo}/workflows/tests/badge.svg)](${repo}/actions)`
         }
     },
 
-    npmBadge: async (name: string) => {
-        const pkg = (await macros.packageNameUrl(name)).text
+    npmBadge: async (name: string, packages:string) => {
+        const pkg =  macros.packageNameUrl(name, packages)
         return {
             text: `[![npm version](https://badge.fury.io/js/${pkg}.svg)](https://badge.fury.io/js/${pkg})`
         }
     },
 
-    include: async (_: string, docs = '', target = '') => {
+    include:  async (_: string, docs = '', target = '') => {
         if (!target) {
             throw new Error('Invalid include macro: missing target argument')
         } const text = await processMacros(docs, target)
         return { text }
-    },
-
-    copy: async (name: string, docs = '', target = '', replace = '', replaceWith = '') => {
-        if (!target) {
-            throw new Error('Invalid copy macro: missing target argument')
-        }
-        return {
-            text: '', afterWrite: async () => {
-                if (replace) {
-                    const content = await readFile(join(docs, name), 'utf8')
-                    const mod = content.split(replace).join(replaceWith)
-                    await writeFile(join(docs, target), mod, { encoding: 'utf8' })
-                } else {
-                    await cp(join(docs, name), join(docs, target))
-                }
-            }
-        }
-    },
+    }
 }
 
-type c = keyof typeof macros
 
-export const createIndexParser = (indexHeaderPath: string) =>
-    (name: string, content: string) =>
-        name === 'index.md'
-            ? `\\[\\[\\[include ../${indexHeaderPath}\\]\\]\\]
-               ${content}`
-            : content
-
+export const createHeadersModifier = (headers: string) => {
+    if (existsSync(headers)) {
+        return (name: string, content: string) => {
+            if (name === 'index.md') {
+                return `\\[\\[\\[include ../${headers}/index.md}\\]\\]\\]
+                    ${content}`
+            }
+            if (name.split('.').length === 2) {
+                return `\\[\\[\\[include ../${headers}/package.md}\\]\\]\\]
+                    ${content}`
+            }
+            return `\\[\\[\\[include ../${headers}/item.md}\\]\\]\\]
+                ${content}`
+        }
+    } else {
+        return (_: string, content: string) => content;
+    }
+}
 
 export async function processMacros(docsPath: string, filename: string, modifier?: (name: string, content: string) => string) {
     const source = await readFile(join(docsPath, filename), 'utf8')
     const mod = modifier ? modifier(filename, source) : source
-    const after = [] as Awaited<ReturnType<Macro>>[]
     const processed = (await Promise.all(mod.split('\\[\\[\\[').map(
         async text => {
             if (!text.includes('\\]\\]\\]')) {
@@ -88,21 +84,15 @@ export async function processMacros(docsPath: string, filename: string, modifier
             const [macro, ...args] = text.replace(/\\]\\]\\][\S\s.]*/g, '').split(' ')
             if (macro && macro in macros) {
                 const res = await (macros as any)[macro]?.(filename, docsPath, ...args)
-                after.push(res)
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                return `${res.text}${text.replace(/.*\\]\\]\\]/, '')}`
+                return `${res}${text.replace(/.*\\]\\]\\]/, '')}`
             } else {
                 return `\\[\\[\\[${text}\\]\\]\\]`
             }
         }
     ))).join('')
     if (source !== processed) {
-        await writeFile(join(docsPath, filename), processed, { encoding: 'utf8' })
-        for (const { afterWrite } of after) {
-            if (afterWrite) {
-                await afterWrite()
-            }
-        }
+        await writeFile(join(docsPath, filename), processed, { encoding: 'utf8' })        
     }
     return processed
 }

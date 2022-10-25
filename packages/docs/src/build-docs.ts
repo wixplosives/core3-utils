@@ -1,15 +1,15 @@
 /* eslint-disable no-console */
-import { dirname, join } from 'path'
+import {  join } from 'path'
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor'
 import { execSync } from 'child_process'
 import { readdirSync } from 'fs'
-import { createIndexParser, processMacros } from './macros'
+import { createHeadersModifier, processMacros } from './macros'
 import { listPackages } from './common'
 /**
  * 
  * @param packagesPath 
  */
-export async function buildDocs(packagesPath = 'packages', docs='_docs', indexHeaderPath='README.base.md') {
+export async function buildDocs(packagesPath:string, docs:string, headers:string) {
     const temp = 'temp'
     console.time("Analyzing APIs...")
     listPackages(packagesPath).forEach(path => {
@@ -25,6 +25,6 @@ export async function buildDocs(packagesPath = 'packages', docs='_docs', indexHe
     await Promise.all(
         readdirSync(docs, { withFileTypes: true })
             .filter(f => f.isFile())
-            .map(({ name }) => processMacros(docs, name, createIndexParser(indexHeaderPath))))
+            .map(({ name }) => processMacros(docs, name, createHeadersModifier(headers))))
     console.timeEnd("Processing macros")
 }    

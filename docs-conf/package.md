@@ -1,2 +1,2 @@
 # [[[packageName]]]
-[[[buildStatus]]]
+[[[npmBadge]]]

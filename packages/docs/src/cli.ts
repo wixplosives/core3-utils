@@ -15,29 +15,26 @@ const output = {
     describe: 'target directory',
     string: true
 }
-const indexHeaderPath = {
-    alias: 'o',
-    default: 'README.base.md',
-    describe: 'main site index header in markdown format',
+const conf = {
+    alias: 'c',
+    default: 'docs-conf',
+    describe: 'index/package/item headers and other configuration',
     string: true
 }
-
-
-
 
 export function cli() {
     yargs(process.argv.slice(2))
         .scriptName('docs')
         .usage('$0 <cmd> [args]')
         .command('build', 'Build doc markdown from packages TSDocs',
-            { output, packages, indexHeaderPath },
-            async (argv) => {
-                await buildDocs(argv.packages, argv.output)
+            { output, packages, headers: conf },
+            async ({ output, packages, headers }) => {
+                await buildDocs(packages, output, headers)
             })
         .command('init', 'initialize docs config and github pages action',
-            { packages },
-            async (argv) => {
-                await init(argv.packages)
+            { packages, headers: conf },
+            async ({ packages, headers} ) => {
+                await init(packages, headers)
             })
         .command(['readme', '<siteUrl>'], 'create README.md for all the packages',
             { docs: output, packages },
@@ -49,12 +46,7 @@ export function cli() {
                 }
                 await createReadme(args._[1] as string, args.docs, args.packages)
             }
-        ).positional('siteUrl', {
-            describe: 'site base URL (links will be directed there)',
-            string: true,
-            nargs: 0,
-            require: true
-        })
+        )
         .demandCommand()
         .help()
         .parseAsync().catch(e => {
