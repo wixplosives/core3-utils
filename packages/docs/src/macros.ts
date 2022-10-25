@@ -38,7 +38,7 @@ export const macros = {
 
     githubPages: (_1='', _2='', _3='', uri='', caption='') => {
         const remote = execSync("git remote -v").toString().split('\n')[1]!
-        const [org, repo] = remote.replace(/.*:/, '').replace('.git', '').split('/')
+        const [org, repo] = remote.replace(/.*:/, '').replace(/\.git.*/, '').split('/')
         const pages = `https://${org}.github.io/${repo}/${uri}`
         return caption === '' ? pages : `[${caption}](${pages})`
     },
