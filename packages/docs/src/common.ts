@@ -22,7 +22,7 @@ export function parseMacro(match: RegExpMatchArray) {
     return { all, macro, args };
 }
 export const replaceAll = (data: string, replace: Record<string, string | ((...args: string[]) => string)>) => {
-    for (const match of data.matchAll(/\[\[\[(.*?)\]\]\]|\\\[\\\[\\\[(.*?)\\\]\\\]\\\]/g)) {
+    for (const match of data.matchAll(/(?<!(\*))\[\[\[(.*?)\]\]\]|(?<!(\*))\\\[\\\[\\\[(.*?)\\\]\\\]\\\]/g)) {
         const { all, macro, args } = parseMacro(match);
         const v = replace[macro];
         if (v) {
