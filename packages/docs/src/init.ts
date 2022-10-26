@@ -1,9 +1,9 @@
 import { join } from 'path';
-import { Config, getRepo, listPackages, replaceAll } from './common';
+import {  getRepo, listPackages, replaceAll, UserConfig, writeConfig } from './common';
 import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 
-export function init(confPath:string, config:Partial<Config>) {
-    const packagesPath = config.packages!
+export function init(confPath:string, config:UserConfig) {
+    const packagesPath = config.packages
     const resources = join(__dirname, '..', '..', 'resources');
     const writeConf = (filename: string, data: string | object) =>
         writeFileSync(join(confPath, filename), typeof data === 'string' ? data : JSON.stringify(data), 'utf8');
@@ -14,9 +14,9 @@ export function init(confPath:string, config:Partial<Config>) {
     };
     
     mkdirSync(confPath, { recursive: true });
-    writeConf('conf.json', {
+    writeConfig(confPath, {
         ...config,
-        git: getRepo(),
+        git: getRepo(true),
     })
     template('api-extractor.base.json');
     template('api-extractor.json');
