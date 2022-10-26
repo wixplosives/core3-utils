@@ -1,4 +1,5 @@
 import { readPackageJson } from '@wixc3/fs-utils';
+import { first } from '@wixc3/common';
 import { execSync } from 'child_process';
 import nodeFs from '@file-services/node';
 import { join, basename } from 'path';
@@ -9,6 +10,20 @@ const stripName = (name: string) => {
     const base = basename(name).split('.')[0]!;
     return base === 'index' ? '..' : base;
 };
+
+const getRepo = () =>{
+    try {
+        const res = execSync('git remote -v').toString().split('\n')[1];
+        const match = first(res?.matchAll(/.*@(.*):(.*)\/(.*)\.git.*/g))
+        if (match) {
+            const [_, host, org, repo] = match
+            return {host, org, repo}
+        }
+        return ;
+    } catch {
+        return;
+    }
+}
 export const macros = {
     rootPackageName: () => readPackageJson('.', nodeFs).name,
 
@@ -25,28 +40,16 @@ export const macros = {
             .join('@'),
 
     gitRepo: () => {
-        try {
-            const res = execSync('git remote -v').toString().split('\n')[1];
-            // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-            const repo =
-                'https://' +
-                res
-                    ?.replace(/.*@/, '')
-                    .replace(/\.git.*/, '')
-                    .replace(':', '/');
-            return repo || 'Unknown git repo';
-        } catch {
-            return 'Unknown git repo';
-        }
+        const repo = getRepo()
+        return repo
+        ? `https://${repo.host}/${repo.org}/${repo.repo}`
+        : 'Unknown git repo'
     },
 
     githubPages: (_1 = '', _2 = '', _3 = '', uri = '', caption = '') => {
-        const remote = execSync('git remote -v').toString().split('\n')[1]!;
-        const [org, repo] = remote
-            .replace(/.*:/, '')
-            .replace(/\.git.*/, '')
-            .split('/');
-        const pages = `https://${org}.github.io/${repo}/${uri}`;
+        const repo = getRepo()
+        if (!repo) return ''
+        const pages = `https://${repo.org!}.github.io/${repo.repo}/${uri}`
         return caption === '' ? pages : `[${caption}](${pages})`;
     },
 
