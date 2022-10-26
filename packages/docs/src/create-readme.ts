@@ -4,8 +4,8 @@ import { listPackages, loadConfig } from './common';
 import { readFileSync, writeFileSync } from 'fs';
 import { siteUrl as site } from './cli';
 
-export function createReadme(conf:string, siteUrl:string) {
-    const config = loadConfig(conf)
+export function createReadme(conf: string, siteUrl: string) {
+    const config = loadConfig(conf);
     if (siteUrl === site.default) {
         siteUrl = config.git.pages;
     }

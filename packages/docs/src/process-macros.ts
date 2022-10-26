@@ -1,8 +1,8 @@
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import { join } from "path";
-import { ProcessingConfig, replaceAll } from "./common";
-import { macros } from './macros'
-import { mapValues } from '@wixc3/common'
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
+import { ProcessingConfig, replaceAll } from './common';
+import { macros } from './macros';
+import { mapValues } from '@wixc3/common';
 
 export const createHeadersModifier = (headers: string) => {
     if (existsSync(headers)) {
@@ -23,15 +23,16 @@ export const createHeadersModifier = (headers: string) => {
     }
 };
 
-export function processMacros(
-    config: ProcessingConfig,
-    filename: string,
-    filenameOverride?: string
-) {
+export function processMacros(config: ProcessingConfig, filename: string, filenameOverride?: string) {
     const source = readFileSync(join(config.docs, filename), 'utf8');
     const mod = config.modifier && !filenameOverride ? config.modifier(filename, source) : source;
-    const macrosCtx = mapValues(macros, m => (...args:string[])=>m(config, filenameOverride || filename, ...args))
-    const processed = replaceAll(mod, macrosCtx)
+    const macrosCtx = mapValues(
+        macros,
+        (m) =>
+            (...args: string[]) =>
+                m(config, filenameOverride || filename, ...args)
+    );
+    const processed = replaceAll(mod, macrosCtx);
     if (source !== processed) {
         writeFileSync(join(config.docs, filenameOverride || filename), processed, { encoding: 'utf8' });
     }

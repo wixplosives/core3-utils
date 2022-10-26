@@ -32,30 +32,20 @@ export function cli() {
     yargs(process.argv.slice(2))
         .scriptName('docs')
         .usage('$0 <cmd> [args]')
-        .command(
-            'build',
-            'Build doc markdown from packages TSDocs',
-            {  conf },
-            ({ conf }) => {
-                buildDocs(conf);
-            }
-        )
+        .command('build', 'Build doc markdown from packages TSDocs', { conf }, ({ conf }) => {
+            buildDocs(conf);
+        })
         .command(
             'init',
             'initialize docs config and github pages action',
             { packages, conf, output, siteUrl },
             ({ packages, conf, output, siteUrl }) => {
-                init( conf, {packages, docs:output, siteUrl});
+                init(conf, { packages, docs: output, siteUrl });
             }
         )
-        .command(
-            ['readme'],
-            'create README.md for all the packages',
-            { conf, siteUrl },
-            ({ conf, siteUrl }) => {
-                createReadme(conf, siteUrl);
-            }
-        )
+        .command(['readme'], 'create README.md for all the packages', { conf, siteUrl }, ({ conf, siteUrl }) => {
+            createReadme(conf, siteUrl);
+        })
         .demandCommand()
         .help()
         .parseAsync()

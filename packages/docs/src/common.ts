@@ -16,31 +16,31 @@ export const stripName = (name: string) => {
 };
 
 export function parseMacro(match: RegExpMatchArray) {
-    const all = match[0]!
-    const m = match[1]?.split(/\s+/).filter(i => i)
+    const all = match[0]!;
+    const m = match[1]?.split(/\s+/).filter((i) => i);
     const [macro, ...args] = (m || []) as [string, ...string[]];
-    return { all, macro, args }
+    return { all, macro, args };
 }
 export const replaceAll = (data: string, replace: Record<string, string | ((...args: string[]) => string)>) => {
     for (const match of data.matchAll(/\[\[\[(.*?)\]\]\]|\\\[\\\[\\\[(.*?)\\\]\\\]\\\]/g)) {
-        const {all, macro, args} = parseMacro(match)
-        const v = replace[macro]
+        const { all, macro, args } = parseMacro(match);
+        const v = replace[macro];
         if (v) {
-            data = data.replaceAll(all, typeof v !== 'string' ?  v(...args) : v)
+            data = data.replaceAll(all, typeof v !== 'string' ? v(...args) : v);
         }
     }
-    return data
-}
+    return data;
+};
 
 export type Repo = {
-    host: string,
-    org: string,
-    repo: string,
-    pages: string,
-    github: string
-}
-export function getRepo(assert: true): Repo
-export function getRepo(): Nullable<Repo>
+    host: string;
+    org: string;
+    repo: string;
+    pages: string;
+    github: string;
+};
+export function getRepo(assert: true): Repo;
+export function getRepo(): Nullable<Repo>;
 export function getRepo(assert = false): Nullable<Repo> {
     try {
         const res = execSync('git remote -v').toString().split('\n')[1];
@@ -49,43 +49,44 @@ export function getRepo(assert = false): Nullable<Repo> {
             const [_, host, org, repo] = match;
             if (host && org && repo) {
                 return {
-                    host, org, repo,
+                    host,
+                    org,
+                    repo,
                     pages: `https://${org}.github.io/${repo}`,
-                    github: `https://${host}/${org}/${repo}`
+                    github: `https://${host}/${org}/${repo}`,
                 };
             }
         }
     } catch {
-        // 
+        //
     }
     if (assert) {
-        throw new Error('Unable to find remote git repo, make sure git is working and the origin is set')
+        throw new Error('Unable to find remote git repo, make sure git is working and the origin is set');
     }
-    return
+    return;
 }
-
 
 export type UserConfig = {
-    packages: string,
-    docs: string,
-    siteUrl?: string
-}
+    packages: string;
+    docs: string;
+    siteUrl?: string;
+};
 
 export type Config = UserConfig & {
-    git: Repo
-}
+    git: Repo;
+};
 
-export type ProcessingConfig = Config & { modifier?: (name: string, content: string) => string }
+export type ProcessingConfig = Config & { modifier?: (name: string, content: string) => string };
 
 export function loadConfig(path: string): Config {
     try {
-        return JSON.parse(readFileSync(join(path, 'config.json'), 'utf8')) as Config
+        return JSON.parse(readFileSync(join(path, 'config.json'), 'utf8')) as Config;
     } catch {
         //
     }
-    throw new Error(`Invalid config at ${path}/config.json.\n Try running "docs init" first`)
+    throw new Error(`Invalid config at ${path}/config.json.\n Try running "docs init" first`);
 }
 
 export function writeConfig(path: string, config: Config) {
-    writeFileSync(join(path, 'config.json'), JSON.stringify(config, null, 2), 'utf8')
+    writeFileSync(join(path, 'config.json'), JSON.stringify(config, null, 2), 'utf8');
 }
