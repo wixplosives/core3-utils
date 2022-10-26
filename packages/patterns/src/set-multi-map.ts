@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { chain, forEach } from '@wixc3/common';
 
 export class SetMultiMap<K, V> implements Iterable<[K, V]> {
