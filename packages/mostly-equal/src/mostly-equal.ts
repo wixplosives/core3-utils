@@ -109,6 +109,7 @@ export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
     const valueErrors = [...values.entries()].reduce((errors, [expecter, values]) => {
         try {
             const res = expecter.expectMethod(
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                 values.map((val) => val.value),
                 values.map((item) => ({
                     fieldDefinedInParent: item.fieldDefinedInParent,
