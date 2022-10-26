@@ -1,10 +1,8 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../dist",
-    "module": "CommonJS",
+    "outDir": "../dist/cjs",
     "lib": ["ES2022"],
     "types": ["node"]
-  },
-  "references": []
+  }
 }
