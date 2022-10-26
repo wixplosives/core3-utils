@@ -12,10 +12,10 @@ export const createHeadersModifier = (headers: string) => {
                     ${content}`;
             }
             if (name.split('.').length === 2) {
-                return `[[[[include ../${headers}/package.md]]]\\]
+                return `[[[include ../${headers}/package.md]]]
                     ${content}`;
             }
-            return `[[[[include ../${headers}/item.md]]]\\]
+            return `[[[include ../${headers}/item.md]]]
                 ${content}`;
         };
     } else {
