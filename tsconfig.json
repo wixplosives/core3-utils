@@ -2,7 +2,7 @@
   "files": [],
   "references": [
     { "path": "./packages/common/src/tsconfig.cjs.json" },
-    { "path": "./packages/pattens/src" },
+    { "path": "./packages/patterns/src" },
     { "path": "./packages/isomorphic-fetch/src" },
     { "path": "./packages/mark-text/src" },
     { "path": "./packages/mostly-equal/src" },
