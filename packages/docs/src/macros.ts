@@ -3,6 +3,7 @@ import nodeFs from '@file-services/node';
 import { join } from 'path';
 import { ProcessingConfig, stripName } from './common';
 import { processMacros } from './process-macros';
+import { repeat } from '@wixc3/common';
 
 export type Macro = (config: ProcessingConfig, filename: string, ...args: string[]) => string;
 export class MacroError extends Error {
@@ -66,6 +67,9 @@ const include: Macro = (config, name, target = '') => {
     return processMacros(config, target, name);
 };
 
+const h: Macro = (_, __, level, ...text) =>
+    `${repeat('#', parseInt(level))} ${text.join(' ')}\n`
+
 export const macros = {
     // Package name
     rootPackageName,
@@ -81,4 +85,6 @@ export const macros = {
     // badges
     npmBadge,
     githubBuildStatus,
+    // Formatting
+    h,
 };
