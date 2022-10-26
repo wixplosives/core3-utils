@@ -2,14 +2,15 @@
   "name": "@wixc3/common",
   "version": "2.2.1",
   "description": "Common utils, usable in all environments",
-  "main": "dist/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "author": "Wix.com",
   "sideEffects": false,
   "files": [
     "dist",
     "src",
-    "test",
-    "!dist/tsconfig.tsbuildinfo"
+    "!dist/*/test",
+    "!dist/*/tsconfig.tsbuildinfo"
   ],
   "license": "MIT",
   "repository": "git@github.com:wixplosives/core3-utils.git",
@@ -19,5 +20,8 @@
   "dependencies": {
     "@file-services/path": "^7.0.1",
     "@file-services/types": "^7.0.1"
+  },
+  "devDependencies": {
+    "@microsoft/api-documenter": "^7.19.22"
   }
 }

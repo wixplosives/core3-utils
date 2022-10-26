@@ -1,15 +1,16 @@
 {
   "name": "@wixc3/fs-utils",
   "version": "2.2.0",
-  "description": "Common utils, usable in all environments",
-  "main": "dist/index.js",
+  "description": "Filesystem utils, usable in all environments",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "author": "Wix.com",
   "sideEffects": false,
   "files": [
     "dist",
     "src",
-    "test",
-    "!dist/tsconfig.tsbuildinfo"
+    "!dist/*/test",
+    "!dist/*/tsconfig.tsbuildinfo"
   ],
   "license": "MIT",
   "repository": "git@github.com:wixplosives/core3-utils.git",
@@ -18,5 +19,8 @@
   },
   "dependencies": {
     "@file-services/memory": "^7.0.1"
+  },
+  "devDependencies": {
+    "@file-services/types": "^7.0.1"
   }
 }
