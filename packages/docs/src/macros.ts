@@ -47,7 +47,7 @@ export const macros = {
     githubPages: (_1 = '', _2 = '', _3 = '', uri = '', caption = '') => {
         const repo = getRepo();
         if (!repo) return '';
-        const pages = `https://${repo.org!}.github.io/${repo.repo}/${uri}`;
+        const pages = `https://${repo.org}.github.io/${repo.repo}/${uri}`;
         return caption === '' ? pages : `[${caption}](${pages})`;
     },
 
