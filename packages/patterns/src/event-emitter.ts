@@ -1,51 +1,89 @@
-import { SetMultiMap } from './set-multi-map';
+import { Signal } from './signal';
 
-export type EventListener<T> = (event: T) => void;
+/**
+ * A simple event emitter
+ */
+export class EventEmitter<Events extends Record<string, unknown>, EventId extends keyof Events = keyof Events> {
+    private events = new Map<EventId, Signal<any>>();
+    private emitOnce = new Map<EventId, Signal<any>>();
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export class EventEmitter<T extends {}> {
-    public listeners = new SetMultiMap<keyof T, EventListener<any>>();
-    public listenersOnce = new SetMultiMap<keyof T, EventListener<any>>();
+    /**
+     * Check if an event has subscribers
+     * @returns true if event has subscribers
+     */
+    hasSubscribers = (event: EventId) => this.events.has(event);
 
-    public on<K extends keyof T>(eventName: K, listener: EventListener<T[K]>) {
-        this.listeners.add(eventName, listener);
-    }
+    /**
+     * Subscribe a handler for event
+     */
+    subscribe = <Event extends EventId>(event: Event, handler: (data: Events[Event]) => void) => {
+        const bucket = this.events.get(event);
+        bucket ? bucket.add(handler) : this.events.set(event, new Signal([handler]));
+    };
 
-    public subscribe<K extends keyof T>(eventName: K, listener: EventListener<T[K]>) {
-        this.on(eventName, listener);
-    }
+    /**
+     * {@inheritDoc EventEmitter.subscribe}
+     */
+    on = this.subscribe;
 
-    public once<K extends keyof T>(eventName: K, listener: EventListener<T[K]>) {
-        this.listenersOnce.add(eventName, listener);
-    }
+    /**
+     * Adds a handler that will be called at most once
+     */
+    once = <Event extends EventId>(event: Event, handler: (data: Events[Event]) => void) => {
+        this.off(event, handler);
+        const bucket = this.emitOnce.get(event);
+        bucket ? bucket.add(handler) : this.emitOnce.set(event, new Signal([handler]));
+    };
 
-    public off<K extends keyof T>(eventName: K, listener: EventListener<T[K]>) {
-        this.listeners.delete(eventName, listener);
-        this.listenersOnce.delete(eventName, listener);
-    }
+    /**
+     * Unsubscribe a handler from event
+     */
+    unsubscribe = <Event extends EventId>(event: Event, handler: (data: Events[Event]) => void) => {
+        let bucket = this.events.get(event);
+        bucket?.delete(handler);
+        bucket?.size === 0 && this.events.delete(event);
+        bucket = this.emitOnce.get(event);
+        bucket?.delete(handler);
+        bucket?.size === 0 && this.events.delete(event);
+    };
 
-    public unsubscribe<K extends keyof T>(eventName: K, listener: EventListener<T[K]>) {
-        this.off(eventName, listener);
-    }
+    /**
+     * {@inheritDoc EventEmitter.unsubscribe}
+     */
+    off = this.unsubscribe;
 
-    public emit<K extends keyof T>(eventName: K, eventValue: T[K]) {
-        const listeners = this.listeners.get(eventName);
-        if (listeners) {
-            for (const listener of listeners) {
-                listener(eventValue);
-            }
-        }
-        const listenersOnce = this.listenersOnce.get(eventName);
-        if (listenersOnce) {
-            for (const listener of listenersOnce) {
-                listener(eventValue);
-            }
-            this.listenersOnce.deleteKey(eventName);
-        }
-    }
+    /**
+     * Drop all subscriptions of a signal
+     * @param event - signal id
+     */
+    delete = <Event extends EventId>(event: Event) => {
+        this.events.delete(event);
+        this.emitOnce.delete(event);
+    };
 
-    public clear() {
-        this.listeners.clear();
-        this.listenersOnce.clear();
-    }
+    /**
+     * Drop all subscriptions
+     */
+    clear = () => {
+        this.events = new Map<EventId, Signal<any>>();
+        this.emitOnce = new Map<EventId, Signal<any>>();
+    };
+
+    /**
+     * {@inheritDoc Signal.notify}
+     * @param event - eve
+     * @param data - event data
+     */
+    notify = <Event extends EventId>(event: Event, data: Events[Event]) => {
+        this.events.get(event)?.notify(data);
+        this.emitOnce.get(event)?.notify(data);
+        this.emitOnce.delete(event);
+    };
+
+    /**
+     * {@inheritDoc EventEmitter.notify}
+     */
+    emit = this.notify;
 }
+
+export type IEventEmitter<T extends Record<string, any>> = Pick<EventEmitter<T>, keyof EventEmitter<T>>;
