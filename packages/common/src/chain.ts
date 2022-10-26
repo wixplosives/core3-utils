@@ -22,7 +22,7 @@ import {
     some,
     unique,
 } from './iterables';
-import { mapValue } from './objects';
+import { mapValues } from './objects';
 
 /**
  * {@label Iter}
@@ -99,13 +99,13 @@ function chainIter<T>(iterable: Iterable<T>): IterableChain<T> {
     return {
         value: iterable,
         iterable,
-        ...mapValue(
+        ...mapValues(
             toIter,
             (v) =>
                 (...args: any[]) =>
                     chainIter(v(iterable, ...args) as Iterable<unknown>)
         ),
-        ...mapValue(
+        ...mapValues(
             toElm,
             (v) =>
                 (...args: any[]) =>

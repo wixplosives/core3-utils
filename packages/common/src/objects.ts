@@ -37,7 +37,7 @@ export function mapObject(obj: object, mapping: (entry: [string, any]) => [strin
 /**
  * Maps values of a plain object
  */
-export function mapValue(obj: object, mapping: (value: any, k?: string) => any) {
+export function mapValues(obj: object, mapping: (value: any, k?: string) => any) {
     return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, mapping(v, k)]));
 }
 
