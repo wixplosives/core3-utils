@@ -1,8 +1,8 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { ProcessingConfig, replaceAll } from './common';
+import { ProcessingConfig, execMacro } from './common';
 import { macros } from './macros';
-import { mapValues } from '@wixc3/common';
+import { mapValues, repeat } from '@wixc3/common';
 
 export const createHeadersModifier = (headers: string) => {
     if (existsSync(headers)) {
@@ -32,7 +32,7 @@ export function processMacros(config: ProcessingConfig, filename: string, filena
             (...args: string[]) =>
                 m(config, filenameOverride || filename, ...args)
     );
-    const processed = replaceAll(mod, macrosCtx);
+    const processed = execMacro(mod, macrosCtx).replaceAll(/\*(\\\[){3}/g, repeat('\\[', 3))
     if (source !== processed) {
         writeFileSync(join(config.docs, filenameOverride || filename), processed, { encoding: 'utf8' });
     }

@@ -20,6 +20,7 @@ import {
     reduce,
     size,
     some,
+    sort,
     unique,
 } from './iterables';
 import { mapValues } from './objects';
@@ -94,7 +95,7 @@ export function chain<T>(value: T) {
 }
 
 function chainIter<T>(iterable: Iterable<T>): IterableChain<T> {
-    const toIter = { map, flatMap, filter, concat, flat, unique };
+    const toIter = { map, flatMap, filter, concat, flat, unique, sort };
     const toElm = { last, first, isEmpty, size, at, next, prev, find, some, includes, every, reduce };
     return {
         value: iterable,
@@ -147,6 +148,7 @@ export type Chain<T> = {
     find: (p: Predicate<T>) => ValueChain<T>;
     includes: (element: T) => ValueChain<boolean>;
     some: (p: Predicate<T>) => ValueChain<boolean>;
+    sort: (p: Predicate<T, number>) => IterableChain<T>;
     every: (p: Predicate<T>) => ValueChain<boolean>;
     flat: () => IterableChain<Flat<T>>;
     reduce: <A>(reducer: (acc: A, item: T) => A, initial: A) => ValueChain<A>;

@@ -17,12 +17,12 @@ export const stripName = (name: string) => {
 
 export function parseMacro(match: RegExpMatchArray) {
     const all = match[0]!;
-    const m = match[1]?.split(/\s+/).filter((i) => i);
+    const m = match[3]?.split(/\s+/).filter((i) => i);
     const [macro, ...args] = (m || []) as [string, ...string[]];
     return { all, macro, args };
 }
-export const replaceAll = (data: string, replace: Record<string, string | ((...args: string[]) => string)>) => {
-    for (const match of data.matchAll(/(?<!(\*))\[\[\[(.*?)\]\]\]|(?<!(\*))\\\[\\\[\\\[(.*?)\\\]\\\]\\\]/g)) {
+export const execMacro = (data: string, replace: Record<string, string | ((...args: string[]) => string)>) => {
+    for (const match of data.matchAll(/(?<!\*)((\\?)\[){3}(.+?)(\2\]){3}/g)) {
         const { all, macro, args } = parseMacro(match);
         const v = replace[macro];
         if (v) {

@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { getRepo, listPackages, replaceAll, UserConfig, writeConfig } from './common';
+import { getRepo, listPackages, execMacro, UserConfig, writeConfig } from './common';
 import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 
 /**
@@ -18,7 +18,7 @@ export function init(confPath: string, config: UserConfig) {
         writeFileSync(join(confPath, filename), typeof data === 'string' ? data : JSON.stringify(data), 'utf8');
     const template = (resource: string) => {
         const base = readFileSync(join(resources, resource), 'utf8');
-        const mod = replaceAll(base, { packagesPath, confPath });
+        const mod = execMacro(base, { packagesPath, confPath });
         writeConf(resource, mod);
     };
 

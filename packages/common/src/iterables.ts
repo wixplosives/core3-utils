@@ -264,7 +264,7 @@ export function isIterable(x: any): x is Iterable<unknown> {
 }
 
 /**
- * @see Array.sort
+ * @see Array<T>.sort
  * @param by - comparator, returns a negative value if a should precede b
  */
 export function sort<T>(iterable: Nullable<Iterable<T>>, by?: (a: T, b: T) => number): Iterable<T> {
