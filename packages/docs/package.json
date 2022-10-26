@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/docs",
-  "version": "2.2.24",
+  "version": "3.0.1",
   "description": "API ",
   "main": "dist/cjs/index.js",
   "module": "esm/index.js",
