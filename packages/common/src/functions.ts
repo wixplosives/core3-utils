@@ -19,6 +19,7 @@ export function once<T extends (...args: any[]) => any>(fn: T): T {
             run = true;
             result = fn(...args) as ReturnType<T>;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return result;
     }) as T;
 }

@@ -1,32 +1,28 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { isGetter } from './safe-print';
 import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print';
 import type { LookupPath, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
 
 const expectValueSymb = Symbol('expect');
 const expectValuesSymb = Symbol('expect-values');
-interface ExpectValue<T> {
+export interface ExpectValue<T> {
     expectMethod: ExpectSingleMatcher<T>;
     _brand: typeof expectValueSymb;
     getMatchInfo: () => ExpandedValues<T>;
     clear: () => void;
 }
-interface ExpectValues<T = any> {
+export interface ExpectValues<T = any> {
     expectMethod: ExpectMultiMatcher<T>;
     allowUndefined: boolean;
     _brand: typeof expectValuesSymb;
     getMatchInfo: () => ExpandedValues<T>;
 }
 function isExpectVal(val: any): val is ExpectValue<any> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return !!val && val._brand === expectValueSymb;
 }
 
 function isExpectValues(val: any): val is ExpectValues {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return !!val && val._brand === expectValuesSymb;
 }
 
@@ -78,16 +74,17 @@ export const clearMatchedValues = (subMatcher: any) => {
         subMatcher.clear();
     }
 };
-interface ExpectValuesInfo {
+export interface ExpectValuesInfo {
     uniqueSymb: ExpectValues;
     value: any;
     path: LookupPath;
     fieldDefinedInParent: boolean;
 }
-type ErrorOrTextOrExpect = Array<string | Error | ExpectValuesInfo>;
-type ErrorOrText = Array<string | Error>;
+export type ErrorOrTextOrExpect = Array<string | Error | ExpectValuesInfo>;
+export type ErrorOrText = Array<string | Error>;
 
 function isExpectValuesInfo(val: any): val is ExpectValuesInfo {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return !!val && isExpectValues(val.uniqueSymb);
 }
 
