@@ -11,19 +11,19 @@ const stripName = (name: string) => {
     return base === 'index' ? '..' : base;
 };
 
-const getRepo = () =>{
+const getRepo = () => {
     try {
         const res = execSync('git remote -v').toString().split('\n')[1];
-        const match = first(res?.matchAll(/.*@(.*):(.*)\/(.*)\.git.*/g))
+        const match = first(res?.matchAll(/.*@(.*):(.*)\/(.*)\.git.*/g));
         if (match) {
-            const [_, host, org, repo] = match
-            return {host, org, repo}
+            const [_, host, org, repo] = match;
+            return { host, org, repo };
         }
-        return ;
+        return;
     } catch {
         return;
     }
-}
+};
 export const macros = {
     rootPackageName: () => readPackageJson('.', nodeFs).name,
 
@@ -40,16 +40,14 @@ export const macros = {
             .join('@'),
 
     gitRepo: () => {
-        const repo = getRepo()
-        return repo
-        ? `https://${repo.host}/${repo.org}/${repo.repo}`
-        : 'Unknown git repo'
+        const repo = getRepo();
+        return repo ? `https://${repo.host}/${repo.org}/${repo.repo}` : 'Unknown git repo';
     },
 
     githubPages: (_1 = '', _2 = '', _3 = '', uri = '', caption = '') => {
-        const repo = getRepo()
-        if (!repo) return ''
-        const pages = `https://${repo.org!}.github.io/${repo.repo}/${uri}`
+        const repo = getRepo();
+        if (!repo) return '';
+        const pages = `https://${repo.org!}.github.io/${repo.repo}/${uri}`;
         return caption === '' ? pages : `[${caption}](${pages})`;
     },
 
