@@ -5,8 +5,8 @@ export type Predicate<S, V = boolean> = (src: S) => V;
 export type Flat<T> = T extends Iterable<infer A> ? A : T;
 
 /**
- * @param iterable
- * @returns the last element of iterable
+ * Picks the last element of an iterable
+ * @returns undefined for null/empty iterable
  */
 export function last<T>(iterable: Nullable<Iterable<T>>): T | undefined {
     let last!: T;
@@ -19,14 +19,15 @@ export function last<T>(iterable: Nullable<Iterable<T>>): T | undefined {
 }
 
 /**
- * @param iterable
- * @returns the first element of iterable
+ * Picks the first element of an iterable
+ * @returns undefined for null/empty iterable
  */
-export const first = <T>(iterable: Nullable<Iterable<T>>): T | undefined => at(iterable, 0);
+export function first<T>(iterable: Nullable<Iterable<T>>): T | undefined {
+    return at(iterable, 0);
+}
 
 /**
- * @param iterable
- * @returns the first element of iterable
+ * Checks if an iterable is empty
  */
 export function isEmpty(iterable: Iterable<unknown>): boolean {
     for (const _ of iterable) {
@@ -36,22 +37,23 @@ export function isEmpty(iterable: Iterable<unknown>): boolean {
 }
 
 /**
- * @param iterable
- * @returns the elements count of iterable
+ * Evaluate the size of an iterable
+ * @returns elements count of iterable, 0 if null
  */
-export function size(iterable: Iterable<unknown>): number {
+export function size(iterable: Nullable<Iterable<unknown>>): number {
     let size = 0;
-    for (const _ of iterable) {
-        size++;
+    if (iterable) {
+        for (const _ of iterable) {
+            size++;
+        }
     }
     return size;
 }
 
 /**
+ * Finds element by index, including negative index
  * @see Array.at
- * @param iterable
- * @param index
- * @returns the element at the given index
+ * @returns undefined if invalid index or null iterable
  */
 export function at<T>(iterable: Nullable<Iterable<T>>, index: number): T | undefined {
     if (iterable) {
@@ -69,9 +71,8 @@ export function at<T>(iterable: Nullable<Iterable<T>>, index: number): T | undef
 }
 
 /**
- * @param iterable
- * @param item
- * @returns the element after item, undefined if last or not found
+ * Find the element following an item
+ * @returns undefined if item is last or not found
  */
 export function next<T>(iterable: Nullable<Iterable<T>>, item: T): T | undefined {
     let wasFound = false;
@@ -89,9 +90,8 @@ export function next<T>(iterable: Nullable<Iterable<T>>, item: T): T | undefined
 }
 
 /**
- * @param iterable
- * @param item
- * @returns the elements before item, undefined if first or not found
+ * Find the element before an item
+ * @returns undefined if item is first or not found
  */
 export function prev<T>(iterable: Nullable<Iterable<T>>, item: T): T | undefined {
     let prev!: T;
@@ -107,9 +107,8 @@ export function prev<T>(iterable: Nullable<Iterable<T>>, item: T): T | undefined
 }
 
 /**
- * @param iterable
- * @param by an element identifier function
- * @returns an iterable with unique elements
+ * Creates iterable of unique elements
+ * @param by - an element identifier (hash) function
  */
 export function* unique<T>(iterable: Nullable<Iterable<T>>, by: Predicate<T, unknown> = (i) => i): Iterable<T> {
     const known = new Set<unknown>();
@@ -125,10 +124,8 @@ export function* unique<T>(iterable: Nullable<Iterable<T>>, by: Predicate<T, unk
 }
 
 /**
+ * Map iterable elements
  * @see Array.map
- * @param iterable
- * @param mapFn
- * @returns a mapped iterable
  */
 export function* map<S, T>(iterable: Nullable<Iterable<S>>, mapFn: Mapping<S, T>): Iterable<T> {
     if (iterable) {
@@ -140,8 +137,6 @@ export function* map<S, T>(iterable: Nullable<Iterable<S>>, mapFn: Mapping<S, T>
 
 /**
  * @see Array.flatMap
- * @param iterable
- * @param mapFn
  * @returns a mapped, flattened iterables
  */
 export function* flatMap<S, T>(iterable: Nullable<Iterable<S>>, mapFn: Mapping<S, T | Iterable<T>>): Iterable<Flat<T>> {
@@ -150,9 +145,6 @@ export function* flatMap<S, T>(iterable: Nullable<Iterable<S>>, mapFn: Mapping<S
 
 /**
  * @see Array.filter
- * @param iterable
- * @param predicate
- * @returns a filtered iterable
  */
 export function* filter<T>(iterable: Nullable<Iterable<T>>, predicate: Predicate<T>): Iterable<T> {
     if (iterable) {
@@ -166,7 +158,6 @@ export function* filter<T>(iterable: Nullable<Iterable<T>>, predicate: Predicate
 
 /**
  * @see Array.concat
- * @param iterables
  * @returns a concatenated iterable
  */
 export function* concat<T>(...iterables: Nullable<Iterable<T>>[]): Iterable<T> {
@@ -179,12 +170,11 @@ export function* concat<T>(...iterables: Nullable<Iterable<T>>[]): Iterable<T> {
 
 /**
  * @see Array.forEach
- * @param iterable
- * @param fn
  */
 export function forEach<T>(iterable: Nullable<Iterable<T>>, fn: Mapping<T, unknown>): void {
     if (iterable) {
         for (const v of iterable) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             fn(v);
         }
     }
@@ -192,8 +182,6 @@ export function forEach<T>(iterable: Nullable<Iterable<T>>, fn: Mapping<T, unkno
 
 /**
  * @see Array.find
- * @param iterable
- * @param predicate
  * @returns the first element the satisfies the predicate
  */
 export function find<T>(iterable: Nullable<Iterable<T>>, predicate: Predicate<T>): T | undefined {
@@ -209,8 +197,6 @@ export function find<T>(iterable: Nullable<Iterable<T>>, predicate: Predicate<T>
 
 /**
  * @see Array.includes
- * @param iterable
- * @param item
  * @returns item is an element of iterable
  */
 export function includes<T>(iterable: Nullable<Iterable<T>>, item: T): boolean {
@@ -219,8 +205,6 @@ export function includes<T>(iterable: Nullable<Iterable<T>>, item: T): boolean {
 
 /**
  * @see Array.some
- * @param iterable
- * @param predicate
  * @returns there is an element satisfies the predicate
  */
 export function some<T>(iterable: Nullable<Iterable<T>>, predicate: Predicate<T>): boolean {
@@ -229,8 +213,6 @@ export function some<T>(iterable: Nullable<Iterable<T>>, predicate: Predicate<T>
 
 /**
  * @see Array.every
- * @param iterable
- * @param predicate
  * @returns true is all elements satisfy the predicate
  */
 export function every<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolean {
@@ -244,8 +226,7 @@ export function every<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolea
 
 /**
  * @see Array.flat
- * @param deep if true, repeat the flattening until all elements are not iterable
- * @param iterable
+ * @param deep - if true, repeat the flattening until all elements are not iterable
  * @returns a flattened iterable,
  *      where elements that are iterable are spread into the result
  */
@@ -263,9 +244,8 @@ export function* flat<T>(iterable: Nullable<Iterable<T | Iterable<T>>>, deep = f
 }
 
 /**
- *
- * @param iterable
- * @returns an histogram map (element=>count)
+ * Calculate a histogram of iterable elements
+ * @returns an histogram map (element=\>count)
  */
 export function histogram<T>(iterable: Iterable<T>) {
     const histogram = new Map<T, number>();
@@ -277,8 +257,6 @@ export function histogram<T>(iterable: Iterable<T>) {
 }
 
 /**
- *
- * @param x
  * @returns true if x is iterable
  */
 export function isIterable(x: any): x is Iterable<unknown> {
@@ -286,9 +264,8 @@ export function isIterable(x: any): x is Iterable<unknown> {
 }
 
 /**
- * @see Array.sort
- * @param iterable
- * @param by comparator
+ * @see Array<T>.sort
+ * @param by - comparator, returns a negative value if a should precede b
  */
 export function sort<T>(iterable: Nullable<Iterable<T>>, by?: (a: T, b: T) => number): Iterable<T> {
     return iterable ? [...iterable].sort(by) : [];
@@ -296,9 +273,6 @@ export function sort<T>(iterable: Nullable<Iterable<T>>, by?: (a: T, b: T) => nu
 
 /**
  * @see Array.reduce
- * @param iterable
- * @param reducer
- * @param initial
  * @returns reduced object
  */
 export function reduce<T, A>(iterable: Nullable<Iterable<T>>, reducer: (acc: A, item: T) => A, initial: A): A {
@@ -311,8 +285,12 @@ export function reduce<T, A>(iterable: Nullable<Iterable<T>>, reducer: (acc: A, 
     return acc;
 }
 
-export const groupBy = <T, K extends keyof T>(elements: Iterable<T>, property: K): Map<T[K], T[]> =>
-    reduce(
+/**
+ * Groups elements by the value of a property
+ * @returns A map of the value to an array of elements
+ */
+export function groupBy<T, K extends keyof T>(elements: Iterable<T>, property: K): Map<T[K], T[]> {
+    return reduce(
         elements,
         (acc, element) => {
             const propertyValue = acc.get(element[property]);
@@ -327,3 +305,4 @@ export const groupBy = <T, K extends keyof T>(elements: Iterable<T>, property: K
         },
         new Map<T[K], T[]>()
     );
+}

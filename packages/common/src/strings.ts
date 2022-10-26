@@ -2,8 +2,7 @@ import { getIn } from './objects';
 
 /**
  * Throws if value is not a string
- * @param value
- * @param errorMessage
+
  */
 export function assertIsString(value: any, errorMessage = 'Value is not string'): asserts value is string {
     if (typeof value !== 'string') {
@@ -11,11 +10,9 @@ export function assertIsString(value: any, errorMessage = 'Value is not string')
     }
 }
 
-//
 /**
- * Replaced non alphanumeric character with CSS unicode representation
- * @see https://drafts.csswg.org/cssom/#escape-a-character-as-code-point
- * @param str
+ * Replaced non alphanumeric character with {@link https://drafts.csswg.org/cssom/#escape-a-character-as-code-point|CSS unicode representation}
+
  * @returns CSS safe string
  */
 export const escapeCSS = (str: string) =>
@@ -24,6 +21,9 @@ export const escapeCSS = (str: string) =>
         return `\\${code.toString(16)} `;
     });
 
+/**
+
+ */
 export enum NamingConvention {
     KebabCase = 'kebab-case',
     PascalCase = 'pascal-case',
@@ -31,9 +31,9 @@ export enum NamingConvention {
 }
 
 /**
- *
- * @param namingConvention
- * @returns true if namingConvention is a supported NamingConvention
+ * Checks if namingConvention is supported
+
+ * @returns true if namingConvention is a supported {@link NamingConvention}
  */
 export function isValidNamingConvention(namingConvention: string): namingConvention is NamingConvention {
     return Object.values(NamingConvention).some((value) => value === namingConvention);
@@ -41,8 +41,7 @@ export function isValidNamingConvention(namingConvention: string): namingConvent
 
 /**
  * Capitalize the first letter of a string
- * @param val
- * @returns val with the first letter capitalized
+
  */
 export function capitalizeFirstLetter(val: string): string {
     return val.length === 0 ? val : val.charAt(0).toUpperCase() + val.slice(1);
@@ -50,12 +49,15 @@ export function capitalizeFirstLetter(val: string): string {
 
 /**
  * Breaks down a string to words, dropping non letters and numbers
- * @example <caption>Spaces</caption> splitIntoWords("Hello world") => ["Hello", "world"]
- * @example <caption>Numbers</caption>  splitIntoWords("Hello123world") => ["Hello", "123" "world"]
- * @example <caption>Acronyms</caption> splitIntoWords("Hello WRL") => ["Hello", "WRL"]
- * @example <caption>Capitalized</caption> splitIntoWords("HelloWorld") => ["Hello", "World"]
- * @example <caption>Others characters</caption> splitIntoWords("Hello_world--"") => ["Hello", "world"]
- * @param str
+
+ * @example
+ * ```ts
+ * splitIntoWords("Hello world") // => ["Hello", "world"]
+ * splitIntoWords("Hello123world") // => ["Hello", "123" "world"]
+ * splitIntoWords("Hello WRL") // => ["Hello", "WRL"]
+ * splitIntoWords("HelloWorld") // => ["Hello", "World"]
+ * splitIntoWords("Hello_world--") // => ["Hello", "world"]
+ * ```
  * @returns An array of words contained in str
  */
 export const splitIntoWords = (str: string): string[] => {
@@ -68,8 +70,7 @@ export const splitIntoWords = (str: string): string[] => {
 
 /**
  * Converts a string to kebab-case
- * @param str
- * @returns str in kebab-case-convention
+
  */
 export function toKebabCase(str: string): string {
     return splitIntoWords(str).join('-').toLowerCase();
@@ -77,8 +78,7 @@ export function toKebabCase(str: string): string {
 
 /**
  * Converts a string to PascalCase
- * @param str
- * @returns str in PascalCaseConvention
+
  */
 export function toPascalCase(str: string): string {
     const words = splitIntoWords(str).map((word) => capitalizeFirstLetter(word.toLowerCase()));
@@ -86,11 +86,12 @@ export function toPascalCase(str: string): string {
 }
 
 /**
- * Similar to toPascalCase, but drops heading non-letters
- * @example toPascalCaseJsIdentifier("123helloWorld") => "HelloWorld"
- * @see toPascalCase
- * @param str
- * @returns str in PascalCaseConvention that starts with a letter
+ * Similar to {@link toPascalCase}, but drops heading non-letters
+
+ * @example 
+ * ```ts
+ * toPascalCaseJsIdentifier("123helloWorld") // => "HelloWorld"
+ * ```
  */
 export function toPascalCaseJsIdentifier(str: string): string {
     str = str.replace(/^[^a-z]+/i, ''); // must start with a letter
@@ -99,8 +100,7 @@ export function toPascalCaseJsIdentifier(str: string): string {
 
 /**
  * Converts a string to camelCase
- * @param str
- * @returns str in camelCaseConvention
+
  */
 export function toCamelCase(str: string): string {
     const words = splitIntoWords(str).map((word, index) =>
@@ -111,9 +111,7 @@ export function toCamelCase(str: string): string {
 
 /**
  * Converts string formatting to a naming convention
- * @param str
- * @param namingConvention
- * @returns
+
  */
 export function toNamingConvention(str: string, namingConvention: NamingConvention): string {
     switch (namingConvention) {
@@ -127,7 +125,8 @@ export function toNamingConvention(str: string, namingConvention: NamingConventi
 }
 
 /**
- * like toKebabCase, but prepends '-' if first character of input is UpperCase
+ * like {@link toKebabCase}, but prepends '-' if first character of input is UpperCase
+
  */
 export function toCSSKebabCase(str: string): string {
     const c = str.charAt(0);
@@ -138,7 +137,8 @@ export function toCSSKebabCase(str: string): string {
 }
 
 /**
- * like toCamelCase, but capitalizes first character if input starts with '-'
+ * like {@link toCamelCase}, but capitalizes first character if input starts with '-'
+
  */
 export function toCSSCamelCase(str: string): string {
     const c = str.charAt(0);
@@ -150,9 +150,8 @@ export function toCSSCamelCase(str: string): string {
 
 /**
  * Finds line an column by position index
- * @param content
- * @param pos
- * @param newline zero based line number and character
+
+ * @returns zero based line number and character
  */
 export function indexToLineAndColumn(
     content: string,
@@ -186,15 +185,21 @@ export function indexToLineAndColumn(
 }
 
 /**
- *
- * @param str
- * @param substr
- * @returns true is str contains substr, ignoring capitalization
+ * Checks if str contains substr ignoring capitalization
+
  */
 export function includesCaseInsensitive(str: string, substr: string): boolean {
     return str.toLowerCase().includes(substr.toLowerCase());
 }
 
+/**
+ * Matches the indentation of modified to the one of reference
+
+ * @param reference -
+ * @param modified -
+ * @param newline -
+ * @returns 
+ */
 export function equalIdents(reference: string, modified: string, newline = '\n') {
     const referenceArr = reference.split(newline);
     const modifiedArr = modified.split(newline);
@@ -214,8 +219,9 @@ export function equalIdents(reference: string, modified: string, newline = '\n')
 
 /**
  * Remove line indentation (heading whitespace)
- * @param modified
- * @param separator
+
+ * @param modified-
+ * @param separator-
  * @returns
  */
 export function noIdents(modified: string, separator = '\n') {
@@ -227,15 +233,27 @@ export function noIdents(modified: string, separator = '\n') {
         .join(separator);
 }
 
+/**
+ * Checks is value is a string
+
+ * @param value -
+ * @returns 
+ */
 export const isString = (value: unknown): value is string => typeof value === 'string';
 
 const templateReg = /\$\{(.+?)\}/g;
 /**
- * @param context A context for the compiler
+ * Similar to templated string, 
+ * given a fixed context object returns a function that parses strings in it
+
+ * @param context- A context for the compiler
  * @returns A template compiler function which accepts a template and compile it with `context`
  * @example
- * templateCompilerProvider({ greetings: 'Hello', person: { name: 'Elad' } })('${greetings} ${person.name}!')
- * // => Hello Elad!
+ * ```ts
+ * const compile = templateCompilerProvider({ greetings: 'Hello', person: { name: 'Elad' } })
+ * compile('${greetings} ${person.name}!')// => Hello Elad!
+ * compile('${person.name} is awesome')// => Elad is awesome
+ * ```
  */
 export function templateCompilerProvider(context: Record<string, any>) {
     return function templateCompiler(template: string) {
@@ -245,4 +263,11 @@ export function templateCompilerProvider(context: Record<string, any>) {
             return valueInContext !== undefined ? valueInContext : match;
         });
     };
+}
+
+/**
+ * Generates a string repeating [str] [count] times
+ */
+export function repeat(str: string, count: number) {
+    return [...new Array(count)].map((_) => str).join('');
 }

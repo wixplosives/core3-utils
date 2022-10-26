@@ -1,5 +1,6 @@
 import { sleep } from 'promise-assist';
 import { chain } from './chain';
+import type { UnionToIntersection } from './types';
 
 export function exclude<R>(...excluded: R[]) {
     return function <T>(t: T): t is Exclude<T, R> {
@@ -13,7 +14,10 @@ export function exclude<R>(...excluded: R[]) {
 }
 /**
  * returns an object composed of the picked object properties
- * @example pick({ a: 1, b: 2 }, ['a']) // => { a: 1 }
+ * @example
+ * ```ts
+ * pick({ a: 1, b: 2 }, ['a']) // => { a: 1 }
+ * ```
  */
 export function pick<O extends object, K extends keyof O>(record: O, keys: Iterable<K>): Pick<O, K> {
     const subset = {} as Pick<O, K>;
@@ -23,21 +27,41 @@ export function pick<O extends object, K extends keyof O>(record: O, keys: Itera
     return subset;
 }
 
-export const mapObject = (obj: object, mapping: (entry: [string, any]) => [string, any]) =>
-    Object.fromEntries(Object.entries(obj).map(mapping));
+/**
+ * Maps key value pairs of a plain object
+ */
+export function mapObject(obj: object, mapping: (entry: [string, any]) => [string, any]) {
+    return Object.fromEntries(Object.entries(obj).map(mapping));
+}
 
-export const mapValue = (obj: object, mapping: (value: any) => any) =>
-    Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, mapping(v)]));
+/**
+ * Maps values of a plain object
+ */
+export function mapValues(obj: object, mapping: (value: any, k?: string) => any) {
+    return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, mapping(v, k)]));
+}
 
-export const mapKeys = (obj: object, mapping: (key: string) => string) =>
-    Object.fromEntries(Object.entries(obj).map(([k, v]) => [mapping(k), v]));
+/**
+ * Maps values of a plain object
+ */
+export function mapKeys(obj: object, mapping: (key: string, value?: any) => string) {
+    return Object.fromEntries(Object.entries(obj).map(([k, v]) => [mapping(k, v), v]));
+}
 
+/**
+ * Checks that value is a POJO
+ */
 export function isPlainObject(value: unknown): value is Record<string | number | symbol, any> {
     return value !== null && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype;
 }
 
-// eslint-disable-next-line no-console, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
-export const reportError = (ex: unknown) => console.error(ex);
+/**
+ * Logs an error
+ */
+export function reportError(ex: unknown) {
+    // eslint-disable-next-line no-console, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+    console.error(ex);
+}
 
 /**
  * Awaits a record of promises, and returns a record of their results.
@@ -80,11 +104,13 @@ export const newMacrotask = () => sleep(0);
 /**
  * Reverses keys-values of an object, ignoring falsy values.
  * First takes on value collisions.
- *
  * @returns a new object with the values as keys and the keys as values
- * @example { a: 'y', b: 'z'} => { y: 'a', z: 'b' }
+ * @example
+ * ```ts
+ * reverseObject({ a: 'y', b: 'z'}) // => { y: 'a', z: 'b' }
+ * ```
  */
-export const reverseObject = (obj: Record<string, string | false | undefined>) => {
+export function reverseObject(obj: Record<string, string | false | undefined>) {
     const reversedObject: Record<string, string> = {};
 
     for (const [key, value] of Object.entries(obj)) {
@@ -94,7 +120,7 @@ export const reverseObject = (obj: Record<string, string | false | undefined>) =
     }
 
     return reversedObject;
-};
+}
 
 /**
  * Returns an object where missing keys and values/keys
@@ -102,21 +128,26 @@ export const reverseObject = (obj: Record<string, string | false | undefined>) =
  * to the value in shouldUseDefault.
  *
  * @example
- * defaults({}, {a:0}) => {a:0}
- * defaults({a:1}, {a:0}) => {a:1}
- * defaults({a:{}}, {a:{b:1}}) => {a:{b:1}}
- *
+ * ```ts
+ * defaults({}, {a:0}) // => {a:0}
+ * defaults({a:1}, {a:0}) // => {a:1}
+ * defaults({a:{}}, {a:{b:1}}) // => {a:{b:1}}
+ * ```
  * by default, any undefined value will be replaced
- * @param source
- * @param defaultValues
- * @param deep [true] perform a deep comparison
+ * @param deep - [true] perform a deep comparison
  * @example
- * defaults({a:{}}, {a:{b:1}}, false) => {a:{}}
- * @param shouldUseDefault [(v,k)=>v===undefined] value/key for which shouldUseDefault returns true will be taken from defaultValues, ignoring source
- *      k is provided as a dot separated path
+ * ```ts
+ * defaults({a:{}}, {a:{b:1}}, false) // => {a:{}}
+ * ```
+ * @param shouldUseDefault - value/key for which shouldUseDefault
+ * returns true will be taken from defaultValues,
+ * ignoring source.
+ * k is provided as a dot separated path
  * @example
- * defaults({a:{b:1}}, {a:{b:2}}, true, (_,k)=>k==='a.b') => {a:{b:2}}
- * defaults({a:1}, {a:2}, true, v=>v===1) => {a:2}
+ * ```ts
+ * defaults({a:{b:1}}, {a:{b:2}}, true, (_,k)=>k==='a.b') // => {a:{b:2}}
+ * defaults({a:1}, {a:2}, true, v=>v===1) // => {a:2}
+ * ```
  * @returns a new object with merged source and defaultValues
  */
 export function defaults<S, D>(
@@ -160,12 +191,13 @@ export function defaults<S, D>(
 }
 
 /**
- * @param obj The object to query
- * @param path The path of the property to get.
+ * @param obj - The object to query
+ * @param path - The path of the property to get.
  * @returns The value at `path` of `object` id exists, `undefined` otherwise
  * @example
- * getIn({ a: { b: 'c' } }, ['a', 'b'])
- * // => c
+ * ```ts
+ * getIn({ a: { b: 'c' } }, ['a', 'b']) // => c
+ * ```
  */
 export function getIn(obj: Record<string, any>, path: string[]): unknown {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -173,9 +205,8 @@ export function getIn(obj: Record<string, any>, path: string[]): unknown {
 }
 
 const DELETE = Symbol();
-type Remap<T> = Partial<Record<keyof T, string | typeof DELETE>>;
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
-type Remapped<T extends object, R> = UnionToIntersection<
+export type Remap<T> = Partial<Record<keyof T, string | typeof DELETE>>;
+export type Remapped<T extends object, R> = UnionToIntersection<
     R extends Partial<Record<keyof T, string | typeof DELETE>>
         ? {
               [K in keyof T]: K extends keyof R
@@ -187,17 +218,16 @@ type Remapped<T extends object, R> = UnionToIntersection<
         : never
 >;
 
-type Remapp = {
+export type RemapFunc = {
     <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R>;
     readonly DELETE: typeof DELETE;
 };
 /**
  * remaps keys of obj based on rename map object,
- * @param obj
- * @param rename key:key name in obj, value: new name (string) OR remap.DELETE
+ * @param rename - key:key name in obj, value: new name (string) OR remap.DELETE
  * @returns
  */
-export const remap: Remapp = <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R> =>
+export const remap: RemapFunc = <T extends object, R extends Remap<T>>(obj: T, rename: R): Remapped<T, R> =>
     Object.fromEntries(
         chain(Object.entries(obj))
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

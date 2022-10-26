@@ -1,12 +1,17 @@
+/**
+ * @returns a no operation function
+ */
 export const noop = () => undefined;
+/**
+ * @returns a function that returns a resolved Promise
+ */
 export const asyncNoop = () => Promise.resolve();
 
 /**
- *
- * @param fn
+ * Make a function executable only once, following calls are ignored
  * @returns fn, wrapped to run only upon first execution
  */
-export const once = <T extends (...args: unknown[]) => unknown>(fn: T): T => {
+export function once<T extends (...args: any[]) => any>(fn: T): T {
     let run = false;
     let result: ReturnType<T>;
     return ((...args: unknown[]) => {
@@ -14,6 +19,7 @@ export const once = <T extends (...args: unknown[]) => unknown>(fn: T): T => {
             run = true;
             result = fn(...args) as ReturnType<T>;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return result;
     }) as T;
-};
+}
