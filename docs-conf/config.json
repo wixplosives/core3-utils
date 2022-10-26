@@ -1,0 +1,12 @@
+{
+  "packages": "packages",
+  "docs": "_docs",
+  "siteUrl": "https://<org>.github.io/<repo>",
+  "git": {
+    "host": "github.com",
+    "org": "wixplosives",
+    "repo": "core3-utils",
+    "pages": "https://wixplosives.github.io/core3-utils",
+    "github": "https://github.com/wixplosives/core3-utils"
+  }
+}
