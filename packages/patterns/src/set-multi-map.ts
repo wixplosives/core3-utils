@@ -1,5 +1,4 @@
-import { chain } from './chain';
-import { forEach } from './iterables';
+import { chain, forEach } from '@wixc3/common';
 
 export class SetMultiMap<K, V> implements Iterable<[K, V]> {
     private map = new Map<K, Set<V>>();
