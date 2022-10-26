@@ -51,7 +51,7 @@ const npmBadge: Macro = (config, name) => {
 }
 
 const github:Macro = (config, name) => 
-    `[${packageName(config, name)} on Github](${config.git.github}/${config.packages}/${unscopedPackageName(config,name)})`
+    `[${packageName(config, name)} on Github](${config.git.github}/tree/master/${config.packages}/${unscopedPackageName(config,name)})`
 
 const include: Macro = (config, name, target = '') => {
     if (!target) {
