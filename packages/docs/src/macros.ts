@@ -1,7 +1,7 @@
 import { readPackageJson } from '@wixc3/fs-utils';
 import nodeFs from '@file-services/node';
 import { join } from 'path';
-import { getRepo, ProcessingConfig, stripName } from './common';
+import {  ProcessingConfig, stripName } from './common';
 import { processMacros } from './process-macros';
 
 export type Macro = (config: ProcessingConfig, filename: string, ...args: string[]) => string;
@@ -50,6 +50,9 @@ const npmBadge: Macro = (config, name) => {
     return `[![npm version](https://badge.fury.io/js/${pkg}.svg)](https://badge.fury.io/js/${pkg})`;
 }
 
+const github:Macro = (config, name) => 
+    `[${packageName(config, name)} on Github](${config.git.github}/${config.packages}/${unscopedPackageName(config,name)})`
+
 const include: Macro = (config, name, target = '') => {
     if (!target) {
         throw new MacroError(config, name, include, 'Missing target argument');
@@ -58,10 +61,14 @@ const include: Macro = (config, name, target = '') => {
 }
 
 export const macros = {
-    rootPackageName,
-    getRepo, githubBuildStatus, packageName,
-    include, githubPages,
-    npmBadge, gitRepo, packageNameUrl, unscopedPackageName
+    // Package name
+    rootPackageName, packageNameUrl, packageName, unscopedPackageName,
+    // git & github
+    github, githubPages, gitRepo, 
+    // utility
+    include,
+    // badges
+    npmBadge, githubBuildStatus 
 }
 
 

@@ -1,1 +1,2 @@
 [[[npmBadge]]]
+[[[github]]]
