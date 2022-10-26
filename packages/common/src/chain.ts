@@ -20,29 +20,71 @@ import {
     reduce,
     size,
     some,
+    sort,
     unique,
 } from './iterables';
-import { mapValue } from './objects';
+import { mapValues } from './objects';
 
 /**
+ * {@label Iter}
  * Chain iterable operations, each acting on the output of the previous step
- *
- * @example <caption>When the action is per item, the result is accessible as *iterable*</caption>
+ * @example When the action is per item, the result is accessible as *iterable*
+ * ```
  * chain([0,1,2])
  *      .filter(i => i)
  *      .map(i => i**2)
- *      .iterable => [1,4]
- * @example <caption>When the action returns an element (as in first, next, reduce etc) the  the result is accessible as *value*</caption>
- * chain([0,1,2]).filter(i => i).first().value => 1
- * @example <caption>However, iterable is always accessible, as a single element iterable</caption>
- * chain([0,1,2]).filter(i => i).first().iterable => [1]
- * @example <caption>**Note** if the action returned undefined, iterable will be empty </caption>
- * chain([]).first().iterable => []
- * chain([]).first().value => undefined
- * @param value
- * @returns
+ *      .iterable
+ * // => [1,4]
+ * ```
+ * @example When the action returns an element (as in first, next, reduce etc) the  the result is accessible as *value*
+ * ```
+ * chain([0,1,2]).filter(i => i).first().value
+ * // => 1
+ * ```
+ * @example Iterable is always accessible, as a single element iterable
+ * ```
+ * chain([0,1,2]).filter(i => i).first().iterable
+ * // => [1]
+ * ```
+ * @example <b>Note</b> if the action returned undefined, iterable will be empty
+ * ```
+ * chain([]).first().iterable // => []
+ * chain([]).first().value // => undefined
+ * ```
+ * @param value - initial iterable
+ * @returns Chainable action on iterable
  */
-export function chain<T>(iterable: Iterable<T>): IterableChain<T>;
+export function chain<T>(value: Iterable<T>): IterableChain<T>;
+
+/**
+ * {@label Iter}
+ * Chain iterable operations, each acting on the output of the previous step
+ * @example When the action is per item, the result is accessible as *iterable*
+ * ```
+ * chain([0,1,2])
+ *      .filter(i => i)
+ *      .map(i => i**2)
+ *      .iterable
+ * // => [1,4]
+ * ```
+ * @example When the action returns an element (as in first, next, reduce etc) the  the result is accessible as *value*
+ * ```
+ * chain("hello").map(i => i.split("")).first().value
+ * // => "h"
+ * ```
+ * @example Iterable is always accessible, as a single element iterable
+ * ```
+ * chain([0,1,2]).filter(i => i).first().iterable
+ * // => [1]
+ * ```
+ * @example <b>Note</b> if the action returned undefined, iterable will be empty
+ * ```
+ * chain([]).first().iterable // => []
+ * chain([]).first().value // => undefined
+ * ```
+ * @param value - initial value
+ * @returns Chainable action on iterable
+ */
 export function chain<T, V extends NotIterable<T>>(value: V): ValueChain<V>;
 export function chain<T>(value: T) {
     const iterable = (
@@ -53,18 +95,18 @@ export function chain<T>(value: T) {
 }
 
 function chainIter<T>(iterable: Iterable<T>): IterableChain<T> {
-    const toIter = { map, flatMap, filter, concat, flat, unique };
+    const toIter = { map, flatMap, filter, concat, flat, unique, sort };
     const toElm = { last, first, isEmpty, size, at, next, prev, find, some, includes, every, reduce };
     return {
         value: iterable,
         iterable,
-        ...mapValue(
+        ...mapValues(
             toIter,
             (v) =>
                 (...args: any[]) =>
                     chainIter(v(iterable, ...args) as Iterable<unknown>)
         ),
-        ...mapValue(
+        ...mapValues(
             toElm,
             (v) =>
                 (...args: any[]) =>
@@ -74,7 +116,7 @@ function chainIter<T>(iterable: Iterable<T>): IterableChain<T> {
             forEach(iterable, mapping);
             return chainIter(iterable);
         },
-    } as any as IterableChain<T>;
+    } as IterableChain<T>;
 }
 
 function chainElement<T>(value: T): ValueChain<T> {
@@ -85,11 +127,11 @@ function chainElement<T>(value: T): ValueChain<T> {
     };
 }
 
-type IterableChain<T> = Chain<T> & { value: Iterable<T> };
-type ValueChain<T> = Chain<T> & { value: T };
-type NotIterable<T> = T extends Iterable<unknown> ? never : T;
-type Iter<T> = T extends Iterable<infer E> ? Iterable<E> : Iterable<T>;
-type Chain<T> = {
+export type IterableChain<T> = Chain<T> & { value: Iterable<T> };
+export type ValueChain<T> = Chain<T> & { value: T };
+export type NotIterable<T> = T extends Iterable<unknown> ? never : T;
+export type Iter<T> = T extends Iterable<infer E> ? Iterable<E> : Iterable<T>;
+export type Chain<T> = {
     last: () => ValueChain<T>;
     first: () => ValueChain<T>;
     isEmpty: () => ValueChain<boolean>;
@@ -106,6 +148,7 @@ type Chain<T> = {
     find: (p: Predicate<T>) => ValueChain<T>;
     includes: (element: T) => ValueChain<boolean>;
     some: (p: Predicate<T>) => ValueChain<boolean>;
+    sort: (p: Predicate<T, number>) => IterableChain<T>;
     every: (p: Predicate<T>) => ValueChain<boolean>;
     flat: () => IterableChain<Flat<T>>;
     reduce: <A>(reducer: (acc: A, item: T) => A, initial: A) => ValueChain<A>;

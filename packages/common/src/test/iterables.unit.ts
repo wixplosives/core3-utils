@@ -20,7 +20,7 @@ import {
     size,
     reduce,
     groupBy,
-} from '..';
+} from '../iterables';
 describe('iterables', () => {
     it('last', () => {
         expect(last([1, 2, 3])).to.equal(3);

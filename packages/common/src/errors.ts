@@ -4,16 +4,19 @@ import { isPlainObject } from './objects';
  * Convert any kind of value to an error instance. Unless the value is already
  * an error instance, it's stringified and used as the error message.
  */
-export const toError = (value: unknown): Error =>
-    value instanceof Error ? value : new Error(value === undefined ? undefined : String(value));
+export function toError(value: unknown): Error {
+    return value instanceof Error ? value : new Error(value === undefined ? undefined : String(value));
+}
 
 /**
  * Returns error.code property if the error object has it, otherwise returns undefined.
  */
-export const getErrorCode = (error: Error & { code?: string }): string | undefined => {
+export function getErrorCode(error: Error & { code?: string }): string | undefined {
     return typeof error.code === 'string' ? error.code : undefined;
-};
+}
 
+/**
+ */
 export class ErrorWithCode extends Error {
     public code?: string;
 
@@ -27,6 +30,7 @@ export class ErrorWithCode extends Error {
 /**
  * Allows the type checker to detect non-exhaustive switch statements.
  * @example
+ * ```ts
  * declare const align: 'left' | 'right' | 'middle';
  * switch (align) {
  *     case 'left': return 1;
@@ -34,6 +38,7 @@ export class ErrorWithCode extends Error {
  *     // type error since 'middle' is not handled
  *     default: throw new UnreachableCaseError(align);
  * }
+ * ```
  */
 export class UnreachableCaseError extends Error {
     constructor(switchValue: never) {
