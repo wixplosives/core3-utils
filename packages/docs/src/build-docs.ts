@@ -14,7 +14,9 @@ export function buildDocs(conf: string, skipAnalyze = false) {
     if (!skipAnalyze) {
         console.time('Analyzing APIs...');
         listPackages(config.packages).forEach((path) => {
-            const extractorConfig = ExtractorConfig.loadFileAndPrepare(join(config.packages, path, 'api-extractor.json'));
+            const extractorConfig = ExtractorConfig.loadFileAndPrepare(
+                join(config.packages, path, 'api-extractor.json')
+            );
             console.log(`Analyzing APIs of ${path}`);
             Extractor.invoke(extractorConfig);
         });

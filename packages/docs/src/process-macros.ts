@@ -32,7 +32,7 @@ export function processMacros(config: ProcessingConfig, filename: string, filena
             (...args: string[]) =>
                 m(config, filenameOverride || filename, ...args)
     );
-    const processed = execMacro(mod, macrosCtx).replaceAll(/\*(\\\[){3}/g, repeat('\\[', 3))
+    const processed = execMacro(mod, macrosCtx).replaceAll(/\*(\\\[){3}/g, repeat('\\[', 3));
     if (source !== processed) {
         writeFileSync(join(config.docs, filenameOverride || filename), processed, { encoding: 'utf8' });
     }

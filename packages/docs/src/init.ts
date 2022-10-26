@@ -4,11 +4,11 @@ import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 
 /**
  * Initialize docs pre-requisites:
- * 
+ *
  * - Adds api-extractor.json to packages
- * 
+ *
  * - Adds git pages action
- * 
+ *
  * - Creates configs and templates in docs-config
  */
 export function init(confPath: string, config: UserConfig) {

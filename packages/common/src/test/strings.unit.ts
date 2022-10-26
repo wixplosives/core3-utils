@@ -35,7 +35,6 @@ describe('String Utils', () => {
     });
 });
 
-
 it('repeat', () => {
-    expect(repeat('[]', 3)).to.eql('[][][]')
-})
+    expect(repeat('[]', 3)).to.eql('[][][]');
+});

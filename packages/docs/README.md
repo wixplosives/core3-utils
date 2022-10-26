@@ -8,9 +8,40 @@
 
 Tool + CLI for docs generation from TSDocs
 
+## Remarks
+
+### Templates
+
+Site pages includes the following templates from docs-config:
+
+- index.md - main page header
+
+- package.md - packages root page header
+
+- item.md - header for other files
+
+### Macros
+
+There are many awesome macros you can use in your TDDocs. Using macros look like this \\[\[\[macro and args\]\]\]
+
+Available macros are:
+
+- \[\[\[gitRepo\]\]\]
+- \[\[\[github\]\]\]
+- \[\[\[githubBuildStatus\]\]\]
+- \[\[\[githubPages\]\]\]
+- \[\[\[h\]\]\]
+- \[\[\[include\]\]\]
+- \[\[\[listMacros\]\]\]
+- \[\[\[npmBadge\]\]\]
+- \[\[\[packageName\]\]\]
+- \[\[\[packageNameUrl\]\]\]
+- \[\[\[rootPackageName\]\]\]
+- \[\[\[unscopedPackageName\]\]\]
+
 ## Example 1
 
-<caption>generate automatically updated github pages</caption>
+<caption>Generate automatically updated github pages</caption>
 
 ```bash
 yarn add @wixc3/docs
@@ -20,18 +51,25 @@ git push
 
 ## Example 2
 
-<caption>build documentation locally</caption>
+<caption>Build documentation locally</caption>
 
 ```bash
-yarn add @wixc3/docs
 yarn docs build
+```
+
+## Example 3
+
+<caption>Generate README.md in all packages (after docs build)</caption>
+
+```bash
+yarn docs readme
 ```
 
 ## Functions
 
-| Function                                                                                   | Description |
-| ------------------------------------------------------------------------------------------ | ----------- |
-| [buildDocs(conf)](https://wixplosives.github.io/core3-utils/docs.builddocs)                |             |
-| [cli()](https://wixplosives.github.io/core3-utils/docs.cli)                                |             |
-| [createReadme(conf, siteUrl)](https://wixplosives.github.io/core3-utils/docs.createreadme) |             |
-| [init(confPath, config)](https://wixplosives.github.io/core3-utils/docs.init)              |             |
+| Function                                                                                   | Description                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [buildDocs(conf, skipAnalyze)](https://wixplosives.github.io/core3-utils/docs.builddocs)   | Build docs markdown                                                                                                                                                   |
+| [cli()](https://wixplosives.github.io/core3-utils/docs.cli)                                |                                                                                                                                                                       |
+| [createReadme(conf, siteUrl)](https://wixplosives.github.io/core3-utils/docs.createreadme) |                                                                                                                                                                       |
+| [init(confPath, config)](https://wixplosives.github.io/core3-utils/docs.init)              | <p>Initialize docs pre-requisites:</p><p>- Adds api-extractor.json to packages</p><p>- Adds git pages action</p><p>- Creates configs and templates in docs-config</p> |
