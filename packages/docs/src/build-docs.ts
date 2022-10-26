@@ -6,19 +6,20 @@ import { readdirSync } from 'fs';
 import { listPackages, loadConfig, ProcessingConfig } from './common';
 import { createHeadersModifier, processMacros } from './process-macros';
 /**
- *
- * @param packagesPath
+ * Build docs markdown
  */
-export function buildDocs(conf: string) {
+export function buildDocs(conf: string, skipAnalyze = false) {
     const config = loadConfig(conf);
     const temp = 'temp';
-    console.time('Analyzing APIs...');
-    listPackages(config.packages).forEach((path) => {
-        const extractorConfig = ExtractorConfig.loadFileAndPrepare(join(config.packages, path, 'api-extractor.json'));
-        console.log(`Analyzing APIs of ${path}`);
-        Extractor.invoke(extractorConfig);
-    });
-    console.timeEnd('Analyzing APIs...');
+    if (!skipAnalyze) {
+        console.time('Analyzing APIs...');
+        listPackages(config.packages).forEach((path) => {
+            const extractorConfig = ExtractorConfig.loadFileAndPrepare(join(config.packages, path, 'api-extractor.json'));
+            console.log(`Analyzing APIs of ${path}`);
+            Extractor.invoke(extractorConfig);
+        });
+        console.timeEnd('Analyzing APIs...');
+    }
     console.time('Building markdown files');
     execSync(`yarn api-documenter markdown -i ${temp} -o ${config.docs}`);
     console.timeEnd('Building markdown files');

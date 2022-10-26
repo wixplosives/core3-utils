@@ -9,6 +9,12 @@ const packages = {
     describe: 'workspaces (packages) directory',
     string: true,
 };
+const skipAnalyze = {
+    alias: 'a',
+    default: false,
+    describe: 'Use cache analyzed api',
+    boolean: true,
+};
 const output = {
     alias: 'o',
     default: '_docs',
@@ -32,8 +38,8 @@ export function cli() {
     yargs(process.argv.slice(2))
         .scriptName('docs')
         .usage('$0 <cmd> [args]')
-        .command('build', 'Build doc markdown from packages TSDocs', { conf }, ({ conf }) => {
-            buildDocs(conf);
+        .command('build', 'Build doc markdown from packages TSDocs', { conf, skipAnalyze }, ({ conf, skipAnalyze }) => {
+            buildDocs(conf, skipAnalyze);
         })
         .command(
             'init',
