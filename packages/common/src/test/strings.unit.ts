@@ -1,4 +1,4 @@
-import { splitIntoWords, toCamelCase, toKebabCase, toPascalCase } from '..';
+import { repeat, splitIntoWords, toCamelCase, toKebabCase, toPascalCase } from '..';
 import { expect } from 'chai';
 
 describe('String Utils', () => {
@@ -34,3 +34,8 @@ describe('String Utils', () => {
         expect(toCamelCase('HOW_BOUT_DAT')).to.equal('howBoutDat');
     });
 });
+
+
+it('repeat', () => {
+    expect(repeat('[]', 3)).to.eql('[][][]')
+})
