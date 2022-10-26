@@ -3,27 +3,31 @@ import { join } from 'path';
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
 import { execSync } from 'child_process';
 import { readdirSync } from 'fs';
-import { createHeadersModifier, processMacros } from './macros';
-import { listPackages } from './common';
+import { listPackages, loadConfig, ProcessingConfig } from './common';
+import { createHeadersModifier, processMacros } from './process-macros';
+import { config } from 'yargs';
 /**
  *
  * @param packagesPath
  */
-export function buildDocs(packagesPath: string, docs: string, headers: string) {
+export function buildDocs(conf: string) {
+    const config = loadConfig(conf)
     const temp = 'temp';
     console.time('Analyzing APIs...');
-    listPackages(packagesPath).forEach((path) => {
-        const config = ExtractorConfig.loadFileAndPrepare(join(packagesPath, path, 'api-extractor.json'));
+    listPackages(config.packages).forEach((path) => {
+        const extractorConfig = ExtractorConfig.loadFileAndPrepare(join(config.packages, path, 'api-extractor.json'));
         console.log(`Analyzing APIs of ${path}`);
-        Extractor.invoke(config);
+        Extractor.invoke(extractorConfig);
     });
     console.timeEnd('Analyzing APIs...');
     console.time('Building markdown files');
-    execSync(`yarn api-documenter markdown -i ${temp} -o ${docs}`);
+    execSync(`yarn api-documenter markdown -i ${temp} -o ${config.docs}`);
     console.timeEnd('Building markdown files');
     console.time('Processing macros');
-    readdirSync(docs, { withFileTypes: true })
-        .filter((f) => f.isFile())
-        .map(({ name }) => processMacros(docs, packagesPath, name, null, createHeadersModifier(headers)));
+    
+    const pConf:ProcessingConfig = {...config, modifier: createHeadersModifier(conf)}
+    readdirSync(config.docs, { withFileTypes: true })
+        .filter((f) => f.isFile())        
+        .map(({ name }) => processMacros(pConf, name));
     console.timeEnd('Processing macros');
 }

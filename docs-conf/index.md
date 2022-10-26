@@ -1,4 +1,2 @@
-# \[\[\[rootPackageName\]\]\]
-\[\[\[githubBuildStatus\]\]\]
-
-CD FLUSH TEST
+# [[[rootPackageName]]]
+[[[githubBuildStatus]]]

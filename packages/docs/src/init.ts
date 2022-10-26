@@ -1,20 +1,23 @@
 import { join } from 'path';
-import { listPackages } from './common';
+import { Config, getRepo, listPackages, replaceAll } from './common';
 import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 
-export function init(packagesPath = 'packages', confPath: string) {
+export function init(confPath:string, config:Partial<Config>) {
+    const packagesPath = config.packages!
     const resources = join(__dirname, '..', '..', 'resources');
+    const writeConf = (filename: string, data: string | object) =>
+        writeFileSync(join(confPath, filename), typeof data === 'string' ? data : JSON.stringify(data), 'utf8');
     const template = (resource: string) => {
-        let base = readFileSync(join(resources, resource), 'utf8');
-        let mod = base;
-        do {
-            base = mod;
-            mod = base.replace('[[[confPath]]]', confPath);
-            mod = mod.replace('[[[packagesPath]]]', packagesPath);
-        } while (mod !== base);
-        writeFileSync(join(confPath, resource), mod, 'utf8');
+        const base = readFileSync(join(resources, resource), 'utf8');
+        const mod = replaceAll(base, { packagesPath, confPath })
+        writeConf(resource, mod)
     };
+    
     mkdirSync(confPath, { recursive: true });
+    writeConf('conf.json', {
+        ...config,
+        git: getRepo(),
+    })
     template('api-extractor.base.json');
     template('api-extractor.json');
 

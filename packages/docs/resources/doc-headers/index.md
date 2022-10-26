@@ -1,3 +1,2 @@
-# \[\[\[rootPackageName\]\]\]
-
-\[\[\[githubBuildStatus\]\]\]
+# [[[rootPackageName]]]
+[[[githubBuildStatus]]]

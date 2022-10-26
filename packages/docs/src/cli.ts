@@ -35,25 +35,25 @@ export function cli() {
         .command(
             'build',
             'Build doc markdown from packages TSDocs',
-            { output, packages, conf },
-            ({ output, packages, conf }) => {
-                buildDocs(packages, output, conf);
+            {  conf },
+            ({ conf }) => {
+                buildDocs(conf);
             }
         )
         .command(
             'init',
             'initialize docs config and github pages action',
-            { packages, headers: conf },
-            ({ packages, headers }) => {
-                init(packages, headers);
+            { packages, conf, output, siteUrl },
+            ({ packages, conf, output, siteUrl }) => {
+                init( conf, {packages, docs:output, siteUrl});
             }
         )
         .command(
             ['readme'],
             'create README.md for all the packages',
-            { docs: output, packages, siteUrl },
-            ({ docs, packages, siteUrl }) => {
-                createReadme(siteUrl, docs, packages);
+            { conf, siteUrl },
+            ({ conf, siteUrl }) => {
+                createReadme(conf, siteUrl);
             }
         )
         .demandCommand()

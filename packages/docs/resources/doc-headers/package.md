@@ -1,1 +1,1 @@
-\[\[\[npmBadge\]\]\]
+[[[npmBadge]]]
