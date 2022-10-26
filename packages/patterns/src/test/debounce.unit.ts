@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Debouncer, reportError } from '..';
+import { Debouncer } from '../debouncer';
+import { reportError } from '@wixc3/common';
 
 describe('Debounce', () => {
     class MockTimeout {
