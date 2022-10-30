@@ -37,8 +37,13 @@ export function mapObject(obj: object, mapping: (entry: [string, any]) => [strin
 /**
  * Maps values of a plain object
  */
-export function mapValues(obj: object, mapping: (value: any, k?: string) => any) {
-    return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, mapping(v, k)]));
+export function mapValues<T extends object, R = unknown>(
+    obj: T,
+    mapping: (value: T[keyof T], k?: keyof T) => R
+): { [_ in keyof T]: R } {
+    return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, mapping(v as T[keyof T], k as keyof T)])) as {
+        [_ in keyof T]: R;
+    };
 }
 
 /**
@@ -150,33 +155,32 @@ export function reverseObject(obj: Record<string, string | false | undefined>) {
  * ```
  * @returns a new object with merged source and defaultValues
  */
-export function defaults<S, D>(
+export function defaults<S extends object, D extends object>(
     _source: S,
     _defaultValues: D,
     deep = true,
     shouldUseDefault = (v: unknown, _key: string) => v === undefined
 ): S & D {
-    const parseObj = (src: any, dft: any, parentKey = ''): any => {
+    const parseObj = <D, E>(src: D, dft: E, parentKey = ''): any => {
         if (isPlainObject(src)) {
             const result = {} as Record<string, any>;
             for (const [key, value] of Object.entries(src)) {
                 const fullKey = (parentKey ? parentKey + '.' : '') + key;
-                const _default = isPlainObject(dft)
-                    ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                      (dft as any)[key]
-                    : undefined;
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                const _default = isPlainObject(dft) ? dft[key] : undefined;
 
                 if (shouldUseDefault(value, fullKey)) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
                     result[key] = _default;
                 } else {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
                     result[key] = deep ? parseObj(value, _default, fullKey) : value;
                 }
             }
             if (isPlainObject(dft)) {
                 for (const [key, _default] of Object.entries(dft)) {
                     if (!(key in src)) {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         result[key] = _default;
                     }
                 }

@@ -269,5 +269,5 @@ export function templateCompilerProvider(context: Record<string, any>) {
  * Generates a string repeating [str] [count] times
  */
 export function repeat(str: string, count: number) {
-    return [...new Array(count)].map((_) => str).join('');
+    return [...new Array<void>(count)].map((_) => str).join('');
 }

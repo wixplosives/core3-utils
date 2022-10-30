@@ -95,22 +95,28 @@ export function chain<T>(value: T) {
 }
 
 function chainIter<T>(iterable: Iterable<T>): IterableChain<T> {
-    const toIter = { map, flatMap, filter, concat, flat, unique, sort };
-    const toElm = { last, first, isEmpty, size, at, next, prev, find, some, includes, every, reduce };
+    const toIter = {  map, flatMap, filter, concat, flat, unique, sort } as Record<
+        string,
+        (i: Iterable<unknown>, ...args: unknown[]) => Iterable<unknown>
+    >;
+    const toElm = {  last, first, isEmpty, size, at, next, prev, find, some, includes, every, reduce } as Record<
+        string,
+        (i: Iterable<unknown>, ...args: unknown[]) => unknown
+    >;
     return {
         value: iterable,
         iterable,
         ...mapValues(
             toIter,
-            (v) =>
-                (...args: any[]) =>
-                    chainIter(v(iterable, ...args) as Iterable<unknown>)
+            (v: (i: Iterable<unknown>, ...args: unknown[]) => Iterable<unknown>) =>
+                (...args: unknown[]) =>
+                    chainIter(v(iterable, ...args))
         ),
         ...mapValues(
             toElm,
             (v) =>
-                (...args: any[]) =>
-                    chainElement(v(iterable, ...args) as Iterable<unknown>)
+                (...args: unknown[]) =>
+                    chainElement(v(iterable, ...args))
         ),
         forEach: (mapping: Mapping<T, unknown>) => {
             forEach(iterable, mapping);

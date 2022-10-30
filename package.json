@@ -10,7 +10,6 @@
     "pretest": "yarn lint && yarn build",
     "test": "yarn test:only",
     "test:only": "mocha \"packages/*/dist{,/cjs}/test/**/*.unit.js\"",
-    "test:dev": "mocha -r @ts-tools/node/r \"packages/*/test/**/*.unit.ts{,x}\"",
     "prettify": "npx prettier . --write"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 import { readPackageJson } from '@wixc3/fs-utils';
 import nodeFs from '@file-services/node';
 import { join } from 'path';
-import { ProcessingConfig, stripName } from './common';
+import { ProcessingConfig, Repo, stripName } from './common';
 import { processMacros } from './process-macros';
 import { repeat } from '@wixc3/common';
 
@@ -31,7 +31,7 @@ const gitRepo: Macro = (config, name, field = '') => {
     const { git } = config;
     field === field || 'github';
     if (field in git) {
-        return (git as any)[field];
+        return git[field as keyof Repo];
     }
     throw new MacroError(
         config,
