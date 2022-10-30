@@ -11,6 +11,7 @@ import {
     forEach,
     includes,
     isEmpty,
+    join,
     last,
     map,
     Mapping,
@@ -19,6 +20,7 @@ import {
     prev,
     reduce,
     size,
+    skip,
     some,
     sort,
     unique,
@@ -95,11 +97,11 @@ export function chain<T>(value: T) {
 }
 
 function chainIter<T>(iterable: Iterable<T>): IterableChain<T> {
-    const toIter = {  map, flatMap, filter, concat, flat, unique, sort } as Record<
+    const toIter = { skip, map, flatMap, filter, concat, flat, unique, sort } as Record<
         string,
         (i: Iterable<unknown>, ...args: unknown[]) => Iterable<unknown>
     >;
-    const toElm = {  last, first, isEmpty, size, at, next, prev, find, some, includes, every, reduce } as Record<
+    const toElm = { join, last, first, isEmpty, size, at, next, prev, find, some, includes, every, reduce } as Record<
         string,
         (i: Iterable<unknown>, ...args: unknown[]) => unknown
     >;
@@ -155,8 +157,10 @@ export type Chain<T> = {
     includes: (element: T) => ValueChain<boolean>;
     some: (p: Predicate<T>) => ValueChain<boolean>;
     sort: (p: Predicate<T, number>) => IterableChain<T>;
+    join: T extends string ? (separator: string) => ValueChain<string> : never;
     every: (p: Predicate<T>) => ValueChain<boolean>;
     flat: () => IterableChain<Flat<T>>;
+    skip: (count: number) => IterableChain<T>;
     reduce: <A>(reducer: (acc: A, item: T) => A, initial: A) => ValueChain<A>;
     iterable: Iterable<T>;
 };

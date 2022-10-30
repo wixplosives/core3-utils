@@ -20,7 +20,10 @@ import {
     size,
     reduce,
     groupBy,
+    join,
+    skip,
 } from '../iterables';
+
 describe('iterables', () => {
     it('last', () => {
         expect(last([1, 2, 3])).to.equal(3);
@@ -120,6 +123,18 @@ describe('iterables', () => {
         const input = [0, 1, 2, 3];
         const reducer = (acc: number, i: number) => acc + i;
         expect(reduce(input, reducer, 0)).to.equal(input.reduce(reducer, 0));
+    });
+    it('join', () => {
+        expect(join(['0', '1', '2'], ',')).to.eql('0,1,2');
+        expect(join([], ',')).to.eql('');
+        expect(join(null, ',')).to.eql('');
+        expect(join(['0'], ',')).to.eql('0');
+    });
+    it('skip', () => {
+        expect([...skip([0, 1, 2, 3], 1)]).to.eql([1, 2, 3]);
+        expect([...skip([], 1)]).to.eql([]);
+        expect([...skip([0, 1], 0)]).to.eql([0, 1]);
+        expect([...skip([0, 1], 3)]).to.eql([]);
     });
     it('groupBy', () => {
         expect(groupBy([{ a: 1, b: 0 }, { a: 1, b: 1 }, { a: 2 }], 'a')).to.eql(
