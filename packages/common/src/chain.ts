@@ -11,7 +11,6 @@ import {
     forEach,
     includes,
     isEmpty,
-    join,
     last,
     map,
     Mapping,
@@ -20,7 +19,6 @@ import {
     prev,
     reduce,
     size,
-    skip,
     some,
     sort,
     unique,
@@ -97,29 +95,28 @@ export function chain<T>(value: T) {
 }
 
 function chainIter<T>(iterable: Iterable<T>): IterableChain<T> {
-    const toIter = { skip, map, flatMap, filter, concat, flat, unique, sort } as Record<
-        string,
-        (i: Iterable<unknown>, ...args: unknown[]) => Iterable<unknown>
-    >;
-    const toElm = { join, last, first, isEmpty, size, at, next, prev, find, some, includes, every, reduce } as Record<
-        string,
-        (i: Iterable<unknown>, ...args: unknown[]) => unknown
-    >;
+    const toIter = { map, flatMap, filter, concat, flat, unique, sort } as const;
+    const toElm = { last, first, isEmpty, size, at, next, prev, find, some, includes, every, reduce } as const;
+    const boundToIter = mapValues(
+        toIter,
+        (v) =>
+            (...args: unknown[]) =>
+                chainIter(
+                    (v as (iterable: Iterable<unknown>, ...args: unknown[]) => Iterable<unknown>)(iterable, ...args)
+                )
+    );
+    const boundToElm = mapValues(
+        toElm,
+        (v) =>
+            (...args: unknown[]) =>
+                chainElement((v as (iterable: Iterable<unknown>, ...args: unknown[]) => unknown)(iterable, ...args))
+    );
+
     return {
         value: iterable,
         iterable,
-        ...mapValues(
-            toIter,
-            (v: (i: Iterable<unknown>, ...args: unknown[]) => Iterable<unknown>) =>
-                (...args: unknown[]) =>
-                    chainIter(v(iterable, ...args))
-        ),
-        ...mapValues(
-            toElm,
-            (v) =>
-                (...args: unknown[]) =>
-                    chainElement(v(iterable, ...args))
-        ),
+        ...boundToIter,
+        ...boundToElm,
         forEach: (mapping: Mapping<T, unknown>) => {
             forEach(iterable, mapping);
             return chainIter(iterable);
@@ -157,10 +154,8 @@ export type Chain<T> = {
     includes: (element: T) => ValueChain<boolean>;
     some: (p: Predicate<T>) => ValueChain<boolean>;
     sort: (p: Predicate<T, number>) => IterableChain<T>;
-    join: T extends string ? (separator: string) => ValueChain<string> : never;
     every: (p: Predicate<T>) => ValueChain<boolean>;
     flat: () => IterableChain<Flat<T>>;
-    skip: (count: number) => IterableChain<T>;
     reduce: <A>(reducer: (acc: A, item: T) => A, initial: A) => ValueChain<A>;
     iterable: Iterable<T>;
 };

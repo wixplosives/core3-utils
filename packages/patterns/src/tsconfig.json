@@ -2,5 +2,8 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../dist/cjs"
-  }
+  },
+  "references": [
+    { "path": "../../common/src" }
+  ]
 }
