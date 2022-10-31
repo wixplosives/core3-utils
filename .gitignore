@@ -126,3 +126,4 @@ dist
 temp/
 _docs/
 tsdoc-metadata.json
+docs-test-project/
