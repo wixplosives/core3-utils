@@ -1,18 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { chain, forEach } from '@wixc3/common';
 
 export class SetMultiMap<K, V> implements Iterable<[K, V]> {
     private map = new Map<K, Set<V>>();
 
     constructor(entries?: Iterable<[K, V]>) {
-        forEach(entries, ([key, val]) => {
+        forEach(entries, ([key, val]:[K,V]) => {
             this.add(key, val);
         });
     }
 
     public get size(): number {
         return chain(this.map)
-            .map(([_, { size }]) => size)
-            .reduce((sum, size) => sum + size, 0).value;
+            .map(([_, { size }]:[unknown,{size:number}]) => size)
+            .reduce((sum:number, size:number) => sum + size, 0).value;
     }
 
     public get(key: K): ReadonlySet<V> | undefined {

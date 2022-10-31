@@ -18,7 +18,7 @@
     {
       "files": ["*.ts", "*.tsx"],
       "parserOptions": {
-        "project": "packages/*/{src,test}/tsconfig{,.esm,.cjs,.test}.json",
+        "project": "packages/*/src/tsconfig.esm.json",
         "EXPERIMENTAL_useSourceOfProjectReferenceRedirect": true
       },
       "extends": [
