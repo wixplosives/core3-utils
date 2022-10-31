@@ -1,13 +1,10 @@
+export type Listener<T> = (data: T) => void;
+
 /**
  * Signal is a simple event emitter for one type of event.
- *
- * Use Signals a public api for emitting events.
- * Naming a signal is like naming the event the it triggers.
- * If the name sounds like a property try to add a `on` prefix or `Change/Signal` suffix.
- * All methods are bound to the Signal instance
- *
- * Simple example:
- * ```
+
+ * @example
+ * ```ts
  * const foodArrived = new Signal<Food>();
  *
  * foodArrived.subscribe(() => {
@@ -17,42 +14,53 @@
  * foodArrived.notify(new Food('pizza'));
  * ```
  *
- * Usage in a class:
- * ```
+ * @example Usage in a class:
+ * ```ts
  * class LoginService {
  *     public onLoginSuccess = new Signal<User>();
  *     public onLoginFailure = new Signal<Error>();
  *     public onLoginStatusChange = new Signal<Status>();
  * }
  * ```
- *
+ * @remarks
+ * Use Signals a public api for emitting events.
+ * Naming a signal is like naming the event the it triggers.
+ * If the name sounds like a property try to add a `on` prefix or `Change/Signal` suffix.
+ * All methods are bound to the Signal instance
+ * 
  * Notice that the Signals are public.
  * We don't need to implement specific subscriptions on the class, unless we need to expose it as a remote service.
- *
  */
-
-export type Listener<T> = (data: T) => void;
-
 export class Signal<T> extends Set<Listener<T>> {
-    subscribe = (i: Listener<T>) => {
-        this.add(i);
+    /**
+     * Subscribe a notification callback
+     * @param handler - Will be executed with a data arg when a notification occurs
+     */
+    subscribe = (handler: Listener<T>) => {
+        this.add(handler);
     };
-    unsubscribe = (i: Listener<T>) => {
-        this.delete(i);
+    /**
+     * Unsubscribe an existing callback
+     */
+    unsubscribe = (handler: Listener<T>) => {
+        this.delete(handler);
     };
+    /**
+     * Notify all subscribers with arg data
+     */
     notify = (data: T) => {
-        for (const listener of this) {
-            listener(data);
+        for (const handler of this) {
+            handler(data);
         }
     };
 }
 
 /**
- * Same as signal but for multiple types differentiating by the key.
- *
- * Usage
- *
- * const ms = new MultiSignal<{ onChange: { id: 'onChange' }; onDelete: { id: 'onDelete' } }>();
+ * Basic type safe event emitter
+
+ * @example
+ * ```ts
+ * const ms = new EventEmitter<{ onChange: { id: 'onChange' }; onDelete: { id: 'onDelete' } }>();
  * ms.subscribe('onChange', (event) => {
  *    event.id; // 'onChange'
  * });
@@ -61,26 +69,13 @@ export class Signal<T> extends Set<Listener<T>> {
  * });
  *
  * ms.notify('onChange', { id: 'onChange' }); // event is type safe
+ * ```
+ * @example <caption>payload type mismatch</caption>
+ * ```ts
  * ms.notify('onChange', { id: 'onDelete' }); // ERROR!!!
+ * ```
+ * @example <caption>payload type mismatch</caption>
+ * ```ts
  * ms.notify('onSomethingElse', { id: 'onDelete' }); // ERROR!!!
- *
+ * ```
  */
-export class MultiSignal<T extends Record<string, unknown>, K extends keyof T = keyof T> {
-    private signals = new Map<K, Signal<any>>();
-    has = <Id extends K>(id: Id) => this.signals.has(id);
-    subscribe = <Id extends K>(id: Id, h: (data: T[Id]) => void) => {
-        const bucket = this.signals.get(id);
-        bucket ? bucket.add(h) : this.signals.set(id, new Signal([h]));
-    };
-    unsubscribe = <Id extends K>(id: Id, h: (data: T[Id]) => void) => {
-        const bucket = this.signals.get(id);
-        bucket?.delete(h);
-        bucket?.size === 0 && this.signals.delete(id);
-    };
-    delete = <Id extends K>(id: Id) => {
-        this.signals.delete(id);
-    };
-    notify = <Id extends K>(id: Id, data: T[Id]) => {
-        this.signals.get(id)?.notify(data);
-    };
-}
