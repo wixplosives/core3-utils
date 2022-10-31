@@ -3,5 +3,8 @@
   "compilerOptions": {
     "outDir": "../dist/cjs",
     "types": ["node", "mocha"]
-  }
+  },
+  "references": [
+    { "path": "../../common/src/tsconfig.json" },
+  ]
 }
