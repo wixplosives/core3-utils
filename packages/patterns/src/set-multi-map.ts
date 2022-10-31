@@ -16,7 +16,7 @@ export class SetMultiMap<K, V> implements Iterable<[K, V]> {
     private map = new Map<K, Set<V>>();
 
     constructor(entries?: Iterable<[K, V]>) {
-        forEach(entries, ([key, val]:[K,V]) => {
+        forEach(entries, ([key, val]: [K, V]) => {
             this.add(key, val);
         });
     }

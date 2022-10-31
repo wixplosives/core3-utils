@@ -4,7 +4,7 @@ import { chain } from '../chain';
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import gc from 'expose-gc/function';
-const forceGc = gc as () => void
+const forceGc = gc as () => void;
 
 describe('performance', () => {
     it('it faster than the array equivalent function for large iterables', () => {

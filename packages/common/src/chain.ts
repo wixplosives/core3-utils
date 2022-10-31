@@ -101,12 +101,16 @@ function chainIter<T>(iterable: Iterable<T>): IterableChain<T> {
         toIter,
         (v) =>
             (...args: unknown[]) =>
-                chainIter((v as (iterable: Iterable<unknown>, ...args: unknown[]) => Iterable<unknown>)(iterable, ...args)))
+                chainIter(
+                    (v as (iterable: Iterable<unknown>, ...args: unknown[]) => Iterable<unknown>)(iterable, ...args)
+                )
+    );
     const boundToElm = mapValues(
         toElm,
         (v) =>
             (...args: unknown[]) =>
-                chainElement((v as (iterable: Iterable<unknown>, ...args: unknown[]) => unknown)(iterable, ...args)))
+                chainElement((v as (iterable: Iterable<unknown>, ...args: unknown[]) => unknown)(iterable, ...args))
+    );
 
     return {
         value: iterable,

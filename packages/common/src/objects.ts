@@ -37,19 +37,25 @@ export function mapObject(obj: object, mapping: (entry: [string, any]) => [strin
 /**
  * Maps values of a plain object
  */
-export function mapValues<T extends object, R>(obj: T, mapping: (value: T[keyof T], k?: keyof T) => R): { [_ in keyof T]: R } {
+export function mapValues<T extends object, R>(
+    obj: T,
+    mapping: (value: T[keyof T], k?: keyof T) => R
+): { [_ in keyof T]: R } {
     return Object.fromEntries(
-        Object.entries(obj).map(([k, v]: [string, T[keyof T]]) =>
-            [k, mapping(v, k as keyof T)])) as { [_ in keyof T]: R };
+        Object.entries(obj).map(([k, v]: [string, T[keyof T]]) => [k, mapping(v, k as keyof T)])
+    ) as { [_ in keyof T]: R };
 }
 
 /**
  * Maps values of a plain object
  */
-export function mapKeys<T extends object, R extends string>(obj: object, mapping: (key: keyof T, value?: T[keyof T]) => R): Record<R, T[keyof T]> {
+export function mapKeys<T extends object, R extends string>(
+    obj: object,
+    mapping: (key: keyof T, value?: T[keyof T]) => R
+): Record<R, T[keyof T]> {
     return Object.fromEntries(
-        Object.entries(obj).map(([k, v]: [string, T[keyof T]]) =>
-            [mapping(k as keyof T, v), v])) as Record<R, T[keyof T]>;
+        Object.entries(obj).map(([k, v]: [string, T[keyof T]]) => [mapping(k as keyof T, v), v])
+    ) as Record<R, T[keyof T]>;
 }
 
 /**
@@ -165,9 +171,7 @@ export function defaults<S, D>(
             const result = {} as Record<string, any>;
             for (const [key, value] of Object.entries(src)) {
                 const fullKey = (parentKey ? parentKey + '.' : '') + key;
-                const _default = isPlainObject(dft)
-                    ? dft[key]
-                    : undefined;
+                const _default = isPlainObject(dft) ? dft[key] : undefined;
 
                 if (shouldUseDefault(value, fullKey)) {
                     result[key] = _default;
@@ -209,14 +213,14 @@ const DELETE = Symbol();
 export type Remap<T> = Partial<Record<keyof T, string | typeof DELETE>>;
 export type Remapped<T extends object, R> = UnionToIntersection<
     R extends Partial<Record<keyof T, string | typeof DELETE>>
-    ? {
-        [K in keyof T]: K extends keyof R
-        ? R[K] extends string
-        ? { [L in R[K]]: T[K] }
+        ? {
+              [K in keyof T]: K extends keyof R
+                  ? R[K] extends string
+                      ? { [L in R[K]]: T[K] }
+                      : never
+                  : { [L in K]: T[L] };
+          }[keyof T]
         : never
-        : { [L in K]: T[L] };
-    }[keyof T]
-    : never
 >;
 
 export type RemapFunc = {
