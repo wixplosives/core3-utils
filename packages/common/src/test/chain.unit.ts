@@ -3,12 +3,13 @@ import { chain } from '../chain';
 // eslint-disable-next-line
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import gc from 'expose-gc/function';
+import cg from 'expose-gc/function';
+const forceGc = cg as () => void
 
 describe('performance', () => {
     it('it faster than the array equivalent function for large iterables', () => {
         const veryLargeArray = Array.from(new Array(2 ** 18)).map((_, i) => i % 2 ** 32);
-        gc();
+        forceGc();
         const arrayStart = performance.now();
         const result = veryLargeArray
             .map((i) => i - 10_000)
@@ -22,7 +23,7 @@ describe('performance', () => {
                 return acc;
             }, new Set<string>())
             .values();
-        gc();
+        forceGc();
         const arrayTime = performance.now() - arrayStart;
 
         const iterStart = performance.now();
@@ -33,7 +34,7 @@ describe('performance', () => {
             .filter((i) => i.includes('9'))
             .flatMap((i) => i.split(''))
             .unique().iterable;
-        gc();
+        forceGc();
         const iterTime = performance.now() - iterStart;
 
         expect([...result]).to.eql([...iterResult]);
