@@ -3,8 +3,8 @@ import { chain } from '../chain';
 // eslint-disable-next-line
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import cg from 'expose-gc/function';
-const forceGc = cg as () => void
+import gc from 'expose-gc/function';
+const forceGc = gc as () => void
 
 describe('performance', () => {
     it('it faster than the array equivalent function for large iterables', () => {
