@@ -3,9 +3,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
 import { existsSync } from "fs";
-import { resolve } from "path";
+import { join, resolve } from "path";
 import { expect } from "chai";
-import { loadJson, testDir, config, setup, clean } from "./test-common";
+import { loadJson, config, setup, clean } from "./test-common";
+import { _config, _packages, _temp } from "../common";
 
 describe('init', () => {
     // since this this is a longish process, 
@@ -15,27 +16,27 @@ describe('init', () => {
     before(setup)
     after(clean)
     it('generates docs config files and templates', () => {
-        const base = loadJson(config.base, config.conf, 'api-extractor.base.json')
+        const base = loadJson(_config(config, 'api-extractor.base.json'))
         // input
-        expect(base?.mainEntryPointFilePath).to.equal(`<projectFolder>/${testDir(config.packages)}/<unscopedPackageName>/dist/cjs/index.d.ts`)
+        expect(base?.mainEntryPointFilePath).to.equal(`<projectFolder>/${_packages(config)}/<unscopedPackageName>/dist/cjs/index.d.ts`)
         // temp dir
-        expect(base?.apiReport?.reportFolder).to.equal(`<projectFolder>/${testDir(config.temp)}/`)
-        expect(base?.apiReport?.reportTempFolder).to.equal(`<projectFolder>/${testDir(config.temp)}/`)
-        expect(base?.docModel?.apiJsonFilePath).to.equal(`<projectFolder>/${testDir(config.temp)}/<unscopedPackageName>.api.json`)
+        expect(base?.apiReport?.reportFolder).to.equal(`<projectFolder>/${_temp(config)}/`)
+        expect(base?.apiReport?.reportTempFolder).to.equal(`<projectFolder>/${_temp(config)}/`)
+        expect(base?.docModel?.apiJsonFilePath).to.equal(`<projectFolder>/${_temp(config)}/<unscopedPackageName>.api.json`)
         // output
 
     })
     it('generates a "api-extractor.json" in each package', () => {
-        const one = testDir(config.packages, 'one')
+        const one = _packages(config, 'one')
         const apiExConf1 = loadJson(one, 'api-extractor.json')
         expect(resolve(one, apiExConf1?.extends)).to.equal(
-            resolve(testDir(config.conf, 'api-extractor.base.json')))
-        const two = testDir(config.packages, 'two')
+            resolve(_config(config, 'api-extractor.base.json')))
+        const two = _packages(config, 'two')
         const apiExConf2 = loadJson(one, 'api-extractor.json')
         expect(resolve(two, apiExConf2?.extends)).to.equal(
-            resolve(testDir(config.conf, 'api-extractor.base.json')))
+            resolve(_config(config, 'api-extractor.base.json')))
     })
     it('creates a github action that updates github pages', () => {
-        expect(existsSync(testDir('.github', 'workflows', 'jekyll-gh-pages.yml')))
+        expect(existsSync(join(config.base, '.github', 'workflows', 'jekyll-gh-pages.yml')))
     })
 })

@@ -1,6 +1,6 @@
-import { join } from 'path';
-import { getRepo, listPackages, execMacro, UserConfig, writeConfig } from './common';
-import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { join, relative } from 'path';
+import { getRepo, listPackages, execMacro, UserConfig, writeConfig, _packages, _config, _temp } from './common';
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 
 /**
  * Initialize docs pre-requisites:
@@ -11,32 +11,41 @@ import { cpSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
  *
  * - Creates configs and templates in docs-config
  */
-export function init(confPath: string, config: UserConfig) {
-    const packagesPath = config.packages;
+export function init(config: UserConfig, force = false) {
+    const relConfig = relative(_packages(config,'pkg'), _config(config))
     const resources = join(__dirname, '..', '..', 'resources');
-    const writeConf = (filename: string, data: string | object) =>
-        writeFileSync(join(confPath, filename), typeof data === 'string' ? data : JSON.stringify(data), 'utf8');
+    const writeConfFile = (filename: string, data: string | object) => {
+        const path = _config(config, filename)
+        if (force || !existsSync(path)) {
+            writeFileSync(path, typeof data === 'string' ? data : JSON.stringify(data), 'utf8');
+        }
+    }
     const template = (resource: string) => {
-        const base = readFileSync(join(resources, resource), 'utf8');
-        const mod = execMacro(base, { packagesPath, confPath });
-        writeConf(resource, mod);
+        const template = readFileSync(join(resources, resource), 'utf8');
+        const mod = execMacro(template, {
+            packagesPath: _packages(config),
+            relConfig,
+            temp: _temp(config),
+            confPath: _config(config)
+        });
+        writeConfFile(resource, mod);
     };
 
-    mkdirSync(confPath, { recursive: true });
-    writeConfig(confPath, {
+    mkdirSync(_config(config), { recursive: true });
+    writeConfig({
         ...config,
         git: getRepo(true),
-    });
+    }, force);
     template('api-extractor.base.json');
     template('api-extractor.json');
 
-    listPackages(packagesPath).map((pkg) => {
-        const source = join(confPath, 'api-extractor.json');
-        const target = join(packagesPath, pkg, 'api-extractor.json');
-        return cpSync(source, target);
+    listPackages(config).map((pkg) => {
+        const source = _config(config, 'api-extractor.json');
+        const target = _packages(config, pkg, 'api-extractor.json');
+        return cpSync(source, target, { force });
     });
 
-    cpSync(join(resources, 'doc-headers'), confPath, { recursive: true });
-    mkdirSync('.github/workflows', { recursive: true });
-    cpSync(join(resources, 'jekyll-gh-pages.yml'), join('.github/workflows', 'jekyll-gh-pages.yml'));
+    cpSync(join(resources, 'doc-headers'), _config(config), { recursive: true, force });
+    mkdirSync(join(config.base, '.github/workflows'), { recursive: true });
+    cpSync(join(resources, 'jekyll-gh-pages.yml'), join(config.base, '.github/workflows', 'jekyll-gh-pages.yml'));
 }

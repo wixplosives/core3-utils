@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { expect } from "chai"
 import { buildDocs } from "../build-docs"
-import { configPath, testDir, setup, clean, config, overwriteTemplate, readDoc, docExists, runMacro } from "./test-common"
+import { setup, clean, config, overwriteTemplate, readDoc, docExists, runMacro } from "./test-common"
 import { macros } from '../macros'
+import { existsSync } from "fs"
+import { _config, _temp } from "../common"
 
 describe('buildDocs', () => {
     before(setup)
     before(function () {
         this.timeout(5_000)
-        buildDocs(testDir(configPath), false)
+        buildDocs(_config(config), false)
     })
     after(clean)
     it('builds readme files in the docs directory', function () {
@@ -18,12 +20,16 @@ describe('buildDocs', () => {
         expect(docExists('two.md')).to.equal(true)
         expect(docExists('two.test1.md')).to.equal(true)
     })
+    it('generate api jsons in the temp directory', ()=>{
+        expect(existsSync(_temp(config, 'one.api.json'))).to.equal(true)
+        expect(existsSync(_temp(config, 'two.api.json'))).to.equal(true)
+    })
     it('includes headers', function () {
         overwriteTemplate('index.md', 'INDEX_HEADER')
         overwriteTemplate('item.md', 'ITEM_HEADER')
         overwriteTemplate('package.md', 'PACKAGE_HEADER')
 
-        buildDocs(testDir(configPath), true)
+        buildDocs(_config(config), true)
 
         expect(readDoc('index.md')).to.match(/INDEX_HEADER/)
         expect(readDoc('one.md')).to.match(/PACKAGE_HEADER/)
@@ -32,7 +38,7 @@ describe('buildDocs', () => {
     it('evaluates macros, passing config filename and args', function () {
         overwriteTemplate('index.md', '[[[macro 1 !]]]')
 
-        buildDocs(testDir(configPath), true, {
+        buildDocs(_config(config), true, {
             macro: (conf, docFileName, a, b) => {
                 expect(conf).to.deep.include(config)
                 expect(docFileName).to.eql('index.md')
@@ -102,51 +108,45 @@ describe('buildDocs', () => {
             expect(runMacro(macros.githubBuildStatus)).to.equal(
                 '[![Build Status](https://github.com/wixplosives/core3-utils/workflows/tests/badge.svg)](https://github.com/wixplosives/core3-utils/actions)')
         })
-        /***
-         * [[[validate packages/docs/src/test/build.unit.ts example1
-         * @example  
-         * ```ts
-         * myFunc()
-         * ```]]]
-         */
-        describe('validate', function ()  {
-            this.timeout(5_000)
-            const example = `
-            \`\`\`ts
-            const a=1
-            return a
-            \`\`\``
+       
+        // describe('validate', function ()  {
+        //     this.timeout(5_000)
+        //     const example = `
+        //     \`\`\`ts
+        //     const a=1
+        //     return a
+        //     \`\`\``
 
-            it('throws when file or snippetId is not found', () => {
-                expect(() => runMacro(macros.validate, 'index.md',
-                    'packages/one/src/index.ts',
-                    'missing',
-                    example
-                )).to.throw()
-                expect(() => runMacro(macros.validate, 'index.md',
-                    example
-                )).to.throw()
-            })
+        //     it('throws when file or snippetId is not found', () => {
+        //         expect(() => runMacro(macros.validate, 'index.md',
+        //             'packages/one/src/index.ts',
+        //             'missing',
+        //             example
+        //         )).to.throw()
+        //         expect(() => runMacro(macros.validate, 'index.md',
+        //             example
+        //         )).to.throw()
+        //     })
 
-            it('does not change the example when valid', () => {
-               /// [[[example1
-                expect(runMacro(macros.validate, 'index.md',
-                    'packages/one/src/index.ts',
-                    'example',
-                    example
-                // ]]]
-                )).to.equal(example.trim())
-            })
+        //     it('does not change the example when valid', () => {
+        //        /// [[[example1
+        //         expect(runMacro(macros.validate, 'index.md',
+        //             'packages/one/src/index.ts',
+        //             'example',
+        //             example
+        //         // ]]]
+        //         )).to.equal(example.trim())
+        //     })
 
-            it('throws when the example is stale', () => {
-                expect(() => runMacro(macros.validate, 'index.md',
-                    'packages/one/src/index.ts',
-                    'example', `
-                    \`\`\`ts
-                        // different than ref
-                    \`\`\``
-                )).to.throw(/Stale example/)
-            })
-        })
+        //     it('throws when the example is stale', () => {
+        //         expect(() => runMacro(macros.validate, 'index.md',
+        //             'packages/one/src/index.ts',
+        //             'example', `
+        //             \`\`\`ts
+        //                 // different than ref
+        //             \`\`\``
+        //         )).to.throw(/Stale example/)
+        //     })
+        // })
     })
 })

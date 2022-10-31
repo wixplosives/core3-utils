@@ -15,7 +15,7 @@ const skipAnalyze = {
     describe: 'Use cache analyzed api',
     boolean: true,
 };
-const output = {
+const docs = {
     alias: 'o',
     default: '_docs',
     describe: 'target directory',
@@ -25,6 +25,24 @@ const conf = {
     alias: 'c',
     default: 'docs-conf',
     describe: 'index/package/item headers and other configuration',
+    string: true,
+};
+const base = {
+    alias: 'b',
+    default: '.',
+    describe: 'project root',
+    string: true,
+};
+const temp = {
+    alias: 't',
+    default: 'temp',
+    describe: 'temp files directory',
+    boolean: true,
+};
+const force = {
+    alias: 'f',
+    default: false,
+    describe: 'overwrite existing configuration',
     string: true,
 };
 export const siteUrl = {
@@ -44,9 +62,9 @@ export function cli() {
         .command(
             'init',
             'initialize docs config and github pages action',
-            { packages, conf, output, siteUrl },
-            ({ packages, conf, output, siteUrl }) => {
-                init(conf, { packages, docs: output, siteUrl });
+            { packages, conf, docs, siteUrl, base, temp, force },
+            ({ packages, conf, docs, siteUrl, base, temp, force }) => {
+                init({ packages, conf, docs, siteUrl, base, temp }, force);
             }
         )
         .command(['readme'], 'create README.md for all the packages', { conf, siteUrl }, ({ conf, siteUrl }) => {

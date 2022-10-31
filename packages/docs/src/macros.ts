@@ -1,22 +1,21 @@
 import { readPackageJson } from '@wixc3/fs-utils';
 import nodeFs from '@file-services/node';
-import { join } from 'path';
-import { ProcessingConfig, Repo, stripName } from './common';
+import { ProcessingConfig, Repo, stripName, _docs, _packages } from './common';
 import { processMacros } from './process-macros';
 import { repeat } from '@wixc3/common';
 
 export type Macro = (config: ProcessingConfig, filename: string, ...args: string[]) => string;
 export class MacroError extends Error {
     constructor(public config: ProcessingConfig, public file: string, fn: Macro, _message: string) {
-        super(`Macro error in ${join(config.docs, file)} - [[[${fn.name}]]]:
+        super(`Macro error in ${_docs(config, file)} - [[[${fn.name}]]]:
     ${_message}`);
     }
 }
 
-const rootPackageName: Macro = () => readPackageJson('.', nodeFs).name || '';
+const rootPackageName: Macro = ({base}) => readPackageJson(base, nodeFs).name || '';
 
 const packageName: Macro = (config, name) =>
-    readPackageJson(join(config.packages, stripName(name)), nodeFs).name?.toString() || '';
+    readPackageJson(_packages(config, stripName(name)), nodeFs).name?.toString() || '';
 
 const unscopedPackageName: Macro = (config, name) => macros.packageName(config, name).replace(/.*\//, '');
 
@@ -27,9 +26,8 @@ const packageNameUrl: Macro = (config, name) =>
         .map((i: string) => encodeURIComponent(i))
         .join('@');
 
-const gitRepo: Macro = (config, name, field = '') => {
+const gitRepo: Macro = (config, name, field = 'github') => {
     const { git } = config;
-    field === field || 'github';
     if (field in git) {
         return git[field as keyof Repo];
     }

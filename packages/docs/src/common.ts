@@ -2,11 +2,12 @@ import { first, Nullable } from '@wixc3/common';
 import { execSync } from 'child_process';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { basename, join } from 'path';
+import type { Macro } from './macros';
 
-export function listPackages(path: string) {
-    return readdirSync(path, { withFileTypes: true })
+export function listPackages({ base, packages }: UserConfig) {
+    return readdirSync(join(base, packages), { withFileTypes: true })
         .filter((i) => i.isDirectory())
-        .filter((i) => existsSync(join(path, i.name, 'package.json')))
+        .filter((i) => existsSync(join(base, packages, i.name, 'package.json')))
         .map((i) => i.name);
 }
 
@@ -67,7 +68,10 @@ export function getRepo(assert = false): Nullable<Repo> {
 }
 
 export type UserConfig = {
+    conf: string
+    base: string;
     packages: string;
+    temp: string
     docs: string;
     siteUrl?: string;
 };
@@ -76,7 +80,11 @@ export type Config = UserConfig & {
     git: Repo;
 };
 
-export type ProcessingConfig = Config & { modifier?: (name: string, content: string) => string };
+export type ProcessingConfig = Config & {
+    modifier?: (name: string, content: string) => string,
+    macros: Record<string, Macro>
+
+};
 
 export function loadConfig(path: string): Config {
     try {
@@ -87,6 +95,18 @@ export function loadConfig(path: string): Config {
     throw new Error(`Invalid config at ${path}/config.json.\n Try running "docs init" first`);
 }
 
-export function writeConfig(path: string, config: Config) {
-    writeFileSync(join(path, 'config.json'), JSON.stringify(config, null, 2), 'utf8');
+export function writeConfig(config: Config, force: boolean) {
+    const path = join(config.base, config.conf, 'config.json')
+    if (force || !existsSync(path)) {
+        writeFileSync(path, JSON.stringify(config, null, 2), 'utf8');
+    }
 }
+
+export const _packages = ({ base, packages }: UserConfig, ...path: string[]) =>
+    join(base, packages, ...path)
+export const _docs = ({ base, docs }: UserConfig, ...path: string[]) =>
+    join(base, docs, ...path)
+export const _config = ({ base, conf }: UserConfig, ...path: string[]) =>
+    join(base, conf, ...path)
+export const _temp = ({ base, temp }: UserConfig, ...path: string[]) =>
+    join(base, temp, ...path)
