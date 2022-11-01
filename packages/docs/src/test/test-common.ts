@@ -1,12 +1,9 @@
-/* eslint-disable no-console */
-
 import { cpSync, existsSync, mkdirSync, readFileSync,  rmSync,  writeFileSync } from "fs";
 import { join } from "path";
 import { UserConfig, _config, _docs } from "../common";
-import { parse } from 'comment-json'
 import { init } from "../init";
 import { buildDocs } from "../build-docs";
-import { escapeRegExp, isString } from "@wixc3/common";
+import { escapeRegExp, isString, naiveStripComments } from "@wixc3/common";
 import type { Macro } from "../macros";
 
 export const config: UserConfig = {
@@ -18,14 +15,13 @@ export const config: UserConfig = {
 }
 
 export const loadJson = (...paths: string[]) => {
-    const content = readFileSync(join(...paths), 'utf8')
+    const path=join(...paths);
+    const content = naiveStripComments(readFileSync(path, 'utf8'))
     try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return parse(content) as any
+        return JSON.parse(content) 
     } catch (err) {
-        console.error(join(...paths))
-        console.error(content)
-        throw err
+        throw new Error(`${err}\n${path}\n${content}`)
     }
 }
 
