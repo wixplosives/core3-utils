@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 
 import { cpSync, existsSync, mkdirSync, readFileSync,  rmSync,  writeFileSync } from "fs";
 import { join } from "path";
@@ -18,8 +19,14 @@ export const config: UserConfig = {
 
 export const loadJson = (...paths: string[]) => {
     const content = readFileSync(join(...paths), 'utf8')
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return parse(content) as any
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return parse(content) as any
+    } catch (err) {
+        console.error(join(...paths))
+        console.error(content)
+        throw err
+    }
 }
 
 export const setup = () => {
