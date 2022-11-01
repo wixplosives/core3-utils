@@ -3,7 +3,8 @@ import { compileCode } from '../compile';
 import { isSame, match } from '../match';
 import { getText } from './helpers';
 
-describe(`match`, () => {
+describe(`match`, function () {
+    this.timeout(5_000)
     it('finds a patten in code', () => {
         const code = compileCode(`(a)=>{ 
             const b=true 
@@ -46,7 +47,8 @@ describe(`match`, () => {
     });
 });
 
-describe(`isSame`, () => {
+describe(`isSame`, function () {
+    this.timeout(5_000)
     it('returns true for identical nodes', () => {
         const code = `()=>{}`;
         const a = compileCode(code),
