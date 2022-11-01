@@ -113,45 +113,5 @@ describe('buildDocs', () => {
             expect(runMacro(macros.githubBuildStatus)).to.equal(
                 '[![Build Status](https://github.com/org/repo/workflows/tests/badge.svg)](https://github.com/org/repo/actions)')
         })
-       
-        // describe('validate', function ()  {
-        //     this.timeout(5_000)
-        //     const example = `
-        //     \`\`\`ts
-        //     const a=1
-        //     return a
-        //     \`\`\``
-
-        //     it('throws when file or snippetId is not found', () => {
-        //         expect(() => runMacro(macros.validate, 'index.md',
-        //             'packages/one/src/index.ts',
-        //             'missing',
-        //             example
-        //         )).to.throw()
-        //         expect(() => runMacro(macros.validate, 'index.md',
-        //             example
-        //         )).to.throw()
-        //     })
-
-        //     it('does not change the example when valid', () => {
-        //        /// [[[example1
-        //         expect(runMacro(macros.validate, 'index.md',
-        //             'packages/one/src/index.ts',
-        //             'example',
-        //             example
-        //         // ]]]
-        //         )).to.equal(example.trim())
-        //     })
-
-        //     it('throws when the example is stale', () => {
-        //         expect(() => runMacro(macros.validate, 'index.md',
-        //             'packages/one/src/index.ts',
-        //             'example', `
-        //             \`\`\`ts
-        //                 // different than ref
-        //             \`\`\``
-        //         )).to.throw(/Stale example/)
-        //     })
-        // })
     })
 })
