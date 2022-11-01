@@ -23,6 +23,7 @@
   "dependencies": {
     "@microsoft/api-documenter": "^7.19.22",
     "@microsoft/api-extractor": "^7.33.4",
+    "@microsoft/api-extractor-model": "^7.25.2",
     "comment-json": "^4.2.3",
     "yargs": "^17.6.0"
   },

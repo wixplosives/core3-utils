@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
-import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
-import { execSync } from 'child_process';
+import {  Extractor } from '@microsoft/api-extractor';
 import { readdirSync } from 'fs';
 import { Config, listPackages, loadConfig, ProcessingConfig, _docs, _packages, _temp } from './common';
 import { createHeadersModifier, processMacros } from './process-macros';
 import { Macro, macros as builtinMacros } from './macros';
+import { MarkdownDocumenter } from '@microsoft/api-documenter/lib/documenters/MarkdownDocumenter'
+import { ApiModel } from '@microsoft/api-extractor-model'
 
 /**
  * Build docs markdown
@@ -20,12 +21,13 @@ export function buildDocs(conf: string, skipAnalyze = false, macros?: Record<str
 function analyze(skipAnalyze: boolean, config: Config) {
     if (!skipAnalyze) {
         console.time('Analyzing APIs...');
+        const typescriptCompilerFolder = require.resolve('typescript')
+
         listPackages(config).forEach((path) => {
-            const extractorConfig = ExtractorConfig.loadFileAndPrepare(
-                _packages(config, path, 'api-extractor.json')
-            );
-            console.log(`Analyzing APIs of ${path}`);
-            Extractor.invoke(extractorConfig, { typescriptCompilerFolder: require.resolve('typescript') });
+            Extractor.loadConfigAndInvoke(_packages(config, path, 'api-extractor.json'), {
+                // at the time of writing this argument is ignored :(
+                typescriptCompilerFolder
+            }).compilerState
         });
         console.timeEnd('Analyzing APIs...');
     }
@@ -33,7 +35,17 @@ function analyze(skipAnalyze: boolean, config: Config) {
 
 function generateDocs(config: Config) {
     console.time('Building markdown files');
-    execSync(`yarn api-documenter markdown -i ${_temp(config)} -o ${_docs(config)}`);
+    // execSync(`yarn api-documenter markdown -i ${_temp(config)} -o ${_docs(config)}`);
+    const model = new ApiModel()
+    listPackages(config).forEach((path) => {
+        model.loadPackage(_temp(config, `${path}.api.json`))
+    });
+    const dm = new MarkdownDocumenter({
+        apiModel: model,
+        outputFolder: _docs(config),
+        documenterConfig: undefined
+    })
+    dm.generateFiles()
     console.timeEnd('Building markdown files');
 }
 
