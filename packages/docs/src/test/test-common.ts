@@ -1,5 +1,5 @@
 
-import { cpSync, existsSync, mkdirSync, readFileSync,  writeFileSync } from "fs";
+import { cpSync, existsSync, mkdirSync, readFileSync,  rmSync,  writeFileSync } from "fs";
 import { join } from "path";
 import { UserConfig, _config, _docs } from "../common";
 import { parse } from 'comment-json'
@@ -25,18 +25,19 @@ export const loadJson = (...paths: string[]) => {
 export const setup = () => {
     clean()
     mkdirSync(config.base, { recursive: true })
-    const resources = join(__dirname, 'resources');
+    // const resources = join(__dirname, 'resources');
     cpSync(join(__dirname, '..', '..', '..', 'src', 'test', 'resources', 'project'), config.base, { recursive: true });
-    cpSync(join(resources, 'project'), config.base, { recursive: true });
-    init(config, true)
+    // cpSync(join(resources, 'project'), config.base, { recursive: true });
+    init(config, true,  `origin	git@github.com:org/repo.git (fetch)
+origin	git@github.com:org/repo.git (push)`)
 }
 
 export const clean = () =>{
-    // if (existsSync(testDir())) {
-    //     rmSync(testDir(), {
-    //         recursive: true, force:true
-    //     })
-    // }
+    if (existsSync(config.base)) {
+        rmSync(config.base, {
+            recursive: true, force:true
+        })
+    }
 }
 
 export const readDoc = (name:string) => readFileSync(_docs(config, name), 'utf8')

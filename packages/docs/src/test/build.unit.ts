@@ -3,8 +3,8 @@ import { expect } from "chai"
 import { buildDocs } from "../build-docs"
 import { setup, clean, config, overwriteTemplate, readDoc, docExists, runMacro } from "./test-common"
 import { macros } from '../macros'
-import { existsSync } from "fs"
-import { _config, _temp } from "../common"
+import { existsSync, rmSync } from "fs"
+import { _config, _docs, _temp } from "../common"
 
 describe('buildDocs', () => {
     before(setup)
@@ -50,8 +50,13 @@ describe('buildDocs', () => {
     })
 
     describe('builtin macros', () => {
-        beforeEach(setup)
-
+        before(function () {
+            this.timeout(5_000)
+            buildDocs(_config(config), false)
+        })
+        beforeEach(()=>{
+            rmSync(_docs(config), {recursive:true})
+        })
         it('runMacro', () => {
             expect(runMacro('NO_SUCH_MACRO')).to.equal('[[[NO_SUCH_MACRO ]]]')
             expect(runMacro('NO_SUCH_MACRO', 'one.md')).to.equal('[[[NO_SUCH_MACRO ]]]')
@@ -76,24 +81,24 @@ describe('buildDocs', () => {
 
         it('github', () => {
             expect(runMacro(macros.github, 'two.md')).to.equal(
-                '[@test/two on Github](https://github.com/wixplosives/core3-utils/tree/master/packages/two)'
+                '[@test/two on Github](https://github.com/org/repo/tree/master/packages/two)'
             )
             expect(runMacro(macros.github, 'two.test1.md')).to.equal(
-                '[@test/two on Github](https://github.com/wixplosives/core3-utils/tree/master/packages/two)'
+                '[@test/two on Github](https://github.com/org/repo/tree/master/packages/two)'
             )
             expect(runMacro(macros.github)).to.equal(
-                '[main on Github](https://github.com/wixplosives/core3-utils/tree/master/packages/main)'
+                '[main on Github](https://github.com/org/repo/tree/master/packages/main)'
             )
         })
         it('githubPages', () => {
             expect(runMacro(macros.githubPages)).to.equal(
-                'https://wixplosives.github.io/core3-utils')
+                'https://org.github.io/repo')
         })
         it('gitRepo', () => {
             expect(runMacro(macros.gitRepo)).to.equal(
-                'https://github.com/wixplosives/core3-utils')
+                'https://github.com/org/repo')
             expect(runMacro(macros.gitRepo, 'one.md', 'org')).to.equal(
-                'wixplosives')
+                'org')
             expect(() => runMacro(macros.gitRepo, 'one.md', 'invalid')).to.throw()
         })
         it('include', () => {
@@ -106,7 +111,7 @@ describe('buildDocs', () => {
         })
         it('githubBuildStatus', () => {
             expect(runMacro(macros.githubBuildStatus)).to.equal(
-                '[![Build Status](https://github.com/wixplosives/core3-utils/workflows/tests/badge.svg)](https://github.com/wixplosives/core3-utils/actions)')
+                '[![Build Status](https://github.com/org/repo/workflows/tests/badge.svg)](https://github.com/org/repo/actions)')
         })
        
         // describe('validate', function ()  {

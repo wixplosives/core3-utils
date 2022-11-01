@@ -40,11 +40,11 @@ export type Repo = {
     pages: string;
     github: string;
 };
-export function getRepo(assert: true): Repo;
+export function getRepo(assert: true,  overrideOrigin?:string): Repo;
 export function getRepo(): Nullable<Repo>;
-export function getRepo(assert = false): Nullable<Repo> {
+export function getRepo(assert = false, overrideOrigin?:string): Nullable<Repo> {
     try {
-        const res = execSync('git remote -v').toString().split('\n')[1];
+        const res = (overrideOrigin || execSync('git remote -v')).toString().split('\n')[1];
         const match = first(res?.matchAll(/.*@(.*):(.*)\/(.*)\.git.*/g));
         if (match) {
             const [_, host, org, repo] = match;

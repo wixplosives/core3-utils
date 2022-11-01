@@ -11,7 +11,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
  *
  * - Creates configs and templates in docs-config
  */
-export function init(config: UserConfig, force = false) {
+export function init(config: UserConfig, force = false, overrideOrigin?:string) {
     const relConfig = relative(_packages(config,'pkg'), _config(config))
     const resources = join(__dirname, '..', '..', 'resources');
     const writeConfFile = (filename: string, data: string | object) => {
@@ -34,7 +34,7 @@ export function init(config: UserConfig, force = false) {
     mkdirSync(_config(config), { recursive: true });
     writeConfig({
         ...config,
-        git: getRepo(true),
+        git: getRepo(true, overrideOrigin),
     }, force);
     template('api-extractor.base.json');
     template('api-extractor.json');
