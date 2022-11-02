@@ -3,7 +3,7 @@ import { isPlainObject } from './objects';
 import { isMap, isSet } from './types';
 
 /**
- * Deep comparison of two items
+ * Deep comparison of two objects
 
  * @example 
  * ```ts
