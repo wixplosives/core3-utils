@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
-import {  Extractor } from '@microsoft/api-extractor';
+import { Extractor } from '@microsoft/api-extractor';
 import { readdirSync } from 'fs';
 import { Config, listPackages, loadConfig, ProcessingConfig, _docs, _packages, _temp } from './common';
 import { createHeadersModifier, processMacros } from './process-macros';
 import { Macro, macros as builtinMacros } from './macros';
 import { MarkdownDocumenter } from '@microsoft/api-documenter/lib/documenters/MarkdownDocumenter'
 import { ApiModel } from '@microsoft/api-extractor-model'
+import { dirname, join } from 'path';
 
 /**
  * Build docs markdown
@@ -21,13 +22,18 @@ export function buildDocs(conf: string, skipAnalyze = false, macros?: Record<str
 function analyze(skipAnalyze: boolean, config: Config) {
     if (!skipAnalyze) {
         console.time('Analyzing APIs...');
-        const typescriptCompilerFolder = require.resolve('typescript')
+        const typescriptCompilerFolder = join(dirname(require.resolve('typescript')), '..')
 
-        listPackages(config).forEach((path) => {
-            Extractor.loadConfigAndInvoke(_packages(config, path, 'api-extractor.json'), {
-                // at the time of writing this argument is ignored :(
-                typescriptCompilerFolder
-            }).compilerState
+        listPackages(config).forEach((_package) => {
+            try {
+                Extractor.loadConfigAndInvoke(_packages(config, _package, 'api-extractor.json'), {
+                    // at the time of writing this argument is ignored :(
+                    typescriptCompilerFolder,
+                })
+            } catch (err) {
+                throw new Error(`Error analyzing ${_packages(config, _package, 'api-extractor.json')}:
+                ${(err as Error).message}`)
+            }
         });
         console.timeEnd('Analyzing APIs...');
     }

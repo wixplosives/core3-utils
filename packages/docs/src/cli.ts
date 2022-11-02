@@ -43,7 +43,7 @@ const force = {
     alias: 'f',
     default: false,
     describe: 'overwrite existing configuration',
-    string: true,
+    boolean: true,
 };
 export const siteUrl = {
     alias: 's',
