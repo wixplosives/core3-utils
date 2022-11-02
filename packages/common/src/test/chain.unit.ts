@@ -1,8 +1,6 @@
 import { expect } from 'chai';
 import { chain } from '../chain';
-// eslint-disable-next-line
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// @ts-expect-error no types
 import gc from 'expose-gc/function';
 const forceGc = gc as () => void;
 

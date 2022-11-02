@@ -234,6 +234,27 @@ export function noIdents(modified: string, separator = '\n') {
 }
 
 /**
+ * Shifts all indentation to the left
+ * using the line with the least indentation as a baseline
+ */
+export function minimalIndent(str: string) {
+    const lines = str.split('\n');
+    const min = lines.reduce((min, l) => Math.min(l.replace(/(\s*)(.*)/g, '$1').length, min), 0);
+    return lines.map((l) => l.slice(min)).join('\n');
+}
+
+/**
+ * Remove white spaces including empty lines
+ */
+export function noWhiteSpace(str: string) {
+    return str
+        .split('\n')
+        .map((line) => line.replaceAll(/\s+/g, ' ').trim())
+        .filter((i) => i)
+        .join('\n');
+}
+
+/**
  * Checks is value is a string
 
  * @param value -
@@ -269,5 +290,22 @@ export function templateCompilerProvider(context: Record<string, any>) {
  * Generates a string repeating [str] [count] times
  */
 export function repeat(str: string, count: number) {
-    return [...new Array<void>(count)].map((_) => str).join('');
+    return [...new Array<void>(count)].map(() => str).join('');
+}
+
+/**
+ * Returns a string safe to be used in RegExp
+ * @see https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+ */
+export function escapeRegExp(str: string) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // $& means the whole matched string
+}
+
+/**
+ * Removes comments from string
+ * Note that there's lexical no parsing, so stuff like "//'//" will not work
+ */
+export function naiveStripComments(str:string) {
+    return str.replaceAll(/\/\*.+?\*\//gs, '').replaceAll(/\s*(?<!:)\/\/.*\n?/g, '')
 }

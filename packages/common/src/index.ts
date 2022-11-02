@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * Useful utils for strings, iterables, objects, maps, promises and other commonly used structures
+ */
 export * from './strings';
 export * from './numbers';
 export * from './objects';
@@ -10,6 +14,5 @@ export * from './enum-values';
 export * from './index';
 export * from './platform';
 export * from './functions';
-export * from './deferred';
 export * from './types';
 export * from './maps';
