@@ -7,10 +7,9 @@ import { existsSync, rmSync } from "fs"
 import { _config, _docs, _temp } from "../common"
 
 describe('buildDocs', function () {
-    this.timeout(10_000)
     before(setup)
     before(function () {
-        this.timeout(5_000)
+        this.timeout(10_000)
         buildDocs(_config(config), false)
     })
     after(clean)
