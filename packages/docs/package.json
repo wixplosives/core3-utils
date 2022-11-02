@@ -1,0 +1,32 @@
+{
+  "name": "@wixc3/docs",
+  "version": "3.0.1",
+  "description": "API ",
+  "main": "dist/cjs/index.js",
+  "module": "esm/index.js",
+  "author": "Wix.com",
+  "files": [
+    "resources",
+    "dist",
+    "src",
+    "!dist/*/test",
+    "!dist/*/tsconfig.tsbuildinfo"
+  ],
+  "license": "MIT",
+  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "docs": "bin/build-docs"
+  },
+  "dependencies": {
+    "@microsoft/api-documenter": "^7.19.22",
+    "@microsoft/api-extractor": "^7.33.4",
+    "@microsoft/api-extractor-model": "^7.25.2",
+    "yargs": "^17.6.0"
+  },
+  "devDependencies": {
+    "@types/yargs": "^17.0.13"
+  }
+}

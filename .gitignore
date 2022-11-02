@@ -122,3 +122,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .DS_Store
+# Autodocs
+temp/
+_docs/
+tsdoc-metadata.json
+docs-test-project/
