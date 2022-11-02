@@ -6,7 +6,8 @@ import { macros } from '../macros'
 import { existsSync, rmSync } from "fs"
 import { _config, _docs, _temp } from "../common"
 
-describe('buildDocs', () => {
+describe('buildDocs', function () {
+    this.timeout(10_000)
     before(setup)
     before(function () {
         this.timeout(5_000)
@@ -20,7 +21,7 @@ describe('buildDocs', () => {
         expect(docExists('two.md')).to.equal(true)
         expect(docExists('two.test1.md')).to.equal(true)
     })
-    it('generate api jsons in the temp directory', ()=>{
+    it('generate api jsons in the temp directory', () => {
         expect(existsSync(_temp(config, 'one.api.json'))).to.equal(true)
         expect(existsSync(_temp(config, 'two.api.json'))).to.equal(true)
     })
@@ -54,8 +55,8 @@ describe('buildDocs', () => {
             this.timeout(5_000)
             buildDocs(_config(config), false)
         })
-        beforeEach(()=>{
-            rmSync(_docs(config), {recursive:true})
+        beforeEach(() => {
+            rmSync(_docs(config), { recursive: true })
         })
         it('runMacro', () => {
             expect(runMacro('NO_SUCH_MACRO')).to.equal('[[[NO_SUCH_MACRO ]]]')

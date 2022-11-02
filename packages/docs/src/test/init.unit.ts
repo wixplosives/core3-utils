@@ -8,11 +8,12 @@ import { expect } from "chai";
 import { loadJson, config, setup, clean } from "./test-common";
 import { _config, _packages, _temp } from "../common";
 
-describe('init', () => {
+describe('init', function () {
     // since this this is a longish process, 
     // ini t is called only once, all test are checking the resulting files
     // tests do not mutate anything
     // init is executed in "setup"
+    this.timeout(10_000)
     before(setup)
     after(clean)
     it('generates docs config files and templates', () => {
