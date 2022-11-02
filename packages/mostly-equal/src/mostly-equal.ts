@@ -114,6 +114,7 @@ export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
                 values.map((item) => ({
                     fieldDefinedInParent: item.fieldDefinedInParent,
                     path: item.path,
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     value: item.value,
                 }))
             );

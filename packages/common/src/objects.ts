@@ -37,21 +37,31 @@ export function mapObject(obj: object, mapping: (entry: [string, any]) => [strin
 /**
  * Maps values of a plain object
  */
-export function mapValues(obj: object, mapping: (value: any, k?: string) => any) {
-    return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, mapping(v, k)]));
+export function mapValues<T extends object, R>(
+    obj: T,
+    mapping: (value: T[keyof T], k?: keyof T) => R
+): { [_ in keyof T]: R } {
+    return Object.fromEntries(
+        Object.entries(obj).map(([k, v]: [string, T[keyof T]]) => [k, mapping(v, k as keyof T)])
+    ) as { [_ in keyof T]: R };
 }
 
 /**
  * Maps values of a plain object
  */
-export function mapKeys(obj: object, mapping: (key: string, value?: any) => string) {
-    return Object.fromEntries(Object.entries(obj).map(([k, v]) => [mapping(k, v), v]));
+export function mapKeys<T extends object, R extends string>(
+    obj: object,
+    mapping: (key: keyof T, value?: T[keyof T]) => R
+): Record<R, T[keyof T]> {
+    return Object.fromEntries(
+        Object.entries(obj).map(([k, v]: [string, T[keyof T]]) => [mapping(k as keyof T, v), v])
+    ) as Record<R, T[keyof T]>;
 }
 
 /**
  * Checks that value is a POJO
  */
-export function isPlainObject(value: unknown): value is Record<string | number | symbol, any> {
+export function isPlainObject(value: unknown): value is Record<string | number | symbol, unknown> {
     return value !== null && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype;
 }
 
@@ -156,21 +166,16 @@ export function defaults<S, D>(
     deep = true,
     shouldUseDefault = (v: unknown, _key: string) => v === undefined
 ): S & D {
-    const parseObj = (src: any, dft: any, parentKey = ''): any => {
+    const parseObj = (src: unknown, dft: unknown, parentKey = ''): Record<string, unknown> => {
         if (isPlainObject(src)) {
             const result = {} as Record<string, any>;
             for (const [key, value] of Object.entries(src)) {
                 const fullKey = (parentKey ? parentKey + '.' : '') + key;
-                const _default = isPlainObject(dft)
-                    ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                      (dft as any)[key]
-                    : undefined;
+                const _default = isPlainObject(dft) ? dft[key] : undefined;
 
                 if (shouldUseDefault(value, fullKey)) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                     result[key] = _default;
                 } else {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                     result[key] = deep ? parseObj(value, _default, fullKey) : value;
                 }
             }

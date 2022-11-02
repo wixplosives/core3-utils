@@ -3,13 +3,13 @@
   "version": "2.2.0",
   "description": "isomorphic fetch, for browsers and Node.js",
   "main": "./dist/node.js",
-  "browser": "./dist/browser.js",
-  "types": "./dist/browser.d.ts",
+  "browser": "./dist/cjs/browser.js",
+  "types": "./dist/cjs/browser.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/browser.d.ts",
-      "browser": "./dist/browser.js",
-      "default": "./dist/node.js"
+      "types": "./dist/cjs/browser.d.ts",
+      "browser": "./dist/cjs/browser.js",
+      "default": "./dist/cjs/node.js"
     },
     "./package.json": "./package.json"
   },
