@@ -9,7 +9,6 @@
   },
   "references": [
     { "path": "../../common/src" },
-    { "path": "../../fs-utils/src" },
-    { "path": "../../typescript/src" }
+    { "path": "../../fs-utils/src" }
   ]
 }
