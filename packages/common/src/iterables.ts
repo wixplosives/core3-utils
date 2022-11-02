@@ -286,6 +286,42 @@ export function reduce<T, A>(iterable: Nullable<Iterable<T>>, reducer: (acc: A, 
 }
 
 /**
+ * @see Array.join
+ */
+export function join<T extends string>(iterable: Nullable<Iterable<T>>, separator: string): string {
+    if (!iterable) {
+        return '';
+    }
+    let result = first(iterable) || '';
+    let prev: string | null = null;
+    for (const v of skip(iterable, 1)) {
+        if (prev) {
+            result = result + separator + prev;
+        }
+        prev = v;
+    }
+    if (prev) {
+        result = result + separator + prev;
+    }
+    return result;
+}
+
+/**
+ * Skips the first elements of an iterable
+ */
+export function* skip<T>(iterable: Nullable<Iterable<T>>, count: number): Iterable<T> {
+    if (iterable) {
+        for (const item of iterable) {
+            if (count === 0) {
+                yield item;
+            } else {
+                count--;
+            }
+        }
+    }
+}
+
+/**
  * Groups elements by the value of a property
  * @returns A map of the value to an array of elements
  */

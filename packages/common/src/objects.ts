@@ -160,7 +160,7 @@ export function reverseObject(obj: Record<string, string | false | undefined>) {
  * ```
  * @returns a new object with merged source and defaultValues
  */
-export function defaults<S, D>(
+export function defaults<S extends object, D extends object>(
     _source: S,
     _defaultValues: D,
     deep = true,
@@ -182,6 +182,7 @@ export function defaults<S, D>(
             if (isPlainObject(dft)) {
                 for (const [key, _default] of Object.entries(dft)) {
                     if (!(key in src)) {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         result[key] = _default;
                     }
                 }
