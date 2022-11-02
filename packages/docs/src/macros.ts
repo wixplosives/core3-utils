@@ -1,6 +1,6 @@
 import { readPackageJson } from '@wixc3/fs-utils';
 import nodeFs from '@file-services/node';
-import { ProcessingConfig, Repo, stripName, _docs, _packages } from './common';
+import { Repo, stripName, _docs, _packages } from './common';
 import { processMacros } from './process-macros';
 import { repeat } from '@wixc3/common';
 import type { Macro } from './macros.types';
@@ -27,17 +27,16 @@ export const rootPackageName: Macro = ({ base }) => readPackageJson(base, nodeFs
  */
 export const packageName: Macro = (config, name) =>
     config.git.github === 'https://github.com/wixplosives/core3-utils' && name.startsWith('docs-macros')
-        ? '@wixc3/docs'
-        : readPackageJson(_packages(config, stripName(name)), nodeFs).name?.toString() || '';
+    ? '@wixc3/docs'
+    : readPackageJson(_packages(config, stripName(name)), nodeFs).name?.toString() || '';
 
 /**
- *
+ * 
  * Project's current package name, unscoped
- *
+ * 
  * Usage: inside a ts-docs comment block of a package:
- *
- * `[[[unscopedPackageName]]]`
- *
+ * *[[[unscopedPackageName]]]
+ * 
  * Will be replace by the full package name, i.e `bla` for `@wixc3/bla`
  */
 export const unscopedPackageName: Macro = (config, name) => packageName(config, name).replace(/.*\//, '');
@@ -107,7 +106,7 @@ export const githubPages: Macro = ({ git: { pages } }, _name, uri = '', caption 
 export const githubBuildStatus: Macro = ({ git: { github } }) =>
     `[![Build Status](${github}/workflows/tests/badge.svg)](${github}/actions)`;
 
-const npmBadge: Macro = (config, name) => {
+export const npmBadge: Macro = (config, name) => {
     const pkg = packageNameUrl(config, name);
     return `[![npm version](https://badge.fury.io/js/${pkg}.svg)](https://badge.fury.io/js/${pkg})`;
 };
@@ -161,6 +160,6 @@ export const h: Macro = (_, __, level, ...title) => `${repeat('#', parseInt(leve
 export const listMacros: Macro = ({ macros }) => {
     return Object.keys(macros)
         .sort()
-        .map((name) => ` - *\\[\\[\\[${name}\\]\\]\\]`)
+        .map((name) => ` - [*\\[\\[\\[${name}\\]\\]\\]](./docs-macros.${name}.md)`)
         .join('\n');
 };

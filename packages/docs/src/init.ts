@@ -2,6 +2,8 @@ import { join, relative } from 'path';
 import { getRepo, listPackages, execMacro, UserConfig, writeConfig, _packages, _config, _temp } from './common';
 import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 
+export { UserConfig };
+
 /**
  * Initialize docs pre-requisites:
  *

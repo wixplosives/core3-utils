@@ -27,11 +27,9 @@
  *
  * [[[h 3 Macros]]]
  * There are many awesome macros you can use in your TDDocs.
- * Using macros look like this *[[[macro and args]]]
+ * Using macros look like this `[[[macro and args]]]`
  *
- * Available macros are:
- *
- * [[[listMacros]]]
+ * [[[include ./docs-macros.md]]]
  *
  */
 export * from './build-docs';

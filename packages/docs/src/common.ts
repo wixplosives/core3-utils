@@ -2,7 +2,7 @@ import { first, Nullable } from '@wixc3/common';
 import { execSync } from 'child_process';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { basename, join } from 'path';
-import type { Macro } from './macros';
+import type { Macro } from './macros.types';
 
 export function listPackages({ base, packages }: UserConfig) {
     return readdirSync(join(base, packages), { withFileTypes: true })
