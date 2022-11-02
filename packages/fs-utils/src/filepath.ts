@@ -1,6 +1,6 @@
 import { posix as posixPath, win32 as win32Path, extname } from '@file-services/path';
 import type { IFileSystem } from '@file-services/types';
-import { getPackageName } from './get-package-name';
+import { getPackageJsonPath, getPackageName } from './package-json';
 
 export const replaceWinSlashes = (str: string) => str.replace(/\\/g, '/');
 export const formatToOSpaths = (str: string) => {
@@ -42,9 +42,9 @@ export function addRelativePrefix(path: string) {
 }
 
 /**
- * @param filePath full posix path of the file which about to import from `modulePath`
- * @param modulePath full posix path of the imported module
- * @return the relative posix path from `filePath` to `modulePath`
+ * @param filePath - full posix path of the file which about to import from `modulePath`
+ * @param modulePath - full posix path of the imported module
+ * @returns the relative posix path from `filePath` to `modulePath`
  */
 export function rebaseRelativeModulePath(filePath: string, modulePath: string): string {
     if (!isRelativeModulePath(modulePath) && !isWindowsStyleAbsolutePath(modulePath)) {
@@ -63,8 +63,8 @@ export function getRelativeModulePath(sourceAbsFilePath: string, targetAbsFilePa
 /**
  * Creates relative import path for a file, stripping extension from JS/TS files.
  *
- * @param sourceFilePath the file path of the component source code to be modified by new import lines
- * @param filePathToImport the file path to be imported into the source file
+ * @param sourceFilePath - the file path of the component source code to be modified by new import lines
+ * @param filePathToImport - the file path to be imported into the source file
  */
 export function getRelativeImportPath(sourceFilePath: string, filePathToImport: string): string {
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -78,9 +78,9 @@ export function getRelativeImportPath(sourceFilePath: string, filePathToImport: 
 /**
  * Creates bare import specifier for an absolute import path, stripping extension from JS/TS files.
  *
- * @param absoluteImportPath an absolute import path
- * @param packageJsonPath package.json file path
- * @param packageJsonName package name
+ * @param absoluteImportPath - an absolute import path
+ * @param packageJsonPath - package.json file path
+ * @param packageJsonName - package name
  */
 export function getBareImportSpecifier(
     absoluteImportPath: string,
@@ -97,10 +97,10 @@ export function getBareImportSpecifier(
 /**
  * Returns relative import path if imported and target files are in the same package, otherwise returns a bare import specifier.
  *
- * @param importedFilePath an absolute path of imported file
- * @param targetFilePath an absolute path of the file to which import will be added
- * @param targetPackageJsonPath absolute file path to the target package.json
- * @param fs file system
+ * @param importedFilePath - an absolute path of imported file
+ * @param targetFilePath - an absolute path of the file to which import will be added
+ * @param targetPackageJsonPath - absolute file path to the target package.json
+ * @param fs - file system
  */
 export function createImportPath({
     importedFilePath,
@@ -116,24 +116,6 @@ export function createImportPath({
     } else {
         return getBareImportSpecifier(importedFilePath, importPackageJsonPath, importPackageJsonName);
     }
-}
-
-/**
- * Gets path to package.json file closest to the given file path.
- *
- * @param filePath a file path
- * @param fs file system
- */
-export function getPackageJsonPath(filePath: string, fs: IFileSystem): string | undefined {
-    return fs.findClosestFileSync(filePath, 'package.json');
-}
-
-/**
- * Gets path to package directory, closest to the given file path.
- */
-export function getPackagePath(filePath: string, fs: IFileSystem): string | undefined {
-    const packageJsonPath = getPackageJsonPath(filePath, fs);
-    return packageJsonPath ? fs.dirname(packageJsonPath) : undefined;
 }
 
 /**
@@ -153,7 +135,7 @@ export function isSubPath(path: string, basePath: string, fs: IFileSystem): bool
 export const fileRequestPrefix = 'file://';
 
 /**
- * @param currentPath absolute path to yield parent directory path from
+ * @param currentPath - absolute path to yield parent directory path from
  */
 export function* pathChainToRoot(currentPath: string) {
     let lastPath: string | undefined;
@@ -166,8 +148,8 @@ export function* pathChainToRoot(currentPath: string) {
 
 /**
  * Safely checks if a path contains a directory name.
- * @param filePath absolute path to a file
- * @param directoryName directory to check if included as dir inside the file path
+ * @param filePath - absolute path to a file
+ * @param directoryName - directory to check if included as dir inside the file path
  * @returns boolean indicating if filePath includes directoryName
  */
 export function isPathIncludesDir(filePath: string, directoryName: string) {
@@ -187,11 +169,13 @@ export function isWindowsStyleAbsolutePath(fsPath: string): boolean {
  * Returns file extension from the first occurrence of the ".",
  * unlike path.extname() which returns from the last occurrence.
  * @example
+ * ```ts
  *   getFullExtname('/dir/my-component.st.css') // => '.st.css'
+ * ```
  */
 export function getFullExtname(filePath: string) {
     let basePath = filePath;
-    const totalExtParts = [];
+    const totalExtParts: string[] = [];
     let ext = win32Path.extname(basePath);
     while (ext && ext.length > 0) {
         totalExtParts.unshift(ext);
@@ -233,9 +217,7 @@ export const getDTSPath = (filePath: string) => {
 
 /**
  * Ensure a single heading/trailing backslash (/) of a single line string
- * @param str
- * @param type 'heading'|'trailing'|'both'|'none'
- * @returns
+ * @param type - 'heading'|'trailing'|'both'|'none'
  */
 export function backSlash(str: string, type: 'heading' | 'trailing' | 'both' | 'none') {
     const s = str.replace(/^\/+|\/+$/, '');
