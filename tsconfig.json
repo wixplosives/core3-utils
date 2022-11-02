@@ -6,6 +6,7 @@
     { "path": "./packages/patterns/src" },
     { "path": "./packages/patterns/src/tsconfig.esm.json" },
     { "path": "./packages/isomorphic-fetch/src" },
+    { "path": "./packages/isomorphic-fetch/src/tsconfig.esm.json" },
     { "path": "./packages/mark-text/src" },
     { "path": "./packages/mark-text/src/tsconfig.esm.json" },
     { "path": "./packages/mostly-equal/src" },
@@ -19,6 +20,10 @@
     { "path": "./packages/fs-utils/src" },
     { "path": "./packages/fs-utils/src/tsconfig.esm.json" },
     { "path": "./packages/performance/src" },
-    { "path": "./packages/performance/src/tsconfig.esm.json" }
+    { "path": "./packages/performance/src/tsconfig.esm.json" },
+    { "path": "./packages/docs/src" },
+    { "path": "./packages/docs/src/tsconfig.esm.json" },
+    { "path": "./packages/docs/src/test/resources/project/packages/one/src" },
+    { "path": "./packages/docs/src/test/resources/project/packages/two/src" },
   ]
 }
