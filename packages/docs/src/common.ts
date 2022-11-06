@@ -23,7 +23,7 @@ export function parseMacro(match: RegExpMatchArray) {
     return { all, macro, args };
 }
 export const execMacro = (data: string, replace: Record<string, string | ((...args: string[]) => string)>) => {
-    for (const match of data.matchAll(/(?<!\*)((\\?)\[){3}(.+?)(\2\]){3}/g)) {
+    for (const match of data.matchAll(/(?<!`|<code>)((\\?)\[){3}(.+?)(\2\]){3}/g)) {
         const { all, macro, args } = parseMacro(match);
         const v = replace[macro];
         if (v) {
@@ -105,3 +105,7 @@ export const _packages = ({ base, packages }: UserConfig, ...path: string[]) => 
 export const _docs = ({ base, docs }: UserConfig, ...path: string[]) => join(base, docs, ...path);
 export const _config = ({ base, conf }: UserConfig, ...path: string[]) => join(base, conf, ...path);
 export const _temp = ({ base, temp }: UserConfig, ...path: string[]) => join(base, temp, ...path);
+
+export function isWixDocs(config: Config) {
+    return config.git.github === 'https://github.com/wixplosives/core3-utils';
+}

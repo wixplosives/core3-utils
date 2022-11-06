@@ -2,9 +2,10 @@
 import { expect } from 'chai';
 import { buildDocs } from '../build-docs';
 import { setup, clean, config, overwriteTemplate, readDoc, docExists, runMacro } from './test-common';
-import { macros } from '../macros';
+import * as macros from '../macros';
 import { existsSync, rmSync } from 'fs';
 import { _config, _docs, _temp } from '../common';
+import type { Macro, Macros } from '../macros.types';
 
 describe('buildDocs', function () {
     before(setup);
@@ -44,14 +45,14 @@ describe('buildDocs', function () {
                 expect(docFileName).to.eql('index.md');
                 return `MACRO${a}${b}`;
             },
-        });
+        } as Macros);
 
         expect(readDoc('index.md')).to.match(/MACRO1!/);
     });
 
     describe('builtin macros', () => {
         before(function () {
-            this.timeout(5_000);
+            this.timeout(10_000);
             buildDocs(_config(config), false);
         });
         beforeEach(() => {
@@ -61,6 +62,15 @@ describe('buildDocs', function () {
             expect(runMacro('NO_SUCH_MACRO')).to.equal('[[[NO_SUCH_MACRO ]]]');
             expect(runMacro('NO_SUCH_MACRO', 'one.md')).to.equal('[[[NO_SUCH_MACRO ]]]');
             expect(runMacro('NO_SUCH_MACRO', 'one.test1.md')).to.equal('[[[NO_SUCH_MACRO ]]]');
+        });
+
+        it('does not run macro comments - `[[[comment]]]`', () => {
+            const comment: Macro = () => 'error';
+            overwriteTemplate('index.md', '`[[[comment]]]`');
+            buildDocs(_config(config), true, { comment });
+            const content = readDoc('index.md');
+            expect(content).to.match(/`\[\[\[comment\]\]\]`/g);
+            expect(content).not.to.match(/error/g);
         });
 
         it('rootPackageName', () => {
