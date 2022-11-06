@@ -27,16 +27,16 @@ export const rootPackageName: Macro = ({ base }) => readPackageJson(base, nodeFs
  */
 export const packageName: Macro = (config, name) =>
     config.git.github === 'https://github.com/wixplosives/core3-utils' && name.startsWith('docs-macros')
-    ? '@wixc3/docs'
-    : readPackageJson(_packages(config, stripName(name)), nodeFs).name?.toString() || '';
+        ? '@wixc3/docs'
+        : readPackageJson(_packages(config, stripName(name)), nodeFs).name?.toString() || '';
 
 /**
- * 
+ *
  * Project's current package name, unscoped
- * 
+ *
  * Usage: inside a ts-docs comment block of a package:
  * *[[[unscopedPackageName]]]
- * 
+ *
  * Will be replace by the full package name, i.e `bla` for `@wixc3/bla`
  */
 export const unscopedPackageName: Macro = (config, name) => packageName(config, name).replace(/.*\//, '');

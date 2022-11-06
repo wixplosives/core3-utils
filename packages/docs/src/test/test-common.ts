@@ -25,7 +25,6 @@ export const loadJson = (...paths: string[]) => {
     }
 };
 
-
 // eslint-disable-next-line no-console
 const config_log = console.log;
 
@@ -47,7 +46,7 @@ origin	git@github.com:org/repo.git (push)`
 
 export const clean = () => {
     // eslint-disable-next-line no-console
-    console.log = config_log
+    console.log = config_log;
     if (existsSync(config.base)) {
         rmSync(config.base, {
             recursive: true,
