@@ -4,7 +4,7 @@ import { UserConfig, _config, _docs } from '../common';
 import { init } from '../init';
 import { buildDocs } from '../build-docs';
 import { escapeRegExp, isString, naiveStripComments } from '@wixc3/common';
-import type { Macro } from '../macros';
+import type { Macro } from '../macros.types';
 
 export const config: UserConfig = {
     conf: 'test-conf',
@@ -25,12 +25,18 @@ export const loadJson = (...paths: string[]) => {
     }
 };
 
+
+// eslint-disable-next-line no-console
+const config_log = console.log;
+
 export const setup = () => {
     clean();
+    // eslint-disable-next-line no-console
+    console.log = () => {
+        /* */
+    };
     mkdirSync(config.base, { recursive: true });
-    // const resources = join(__dirname, 'resources');
     cpSync(join(__dirname, '..', '..', '..', 'src', 'test', 'resources', 'project'), config.base, { recursive: true });
-    // cpSync(join(resources, 'project'), config.base, { recursive: true });
     init(
         config,
         true,
@@ -40,6 +46,8 @@ origin	git@github.com:org/repo.git (push)`
 };
 
 export const clean = () => {
+    // eslint-disable-next-line no-console
+    console.log = config_log
     if (existsSync(config.base)) {
         rmSync(config.base, {
             recursive: true,
