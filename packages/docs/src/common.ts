@@ -40,9 +40,9 @@ export type Repo = {
     pages: string;
     github: string;
 };
-export function getRepo(assert: true,  overrideOrigin?:string): Repo;
+export function getRepo(assert: true, overrideOrigin?: string): Repo;
 export function getRepo(): Nullable<Repo>;
-export function getRepo(assert = false, overrideOrigin?:string): Nullable<Repo> {
+export function getRepo(assert = false, overrideOrigin?: string): Nullable<Repo> {
     try {
         const res = (overrideOrigin || execSync('git remote -v')).toString().split('\n')[1];
         const match = first(res?.matchAll(/.*@(.*):(.*)\/(.*)\.git.*/g));
@@ -68,10 +68,10 @@ export function getRepo(assert = false, overrideOrigin?:string): Nullable<Repo> 
 }
 
 export type UserConfig = {
-    conf: string
+    conf: string;
     base: string;
     packages: string;
-    temp: string
+    temp: string;
     docs: string;
     siteUrl?: string;
 };
@@ -81,9 +81,8 @@ export type Config = UserConfig & {
 };
 
 export type ProcessingConfig = Config & {
-    modifier?: (name: string, content: string) => string,
-    macros: Record<string, Macro>
-
+    modifier?: (name: string, content: string) => string;
+    macros: Record<string, Macro>;
 };
 
 export function loadConfig(path: string): Config {
@@ -96,17 +95,13 @@ export function loadConfig(path: string): Config {
 }
 
 export function writeConfig(config: Config, force: boolean) {
-    const path = join(config.base, config.conf, 'config.json')
+    const path = join(config.base, config.conf, 'config.json');
     if (force || !existsSync(path)) {
         writeFileSync(path, JSON.stringify(config, null, 2), 'utf8');
     }
 }
 
-export const _packages = ({ base, packages }: UserConfig, ...path: string[]) =>
-    join(base, packages, ...path)
-export const _docs = ({ base, docs }: UserConfig, ...path: string[]) =>
-    join(base, docs, ...path)
-export const _config = ({ base, conf }: UserConfig, ...path: string[]) =>
-    join(base, conf, ...path)
-export const _temp = ({ base, temp }: UserConfig, ...path: string[]) =>
-    join(base, temp, ...path)
+export const _packages = ({ base, packages }: UserConfig, ...path: string[]) => join(base, packages, ...path);
+export const _docs = ({ base, docs }: UserConfig, ...path: string[]) => join(base, docs, ...path);
+export const _config = ({ base, conf }: UserConfig, ...path: string[]) => join(base, conf, ...path);
+export const _temp = ({ base, temp }: UserConfig, ...path: string[]) => join(base, temp, ...path);

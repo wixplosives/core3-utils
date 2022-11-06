@@ -1,6 +1,6 @@
-export function test1(){
+export function test1() {
     // [[[example
-    const a=1;
+    const a = 1;
     return a;
     // ]]]
 }

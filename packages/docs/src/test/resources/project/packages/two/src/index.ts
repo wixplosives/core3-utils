@@ -1,3 +1,3 @@
-export function test1(){
-    return 1
+export function test1() {
+    return 1;
 }

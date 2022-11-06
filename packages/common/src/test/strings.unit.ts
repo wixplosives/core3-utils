@@ -47,19 +47,20 @@ it('noWhiteSpace', () => {
     expect(noWhiteSpace('   empty \n\n \n  lines  ')).to.equal('empty\nlines');
 });
 
-
-describe('stripComments', ()=>{
-    it('removes /* */ comments', ()=>{
-        expect(naiveStripComments(`no /* success removing */comments`)).to.equal('no comments')
-        expect(naiveStripComments(`no /* 
+describe('stripComments', () => {
+    it('removes /* */ comments', () => {
+        expect(naiveStripComments(`no /* success removing */comments`)).to.equal('no comments');
+        expect(
+            naiveStripComments(`no /* 
         success removing
-         */comments`)).to.equal('no comments')
-    })
-    it('removes // comments', ()=>{
-        expect(naiveStripComments(`no comments// after code`)).to.equal('no comments')
-        expect(naiveStripComments(`// line comments\nno comments`)).to.equal('no comments')
-    })
-    it('does not identify :// as comment', ()=>{
-        expect(naiveStripComments(`http://url //my site`)).to.equal('http://url')
-    })
-})
+         */comments`)
+        ).to.equal('no comments');
+    });
+    it('removes // comments', () => {
+        expect(naiveStripComments(`no comments// after code`)).to.equal('no comments');
+        expect(naiveStripComments(`// line comments\nno comments`)).to.equal('no comments');
+    });
+    it('does not identify :// as comment', () => {
+        expect(naiveStripComments(`http://url //my site`)).to.equal('http://url');
+    });
+});

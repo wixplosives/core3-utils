@@ -12,7 +12,7 @@ export class MacroError extends Error {
     }
 }
 
-const rootPackageName: Macro = ({base}) => readPackageJson(base, nodeFs).name || '';
+const rootPackageName: Macro = ({ base }) => readPackageJson(base, nodeFs).name || '';
 
 const packageName: Macro = (config, name) =>
     readPackageJson(_packages(config, stripName(name)), nodeFs).name?.toString() || '';

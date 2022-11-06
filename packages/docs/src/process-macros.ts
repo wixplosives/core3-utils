@@ -1,22 +1,22 @@
-import {  readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { join, relative } from 'path';
 import { ProcessingConfig, execMacro, Config, _docs } from './common';
 import { mapValues, repeat } from '@wixc3/common';
 
 export const createHeadersModifier = (config: Config) => {
-    const headers = relative(config.docs, config.conf)
+    const headers = relative(config.docs, config.conf);
     return (name: string, content: string) => {
-        let file = 'item'
+        let file = 'item';
         if (name === 'index.md') {
-            file = 'index'
+            file = 'index';
         } else {
             if (name.split('.').length === 2) {
-                file = 'package'
+                file = 'package';
             }
         }
         return `[[[include ${headers}/${file}.md]]]
 ${content}`;
-    }
+    };
 };
 
 export function processMacros(config: ProcessingConfig, filename: string, filenameOverride?: string) {

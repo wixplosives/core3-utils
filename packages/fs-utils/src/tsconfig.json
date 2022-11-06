@@ -2,8 +2,6 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../dist/cjs"
-  }, 
-  "references": [
-    { "path": "../../common/src/tsconfig.json" }
-  ]
+  },
+  "references": [{ "path": "../../common/src/tsconfig.json" }]
 }
