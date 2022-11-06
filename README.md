@@ -15,6 +15,7 @@
 | [@wixc3/browser](https://wixplosives.github.io/core3-utils/browser)                   | Browser utilities                                                                                    |
 | [@wixc3/common](https://wixplosives.github.io/core3-utils/common)                     | Useful utils for strings, iterables, objects, maps, promises and other commonly used structures      |
 | [@wixc3/docs](https://wixplosives.github.io/core3-utils/docs)                         | Tool + CLI for docs generation from TSDocs                                                           |
+| [@wixc3/docs-macros](https://wixplosives.github.io/core3-utils/docs-macros)           |                                                                                                      |
 | [@wixc3/fs-utils](https://wixplosives.github.io/core3-utils/fs-utils)                 |                                                                                                      |
 | [@wixc3/isomorphic-fetch](https://wixplosives.github.io/core3-utils/isomorphic-fetch) | An isomorphic way to use fetch (i.e works the same in browser and node environments)                 |
 | [@wixc3/mark-text](https://wixplosives.github.io/core3-utils/mark-text)               |                                                                                                      |
