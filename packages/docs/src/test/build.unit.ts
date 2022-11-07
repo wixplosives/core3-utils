@@ -10,7 +10,7 @@ import type { Macro, Macros } from '../macros.types';
 describe('buildDocs', function () {
     before(setup);
     before(function () {
-        this.timeout(10_000);
+        this.timeout(15_000);
         buildDocs(_config(config), false);
     });
     after(clean);
