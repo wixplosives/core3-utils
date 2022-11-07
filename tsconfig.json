@@ -24,6 +24,7 @@
     { "path": "./packages/docs/src" },
     { "path": "./packages/docs/src/tsconfig.esm.json" },
     { "path": "./packages/docs/src/test/resources/project/packages/one/src" },
-    { "path": "./packages/docs/src/test/resources/project/packages/two/src" }
+    { "path": "./packages/docs/src/test/resources/project/packages/two/src" },
+    { "path": "./packages/docs/src/test/resources/project/packages/weird/src" }
   ]
 }

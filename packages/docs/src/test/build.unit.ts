@@ -10,7 +10,7 @@ import type { Macro, Macros } from '../macros.types';
 describe('buildDocs', function () {
     before(setup);
     before(function () {
-        this.timeout(10_000);
+        this.timeout(15_000);
         buildDocs(_config(config), false);
     });
     after(clean);
@@ -24,6 +24,9 @@ describe('buildDocs', function () {
     it('generate api jsons in the temp directory', () => {
         expect(existsSync(_temp(config, 'one.api.json'))).to.equal(true);
         expect(existsSync(_temp(config, 'two.api.json'))).to.equal(true);
+    });
+    it('generate api jsons for packages with names that are different than their directory name', () => {
+        expect(existsSync(_temp(config, 'different-name.api.json'))).to.equal(true);
     });
     it('includes headers', function () {
         overwriteTemplate('index.md', 'INDEX_HEADER');
@@ -112,8 +115,8 @@ describe('buildDocs', function () {
             expect(runMacro(macros.include, 'index.md', '../include.md')).to.equal('Included!');
         });
         it('npmBadge', () => {
-            expect(runMacro(macros.npmBadge)).to.equal(
-                '[![npm version](https://badge.fury.io/js/main.svg)](https://badge.fury.io/js/main)'
+            expect(runMacro(macros.npmBadge, 'one.md')).to.equal(
+                '[![npm version](https://badge.fury.io/js/@test%2Fone.svg)](https://badge.fury.io/js/@test%2Fone)'
             );
         });
         it('githubBuildStatus', () => {

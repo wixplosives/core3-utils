@@ -17,6 +17,6 @@ export function createReadme(conf: string, siteUrl: string) {
         }
         writeFileSync(join(packagesPath, packageName, 'README.md'), content, 'utf8');
     };
-    listPackages(config).map((name) => copyWithSiteUrlLinks(name, name, config.packages));
+    listPackages(config).map(({dir, unscopedName}) => copyWithSiteUrlLinks(dir, unscopedName, config.packages));
     copyWithSiteUrlLinks('index', '.', '.');
 }

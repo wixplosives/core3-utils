@@ -1,6 +1,6 @@
 import { readPackageJson } from '@wixc3/fs-utils';
 import nodeFs from '@file-services/node';
-import { Repo, stripName, _docs, _packages } from './common';
+import { getPackageByUnscopedName, isWixDocs, Repo, stripName, _docs, _packages } from './common';
 import { processMacros } from './process-macros';
 import { repeat } from '@wixc3/common';
 import type { Macro } from './macros.types';
@@ -26,9 +26,11 @@ export const rootPackageName: Macro = ({ base }) => readPackageJson(base, nodeFs
  * Will be replace by the full package name, i.e `@wixc3/docs`
  */
 export const packageName: Macro = (config, name) =>
-    config.git.github === 'https://github.com/wixplosives/core3-utils' && name.startsWith('docs-macros')
-        ? '@wixc3/docs'
-        : readPackageJson(_packages(config, stripName(name)), nodeFs).name?.toString() || '';
+    name === 'index.md'
+        ? readPackageJson(_packages(config, '..'), nodeFs).name!
+        : isWixDocs(config) && name.startsWith('docs-macros')
+            ? '@wixc3/docs'
+            : getPackageByUnscopedName(config, stripName(name)).name
 
 /**
  *
@@ -106,9 +108,21 @@ export const githubPages: Macro = ({ git: { pages } }, _name, uri = '', caption 
 export const githubBuildStatus: Macro = ({ git: { github } }) =>
     `[![Build Status](${github}/workflows/tests/badge.svg)](${github}/actions)`;
 
+/**
+ *
+ * A npm version badge
+ *
+ * Usage: inside a ts-docs comment block:
+ *
+ * `[[[npmBadge]]]`
+ */
 export const npmBadge: Macro = (config, name) => {
-    const pkg = packageNameUrl(config, name);
-    return `[![npm version](https://badge.fury.io/js/${pkg}.svg)](https://badge.fury.io/js/${pkg})`;
+    if (name !== 'index.md') {
+        const pkg = packageNameUrl(config, name);
+        return `[![npm version](https://badge.fury.io/js/${pkg}.svg)](https://badge.fury.io/js/${pkg})`;
+    } else {
+        return '';
+    }
 };
 
 /**
