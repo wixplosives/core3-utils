@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/mostly-equal",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "scripts": {
