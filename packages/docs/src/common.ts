@@ -1,20 +1,39 @@
 import { first, Nullable } from '@wixc3/common';
+import { readPackageJson } from '@wixc3/fs-utils';
 import { execSync } from 'child_process';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { basename, join } from 'path';
 import type { Macro } from './macros.types';
+import nodeFs from '@file-services/node';
 
-export function listPackages({ base, packages }: UserConfig) {
+
+export function listPackages(config: UserConfig) {
+    const { base, packages } = config;
     return readdirSync(join(base, packages), { withFileTypes: true })
         .filter((i) => i.isDirectory())
-        .filter((i) => existsSync(join(base, packages, i.name, 'package.json')))
-        .map((i) => i.name);
+        .filter((i) => existsSync(_packages(config, i.name, 'package.json')))
+        .map((i) => ({
+            dir: i.name,
+            name: readPackageJson(_packages(config, i.name), nodeFs).name!,
+            unscopedName: unscopedPackageName(readPackageJson(_packages(config, i.name), nodeFs).name!),
+        }));
+}
+
+export const getPackageByUnscopedName = (config: Config, unscopedName: string) => {
+    const found = listPackages(config).find(({ unscopedName: pkg }) => pkg === unscopedName)
+    if (!found) {
+        throw new Error(`Packages not found: "${unscopedName}"`)
+    }
+    return found
 }
 
 export const stripName = (name: string) => {
     const base = basename(name).split('.')[0]!;
     return base === 'index' ? '..' : base;
 };
+
+export const unscopedPackageName = (name: string) => name.split('/')[1] || name
+
 
 export function parseMacro(match: RegExpMatchArray) {
     const all = match[0]!;
