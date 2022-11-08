@@ -12,16 +12,42 @@ export const thumbsUp = '👍';
 
 export const notImportant = expectValue(() => undefined);
 
+/**
+ * Field must be defined (null is considered define)
+ */
 export const defined = expectValue((val) => {
     expect(val).to.not.equal(undefined);
 });
 
-export const equal = (value: unknown, truncateData = true) =>
+/**
+ * Strict equality of a field
+ * @param thumbsUpOnSuccess - when there is a match, display thumbs up instead of the true value
+ * @returns 
+ */
+export const equal = (value: unknown, thumbsUpOnSuccess = true) =>
     expectValue((val) => {
         expect(val).equal(value);
-        return truncateData ? `"${thumbsUp}"` : undefined;
+        return thumbsUpOnSuccess ? `"${thumbsUp}"` : undefined;
     });
 
+/**
+ * Creates a symbol for usage in {@link mostlyEqual},
+ * Comparing the resulting value in any place it is used as the value
+ * @example
+ * ```ts
+ * const id = defineUnique('id');
+ * expect({
+ *       a: 'a',
+ *       b: 'b',
+ *   }).to.mostlyEqual({
+ *       a: id,
+ *       b: id
+ *   }); // will pass
+ * ```
+ * 
+ * @param name - error display name
+ * @param skipUndefined - ignores undefined values, even for multiple instances
+ */
 export const defineUnique = (name: string, skipUndefined = false) =>
     expectValues((vals) => {
         const seenValues = new Set<unknown>();
@@ -38,6 +64,24 @@ export const defineUnique = (name: string, skipUndefined = false) =>
         return vals.map((item) => (nonUniquValues.has(item) ? new Error(`${name} - is not unique`) : undefined));
     }, skipUndefined);
 
+/**
+ * Creates a symbol for usage in {@link mostlyEqual},
+ * Comparing the resulting value in any place it is used as the value
+ * @example
+ * ```ts
+ * const id = defineSame('id');
+ * expect({
+ *       a: 'a',
+ *       b: 'b',
+ *   }).to.mostlyEqual({
+ *       a: id,
+ *       b: id
+ *   }); // will fail
+ * ```
+ * 
+ * @param name - error display name
+ * @param skipUndefined - ignores undefined values, even for multiple instances
+ */
 export const defineSame = (name: string, skipUndefined = false) =>
     expectValues((vals) => {
         let values = [...vals];
