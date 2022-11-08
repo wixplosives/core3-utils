@@ -20,8 +20,5 @@
   "dependencies": {
     "@file-services/path": "^7.0.1",
     "@file-services/types": "^7.0.1"
-  },
-  "devDependencies": {
-    "@microsoft/api-documenter": "^7.19.22"
   }
 }
