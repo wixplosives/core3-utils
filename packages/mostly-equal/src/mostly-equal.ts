@@ -29,7 +29,7 @@ function isExpectValues(val: any): val is ExpectValues {
 /**
  * Used for adding field matchers to {@link mostlyEqual}
  * Creates a symbol used for field matching
- * 
+ *
  * @example
  * ```ts
  * expect({count:4}).to.be.mostlyEqual({
@@ -39,8 +39,8 @@ function isExpectValues(val: any): val is ExpectValues {
  * })
  * ```
  * If expectMethod returns a value, it will replace the original value
- * for error printing when another matcher failed 
- * @param expectMethod 
+ * for error printing when another matcher failed
+ * @param expectMethod
  */
 export const expectValue = <T>(expectMethod: ExpectSingleMatcher<T>): any => {
     let values: ExpandedValues<T> = [];
@@ -64,11 +64,7 @@ export const expectValue = <T>(expectMethod: ExpectSingleMatcher<T>): any => {
 /**
  * Similar to {@link expectValue}, but called for all the matches at once.
  * This way a matcher can compare different values
- * @see defineUnique
- * @example
- * ```ts
- * 
- * ```
+ * {@link defineUnique}
  */
 export const expectValues = <T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): any => {
     let values: ExpandedValues<T> = [];
