@@ -16,7 +16,7 @@ export function createReadme(conf: string, siteUrl: string) {
         for (const [all, caption, uri, ext] of content.matchAll(/\[(.*?)\]\(\.\/([^)]*)\.(.+?)\)/g)) {
             content = content.replace(all, `[${caption!}](${siteUrl}${uri!}${ext === 'md' ? '' : ext!})`);
         }
-        content = format(content, { parser: 'markdown' });
+        content = format(content, { parser: 'markdown' })
         writeFileSync(join(packagesPath, packageName, 'README.md'), content, 'utf8');
     };
     listPackages(config).map(({ dir, unscopedName }) => copyWithSiteUrlLinks(dir, unscopedName, config.packages));
