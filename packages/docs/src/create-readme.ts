@@ -15,7 +15,11 @@ export function createReadme(config: Config, siteUrl: string = site.default) {
             content = content.replace(all || '', `[${caption!}](${siteUrl}${uri!}${ext === 'md' ? '' : ext!})`);
         }
         content = format(content, { parser: 'markdown' });
+<<<<<<< HEAD
         writeFileSync(_packages(config, pkg.dir, 'README.md'), content, 'utf8');
+=======
+        writeFileSync(join(packagesPath, packageName, 'README.md'), content, 'utf8');
+>>>>>>> 7dc8444 (prettified)
     };
     listPackages(config).map(pkg => copyWithSiteUrlLinks(pkg));
     copyWithSiteUrlLinks({ dir: '..', name: 'index', unscopedName: 'index' });

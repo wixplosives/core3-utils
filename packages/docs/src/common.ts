@@ -6,6 +6,7 @@ import { basename, join } from 'path';
 import type { Macro } from './macros.types';
 import nodeFs from '@file-services/node';
 
+<<<<<<< HEAD
 export type Package = {
     dir: string;
     name: string;
@@ -13,6 +14,9 @@ export type Package = {
 }
 
 export function listPackages(config: UserConfig): Package[] {
+=======
+export function listPackages(config: UserConfig) {
+>>>>>>> 7dc8444 (prettified)
     const { base, packages } = config;
     return readdirSync(join(base, packages), { withFileTypes: true })
         .filter((i) => i.isDirectory())
@@ -25,20 +29,19 @@ export function listPackages(config: UserConfig): Package[] {
 }
 
 export const getPackageByUnscopedName = (config: Config, unscopedName: string) => {
-    const found = listPackages(config).find(({ unscopedName: pkg }) => pkg === unscopedName)
+    const found = listPackages(config).find(({ unscopedName: pkg }) => pkg === unscopedName);
     if (!found) {
-        throw new Error(`Packages not found: "${unscopedName}"`)
+        throw new Error(`Packages not found: "${unscopedName}"`);
     }
-    return found
-}
+    return found;
+};
 
 export const stripName = (name: string) => {
     const base = basename(name).split('.')[0]!;
     return base === 'index' ? '..' : base;
 };
 
-export const unscopedPackageName = (name: string) => name.split('/')[1] || name
-
+export const unscopedPackageName = (name: string) => name.split('/')[1] || name;
 
 export function parseMacro(match: RegExpMatchArray) {
     const all = match[0]!;
