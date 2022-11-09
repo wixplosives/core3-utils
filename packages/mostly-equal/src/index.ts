@@ -3,7 +3,7 @@
 /**
  * @packageDocumentation
  * Adds chai matches for partial equality of JSONs
- * 
+ *
  * @example
  * ```ts
  *  import chai, { expect } from 'chai';
@@ -12,9 +12,9 @@
  *  expect({a: 1}).to.mostlyEqual({
  *           a: 1,
  *       b: notImportant,
- *   });             
+ *   });
  * ```
- * 
+ *
  */
 export * from './mostly-equal';
 export * from './mostly-equal-chai-plugin';

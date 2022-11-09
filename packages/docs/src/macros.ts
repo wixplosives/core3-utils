@@ -29,8 +29,8 @@ export const packageName: Macro = (config, name) =>
     name === 'index.md'
         ? readPackageJson(_packages(config, '..'), nodeFs).name!
         : isWixDocs(config) && name.startsWith('docs-macros')
-            ? '@wixc3/docs'
-            : getPackageByUnscopedName(config, stripName(name)).name
+        ? '@wixc3/docs'
+        : getPackageByUnscopedName(config, stripName(name)).name;
 
 /**
  *
