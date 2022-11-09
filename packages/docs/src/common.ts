@@ -25,19 +25,20 @@ export function listPackages(config: UserConfig): Package[] {
 }
 
 export const getPackageByUnscopedName = (config: Config, unscopedName: string) => {
-    const found = listPackages(config).find(({ unscopedName: pkg }) => pkg === unscopedName);
+    const found = listPackages(config).find(({ unscopedName: pkg }) => pkg === unscopedName)
     if (!found) {
-        throw new Error(`Packages not found: "${unscopedName}"`);
+        throw new Error(`Packages not found: "${unscopedName}"`)
     }
-    return found;
-};
+    return found
+}
 
 export const stripName = (name: string) => {
     const base = basename(name).split('.')[0]!;
     return base === 'index' ? '..' : base;
 };
 
-export const unscopedPackageName = (name: string) => name.split('/')[1] || name;
+export const unscopedPackageName = (name: string) => name.split('/')[1] || name
+
 
 export function parseMacro(match: RegExpMatchArray) {
     const all = match[0]!;
