@@ -9,6 +9,8 @@ import { dirname, join } from 'path';
 import type { Macros } from './macros.types';
 import * as builtinMacros from './macros';
 export type { Macros };
+import { format } from 'prettier';
+
 /**
  * Build docs markdown
  */
@@ -18,6 +20,7 @@ export function buildDocs(conf: string, skipAnalyze = false, macros?: Macros) {
     analyze(skipAnalyze, config);
     generateDocs(config);
     evaluateMacros(config, macros);
+    prettify(config);
 }
 
 function analyze(skipAnalyze: boolean, config: Config) {
@@ -76,4 +79,17 @@ function evaluateMacros(config: Config, macros: Macros | undefined) {
         .filter((f) => f.isFile())
         .map(({ name }) => processMacros(pConf, name));
     console.timeEnd('Processing macros');
+}
+
+function prettify(config: Config) {
+    console.time('Prettifying');
+    readdirSync(_docs(config), { withFileTypes: true })
+        .filter((f) => f.isFile())
+        .map(({ name }) => {
+            writeFileSync(
+                _docs(config, name),
+                format(readFileSync(_docs(config, name), 'utf8'), { parser: 'markdown' })
+            );
+        });
+    console.timeEnd('Prettifying');
 }
