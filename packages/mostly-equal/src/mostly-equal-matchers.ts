@@ -24,11 +24,12 @@ export const defined = expectValue((val) => {
  * @param thumbsUpOnSuccess - when there is a match, display thumbs up instead of the true value
  * @returns
  */
-export const equal = (value: unknown, thumbsUpOnSuccess = true) =>
-    expectValue((val) => {
+export function equal(value: unknown, thumbsUpOnSuccess = true) {
+    return expectValue((val) => {
         expect(val).equal(value);
         return thumbsUpOnSuccess ? `"${thumbsUp}"` : undefined;
     });
+}
 
 /**
  * Creates a symbol for usage in {@link mostly-equal},
