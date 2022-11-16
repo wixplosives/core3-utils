@@ -22,8 +22,8 @@
     "@types/node": "16",
     "@types/sinon": "^10.0.13",
     "@types/sinon-chai": "^3.2.9",
-    "@typescript-eslint/eslint-plugin": "^5.42.1",
-    "@typescript-eslint/parser": "^5.42.1",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/parser": "^5.43.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "eslint": "^8.27.0",
@@ -35,7 +35,7 @@
     "rimraf": "^3.0.2",
     "sinon": "^14.0.2",
     "sinon-chai": "^3.7.0",
-    "typescript": "~4.8.4"
+    "typescript": "~4.9.3"
   },
   "license": "MIT",
   "private": true

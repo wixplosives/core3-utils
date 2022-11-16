@@ -61,7 +61,7 @@ export function capitalizeFirstLetter(val: string): string {
  * @returns An array of words contained in str
  */
 export const splitIntoWords = (str: string): string[] => {
-    let words = str.match(/[a-z0-9]+/gi) ?? [];
+    let words: string[] = str.match(/[a-z0-9]+/gi) ?? [];
     words = words.flatMap((w) => w.split(/(\d+)/g)); // Numbers
     words = words.flatMap((w) => w.split(/([A-Z]+)(?=[A-Z][a-z])/g)); // Acronyms
     words = words.flatMap((w) => w.split(/([A-Z]?[a-z]+)/g)); // PascalCase and camelCase
@@ -88,7 +88,7 @@ export function toPascalCase(str: string): string {
 /**
  * Similar to {@link toPascalCase}, but drops heading non-letters
 
- * @example 
+ * @example
  * ```ts
  * toPascalCaseJsIdentifier("123helloWorld") // => "HelloWorld"
  * ```
@@ -198,7 +198,7 @@ export function includesCaseInsensitive(str: string, substr: string): boolean {
  * @param reference -
  * @param modified -
  * @param newline -
- * @returns 
+ * @returns
  */
 export function equalIdents(reference: string, modified: string, newline = '\n') {
     const referenceArr = reference.split(newline);
@@ -258,13 +258,13 @@ export function noWhiteSpace(str: string) {
  * Checks is value is a string
 
  * @param value -
- * @returns 
+ * @returns
  */
 export const isString = (value: unknown): value is string => typeof value === 'string';
 
 const templateReg = /\$\{(.+?)\}/g;
 /**
- * Similar to templated string, 
+ * Similar to templated string,
  * given a fixed context object returns a function that parses strings in it
 
  * @param context- A context for the compiler

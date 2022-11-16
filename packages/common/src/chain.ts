@@ -90,7 +90,13 @@ export function chain<T>(value: Iterable<T>): IterableChain<T>;
 export function chain<T, V extends NotIterable<T>>(value: V): ValueChain<V>;
 export function chain<T>(value: T) {
     const iterable = (
-        value === undefined ? [] : value === null ? [null] : Symbol.iterator in value ? value : [value]
+        value === undefined
+            ? []
+            : value === null
+            ? [null]
+            : typeof value === 'object' && Symbol.iterator in value
+            ? value
+            : [value]
     ) as Iter<T>;
 
     return iterable === value ? chainIter(iterable) : chainElement(value);
