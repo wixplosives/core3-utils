@@ -5,7 +5,7 @@
  * Adds chai matches for partial equality of JSONs
  *
  * @example
- * ```ts
+ * ```ts(packages/mostly-equal/src/test/mostly-equal.unit.ts#example)
  *  import chai, { expect } from 'chai';
  *  import {mostlyEqlChaiPlugin, notImportant} from '@wixc3/mostly-equal'
  *  chai.use(mostlyEqlChaiPlugin)
