@@ -22,16 +22,17 @@ export const defined = expectValue((val) => {
 /**
  * Strict equality of a field
  * @param thumbsUpOnSuccess - when there is a match, display thumbs up instead of the true value
- * @returns 
+ * @returns
  */
-export const equal = (value: unknown, thumbsUpOnSuccess = true) =>
-    expectValue((val) => {
+export function equal(value: unknown, thumbsUpOnSuccess = true) {
+    return expectValue((val) => {
         expect(val).equal(value);
         return thumbsUpOnSuccess ? `"${thumbsUp}"` : undefined;
     });
+}
 
 /**
- * Creates a symbol for usage in {@link mostlyEqual},
+ * Creates a symbol for usage in {@link mostly-equal},
  * Comparing the resulting value in any place it is used as the value
  * @example
  * ```ts
@@ -44,7 +45,7 @@ export const equal = (value: unknown, thumbsUpOnSuccess = true) =>
  *       b: id
  *   }); // will pass
  * ```
- * 
+ *
  * @param name - error display name
  * @param skipUndefined - ignores undefined values, even for multiple instances
  */
@@ -78,7 +79,7 @@ export const defineUnique = (name: string, skipUndefined = false) =>
  *       b: id
  *   }); // will fail
  * ```
- * 
+ *
  * @param name - error display name
  * @param skipUndefined - ignores undefined values, even for multiple instances
  */
