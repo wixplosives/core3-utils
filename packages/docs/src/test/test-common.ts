@@ -43,13 +43,12 @@ export const setup = (_init = true) => {
     };
     mkdirSync(config.base, { recursive: true });
     cpSync(join(__dirname, '..', '..', '..', 'src', 'test', 'resources', 'project'), config.base, { recursive: true });
-    const { git: _, ...userConfig } = config
+    const { git: _, ...userConfig } = config;
+    userConfig.origin = 'git@github.com:org/repo.git';
     if (_init) {
         init(
             userConfig,
-            true,
-            `origin	git@github.com:org/repo.git (fetch)
-origin	git@github.com:org/repo.git (push)`
+            true
         );
     }
 };

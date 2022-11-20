@@ -96,6 +96,7 @@ export type UserConfig = {
     packages: string;
     temp: string;
     docs: string;
+    origin?: string;
     siteUrl?: string;
 };
 

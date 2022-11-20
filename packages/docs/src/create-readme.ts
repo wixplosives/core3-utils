@@ -1,7 +1,7 @@
 import { backSlash } from '@wixc3/fs-utils';
 import { Config, listPackages, Package, _docs, _packages } from './common';
 import { readFileSync, writeFileSync } from 'fs';
-import { siteUrl as site } from './cli';
+import { siteUrl as site } from './cli.options';
 import { format } from 'prettier';
 
 export function createReadme(config: Config, siteUrl: string = site.default) {

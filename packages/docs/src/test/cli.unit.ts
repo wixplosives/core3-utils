@@ -8,24 +8,20 @@ import { clean, config, setup } from "./test-common";
 describe('cli', function () {
     this.timeout(15_000)
     before(() => setup(false))
-    before(() => {
-        try {
-            spawnSync('git', ['remote', 'add', 'origin', 'git@github.com:wixplosives/core3-utils.git'])
-        } catch {/* Applicable in CI, where git remote is not set */ }
-    })
     after(clean)
 
-    it('init', () => {
-        spawnSync('yarn', ['docs', 'init', '-b', config.base, '-c', config.conf, '-o', config.docs, '-t', config.temp, '-s', 'https:/test.site.com'])
+    it('init, build, readme', () => {
+        spawnSync('yarn', ['docs', 'init', '-b', config.base, '-c', config.conf, '-d', config.docs, '-t', config.temp, '-s', 'https:/test.site.com', '-o', 'git@github.com:test/docs.git'])
         expect(JSON.parse(readFileSync(_config(config, 'config.json'), 'utf8'))).to.eql({
             ...config,
             siteUrl: "https:/test.site.com",
+            origin: "git@github.com:test/docs.git",
             git: {
                 host: "github.com",
-                org: "wixplosives",
-                repo: "core3-utils",
-                pages: "https://wixplosives.github.io/core3-utils",
-                github: "https://github.com/wixplosives/core3-utils"
+                org: "test",
+                repo: "docs",
+                pages: "https://test.github.io/docs",
+                github: "https://github.com/test/docs"
             }
         }, 'failed docs init')
 

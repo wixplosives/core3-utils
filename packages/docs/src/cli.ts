@@ -4,55 +4,7 @@ import { buildDocs } from './build-docs/build-docs';
 import { loadConfig } from './common';
 import { createReadme } from './create-readme';
 import { init } from './init';
-
-const packages = {
-    alias: 'p',
-    default: 'packages',
-    describe: 'workspaces (packages) directory',
-    string: true,
-};
-const skipAnalyze = {
-    alias: 'a',
-    default: false,
-    describe: 'Use cache analyzed api',
-    boolean: true,
-};
-const docs = {
-    alias: 'o',
-    default: '_docs',
-    describe: 'target directory',
-    string: true,
-};
-const conf = {
-    alias: 'c',
-    default: 'docs-conf',
-    describe: 'index/package/item headers and other configuration',
-    string: true,
-};
-const base = {
-    alias: 'b',
-    default: '.',
-    describe: 'project root',
-    string: true,
-};
-const temp = {
-    alias: 't',
-    default: 'temp',
-    describe: 'temp files directory',
-    string: true,
-};
-const force = {
-    alias: 'f',
-    default: false,
-    describe: 'overwrite existing configuration',
-    boolean: true,
-};
-export const siteUrl = {
-    alias: 's',
-    default: 'https://<org>.github.io/<repo>',
-    describe: `base URL of the project's github pages`,
-    string: true,
-};
+import { base, conf, docs, force, origin, packages, siteUrl, skipAnalyze, temp } from './cli.options'
 
 export function cli() {
     yargs(process.argv.slice(2))
@@ -64,9 +16,9 @@ export function cli() {
         .command(
             'init',
             'initialize docs config and github pages action',
-            { packages, conf, docs, siteUrl, base, temp, force },
-            ({ packages, conf, docs, siteUrl, base, temp, force }) => {
-                init({ packages, conf, docs, siteUrl, base, temp }, force);
+            { packages, conf, docs, siteUrl, base, temp, force, origin },
+            ({ packages, conf, docs, siteUrl, base, temp, force, origin }) => {
+                init({ packages, conf, docs, siteUrl, base, temp, origin }, force);
             }
         )
         .command('readme', 'create README.md for all the packages', { conf, base, siteUrl }, ({ conf, base, siteUrl }) => {
