@@ -18,7 +18,8 @@
     "access": "public"
   },
   "bin": {
-    "docs": "bin/build-docs"
+    "docs": "bin/build-docs",
+    "tsdocs": "bin/build-docs"
   },
   "dependencies": {
     "@microsoft/api-documenter": "^7.19.24",
