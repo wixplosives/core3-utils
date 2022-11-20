@@ -1,6 +1,7 @@
 import { join, relative } from 'path';
 import { getRepo, listPackages, execMacro, UserConfig, writeConfig, _packages, _config, _temp } from './common';
 import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { origin } from './cli.options';
 
 export { UserConfig };
 
@@ -13,7 +14,7 @@ export { UserConfig };
  *
  * - Creates configs and templates in docs-config
  */
-export function init(config: UserConfig, force = false, overrideOrigin?: string) {
+export function init(config: UserConfig, force = false) {
     const relConfig = relative(_packages(config, 'pkg'), _config(config));
     const resources = join(__dirname, '..', '..', 'resources');
     const writeConfFile = (filename: string, data: string | object) => {
@@ -37,7 +38,9 @@ export function init(config: UserConfig, force = false, overrideOrigin?: string)
     writeConfig(
         {
             ...config,
-            git: getRepo(true, overrideOrigin),
+            git: getRepo(true, config.origin === origin.default
+                ? undefined
+                : `origin	${config.origin} (fetch)\norigin	${config.origin} (push)`)
         },
         force
     );

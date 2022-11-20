@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { expect } from 'chai';
-import { buildDocs } from '../build-docs';
+import { buildDocs } from '../build-docs/build-docs';
 import { setup, clean, config, overwriteTemplate, readDoc, docExists, runMacro } from './test-common';
 import * as macros from '../macros';
 import { existsSync, rmSync } from 'fs';
@@ -8,10 +8,10 @@ import { _config, _docs, _temp } from '../common';
 import type { Macro, Macros } from '../macros.types';
 
 describe('buildDocs', function () {
-    before(setup);
+    before(() => setup());
     before(function () {
         this.timeout(15_000);
-        buildDocs(_config(config), false);
+        buildDocs(config);
     });
     after(clean);
     it('builds readme files in the docs directory', function () {
@@ -33,7 +33,7 @@ describe('buildDocs', function () {
         overwriteTemplate('item.md', 'ITEM_HEADER');
         overwriteTemplate('package.md', 'PACKAGE_HEADER');
 
-        buildDocs(_config(config), true);
+        buildDocs(config, { analyze: false, prettify: false });
 
         expect(readDoc('index.md')).to.match(/INDEX_HEADER/);
         expect(readDoc('one.md')).to.match(/PACKAGE_HEADER/);
@@ -42,13 +42,14 @@ describe('buildDocs', function () {
     it('evaluates macros, passing config filename and args', function () {
         overwriteTemplate('index.md', '[[[macro 1 !]]]');
 
-        buildDocs(_config(config), true, {
-            macro: (conf, docFileName, a, b) => {
-                expect(conf).to.deep.include(config);
-                expect(docFileName).to.eql('index.md');
-                return `MACRO${a}${b}`;
-            },
-        } as Macros);
+        buildDocs(config, { analyze: false, prettify: false },
+            {
+                macro: (conf, docFileName, a, b) => {
+                    expect(conf).to.deep.include(config);
+                    expect(docFileName).to.eql('index.md');
+                    return `MACRO${a}${b}`;
+                },
+            } as Macros);
 
         expect(readDoc('index.md')).to.match(/MACRO1!/);
     });
@@ -56,7 +57,8 @@ describe('buildDocs', function () {
     describe('builtin macros', () => {
         before(function () {
             this.timeout(10_000);
-            buildDocs(_config(config), false);
+            buildDocs(config, { analyze: false, prettify: false });
+
         });
         beforeEach(() => {
             rmSync(_docs(config), { recursive: true });
@@ -70,7 +72,7 @@ describe('buildDocs', function () {
         it('does not run macro comments - `[[[comment]]]`', () => {
             const comment: Macro = () => 'error';
             overwriteTemplate('index.md', '`[[[comment]]]`');
-            buildDocs(_config(config), true, { comment });
+            buildDocs(config, { analyze: false, prettify: false }, { comment });
             const content = readDoc('index.md');
             expect(content).to.match(/`\[\[\[comment\]\]\]`/g);
             expect(content).not.to.match(/error/g);

@@ -10,11 +10,11 @@ import { _config, _packages, _temp } from '../common';
 
 describe('init', function () {
     // since this this is a longish process,
-    // ini t is called only once, all test are checking the resulting files
+    // init is called only once, all test are checking the resulting files
     // tests do not mutate anything
     // init is executed in "setup"
     this.timeout(10_000);
-    before(setup);
+    before(() => setup());
     after(clean);
     it('generates docs config files and templates', () => {
         const base = loadJson(_config(config, 'api-extractor.base.json'));
