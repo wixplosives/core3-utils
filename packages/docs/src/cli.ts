@@ -69,7 +69,7 @@ export function cli() {
             }
         )
         .command(['readme'], 'create README.md for all the packages', { conf, siteUrl }, ({ conf, siteUrl }) => {
-            createReadme(conf, siteUrl);
+            createReadme(loadConfig(conf), siteUrl);
         })
         .demandCommand()
         .help()

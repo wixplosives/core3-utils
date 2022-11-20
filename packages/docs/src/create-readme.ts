@@ -1,12 +1,11 @@
 import { join } from 'path';
 import { backSlash } from '@wixc3/fs-utils';
-import { listPackages, loadConfig } from './common';
+import { Config, listPackages } from './common';
 import { readFileSync, writeFileSync } from 'fs';
 import { siteUrl as site } from './cli';
 import { format } from 'prettier';
 
-export function createReadme(conf: string, siteUrl: string) {
-    const config = loadConfig(conf);
+export function createReadme(config: Config, siteUrl: string) {
     if (siteUrl === site.default) {
         siteUrl = config.git.pages;
     }

@@ -13,11 +13,11 @@ export const config: Config = {
     packages: 'packages',
     temp: 'test-temp',
     git: {
-        github: '',
-        host: '',
-        org: '',
-        pages: '',
-        repo: ''
+        github: 'https://github.com/org/repo',
+        host: 'github.com',
+        org: 'org',
+        pages: 'https://org.github.io/repo',
+        repo: 'repo'
     }
 };
 
@@ -43,8 +43,9 @@ export const setup = () => {
     };
     mkdirSync(config.base, { recursive: true });
     cpSync(join(__dirname, '..', '..', '..', 'src', 'test', 'resources', 'project'), config.base, { recursive: true });
+    const { git: _, ...userConfig } = config
     init(
-        config,
+        userConfig,
         true,
         `origin	git@github.com:org/repo.git (fetch)
 origin	git@github.com:org/repo.git (push)`
@@ -76,7 +77,7 @@ export const runMacro = (macro: Macro | string, filename = 'index.md', ...args: 
     overwriteTemplate('package.md', header);
     overwriteTemplate('item.md', header);
 
-    buildDocs(_config(config), true);
+    buildDocs(config, { analyze: false, prettify: false });
     return readDoc(filename)
         .replaceAll(/>>>>>>>(.*)<<<<<<<.*$/gs, '$1')
         .trim();
