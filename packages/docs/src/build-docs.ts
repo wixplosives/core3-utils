@@ -35,7 +35,7 @@ function analyze(skipAnalyze: boolean, config: Config) {
                 ${(err as Error).message}`);
             }
         };
-        listPackages(config).forEach(({dir}) => analyzeFile(_packages(config, dir, 'api-extractor.json')));
+        listPackages(config).forEach(({ dir }) => analyzeFile(_packages(config, dir, 'api-extractor.json')));
         if (isWixDocs(config)) {
             analyzeFile(_packages(config, 'docs', 'macros.api-extractor.json'));
             const macrosDocsPath = _temp(config, 'built-in-macros.api.json');
@@ -49,7 +49,7 @@ function analyze(skipAnalyze: boolean, config: Config) {
 function generateDocs(config: Config) {
     console.time('Building markdown files');
     const model = new ApiModel();
-    listPackages(config).forEach(({unscopedName}) => {
+    listPackages(config).forEach(({ unscopedName }) => {
         model.loadPackage(_temp(config, `${unscopedName}.api.json`));
     });
     if (isWixDocs(config)) {
