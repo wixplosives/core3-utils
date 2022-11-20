@@ -6,7 +6,7 @@ import { _config, _docs, _packages } from "../common";
 import { clean, config, setup } from "./test-common";
 
 describe('cli', function () {
-    this.timeout(15_000)
+    this.timeout(25_000)
     before(() => setup(false))
     after(clean)
 
