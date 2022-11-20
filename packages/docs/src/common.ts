@@ -6,7 +6,13 @@ import { basename, join } from 'path';
 import type { Macro } from './macros.types';
 import nodeFs from '@file-services/node';
 
-export function listPackages(config: UserConfig) {
+export type Package = {
+    dir: string;
+    name: string;
+    unscopedName: string;
+}
+
+export function listPackages(config: UserConfig): Package[] {
     const { base, packages } = config;
     return readdirSync(join(base, packages), { withFileTypes: true })
         .filter((i) => i.isDirectory())
@@ -124,5 +130,5 @@ export const _config = ({ base, conf }: UserConfig, ...path: string[]) => join(b
 export const _temp = ({ base, temp }: UserConfig, ...path: string[]) => join(base, temp, ...path);
 
 export function isWixDocs(config: Config) {
-    return config.git.github === 'https://github.com/wixplosives/core3-utils';
+    return config.git.github === 'https://github.com/wixplosives/core3-utils' && config.base === '.';
 }

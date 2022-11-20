@@ -35,7 +35,7 @@ export const loadJson = (...paths: string[]) => {
 // eslint-disable-next-line no-console
 const config_log = console.log;
 
-export const setup = () => {
+export const setup = (_init = true) => {
     clean();
     // eslint-disable-next-line no-console
     console.log = () => {
@@ -44,12 +44,14 @@ export const setup = () => {
     mkdirSync(config.base, { recursive: true });
     cpSync(join(__dirname, '..', '..', '..', 'src', 'test', 'resources', 'project'), config.base, { recursive: true });
     const { git: _, ...userConfig } = config
-    init(
-        userConfig,
-        true,
-        `origin	git@github.com:org/repo.git (fetch)
+    if (_init) {
+        init(
+            userConfig,
+            true,
+            `origin	git@github.com:org/repo.git (fetch)
 origin	git@github.com:org/repo.git (push)`
-    );
+        );
+    }
 };
 
 export const clean = () => {

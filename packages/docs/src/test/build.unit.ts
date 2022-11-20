@@ -8,7 +8,7 @@ import { _config, _docs, _temp } from '../common';
 import type { Macro, Macros } from '../macros.types';
 
 describe('buildDocs', function () {
-    before(setup);
+    before(() => setup());
     before(function () {
         this.timeout(15_000);
         buildDocs(config);

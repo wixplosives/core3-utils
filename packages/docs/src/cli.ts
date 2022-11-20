@@ -1,3 +1,4 @@
+import { join } from 'path';
 import yargs from 'yargs/yargs';
 import { buildDocs } from './build-docs/build-docs';
 import { loadConfig } from './common';
@@ -38,7 +39,7 @@ const temp = {
     alias: 't',
     default: 'temp',
     describe: 'temp files directory',
-    boolean: true,
+    string: true,
 };
 const force = {
     alias: 'f',
@@ -57,8 +58,8 @@ export function cli() {
     yargs(process.argv.slice(2))
         .scriptName('docs')
         .usage('$0 <cmd> [args]')
-        .command('build', 'Build doc markdown from packages TSDocs', { conf, skipAnalyze }, ({ conf, skipAnalyze }) => {
-            buildDocs(loadConfig(conf), { analyze: skipAnalyze });
+        .command('build', 'Build doc markdown from packages TSDocs', { conf, base, skipAnalyze }, ({ base, conf, skipAnalyze }) => {
+            buildDocs(loadConfig(join(base, conf)), { analyze: !skipAnalyze });
         })
         .command(
             'init',
@@ -68,8 +69,8 @@ export function cli() {
                 init({ packages, conf, docs, siteUrl, base, temp }, force);
             }
         )
-        .command(['readme'], 'create README.md for all the packages', { conf, siteUrl }, ({ conf, siteUrl }) => {
-            createReadme(loadConfig(conf), siteUrl);
+        .command('readme', 'create README.md for all the packages', { conf, base, siteUrl }, ({ conf, base, siteUrl }) => {
+            createReadme(loadConfig(join(base, conf)), siteUrl);
         })
         .demandCommand()
         .help()
