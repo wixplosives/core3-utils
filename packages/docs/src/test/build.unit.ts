@@ -11,7 +11,7 @@ describe('buildDocs', function () {
     before(setup);
     before(function () {
         this.timeout(15_000);
-        buildDocs(_config(config), false);
+        buildDocs(config);
     });
     after(clean);
     it('builds readme files in the docs directory', function () {
@@ -33,7 +33,7 @@ describe('buildDocs', function () {
         overwriteTemplate('item.md', 'ITEM_HEADER');
         overwriteTemplate('package.md', 'PACKAGE_HEADER');
 
-        buildDocs(_config(config), true);
+        buildDocs(config, { analyze: false });
 
         expect(readDoc('index.md')).to.match(/INDEX_HEADER/);
         expect(readDoc('one.md')).to.match(/PACKAGE_HEADER/);

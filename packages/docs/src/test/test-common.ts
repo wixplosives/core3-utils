@@ -1,17 +1,24 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { UserConfig, _config, _docs } from '../common';
+import { Config, _config, _docs } from '../common';
 import { init } from '../init';
 import { buildDocs } from '../build-docs/build-docs';
 import { escapeRegExp, isString, naiveStripComments } from '@wixc3/common';
 import type { Macro } from '../macros.types';
 
-export const config: UserConfig = {
+export const config: Config = {
     conf: 'test-conf',
     base: 'docs-test-project',
     docs: 'test-docs',
     packages: 'packages',
     temp: 'test-temp',
+    git: {
+        github: '',
+        host: '',
+        org: '',
+        pages: '',
+        repo: ''
+    }
 };
 
 export const loadJson = (...paths: string[]) => {

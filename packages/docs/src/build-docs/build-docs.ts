@@ -4,21 +4,21 @@ import type { Macros } from '../macros.types';
 import { analyze, evaluateMacros, generateMarkdown } from './build-steps';
 export type { Macros };
 
-const skipDefaults = {
-    analyze: false,
-    evaluateMacros: false,
-    generateMarkdown: false,
+const all = {
+    analyze: true,
+    evaluateMacros: true,
+    generateMarkdown: true,
 }
 
-export type Skip = Partial<typeof skipDefaults>
+export type BuildSteps = Partial<typeof all>
 
 /**
  * Build docs markdown
  */
-export function buildDocs(config: Config, skip: Skip, macros?: Macros) {
-    skip = { ...skipDefaults, ...skip }
-    if (!skip.analyze) analyze(config);
-    if (!skip.generateMarkdown) generateMarkdown(config);
-    if (!skip.evaluateMacros) evaluateMacros(config, macros);
+export function buildDocs(config: Config, steps: BuildSteps = all, macros?: Macros) {
+    steps = { ...all, ...steps }
+    if (!steps.analyze) analyze(config);
+    if (!steps.generateMarkdown) generateMarkdown(config);
+    if (!steps.evaluateMacros) evaluateMacros(config, macros);
 }
 
