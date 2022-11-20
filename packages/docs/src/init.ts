@@ -44,7 +44,7 @@ export function init(config: UserConfig, force = false, overrideOrigin?: string)
     template('api-extractor.base.json');
     template('api-extractor.json');
 
-    listPackages(config).map(({dir}) => {
+    listPackages(config).map(({ dir }) => {
         const source = _config(config, 'api-extractor.json');
         const target = _packages(config, dir, 'api-extractor.json');
         return cpSync(source, target, { force });
