@@ -5,7 +5,13 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { basename, join } from 'path';
 import type { Macro } from './macros.types';
 import nodeFs from '@file-services/node';
+export type Package = {
+    dir: string;
+    name: string;
+    unscopedName: string;
+}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 export type Package = {
     dir: string;
@@ -17,6 +23,9 @@ export function listPackages(config: UserConfig): Package[] {
 =======
 export function listPackages(config: UserConfig) {
 >>>>>>> 7dc8444 (prettified)
+=======
+export function listPackages(config: UserConfig):Package[] {
+>>>>>>> 6658699 (added @example validation)
     const { base, packages } = config;
     return readdirSync(join(base, packages), { withFileTypes: true })
         .filter((i) => i.isDirectory())
@@ -36,6 +45,14 @@ export const getPackageByUnscopedName = (config: Config, unscopedName: string) =
     return found;
 };
 
+export const getPackageByName = (config: UserConfig, name: string) => {
+    const found = listPackages(config).find(({ name: pkg }) => pkg === name);
+    if (!found) {
+        throw new Error(`Packages not found: "${name}"`);
+    }
+    return found;
+};
+
 export const stripName = (name: string) => {
     const base = basename(name).split('.')[0]!;
     return base === 'index' ? '..' : base;
@@ -49,6 +66,7 @@ export function parseMacro(match: RegExpMatchArray) {
     const [macro, ...args] = (m || []) as [string, ...string[]];
     return { all, macro, args };
 }
+
 export const execMacro = (data: string, replace: Record<string, string | ((...args: string[]) => string)>) => {
     for (const match of data.matchAll(/(?<!`|<code>)((\\?)\[){3}(.+?)(\2\]){3}/g)) {
         const { all, macro, args } = parseMacro(match);
@@ -67,6 +85,7 @@ export type Repo = {
     pages: string;
     github: string;
 };
+
 export function getRepo(assert: true, overrideOrigin?: string): Repo;
 export function getRepo(): Nullable<Repo>;
 export function getRepo(assert = false, overrideOrigin?: string): Nullable<Repo> {
@@ -102,6 +121,7 @@ export type UserConfig = {
     docs: string;
     origin?: string;
     siteUrl?: string;
+    examples:string;
 };
 
 export type Config = UserConfig & {

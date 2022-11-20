@@ -12,6 +12,7 @@ export const config: Config = {
     docs: 'test-docs',
     packages: 'packages',
     temp: 'test-temp',
+<<<<<<< HEAD
     git: {
         github: 'https://github.com/org/repo',
         host: 'github.com',
@@ -19,6 +20,9 @@ export const config: Config = {
         pages: 'https://org.github.io/repo',
         repo: 'repo'
     }
+=======
+    examples: 'src/test'
+>>>>>>> 6658699 (added @example validation)
 };
 
 export const loadJson = (...paths: string[]) => {

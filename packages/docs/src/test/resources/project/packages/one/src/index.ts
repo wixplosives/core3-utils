@@ -1,8 +1,7 @@
 /**
- * 
  * @example 
- * ```ts
- * test1() // => 1
+ * ```ts (Example1)
+ * 'outdated example'
  * ```
  */
 export function test1() {

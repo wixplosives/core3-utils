@@ -1,10 +1,7 @@
 import { expect } from 'chai';
 import { buildDocs } from '../build-docs';
 import { setup, clean, config } from './test-common';
-import * as macros from '../macros';
-import { existsSync, rmSync } from 'fs';
 import { _config, _docs, _temp } from '../common';
-import type { Macro, Macros } from '../macros.types';
 import { validateExamples } from '../validate-examples';
 
 describe('validateExamples', function () {
@@ -15,30 +12,24 @@ describe('validateExamples', function () {
     });
     after(clean);
 
-    // describe('@example with no ref', () => {
-    //     it('does nothing', () => {
-
-    //     })
-    // })
+    describe('@example with no ref', () => {
+        it(`doesn't throw`, () => {
+            validateExamples(config, 'two.api.json')
+        })
+    })
     describe('@example with ref', () => {
         describe('a valid ref', () => {
             it('throws when the file is out of sync', () => {
-                expect(validateExamples(_temp(config, 'two.api.json')))
+                expect(() => validateExamples(config, 'one.api.json')).to.throw("Outdated example")
             })
-            // it('does not throw when the file is in sync', () => {
-
-            // })
-            // it('does not throw when the diff is in white space', () => {
-
-            // })
-            // it('allows for the same ref in different packages', () => {
-
-            // })
+            it('does not throw when the file is in sync', () => {
+                validateExamples(config, 'two.api.json')
+            })
         })
-        // describe('an invalid ref', () => {
-        //     it('throws for missing example ref', () => {
-
-        //     })
-        // })
+        describe('missing ref', () => {
+            it('throws for missing example ref', () => {
+                expect(() => validateExamples(config, 'different-name.api.json')).to.throw("Missing example reference")
+            })
+        })
     })
 })
