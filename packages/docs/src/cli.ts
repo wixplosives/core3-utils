@@ -1,5 +1,6 @@
 import yargs from 'yargs/yargs';
-import { buildDocs } from './build-docs';
+import { buildDocs } from './build-docs/build-docs';
+import { loadConfig } from './common';
 import { createReadme } from './create-readme';
 import { init } from './init';
 
@@ -57,7 +58,7 @@ export function cli() {
         .scriptName('docs')
         .usage('$0 <cmd> [args]')
         .command('build', 'Build doc markdown from packages TSDocs', { conf, skipAnalyze }, ({ conf, skipAnalyze }) => {
-            buildDocs(conf, skipAnalyze);
+            buildDocs(loadConfig(conf), { analyze: skipAnalyze });
         })
         .command(
             'init',

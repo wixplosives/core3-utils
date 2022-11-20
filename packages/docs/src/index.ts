@@ -32,7 +32,7 @@
  * [[[include ./docs-macros.md]]]
  *
  */
-export * from './build-docs';
+export * from './build-docs/build-docs';
 export * from './create-readme';
 export * from './init';
 export { cli } from './cli';

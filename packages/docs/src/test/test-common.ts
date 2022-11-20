@@ -2,7 +2,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } fr
 import { join } from 'path';
 import { UserConfig, _config, _docs } from '../common';
 import { init } from '../init';
-import { buildDocs } from '../build-docs';
+import { buildDocs } from '../build-docs/build-docs';
 import { escapeRegExp, isString, naiveStripComments } from '@wixc3/common';
 import type { Macro } from '../macros.types';
 
