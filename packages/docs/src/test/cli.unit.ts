@@ -11,11 +11,12 @@ describe('cli', function () {
     after(clean)
 
     it('init, build, readme', () => {
-        spawnSync('yarn', ['docs', 'init', '-b', config.base, '-c', config.conf, '-d', config.docs, '-t', config.temp, '-s', 'https:/test.site.com', '-o', 'git@github.com:test/docs.git'])
+        spawnSync('yarn', ['docs', 'init', '-b', config.base, '-c', config.conf, '-d', config.docs, '-t', config.temp, '-s', 'https:/test.site.com', '-o', 'git@github.com:test/docs.git', '-e', 'src'])
         expect(JSON.parse(readFileSync(_config(config, 'config.json'), 'utf8'))).to.eql({
             ...config,
             siteUrl: "https:/test.site.com",
             origin: "git@github.com:test/docs.git",
+            examples: 'src',
             git: {
                 host: "github.com",
                 org: "test",

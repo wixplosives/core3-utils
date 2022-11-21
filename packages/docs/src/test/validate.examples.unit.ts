@@ -5,10 +5,10 @@ import { _config, _docs, _temp } from '../common';
 import { validateExamples } from '../validate-examples';
 
 describe('validateExamples', function () {
-    before(setup);
+    before(() => setup());
     before(function () {
         this.timeout(15_000);
-        buildDocs(_config(config), false);
+        buildDocs(config, { prettify: false });
     });
     after(clean);
 

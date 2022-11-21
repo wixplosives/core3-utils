@@ -53,3 +53,10 @@ export const siteUrl = {
     describe: `base URL of the project's github pages`,
     string: true,
 };
+
+export const examples = {
+    alias: 'e',
+    default: 'src/test',
+    describe: 'examples source root',
+    string: true,
+};

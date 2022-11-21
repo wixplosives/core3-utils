@@ -13,6 +13,6 @@ describe('@example ref', () => {
             // {@label Example3
             test3() // => 3
             // @}
-            ).to.equal(3)
+        ).to.equal(3)
     })
 })  

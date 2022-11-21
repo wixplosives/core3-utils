@@ -5,14 +5,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { basename, join } from 'path';
 import type { Macro } from './macros.types';
 import nodeFs from '@file-services/node';
-export type Package = {
-    dir: string;
-    name: string;
-    unscopedName: string;
-}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 export type Package = {
     dir: string;
     name: string;
@@ -20,12 +13,6 @@ export type Package = {
 }
 
 export function listPackages(config: UserConfig): Package[] {
-=======
-export function listPackages(config: UserConfig) {
->>>>>>> 7dc8444 (prettified)
-=======
-export function listPackages(config: UserConfig):Package[] {
->>>>>>> 6658699 (added @example validation)
     const { base, packages } = config;
     return readdirSync(join(base, packages), { withFileTypes: true })
         .filter((i) => i.isDirectory())
@@ -121,7 +108,7 @@ export type UserConfig = {
     docs: string;
     origin?: string;
     siteUrl?: string;
-    examples:string;
+    examples: string;
 };
 
 export type Config = UserConfig & {
