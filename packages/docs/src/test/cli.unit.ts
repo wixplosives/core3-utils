@@ -14,7 +14,6 @@ describe('cli', function () {
         spawnSync('yarn', [
             'docs',
             'init',
-            '-b',
             ...args,
             '-d',
             config.docs,
