@@ -14,8 +14,8 @@ describe('readme', function () {
         // tests do not mutate anything
         // init is executed in "setup"
         this.timeout(15_000);
-        buildDocs(config);
-        createReadme(config)
+        buildDocs(config, { validateExamples: false });
+        createReadme(config);
     });
     after(clean);
     it('builds README.md files in the src directory of each package', function () {
@@ -25,7 +25,7 @@ describe('readme', function () {
     });
     it('builds README.md in the source root', function () {
         expect(existsSync(_packages(config, '..', 'README.md'))).to.equal(true);
-        const content = readFileSync(_packages(config, '..', 'README.md'), 'utf8')
+        const content = readFileSync(_packages(config, '..', 'README.md'), 'utf8');
         expect(content).to.match(/\[@test\/one\]/);
         expect(content).to.match(/\[@test\/two\]/);
         expect(content).to.match(/\[@test\/different-name\]/);

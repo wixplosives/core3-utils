@@ -5,6 +5,7 @@
   "siteUrl": "https://<org>.github.io/<repo>",
   "base": ".",
   "temp": "temp",
+  "examples": "src/test",
   "git": {
     "host": "github.com",
     "org": "wixplosives",

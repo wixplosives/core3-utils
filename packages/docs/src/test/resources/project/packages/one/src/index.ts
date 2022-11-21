@@ -1,5 +1,5 @@
 /**
- * @example 
+ * @example
  * ```ts (Example1)
  * 'outdated example'
  * ```

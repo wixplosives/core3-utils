@@ -18,8 +18,8 @@ export const config: Config = {
         host: 'github.com',
         org: 'org',
         pages: 'https://org.github.io/repo',
-        repo: 'repo'
-    }
+        repo: 'repo',
+    },
 };
 
 export const loadJson = (...paths: string[]) => {
@@ -38,8 +38,13 @@ const config_log = console.log;
 
 export const setup = (_init = true) => {
     clean();
+    // Suppress logs during test
     // eslint-disable-next-line no-console
     console.log = () => {
+        /* */
+    };
+    // eslint-disable-next-line no-console
+    console.warn = () => {
         /* */
     };
     mkdirSync(config.base, { recursive: true });
@@ -47,10 +52,7 @@ export const setup = (_init = true) => {
     const { git: _, ...userConfig } = config;
     userConfig.origin = 'git@github.com:org/repo.git';
     if (_init) {
-        init(
-            userConfig,
-            true
-        );
+        init(userConfig, true);
     }
 };
 
@@ -79,7 +81,7 @@ export const runMacro = (macro: Macro | string, filename = 'index.md', ...args: 
     overwriteTemplate('package.md', header);
     overwriteTemplate('item.md', header);
 
-    buildDocs(config, { analyze: false, prettify: false });
+    buildDocs(config, { analyze: false, prettify: false, validateExamples: false });
     return readDoc(filename)
         .replaceAll(/>>>>>>>(.*)<<<<<<<.*$/gs, '$1')
         .trim();

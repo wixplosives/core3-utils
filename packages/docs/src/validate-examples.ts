@@ -1,11 +1,11 @@
 import { ApiPackage, ApiDeclaredItem, ApiItem } from '@microsoft/api-extractor-model';
 import { format } from 'prettier';
 import { GlobSync } from 'glob';
-import { UserConfig, getPackageByName, Package, _packages, _temp } from './common';
+import { UserConfig, getPackageByName, Package, _packages, _temp, Config } from './common';
 import { readFileSync } from 'fs';
 import { expect } from 'chai';
 
-export function validateExamples(config: UserConfig, apiJsons = '*.api.json') {
+export function validateExamples(config: Config, apiJsons = '*.api.json') {
     const glob = new GlobSync(_temp(config, apiJsons));
     let found = false;
     for (const apiJson of glob.found) {
@@ -78,7 +78,7 @@ function findAllExamples(config: UserConfig, pkg: Package, type: string | undefi
             const foundExamples = content.matchAll(/\/\/\s*\{@label[ \t]+(\w+)\s*\n(.*?)\/\/\s*@}/gs);
             for (const [_, label, example] of foundExamples) {
                 if (!label) {
-                    throw new Error(`Invalid example label: label is not defined in  ${file}`);
+                    throw new Error(`Invalid example label: label is not defined in ${file}`);
                 }
                 if (examples.has(label)) {
                     throw new Error(`Invalid example label: "// {@label ${label}" is not unique in package ${pkg}

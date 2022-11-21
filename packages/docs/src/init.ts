@@ -38,9 +38,12 @@ export function init(config: UserConfig, force = false) {
     writeConfig(
         {
             ...config,
-            git: getRepo(true, config.origin === origin.default
-                ? undefined
-                : `origin	${config.origin} (fetch)\norigin	${config.origin} (push)`)
+            git: getRepo(
+                true,
+                config.origin === origin.default
+                    ? undefined
+                    : `origin	${config.origin} (fetch)\norigin	${config.origin} (push)`
+            ),
         },
         force
     );

@@ -1,4 +1,3 @@
-
 export const packages = {
     alias: 'p',
     default: 'packages',

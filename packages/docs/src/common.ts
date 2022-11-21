@@ -10,7 +10,7 @@ export type Package = {
     dir: string;
     name: string;
     unscopedName: string;
-}
+};
 
 export function listPackages(config: UserConfig): Package[] {
     const { base, packages } = config;
@@ -32,8 +32,13 @@ export const getPackageByUnscopedName = (config: Config, unscopedName: string) =
     return found;
 };
 
-export const getPackageByName = (config: UserConfig, name: string) => {
-    const found = listPackages(config).find(({ name: pkg }) => pkg === name);
+export const getPackageByName = (config: Config, name: string) => {
+    const found = listPackages(config).find(({ name: pkg }) => {
+        if (isWixDocs(config) && name === '@wixc3/docs-macros') {
+            return pkg === '@wixc3/docs';
+        }
+        return pkg === name;
+    });
     if (!found) {
         throw new Error(`Packages not found: "${name}"`);
     }
