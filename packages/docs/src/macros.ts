@@ -2,7 +2,6 @@ import { readPackageJson } from '@wixc3/fs-utils';
 import nodeFs from '@file-services/node';
 import { getPackageByUnscopedName, isWixDocs, Repo, stripName, _docs, _packages } from './common';
 import { processMacros } from './process-macros';
-import { repeat } from '@wixc3/common';
 import type { Macro } from './macros.types';
 
 /**
@@ -162,7 +161,7 @@ export const include: Macro = (config, name, target = '') => {
  *
  * `[[[h level title]]]`
  */
-export const h: Macro = (_, __, level, ...title) => `${repeat('#', parseInt(level))} ${title.join(' ')}\n`;
+export const h: Macro = (_, __, level, ...title) => `${'#'.repeat(parseInt(level))} ${title.join(' ')}\n`;
 
 /**
  * Lists all the available macros
