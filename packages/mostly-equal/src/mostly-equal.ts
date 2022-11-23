@@ -22,12 +22,11 @@ function isExpectVal(val: any): val is ExpectValue<any> {
 }
 
 function isExpectValues(val: any): val is ExpectValues {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return !!val && val._brand === expectValuesSymb;
+    return !!val && (val as { _brand: unknown })._brand === expectValuesSymb;
 }
 
 /**
- * Used for adding field matchers to {@link mostlyEqual}
+ * Used for adding field matchers to mostlyEqual
  * Creates a symbol used for field matching
  *
  * @example
@@ -42,7 +41,7 @@ function isExpectValues(val: any): val is ExpectValues {
  * for error printing when another matcher failed
  * @param expectMethod
  */
-export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): any {
+export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>) {
     let values: ExpandedValues<T> = [];
 
     const wrapMethod: ExpectSingleMatcher<T> = (value, fieldDefinedInParent, path) => {
@@ -66,7 +65,7 @@ export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): any {
  * This way a matcher can compare different values
  * {@link defineUnique}
  */
-export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): any {
+export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false) {
     let values: ExpandedValues<T> = [];
     const wrapMethod: ExpectMultiMatcher<T> = (vals, valInfos) => {
         values = valInfos;

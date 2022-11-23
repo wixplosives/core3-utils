@@ -1,13 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /**
  * Sub matchers
  */
-
 import { expect } from 'chai';
 import { expectValue, expectValues } from './mostly-equal';
-
 export const thumbsUp = '👍';
 
 export const notImportant = expectValue(() => undefined);
@@ -32,7 +27,7 @@ export function equal(value: unknown, thumbsUpOnSuccess = true) {
 }
 
 /**
- * Creates a symbol for usage in {@link mostly-equal},
+ * Creates a symbol for usage in expect.mostlyEqual,
  * Comparing the resulting value in any place it is used as the value
  * @example
  * ```ts
@@ -66,7 +61,7 @@ export const defineUnique = (name: string, skipUndefined = false) =>
     }, skipUndefined);
 
 /**
- * Creates a symbol for usage in {@link mostlyEqual},
+ * Creates a symbol for usage in mostlyEqual,
  * Comparing the resulting value in any place it is used as the value
  * @example
  * ```ts

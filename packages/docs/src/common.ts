@@ -10,7 +10,7 @@ export type Package = {
     dir: string;
     name: string;
     unscopedName: string;
-}
+};
 
 export function listPackages(config: UserConfig): Package[] {
     const { base, packages } = config;
@@ -32,6 +32,19 @@ export const getPackageByUnscopedName = (config: Config, unscopedName: string) =
     return found;
 };
 
+export const getPackageByName = (config: Config, name: string) => {
+    const found = listPackages(config).find(({ name: pkg }) => {
+        if (isWixDocs(config) && name === '@wixc3/docs-macros') {
+            return pkg === '@wixc3/docs';
+        }
+        return pkg === name;
+    });
+    if (!found) {
+        throw new Error(`Packages not found: "${name}"`);
+    }
+    return found;
+};
+
 export const stripName = (name: string) => {
     const base = basename(name).split('.')[0]!;
     return base === 'index' ? '..' : base;
@@ -45,6 +58,7 @@ export function parseMacro(match: RegExpMatchArray) {
     const [macro, ...args] = (m || []) as [string, ...string[]];
     return { all, macro, args };
 }
+
 export const execMacro = (data: string, replace: Record<string, string | ((...args: string[]) => string)>) => {
     for (const match of data.matchAll(/(?<!`|<code>)((\\?)\[){3}(.+?)(\2\]){3}/g)) {
         const { all, macro, args } = parseMacro(match);
@@ -63,6 +77,7 @@ export type Repo = {
     pages: string;
     github: string;
 };
+
 export function getRepo(assert: true, overrideOrigin?: string): Repo;
 export function getRepo(): Nullable<Repo>;
 export function getRepo(assert = false, overrideOrigin?: string): Nullable<Repo> {
@@ -98,6 +113,7 @@ export type UserConfig = {
     docs: string;
     origin?: string;
     siteUrl?: string;
+    examples: string;
 };
 
 export type Config = UserConfig & {

@@ -1,34 +1,88 @@
-import { expect } from "chai";
-import { spawnSync } from "child_process";
-import { existsSync, readFileSync } from "fs";
-import { after } from "mocha";
-import { _config, _docs, _packages } from "../common";
-import { clean, config, setup } from "./test-common";
+import { expect } from 'chai';
+import { spawnSync } from 'child_process';
+import { existsSync, readFileSync, rmSync } from 'fs';
+import { after } from 'mocha';
+import { _config, _docs, _packages, _temp } from '../common';
+import { clean, config, setup } from './test-common';
+
+const args = ['-b', config.base, '-c', config.conf];
 
 describe('cli', function () {
-    this.timeout(25_000)
-    before(() => setup(false))
-    after(clean)
+    this.timeout(25_000);
+    before(() => setup(false));
+    before(() => {
+        spawnSync('yarn', [
+            'docs',
+            'init',
+            ...args,
+            '-d',
+            config.docs,
+            '-t',
+            config.temp,
+            '-s',
+            'https:/test.site.com',
+            '-o',
+            'git@github.com:test/docs.git',
+            '-e',
+            'src',
+        ]);
+    });
+    afterEach(() => {
+        rmSync(_temp(config), { force: true, recursive: true });
+    });
+    after(clean);
 
-    it('init, build, readme', () => {
-        spawnSync('yarn', ['docs', 'init', '-b', config.base, '-c', config.conf, '-d', config.docs, '-t', config.temp, '-s', 'https:/test.site.com', '-o', 'git@github.com:test/docs.git'])
-        expect(JSON.parse(readFileSync(_config(config, 'config.json'), 'utf8'))).to.eql({
-            ...config,
-            siteUrl: "https:/test.site.com",
-            origin: "git@github.com:test/docs.git",
-            git: {
-                host: "github.com",
-                org: "test",
-                repo: "docs",
-                pages: "https://test.github.io/docs",
-                github: "https://github.com/test/docs"
-            }
-        }, 'failed docs init')
+    describe('docs init', () => {
+        it('creates the config file', () => {
+            expect(JSON.parse(readFileSync(_config(config, 'config.json'), 'utf8'))).to.eql(
+                {
+                    ...config,
+                    siteUrl: 'https:/test.site.com',
+                    origin: 'git@github.com:test/docs.git',
+                    examples: 'src',
+                    git: {
+                        host: 'github.com',
+                        org: 'test',
+                        repo: 'docs',
+                        pages: 'https://test.github.io/docs',
+                        github: 'https://github.com/test/docs',
+                    },
+                },
+                'failed docs init'
+            );
+        });
+    });
 
-        spawnSync('yarn', ['docs', 'build', '-b', config.base, '-c', config.conf])
-        expect(existsSync(_docs(config, 'index.md'))).to.equal(true, 'failed docs build')
+    describe('docs build', () => {
+        it('validates examples', () => {
+            const exec = spawnSync('yarn', ['docs', 'build', ...args]);
+            expect(exec.status, exec.stderr.toString()).to.equal(1);
+        });
+        it('generates docs', () => {
+            rmSync(_packages(config, 'one'), { force: true, recursive: true });
+            rmSync(_packages(config, 'weird'), { force: true, recursive: true });
 
-        spawnSync('yarn', ['docs', 'readme', '-b', config.base, '-c', config.conf])
-        expect(existsSync(_packages(config, '..', 'README.md'))).to.equal(true, 'failed docs readme')
-    })
+            const exec = spawnSync('yarn', ['docs', 'build', '-b', config.base, '-c', config.conf]);
+            expect(exec.status, exec.stderr.toString()).to.equal(0);
+            expect(existsSync(_docs(config, 'index.md'))).to.equal(true, 'failed docs build');
+            expect(existsSync(_docs(config, 'two.md'))).to.equal(true, 'failed docs build');
+            expect(existsSync(_docs(config, 'two.test1.md'))).to.equal(true, 'failed docs build');
+        });
+    });
+    describe('readme', () => {
+        before(() => {
+            rmSync(_packages(config, 'one'), { force: true, recursive: true });
+            rmSync(_packages(config, 'weird'), { force: true, recursive: true });
+
+            const exec = spawnSync('yarn', ['docs', 'build', '-b', config.base, '-c', config.conf]);
+            expect(exec.status, exec.stderr.toString()).to.equal(0);
+        });
+        it('generated readme in packages root', () => {
+            const exec = spawnSync('yarn', ['docs', 'readme', ...args]);
+            expect(exec.status, exec.stderr.toString()).to.equal(0);
+
+            expect(existsSync(_packages(config, '..', 'README.md'))).to.equal(true, 'failed docs readme');
+            expect(existsSync(_packages(config, 'two', 'README.md'))).to.equal(true, 'failed docs readme');
+        });
+    });
 });

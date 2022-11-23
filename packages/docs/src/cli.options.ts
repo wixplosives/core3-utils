@@ -1,4 +1,3 @@
-
 export const packages = {
     alias: 'p',
     default: 'packages',
@@ -51,5 +50,12 @@ export const siteUrl = {
     alias: 's',
     default: 'https://<org>.github.io/<repo>',
     describe: `base URL of the project's github pages`,
+    string: true,
+};
+
+export const examples = {
+    alias: 'e',
+    default: 'src/test',
+    describe: 'examples source root',
     string: true,
 };
