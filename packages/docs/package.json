@@ -28,7 +28,7 @@
     "@wixc3/common": "^3.0.4",
     "@wixc3/fs-utils": "^3.0.4",
     "glob": "^8.0.3",
-    "prettier": "^2.7.1",
+    "prettier": "^2.8.0",
     "yargs": "^17.6.2"
   }
 }
