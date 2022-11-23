@@ -287,13 +287,6 @@ export function templateCompilerProvider(context: Record<string, any>) {
 }
 
 /**
- * Generates a string repeating [str] [count] times
- */
-export function repeat(str: string, count: number) {
-    return [...new Array<void>(count)].map(() => str).join('');
-}
-
-/**
  * Returns a string safe to be used in RegExp
  * @see https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
  */
