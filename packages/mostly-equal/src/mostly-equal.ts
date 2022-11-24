@@ -41,7 +41,7 @@ function isExpectValues(val: any): val is ExpectValues {
  * for error printing when another matcher failed
  * @param expectMethod
  */
-export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>) {
+export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): any {
     let values: ExpandedValues<T> = [];
 
     const wrapMethod: ExpectSingleMatcher<T> = (value, fieldDefinedInParent, path) => {
@@ -65,7 +65,7 @@ export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>) {
  * This way a matcher can compare different values
  * {@link defineUnique}
  */
-export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false) {
+export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): any {
     let values: ExpandedValues<T> = [];
     const wrapMethod: ExpectMultiMatcher<T> = (vals, valInfos) => {
         values = valInfos;
