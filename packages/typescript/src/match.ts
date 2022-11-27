@@ -1,5 +1,5 @@
 import type * as ts from 'typescript';
-import { Predicate } from '@wixc3/common';
+import type { Predicate } from '@wixc3/common';
 import { compileCode } from './compile';
 import { findNode, findNodeAfterComment } from './find';
 
