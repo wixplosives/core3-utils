@@ -37,8 +37,10 @@ describe('runSteps', ()=>{
             yield step(sleep(100), 10, 'wait too long')
         })
         const t:Promise<void> = test.bind(this)() 
+        // by returning this expectation the promise rejection is not dangling
+        const exp =  expect(t).to.eventually.be.rejectedWith('Failed in step "wait too long" after 10ms')
         await clock.tickAsync(11)
-        await expect(t).to.have.been.rejectedWith('Failed in step "wait too long" after 10ms')
+        return exp
     })
     it('yields the result of a step', async function () {
         const test = runSteps(function*(){
