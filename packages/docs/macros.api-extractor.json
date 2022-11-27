@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+  "extends": "../../docs-conf/api-extractor.base.json",
+  "mainEntryPointFilePath": "<projectFolder>/packages/docs/dist/cjs/macros.d.ts",
+  "apiReport": {
+    "enabled": false
+  },
+  "docModel": {
+    "enabled": true,
+    "apiJsonFilePath": "<projectFolder>/temp/built-in-macros.api.json"
+  }
+}

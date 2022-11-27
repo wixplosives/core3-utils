@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { expect } from 'chai';
 import { spy, SinonFakeTimers, useFakeTimers, SinonSpy } from 'sinon';
 import { Debouncer } from '../debouncer';

@@ -62,7 +62,7 @@ describe('iterables', () => {
     });
 
     describe('unique', () => {
-        it('creates an array with no repeats', () => {
+        it('creates an iterable with no repeats', () => {
             expect([...unique(['1', 1, 1, true])]).to.eql(['1', 1, true]);
             expect([...unique([0, 1, 2, 3], (i) => i % 2)]).to.eql([0, 1]);
         });

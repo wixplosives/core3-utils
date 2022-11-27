@@ -3,7 +3,5 @@
   "compilerOptions": {
     "outDir": "../dist/cjs"
   },
-  "references": [
-    { "path": "../../common/src" }
-  ]
+  "references": [{ "path": "../../common/src" }]
 }

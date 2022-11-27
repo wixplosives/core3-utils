@@ -3,9 +3,9 @@ import { Signal } from './signal';
 /**
  * A simple event emitter
  */
-export class EventEmitter<Events extends Record<string, unknown>, EventId extends keyof Events = keyof Events> {
-    private events = new Map<EventId, Signal<any>>();
-    private emitOnce = new Map<EventId, Signal<any>>();
+export class EventEmitter<Events extends object, EventId extends keyof Events = keyof Events> {
+    protected events = new Map<EventId, Signal<any>>();
+    protected emitOnce = new Map<EventId, Signal<any>>();
 
     /**
      * Check if an event has subscribers
