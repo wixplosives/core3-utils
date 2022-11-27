@@ -33,7 +33,7 @@ describe('buildDocs', function () {
 
     describe('generateMarkdown step', () => {
         it('builds readme files in the docs directory', function () {
-            buildDocs(config, { validateExamples: false, analyze: false });
+            buildDocs(config, { validateExamples: false, analyze: false, prettify:false });
 
             expect(docExists('index.md')).to.equal(true);
             expect(docExists('one.md')).to.equal(true);
