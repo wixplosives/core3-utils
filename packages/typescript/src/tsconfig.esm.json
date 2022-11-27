@@ -4,7 +4,5 @@
     "outDir": "../dist/esm",
     "module": "esnext"
   },
-  "references": [
-    { "path": "../../common/src/tsconfig.esm.json" },
-  ]
+  "references": [{ "path": "../../common/src/tsconfig.esm.json" }]
 }

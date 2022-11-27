@@ -76,11 +76,11 @@ describe('delayed', () => {
         expect(results).to.eql([0, 1, 2]);
     });
     it('resolves the returned promise with the returned value', async () => {
-        const fn = delayed((id: number) => id, 100)
-        const r1 = fn(1)
-        const r2 = fn(2)
-        await clock.tickAsync(100)
-        expect(await r1).to.equal(1)
-        expect(await r2).to.equal(2)
+        const fn = delayed((id: number) => id, 100);
+        const r1 = fn(1);
+        const r2 = fn(2);
+        await clock.tickAsync(100);
+        expect(await r1).to.equal(1);
+        expect(await r2).to.equal(2);
     });
 });
