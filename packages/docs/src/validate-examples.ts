@@ -29,7 +29,7 @@ function validateSameCode(a?: string, b?: string, message = '') {
     const [ma, mb] = [a, b].map((code) =>
         format(
             (code || '')
-                .split(/\r?\n\s*/)
+                .split(/\r?\n\s*\*?\s*/)
                 .filter((i) => i)
                 .join('\n') || '',
             { parser: 'typescript' }
@@ -42,10 +42,9 @@ function validateNode(config: UserConfig, item: ApiItem, pkg: Package, examples:
     if (hasTSDocs(item)) {
         const docs = item.tsdocComment?.emitAsTsdoc();
         if (docs) {
-            for (const [_all, type, ref, example] of docs.matchAll(
+            for (const [_all, type, ref, exampleCode] of docs.matchAll(
                 /@example\s*\*\s*```(tsx?|jsx?|javascript|typescript)\s*\((\S+)\)(.*)\*\s*```/gs
             )) {
-                const exampleCode = example?.replaceAll(/^\s*\*\s*/g, '');
                 if (ref) {
                     findAllExamples(config, pkg, type, examples);
                     if (!examples.has(ref)) {
