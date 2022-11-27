@@ -5,7 +5,7 @@ import { _config, _docs, _temp } from '../common';
 import { validateExamples } from '../validate-examples';
 
 describe('validateExamples', function () {
-    this.timeout(5_000)
+    this.timeout(5_000);
     before(() => setup());
     before(function () {
         this.timeout(15_000);
