@@ -7,6 +7,28 @@
 
 ## mostly-equal package
 
+Adds chai matches for partial equality of JSONs
+
+## Example
+
+```ts
+import chai, { expect } from 'chai';
+import { mostlyEqlChaiPlugin, notImportant } from '@wixc3/mostly-equal';
+chai.use(mostlyEqlChaiPlugin);
+expect({ a: 1 }).to.mostlyEqual({
+  a: 1,
+  b: notImportant,
+});
+```
+
+## Functions
+
+| Function                                                                                                          | Description                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [equal(value, thumbsUpOnSuccess)](https://wixplosives.github.io/core3-utils/mostly-equal.equal)                   | Strict equality of a field                                                                                                                                                                                                                                                          |
+| [expectValue(expectMethod)](https://wixplosives.github.io/core3-utils/mostly-equal.expectvalue)                   | Used for adding field matchers to mostlyEqual Creates a symbol used for field matching                                                                                                                                                                                              |
+| [expectValues(expectMethod, allowUndefined)](https://wixplosives.github.io/core3-utils/mostly-equal.expectvalues) | Similar to [expectValue()](https://wixplosives.github.io/core3-utils/mostly-equal.expectvalue)<!-- -->, but called for all the matches at once. This way a matcher can compare different values [defineUnique](https://wixplosives.github.io/core3-utils/mostly-equal.defineunique) |
+
 ## Interfaces
 
 | Interface                                                                                       | Description |
@@ -18,27 +40,24 @@
 
 ## Variables
 
-| Variable                                                                                          | Description  |
-| ------------------------------------------------------------------------------------------------- | ------------ |
-| [checkExpectValues](https://wixplosives.github.io/core3-utils/mostly-equal.checkexpectvalues)     |              |
-| [clearMatchedValues](https://wixplosives.github.io/core3-utils/mostly-equal.clearmatchedvalues)   |              |
-| [defined](https://wixplosives.github.io/core3-utils/mostly-equal.defined)                         |              |
-| [defineSame](https://wixplosives.github.io/core3-utils/mostly-equal.definesame)                   |              |
-| [defineUnique](https://wixplosives.github.io/core3-utils/mostly-equal.defineunique)               |              |
-| [equal](https://wixplosives.github.io/core3-utils/mostly-equal.equal)                             |              |
-| [errorString](https://wixplosives.github.io/core3-utils/mostly-equal.errorstring)                 |              |
-| [expectValue](https://wixplosives.github.io/core3-utils/mostly-equal.expectvalue)                 |              |
-| [expectValues](https://wixplosives.github.io/core3-utils/mostly-equal.expectvalues)               |              |
-| [getMatchedValues](https://wixplosives.github.io/core3-utils/mostly-equal.getmatchedvalues)       |              |
-| [isGetter](https://wixplosives.github.io/core3-utils/mostly-equal.isgetter)                       |              |
-| [isPlainObj](https://wixplosives.github.io/core3-utils/mostly-equal.isplainobj)                   |              |
-| [mostlyEqlChaiPlugin](https://wixplosives.github.io/core3-utils/mostly-equal.mostlyeqlchaiplugin) |              |
-| [notImportant](https://wixplosives.github.io/core3-utils/mostly-equal.notimportant)               |              |
-| [printPath](https://wixplosives.github.io/core3-utils/mostly-equal.printpath)                     |              |
-| [registerChildSet](https://wixplosives.github.io/core3-utils/mostly-equal.registerchildset)       |              |
-| [safePrint](https://wixplosives.github.io/core3-utils/mostly-equal.safeprint)                     |              |
-| [spaces](https://wixplosives.github.io/core3-utils/mostly-equal.spaces)                           |              |
-| [thumbsUp](https://wixplosives.github.io/core3-utils/mostly-equal.thumbsup)                       | Sub matchers |
+| Variable                                                                                          | Description                                                                                                          |
+| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| [checkExpectValues](https://wixplosives.github.io/core3-utils/mostly-equal.checkexpectvalues)     |                                                                                                                      |
+| [clearMatchedValues](https://wixplosives.github.io/core3-utils/mostly-equal.clearmatchedvalues)   |                                                                                                                      |
+| [defined](https://wixplosives.github.io/core3-utils/mostly-equal.defined)                         | Field must be defined (null is considered define)                                                                    |
+| [defineSame](https://wixplosives.github.io/core3-utils/mostly-equal.definesame)                   | Creates a symbol for usage in mostlyEqual, Comparing the resulting value in any place it is used as the value        |
+| [defineUnique](https://wixplosives.github.io/core3-utils/mostly-equal.defineunique)               | Creates a symbol for usage in expect.mostlyEqual, Comparing the resulting value in any place it is used as the value |
+| [errorString](https://wixplosives.github.io/core3-utils/mostly-equal.errorstring)                 |                                                                                                                      |
+| [getMatchedValues](https://wixplosives.github.io/core3-utils/mostly-equal.getmatchedvalues)       |                                                                                                                      |
+| [isGetter](https://wixplosives.github.io/core3-utils/mostly-equal.isgetter)                       |                                                                                                                      |
+| [isPlainObj](https://wixplosives.github.io/core3-utils/mostly-equal.isplainobj)                   |                                                                                                                      |
+| [mostlyEqlChaiPlugin](https://wixplosives.github.io/core3-utils/mostly-equal.mostlyeqlchaiplugin) |                                                                                                                      |
+| [notImportant](https://wixplosives.github.io/core3-utils/mostly-equal.notimportant)               |                                                                                                                      |
+| [printPath](https://wixplosives.github.io/core3-utils/mostly-equal.printpath)                     |                                                                                                                      |
+| [registerChildSet](https://wixplosives.github.io/core3-utils/mostly-equal.registerchildset)       |                                                                                                                      |
+| [safePrint](https://wixplosives.github.io/core3-utils/mostly-equal.safeprint)                     |                                                                                                                      |
+| [spaces](https://wixplosives.github.io/core3-utils/mostly-equal.spaces)                           |                                                                                                                      |
+| [thumbsUp](https://wixplosives.github.io/core3-utils/mostly-equal.thumbsup)                       |                                                                                                                      |
 
 ## Type Aliases
 
