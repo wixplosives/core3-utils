@@ -46,7 +46,7 @@ export function compileFile(sourceFilePath: string) {
 }
 
 /**
- * Calculates the effective tsconfig compiler options,
+ * Calculates the effective tsconfig compiler options
  */
 export function getTsConfigCompilerOptions(tsConfigJsonPath?: string): ts.CompilerOptions {
     if (tsConfigJsonPath) {
