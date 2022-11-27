@@ -4,5 +4,9 @@
     "types": ["node", "mocha"],
     "outDir": "../dist/cjs"
   },
-  "references": [{ "path": "../../common/src" }, { "path": "../../fs-utils/src" }]
+  "references": [
+    { "path": "../../common/src" },
+   { "path": "../../fs-utils/src" },
+   { "path": "../../typescript/src" }
+  ]
 }
