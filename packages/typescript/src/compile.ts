@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { isString } from '@wixc3/common';
 import { dirname, join } from 'path';
 import * as ts from 'typescript';
@@ -13,13 +12,11 @@ export function compileCode(code: string, fakePath = 'index.ts') {
     const options = getTsConfigCompilerOptions(configFile);
 
     const host = ts.createCompilerHost(options, true);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    const { readFile } = host;
     host.readFile = (path) => {
         if (path === fakePath) {
             return code;
         } else {
-            return readFile(path);
+            return '';
         }
     };
     const program = ts.createProgram({

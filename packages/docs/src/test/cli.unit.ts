@@ -55,14 +55,16 @@ describe('cli', function () {
 
     describe('docs build', () => {
         it('validates examples', () => {
-            const exec = spawnSync('yarn', ['docs', 'build', ...args]);
-            expect(exec.status, exec.stderr.toString()).to.equal(1);
+            const execInvalid = spawnSync('yarn', ['docs', 'build', ...args]);
+            expect(execInvalid.status, execInvalid.stderr.toString()).to.equal(1);
+            removeFailingPackages();
+            const execValid = spawnSync('yarn', ['docs', 'build', '-a', ...args]);
+            expect(execValid.status, execValid.stderr.toString()).to.equal(0);
         });
         it('generates docs', () => {
-            rmSync(_packages(config, 'one'), { force: true, recursive: true });
-            rmSync(_packages(config, 'weird'), { force: true, recursive: true });
+            removeFailingPackages();
 
-            const exec = spawnSync('yarn', ['docs', 'build', '-b', config.base, '-c', config.conf]);
+            const exec = spawnSync('yarn', ['docs', 'build', ...args]);
             expect(exec.status, exec.stderr.toString()).to.equal(0);
             expect(existsSync(_docs(config, 'index.md'))).to.equal(true, 'failed docs build');
             expect(existsSync(_docs(config, 'two.md'))).to.equal(true, 'failed docs build');
@@ -74,7 +76,7 @@ describe('cli', function () {
             rmSync(_packages(config, 'one'), { force: true, recursive: true });
             rmSync(_packages(config, 'weird'), { force: true, recursive: true });
 
-            const exec = spawnSync('yarn', ['docs', 'build', '-b', config.base, '-c', config.conf]);
+            const exec = spawnSync('yarn', ['docs', 'build', ...args]);
             expect(exec.status, exec.stderr.toString()).to.equal(0);
         });
         it('generated readme in packages root', () => {
@@ -86,3 +88,9 @@ describe('cli', function () {
         });
     });
 });
+function removeFailingPackages() {
+    rmSync(_packages(config, 'one'), { force: true, recursive: true });
+    rmSync(_packages(config, 'weird'), { force: true, recursive: true });
+    rmSync(_temp(config, 'one.api.json'), { force: true });
+    rmSync(_temp(config, 'different-name.api.json'), { force: true });
+}

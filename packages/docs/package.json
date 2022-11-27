@@ -27,8 +27,8 @@
     "@microsoft/api-extractor-model": "^7.25.2",
     "@wixc3/common": "^3.0.7",
     "@wixc3/fs-utils": "^3.0.7",
+    "@wixc3/typescript": "^3.0.7",
     "glob": "^8.0.3",
-    "prettier": "^2.8.0",
     "yargs": "^17.6.2"
   }
 }
