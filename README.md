@@ -23,5 +23,6 @@
 | [@wixc3/node](https://wixplosives.github.io/core3-utils/node)                         |                                                                                                      |
 | [@wixc3/patterns](https://wixplosives.github.io/core3-utils/patterns)                 | Useful data structures such as LRU-Cache, set-multi-map, Signal, EventEmitter, Disposable, Debouncer |
 | [@wixc3/performance](https://wixplosives.github.io/core3-utils/performance)           | Performance measuring                                                                                |
+| [@wixc3/testing](https://wixplosives.github.io/core3-utils/testing)                   |                                                                                                      |
 | [@wixc3/typescript](https://wixplosives.github.io/core3-utils/typescript)             | TypeScript utilities                                                                                 |
 | [@wixc3/wait-for-call](https://wixplosives.github.io/core3-utils/wait-for-call)       | A handy way to test callbacks                                                                        |
