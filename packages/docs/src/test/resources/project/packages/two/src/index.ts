@@ -2,8 +2,8 @@
  *
  * @example
  * ```ts (Example1)
- *       const value = test1();
- *       expect(value).to.equal(1);
+ *    const value = test1();
+ *    expect(value).to.equal(1);
  * ```
  */
 export function test1() {

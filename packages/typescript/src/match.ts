@@ -43,7 +43,12 @@ export function match(code: ts.Node, pattern: string) {
  * @param ignore if this predicate is satisfied for an AST node, it (and its children) will be considered same
  * @returns true iff the code is functionally the same. i.e. ignoring comments, white spaces, ineffective line breaks etc
  */
-export function isSame(a?: ts.Node, b?: ts.Node, ignore: Predicate<ts.Node | undefined> = () => false) {
+export function isSame(
+    a?: ts.Node,
+    b?: ts.Node,
+    ignore: Predicate<ts.Node | undefined> = () => false,
+    reportDiff: (a?: string, b?: string) => void = () => void 0
+) {
     if (ignore(a) || ignore(b)) {
         return true;
     }
@@ -56,13 +61,16 @@ export function isSame(a?: ts.Node, b?: ts.Node, ignore: Predicate<ts.Node | und
             }
             for (let i = 0; i < aChildren.length; i++) {
                 if (!isSame(aChildren[i], bChildren[i], ignore)) {
+                    reportDiff(aChildren[i]?.getText(), bChildren[i]?.getText());
                     return false;
                 }
             }
         } else {
+            reportDiff(a.getText(), b.getText());
             return false;
         }
         return true;
     }
+    reportDiff(a?.getText(), b?.getText());
     return false;
 }

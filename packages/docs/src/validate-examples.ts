@@ -1,9 +1,9 @@
 import { ApiPackage, ApiDeclaredItem, ApiItem } from '@microsoft/api-extractor-model';
-import { format } from 'prettier';
 import { GlobSync } from 'glob';
 import { UserConfig, getPackageByName, Package, _packages, _temp, Config } from './common';
 import { readFileSync } from 'fs';
 import { expect } from 'chai';
+import { compileCode, isSame } from '@wixc3/typescript';
 
 export function validateExamples(config: Config, apiJsons = '*.api.json') {
     const glob = new GlobSync(_temp(config, apiJsons));
@@ -26,16 +26,20 @@ function hasTSDocs(x: any): x is ApiDeclaredItem {
 }
 
 function validateSameCode(a?: string, b?: string, message = '') {
-    const [ma, mb] = [a, b].map((code) =>
-        format(
+    if (a !== b) {
+        const [ma, mb] = [a, b].map((code) =>
             (code || '')
-                .split(/\r?\n\s*\*?\s*/)
+                .split(/\r?\n\s*\*?\s*?/)
                 .filter((i) => i)
-                .join('\n') || '',
-            { parser: 'typescript' }
-        )
-    );
-    expect(ma).to.equal(mb, message);
+                .join('\n')
+        );
+        isSame(
+            compileCode(ma || ''),
+            compileCode(mb || ''),
+            () => false,
+            (a, b) => expect(a).to.equal(b, message)
+        );
+    }
 }
 
 function validateNode(config: UserConfig, item: ApiItem, pkg: Package, examples: Map<string, string>) {

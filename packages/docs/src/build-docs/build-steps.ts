@@ -8,7 +8,7 @@ import { ApiModel } from '@microsoft/api-extractor-model';
 import { dirname, join } from 'path';
 import type { Macros } from '../macros.types';
 import * as builtinMacros from '../macros';
-import { format } from 'prettier';
+import { spawnSync } from 'child_process';
 export type { Macros };
 
 export function analyze(config: Config) {
@@ -69,13 +69,6 @@ export function evaluateMacros(config: Config, macros: Macros | undefined) {
 
 export function prettify(config: Config) {
     console.time('Prettifying');
-    readdirSync(_docs(config), { withFileTypes: true })
-        .filter((f) => f.isFile())
-        .map(({ name }) => {
-            writeFileSync(
-                _docs(config, name),
-                format(readFileSync(_docs(config, name), 'utf8'), { parser: 'markdown' })
-            );
-        });
+    spawnSync('npx', ['prettier', _docs(config), '--write']);
     console.timeEnd('Prettifying');
 }
