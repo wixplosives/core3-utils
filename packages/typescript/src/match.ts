@@ -38,6 +38,11 @@ export function match(code: ts.Node, pattern: string) {
     return undefined;
 }
 
+/**
+ * Compared 2 code snippet (or ASTs)
+ * @param ignore if this predicate is satisfied for an AST node, it (and its children) will be considered same
+ * @returns true iff the code is functionally the same. i.e. ignoring comments, white spaces, ineffective line breaks etc
+ */
 export function isSame(a?: ts.Node, b?: ts.Node, ignore: Predicate<ts.Node | undefined> = () => false) {
     if (ignore(a) || ignore(b)) {
         return true;
