@@ -1476,6 +1476,28 @@
     "@typescript-eslint/types" "5.44.0"
     eslint-visitor-keys "^3.3.0"
 
+"@wixc3/common@^3.0.7":
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/@wixc3/common/-/common-3.0.7.tgz#4ce7c15c27d4cc93aedfb35cff9d1863a832d954"
+  integrity sha512-oVG4e3A1n0LE8TmxkuyUbkC3nNHzwYe+3ptHxwpaxjnQmQ6gTQ1zEK1evy0Mo7QkdrQ4LnO3+12/MxVo5eLutw==
+  dependencies:
+    "@file-services/path" "^7.0.1"
+    "@file-services/types" "^7.0.1"
+    promise-assist "^1.3.0"
+
+"@wixc3/fs-utils@^3.0.7":
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/@wixc3/fs-utils/-/fs-utils-3.0.7.tgz#a7ec505dd43d3c66d0ca4d09870dd0fc6995861e"
+  integrity sha512-TMcC/nQV8qCuVw/NXFikcnYsh2vMipdQ3rS7JnDTilIhcwu7i65GxhyRbdasZ5PVNFwocg64LuRPMD7/i9e9hA==
+  dependencies:
+    "@file-services/memory" "^7.0.1"
+    "@wixc3/common" "^3.0.7"
+
+"@wixc3/typescript@^3.0.7":
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/@wixc3/typescript/-/typescript-3.0.7.tgz#c75410204ee34211ee92e439cc666e4ef57b3884"
+  integrity sha512-A/YvN1MHwxewD5atrhvPByLwIz4oPqTrNqNw/vmgQa7MFosyQuZ0/nuWan+KDezDzixUp2Npjp1sFaqeled50w==
+
 "@yarnpkg/lockfile@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@yarnpkg/lockfile/-/lockfile-1.1.0.tgz#e77a97fbd345b76d83245edcd17d393b1b41fb31"
