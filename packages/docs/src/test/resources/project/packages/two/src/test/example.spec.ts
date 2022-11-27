@@ -5,7 +5,8 @@ import { test1, test3 } from '..';
 describe('@example ref', () => {
     it('tests the example', () => {
         // {@label Example1
-        expect(test1()).to.equal(1);
+        const value = test1();
+        expect(value).to.equal(1);
         // @}
     });
     it('tests the example', () => {
