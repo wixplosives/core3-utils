@@ -60,28 +60,3 @@ describe('stripComments', () => {
         expect(naiveStripComments(`http://url //my site`)).to.equal('http://url');
     });
 });
-
-it('noWhiteSpace', () => {
-    expect(noWhiteSpace('no whitespace')).to.equal('no whitespace');
-    expect(noWhiteSpace('\t\ttabs\t')).to.equal('tabs');
-    expect(noWhiteSpace('   single    line  ')).to.equal('single line');
-    expect(noWhiteSpace('   multiple \r\n  lines  ')).to.equal('multiple\nlines');
-    expect(noWhiteSpace('   empty \n\n \n  lines  ')).to.equal('empty\nlines');
-});
-
-
-describe('stripComments', ()=>{
-    it('removes /* */ comments', ()=>{
-        expect(naiveStripComments(`no /* success removing */comments`)).to.equal('no comments')
-        expect(naiveStripComments(`no /* 
-        success removing
-         */comments`)).to.equal('no comments')
-    })
-    it('removes // comments', ()=>{
-        expect(naiveStripComments(`no comments// after code`)).to.equal('no comments')
-        expect(naiveStripComments(`// line comments\nno comments`)).to.equal('no comments')
-    })
-    it('does not identify :// as comment', ()=>{
-        expect(naiveStripComments(`http://url //my site`)).to.equal('http://url')
-    })
-})
