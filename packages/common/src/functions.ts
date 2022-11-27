@@ -1,4 +1,4 @@
-import { sleep } from "promise-assist";
+import { sleep } from 'promise-assist';
 
 /**
  * @returns a no operation function
@@ -36,11 +36,14 @@ export function once<T extends (...args: any[]) => any>(fn: T): T {
  * This is not throttling (!) since eventually all calls will be ran,
  * while in throttling the calls in the "wait" period are skipped.
  */
-export function delayed<T extends (...args: any[]) => any>(fn: T, wait: number): (...args: Parameters<T>) => Promise<ReturnType<T>> {
-    let queue:Promise<ReturnType<T>|void>|null = null;
+export function delayed<T extends (...args: any[]) => any>(
+    fn: T,
+    wait: number
+): (...args: Parameters<T>) => Promise<ReturnType<T>> {
+    let queue: Promise<ReturnType<T> | void> | null = null;
     return ((...args: Parameters<T>) => {
         if (!queue) {
-            queue = Promise.resolve(fn(...args))
+            queue = Promise.resolve(fn(...args));
         } else {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
             queue = queue.then(
@@ -50,7 +53,7 @@ export function delayed<T extends (...args: any[]) => any>(fn: T, wait: number):
         }
         const tmp = queue;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        queue = tmp.then(()=>sleep(wait))
+        queue = tmp.then(() => sleep(wait));
         return tmp as Promise<ReturnType<T>>;
     }) as T;
 }

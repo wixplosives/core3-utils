@@ -5,7 +5,7 @@ import { findAllNodes, findNode, findNodeAfterComment } from '../find';
 import { getText } from './helpers';
 
 describe(`findNode`, function () {
-    this.timeout(8_000)
+    this.timeout(8_000);
     it('finds a node satisfying the predicate', () => {
         const code = compileCode(`(a)=>{ 
             const b=true 
@@ -27,7 +27,7 @@ describe(`findNode`, function () {
 });
 
 describe(`findAllNodes`, function () {
-    this.timeout(8_000)
+    this.timeout(8_000);
     it('finds all nodes satisfying the predicate', () => {
         const code = compileCode(`(a)=>{ 
             const b=true 
@@ -39,7 +39,7 @@ describe(`findAllNodes`, function () {
 });
 
 describe(`findNodeAfterComment`, function () {
-    this.timeout(8_000)
+    this.timeout(8_000);
     it('finds root comments', () => {
         const compiled = compileCode(`
             // test
