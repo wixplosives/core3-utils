@@ -43,14 +43,14 @@ describe('withSteps', () => {
             const action = () => ++count;
             expect(
                 await step
-                    .poll(action, () => count > 3)
+                    .poll(action, () => count > 2)
                     .interval(5)
-                    .timeout(30)
-            ).to.equal(4);
+                    .timeout(50)
+            ).to.equal(3);
             count = 0;
             await expect(
                 step
-                    .poll(action, () => count > 3)
+                    .poll(action, () => count > 10)
                     .interval(5)
                     .timeout(10)
                     .description('timeout')
