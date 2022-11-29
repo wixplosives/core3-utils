@@ -14,7 +14,7 @@ describe('readme', function () {
         // tests do not mutate anything
         // init is executed in "setup"
         this.timeout(15_000);
-        buildDocs(config, { validateExamples: false });
+        buildDocs(config, { validateExamples: false, prettify:false });
         createReadme(config);
     });
     after(clean);
