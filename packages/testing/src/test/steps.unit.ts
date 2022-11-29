@@ -99,7 +99,7 @@ describe('withSteps', () => {
                             .poll(() => 'success', throwingPredicate)
                             .allowErrors(false)
                             .interval(5)
-                            .timeout(30)
+                            .timeout(100)
                     ).to.equal('success');
                     await expect(step.poll(throwingAction, throwingPredicate)).to.eventually.rejectedWith(
                         'action error'
@@ -107,7 +107,7 @@ describe('withSteps', () => {
                 });
                 withSteps.it('all errors', async (step) => {
                     expect(
-                        await step.poll(throwingAction, throwingPredicate).allowErrors().interval(5).timeout(30)
+                        await step.poll(throwingAction, throwingPredicate).allowErrors().interval(5).timeout(100)
                     ).to.equal('success');
                     await expect(
                         step.poll(
