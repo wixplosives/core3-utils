@@ -13,10 +13,10 @@ type PollStep<T> = Promise<T> & {
     allowErrors: (action?: boolean, predicate?: boolean) => PollStep<T>;
 };
 
-export function promiseStep<T, S extends PromiseStep<T>>(src: Promise<T>, ctx:Mocha.Context): S {
+export function promiseStep<T, S extends PromiseStep<T>>(src: Promise<T>, ctx: Mocha.Context): S {
     let timerId: number;
     let timeoutMessage: string;
-    let timeout= 0
+    let timeout = 0;
     let resolve: (value: T | PromiseLike<T>) => void;
     let reject: (reason?: any) => void;
 
@@ -36,9 +36,9 @@ export function promiseStep<T, S extends PromiseStep<T>>(src: Promise<T>, ctx:Mo
     }) as S;
 
     p.timeout = (ms: number) => {
-        const diff = ms - timeout
-        timeout = ms
-        ctx.timeout(ctx.timeout() + diff)
+        const diff = ms - timeout;
+        timeout = ms;
+        ctx.timeout(ctx.timeout() + diff);
         clearTimeout(timerId);
         timerId = setTimeout(() => reject(new Error(`${timeoutMessage} after ${ms}`)), ms);
         return p;
@@ -52,7 +52,7 @@ export function promiseStep<T, S extends PromiseStep<T>>(src: Promise<T>, ctx:Mo
     return p;
 }
 
-export function pollStep<T>(action: () => T, predicate: Predicate<Awaited<T>>, ctx:Mocha.Context): PollStep<T> {
+export function pollStep<T>(action: () => T, predicate: Predicate<Awaited<T>>, ctx: Mocha.Context): PollStep<T> {
     let intervalId!: number;
     let resolve: (value: T | PromiseLike<T>) => void;
     let reject: (reason?: any) => void;
@@ -99,9 +99,9 @@ export function pollStep<T>(action: () => T, predicate: Predicate<Awaited<T>>, c
         allowErrors = { action, predicate };
         return p;
     };
-    p.catch(()=>{
-        clearInterval(intervalId)
-    })
+    p.catch(() => {
+        clearInterval(intervalId);
+    });
 
     return p.interval(100);
 }
@@ -143,15 +143,15 @@ class Steps {
 
             // eslint-disable-next-line
             // @ts-ignore
-            scope[m] = (...args: Parameters<T>) =>{
-                 def.resolve(args);
-                 // eslint-disable-next-line 
-                 return (original as Function).bind(scope)(...args)
-                }
+            scope[m] = (...args: Parameters<T>) => {
+                def.resolve(args);
+                // eslint-disable-next-line
+                return (original as Function).bind(scope)(...args);
+            };
             const p = this.promise(def.promise);
-            p.then(restore).catch(e => {
-                restore()
-                return Promise.reject(e)
+            p.then(restore).catch((e) => {
+                restore();
+                return Promise.reject(e);
             });
             return p;
         } else {
@@ -167,3 +167,7 @@ export function withSteps(test: Stepped): Mocha.Func {
         return test.bind(this)(new Steps(this));
     };
 }
+
+withSteps.it = function (title: string, test: Stepped): Mocha.Test {
+    return it(title, withSteps(test));
+};
