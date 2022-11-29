@@ -38,23 +38,40 @@ describe('withSteps', () => {
         });
     });
     describe('poll step', () => {
-        withSteps.it('polls on the action every interval', async (step) => {
-            let count = 0;
-            const action = () => ++count;
-            expect(
-                await step
-                    .poll(action, () => count > 2)
-                    .interval(5)
-                    .timeout(50)
-            ).to.equal(3);
-            count = 0;
-            await expect(
-                step
-                    .poll(action, () => count > 10)
-                    .interval(5)
-                    .timeout(10)
-                    .description('timeout')
-            ).to.eventually.rejectedWith('timeout');
+        describe('default behavior', () => {
+            withSteps.it('polls on the action every interval until the predicate returns true', async (step) => {
+                let count = 0;
+                const action = () => ++count;
+                expect(
+                    await step
+                        .poll(action, () => count > 2)
+                        .interval(5)
+                        .timeout(50)
+                ).to.equal(3);
+            });
+            withSteps.it('when the predicate returns anything but false, it is treated as true', async (step) => {
+                expect(
+                    await step
+                        .poll(
+                            () => 'success',
+                            (result) => expect(result).to.equal('success')
+                        )
+                        .interval(5)
+                        .timeout(50)
+                ).to.equal('success');
+            });
+            withSteps.it('times out if the predicate returns false', async (step) => {
+                await expect(
+                    step
+                        .poll(
+                            () => 0,
+                            () => false
+                        )
+                        .interval(5)
+                        .timeout(20)
+                        .description('timeout')
+                ).to.eventually.rejectedWith('timeout');
+            });
         });
         describe('error handling', () => {
             let actionShouldThrow = true;
@@ -81,23 +98,23 @@ describe('withSteps', () => {
                 withSteps.it('fails when the action throws', async (step) => {
                     await expect(step.poll(throwingAction, () => true)).to.eventually.rejectedWith('action error');
                 });
-                withSteps.it('fails when the predicate throws', async (step) => {
-                    await expect(step.poll(() => 0, throwingPredicate)).to.eventually.rejectedWith('predicate error');
+                withSteps.it('does not fails when the predicate throws', async (step) => {
+                    expect(await step.poll(() => 0, throwingPredicate)).to.equal(0);
                 });
             });
             describe('allowErrors', () => {
                 withSteps.it('action errors', async (step) => {
                     expect(await step.poll(throwingAction, () => true).allowErrors(true, false)).to.equal('success');
-
-                    await expect(step.poll(throwingAction, throwingPredicate)).to.eventually.rejectedWith(
-                        'predicate error'
-                    );
                 });
-                withSteps.it('predicate errors', async (step) => {
+                withSteps.it('does not run the predicate if the action threw', async (step) => {
+                    await expect(
+                        step.poll(throwingAction, throwingPredicate).allowErrors(true, false)
+                    ).to.eventually.rejectedWith('predicate error');
+                });
+                withSteps.it('predicate errors (default)', async (step) => {
                     expect(
                         await step
                             .poll(() => 'success', throwingPredicate)
-                            .allowErrors(false)
                             .interval(5)
                             .timeout(100)
                     ).to.equal('success');

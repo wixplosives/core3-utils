@@ -1,17 +1,9 @@
-import { isString, noop, Predicate } from '@wixc3/common';
+import { isString, noop } from '@wixc3/common';
 import { deferred, timeout as _timeout } from 'promise-assist';
 
 type PromiseStep<T> = Promise<T> & {
     timeout: (ms: number) => PromiseStep<T>;
     description: (description: string) => PromiseStep<T>;
-    stack: string;
-};
-
-type PollStep<T> = Promise<T> & {
-    timeout: (ms: number) => PollStep<T>;
-    description: (description: string) => PollStep<T>;
-    interval: (ms: number) => PollStep<T>;
-    allowErrors: (action?: boolean, predicate?: boolean) => PollStep<T>;
     stack: string;
 };
 
@@ -54,7 +46,17 @@ export function promiseStep<T, S extends PromiseStep<T>>(src: Promise<T>, ctx: M
     return p;
 }
 
-export function pollStep<T>(action: () => T, predicate: Predicate<Awaited<T>>, ctx: Mocha.Context): PollStep<T> {
+type PollStep<T> = Promise<T> & {
+    timeout: (ms: number) => PollStep<T>;
+    description: (description: string) => PollStep<T>;
+    interval: (ms: number) => PollStep<T>;
+    allowErrors: (action?: boolean, predicate?: boolean) => PollStep<T>;
+    stack: string;
+};
+
+type Predicate<T> = (a: Awaited<T>) => boolean | Chai.Assertion | void;
+
+export function pollStep<T>(action: () => T, predicate: Predicate<T>, ctx: Mocha.Context): PollStep<T> {
     let intervalId!: number;
     let resolve: (value: T | PromiseLike<T>) => void;
     let reject: (reason?: any) => void;
@@ -84,7 +86,7 @@ export function pollStep<T>(action: () => T, predicate: Predicate<Awaited<T>>, c
             try {
                 value = await Promise.resolve(action());
                 try {
-                    if (predicate(value!)) {
+                    if (predicate(value!) !== false) {
                         clearInterval(intervalId);
                         resolve(value!);
                     }
@@ -114,7 +116,11 @@ class Steps {
     constructor(readonly mochaCtx: Mocha.Context) {}
     defaults = {
         stepTimeout: 1000,
-        pollInterval: 100,
+        poll: {
+            interval: 100,
+            allowActionError: false,
+            allowPredicateError: true,
+        },
     };
     private stepCount = 1;
     private captureStackTrace: CaptureStackFn =
@@ -131,15 +137,19 @@ class Steps {
         step.stack = stack;
         return step;
     };
-
+    
     poll = <R, T extends () => R>(action: T, predicate: Predicate<R>) => {
         this.captureStackTrace(this.stackProvider);
         const { stack } = this.stackProvider;
 
+        const {
+            poll: { interval, allowActionError, allowPredicateError },
+        } = this.defaults;
         const step = pollStep(action, predicate, this.mochaCtx)
             .timeout(this.defaults.stepTimeout)
             .description(`step ${this.stepCount++}`)
-            .interval(this.defaults.pollInterval);
+            .interval(interval)
+            .allowErrors(allowActionError, allowPredicateError);
 
         step.stack = stack;
         return step;
