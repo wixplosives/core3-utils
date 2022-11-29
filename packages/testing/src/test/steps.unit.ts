@@ -5,19 +5,24 @@ import { withSteps } from '../steps';
 
 use(asPromised);
 
-describe('', () => {
+describe('withSteps', () => {
+    // eslint-disable-next-line @typescript-eslint/require-await
     withSteps.it('each step timeout extends the test timeout', async (step) => {
-        step.mochaCtx.timeout(20);
-        await expect(step.promise(new Promise(() => 0)).timeout(10)).to.eventually.rejectedWith('Timed out');
-        await expect(
-            step
-                .poll(
-                    () => 0,
-                    () => false
-                )
-                .timeout(10)
-        ).to.eventually.rejectedWith('Timed out');
-        await expect(step.firstCall({ m: () => 0 }, 'm').timeout(10)).to.eventually.rejectedWith('Timed out');
+        const TIMEOUT = 30
+        step.mochaCtx.timeout(TIMEOUT);
+        await Promise.all([
+            expect(step.promise(new Promise(() => 0)).timeout(TIMEOUT)).to.eventually.rejectedWith('Timed out'),
+            expect(
+               step
+                   .poll(
+                       () => 0,
+                       () => false
+                   )
+                   .timeout(TIMEOUT)
+           ).to.eventually.rejectedWith('Timed out'),
+            expect(step.firstCall({ m: () => 0 }, 'm').timeout(TIMEOUT)).to.eventually.rejectedWith('Timed out')
+        ]);
+        expect(step.mochaCtx.timeout()).to.equal(TIMEOUT*4)
     });
 
     describe('promise step', () => {
@@ -39,8 +44,8 @@ describe('', () => {
             expect(
                 await step
                     .poll(action, () => count > 3)
-                    .interval(1)
-                    .timeout(20)
+                    .interval(5)
+                    .timeout(30)
             ).to.equal(4);
             count = 0;
             await expect(
@@ -93,8 +98,8 @@ describe('', () => {
                         await step
                             .poll(() => 'success', throwingPredicate)
                             .allowErrors(false)
-                            .interval(1)
-                            .timeout(10)
+                            .interval(5)
+                            .timeout(20)
                     ).to.equal('success');
                     await expect(step.poll(throwingAction, throwingPredicate)).to.eventually.rejectedWith(
                         'action error'
@@ -102,7 +107,7 @@ describe('', () => {
                 });
                 withSteps.it('all errors', async (step) => {
                     expect(
-                        await step.poll(throwingAction, throwingPredicate).allowErrors().interval(1).timeout(10)
+                        await step.poll(throwingAction, throwingPredicate).allowErrors().interval(5).timeout(20)
                     ).to.equal('success');
                     await expect(
                         step.poll(
