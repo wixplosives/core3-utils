@@ -1,9 +1,10 @@
-import { isString, Predicate } from '@wixc3/common';
+import { isString, noop, Predicate } from '@wixc3/common';
 import { deferred, timeout as _timeout } from 'promise-assist';
 
 type PromiseStep<T> = Promise<T> & {
     timeout: (ms: number) => PromiseStep<T>;
     description: (description: string) => PromiseStep<T>;
+    stack: string;
 };
 
 type PollStep<T> = Promise<T> & {
@@ -11,6 +12,7 @@ type PollStep<T> = Promise<T> & {
     description: (description: string) => PollStep<T>;
     interval: (ms: number) => PollStep<T>;
     allowErrors: (action?: boolean, predicate?: boolean) => PollStep<T>;
+    stack: string;
 };
 
 export function promiseStep<T, S extends PromiseStep<T>>(src: Promise<T>, ctx: Mocha.Context): S {
@@ -40,7 +42,7 @@ export function promiseStep<T, S extends PromiseStep<T>>(src: Promise<T>, ctx: M
         timeout = ms;
         ctx.timeout(ctx.timeout() + diff);
         clearTimeout(timerId);
-        timerId = setTimeout(() => reject(new Error(`${timeoutMessage} after ${ms}`)), ms);
+        timerId = setTimeout(() => reject(new Error(`${timeoutMessage} after ${ms}ms\n${p.stack}`)), ms);
         return p;
     };
 
@@ -106,6 +108,8 @@ export function pollStep<T>(action: () => T, predicate: Predicate<Awaited<T>>, c
     return p.interval(100);
 }
 
+type CaptureStackFn = (s: { stack: string }) => void;
+
 class Steps {
     constructor(readonly mochaCtx: Mocha.Context) {}
     defaults = {
@@ -113,21 +117,39 @@ class Steps {
         pollInterval: 100,
     };
     private stepCount = 1;
+    private captureStackTrace: CaptureStackFn =
+        (Error as { captureStackTrace?: CaptureStackFn }).captureStackTrace || noop;
+    private stackProvider = { stack: '' };
 
-    promise = <T>(action: Promise<T>) =>
-        promiseStep(action, this.mochaCtx).timeout(this.defaults.stepTimeout).description(`step ${this.stepCount++}`);
+    promise = <T>(action: Promise<T>) => {
+        this.captureStackTrace(this.stackProvider);
+        const { stack } = this.stackProvider;
 
-    poll = <R, T extends () => R>(action: T, predicate: Predicate<R>) =>
-        pollStep(action, predicate, this.mochaCtx)
+        const step = promiseStep(action, this.mochaCtx)
+            .timeout(this.defaults.stepTimeout)
+            .description(`step ${this.stepCount++}`);
+        step.stack = stack;
+        return step;
+    };
+
+    poll = <R, T extends () => R>(action: T, predicate: Predicate<R>) => {
+        this.captureStackTrace(this.stackProvider);
+        const { stack } = this.stackProvider;
+
+        const step = pollStep(action, predicate, this.mochaCtx)
             .timeout(this.defaults.stepTimeout)
             .description(`step ${this.stepCount++}`)
             .interval(this.defaults.pollInterval);
 
-    firstCall = <S extends object, T extends (...args: any[]) => any>(
-        scope: S,
-        method: keyof S | S[keyof S]
-    ): PromiseStep<Parameters<T>> => {
-        const def = deferred<Parameters<T>>();
+        step.stack = stack;
+        return step;
+    };
+
+    firstCall = <S extends object>(scope: S, method: keyof S | S[keyof S]): PromiseStep<any[]> => {
+        this.captureStackTrace(this.stackProvider);
+        const { stack } = this.stackProvider;
+
+        const def = deferred<any[]>();
         let methodName = '';
         if (isString(method)) {
             methodName = method;
@@ -149,6 +171,8 @@ class Steps {
                 return (original as Function).bind(scope)(...args);
             };
             const p = this.promise(def.promise);
+            p.stack = stack;
+
             p.then(restore).catch((e) => {
                 restore();
                 return Promise.reject(e);
@@ -157,6 +181,16 @@ class Steps {
         } else {
             throw new Error('Invalid method name' + methodName);
         }
+    };
+    asyncStub = (fn: (stub: (...args: any[]) => void) => any) => {
+        this.captureStackTrace(this.stackProvider);
+        const { stack } = this.stackProvider;
+
+        const d = deferred<any[]>();
+        fn((...args: any[]) => d.resolve(args));
+        const step = this.promise(d.promise);
+        step.stack = stack;
+        return step;
     };
 }
 

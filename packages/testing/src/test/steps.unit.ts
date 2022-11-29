@@ -8,21 +8,21 @@ use(asPromised);
 describe('withSteps', () => {
     // eslint-disable-next-line @typescript-eslint/require-await
     withSteps.it('each step timeout extends the test timeout', async (step) => {
-        const TIMEOUT = 30
+        const TIMEOUT = 30;
         step.mochaCtx.timeout(TIMEOUT);
         await Promise.all([
             expect(step.promise(new Promise(() => 0)).timeout(TIMEOUT)).to.eventually.rejectedWith('Timed out'),
             expect(
-               step
-                   .poll(
-                       () => 0,
-                       () => false
-                   )
-                   .timeout(TIMEOUT)
-           ).to.eventually.rejectedWith('Timed out'),
-            expect(step.firstCall({ m: () => 0 }, 'm').timeout(TIMEOUT)).to.eventually.rejectedWith('Timed out')
+                step
+                    .poll(
+                        () => 0,
+                        () => false
+                    )
+                    .timeout(TIMEOUT)
+            ).to.eventually.rejectedWith('Timed out'),
+            expect(step.firstCall({ m: () => 0 }, 'm').timeout(TIMEOUT)).to.eventually.rejectedWith('Timed out'),
         ]);
-        expect(step.mochaCtx.timeout()).to.equal(TIMEOUT*4)
+        expect(step.mochaCtx.timeout()).to.equal(TIMEOUT * 4);
     });
 
     describe('promise step', () => {
@@ -99,7 +99,7 @@ describe('withSteps', () => {
                             .poll(() => 'success', throwingPredicate)
                             .allowErrors(false)
                             .interval(5)
-                            .timeout(20)
+                            .timeout(30)
                     ).to.equal('success');
                     await expect(step.poll(throwingAction, throwingPredicate)).to.eventually.rejectedWith(
                         'action error'
@@ -107,7 +107,7 @@ describe('withSteps', () => {
                 });
                 withSteps.it('all errors', async (step) => {
                     expect(
-                        await step.poll(throwingAction, throwingPredicate).allowErrors().interval(5).timeout(20)
+                        await step.poll(throwingAction, throwingPredicate).allowErrors().interval(5).timeout(30)
                     ).to.equal('success');
                     await expect(
                         step.poll(
@@ -157,6 +157,27 @@ describe('withSteps', () => {
             target.method(1, 'success');
             await call;
             expect(target.method).to.equal(originalMethod);
+        });
+    });
+
+    describe('asyncStub', () => {
+        withSteps.it('resolved to the args the stub was called with', async (steps) => {
+            expect(
+                await steps.asyncStub(async (stub) => {
+                    await sleep(1);
+                    stub('success');
+                })
+            ).to.eql(['success']);
+        });
+        withSteps.it('times out when the stub is not called', async (steps) => {
+            await expect(
+                steps
+                    .asyncStub(async (stub) => {
+                        await sleep(100);
+                        stub('success');
+                    })
+                    .timeout(10)
+            ).to.eventually.rejectedWith('Timed out');
         });
     });
 });
