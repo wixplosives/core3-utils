@@ -7,17 +7,17 @@ use(asPromised);
 
 describe('', () => {
     withSteps.it('each step timeout extends the test timeout', async (step) => {
-        step.mochaCtx.timeout(2);
-        await expect(step.promise(new Promise(() => 0)).timeout(2)).to.eventually.rejectedWith('Timed out');
+        step.mochaCtx.timeout(20);
+        await expect(step.promise(new Promise(() => 0)).timeout(10)).to.eventually.rejectedWith('Timed out');
         await expect(
             step
                 .poll(
                     () => 0,
                     () => false
                 )
-                .timeout(2)
+                .timeout(10)
         ).to.eventually.rejectedWith('Timed out');
-        await expect(step.firstCall({ m: () => 0 }, 'm').timeout(2)).to.eventually.rejectedWith('Timed out');
+        await expect(step.firstCall({ m: () => 0 }, 'm').timeout(10)).to.eventually.rejectedWith('Timed out');
     });
 
     describe('promise step', () => {
