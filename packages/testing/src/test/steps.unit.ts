@@ -1,72 +1,183 @@
 import { sleep } from 'promise-assist';
-import { runSteps, step } from '../steps';
 import { expect, use } from 'chai';
 import asPromised from 'chai-as-promised';
-import { useSafeFakeTimers } from '../safe-fake-timer';
+import { withSteps } from '../steps';
 
 use(asPromised);
 
-describe('runSteps', () => {
-    const clock = useSafeFakeTimers();
-    it('waits for the steps to finish', async function () {
-        const result: number[] = [];
-        const test = runSteps(function* () {
-            yield step(
-                sleep(100).then(() => {
-                    result.push(0);
-                })
-            );
-            yield step(
-                sleep(100).then(() => {
-                    result.push(1);
-                })
-            );
-            yield step(
-                sleep(100).then(() => {
-                    result.push(2);
-                })
-            );
-        });
-        const t: Promise<void> = test.bind(this)();
-        expect(result).to.eql([]);
-        await clock.tickAsync(100);
-        expect(result).to.eql([0]);
-        await clock.tickAsync(100);
-        expect(result).to.eql([0, 1]);
-        await clock.tickAsync(100);
-        expect(result).to.eql([0, 1, 2]);
-        return t;
-    });
-    it('fails with the step description when a step times out', async function () {
-        const test = runSteps(function* () {
-            yield step(sleep(100), 10, 'wait too long');
-        });
-        const t: Promise<void> = test.bind(this)();
-        // by returning this expectation the promise rejection is not dangling
-        const exp = expect(t).to.eventually.be.rejectedWith('Failed in step "wait too long" after 10ms');
-        await clock.tickAsync(11);
-        return exp;
-    });
-    it('yields the result of a step', async function () {
-        const test = runSteps(function* () {
-            const res = (yield step(Promise.resolve('success'))) as string;
-            expect(res).to.equal('success');
-        });
-        const t: Promise<void> = test.bind(this)();
-        await clock.tickAsync(1);
-        return t;
+describe('withSteps', () => {
+    // eslint-disable-next-line @typescript-eslint/require-await
+    withSteps.it('each step timeout extends the test timeout', async (step) => {
+        const TIMEOUT = 30;
+        step.mochaCtx.timeout(TIMEOUT);
+        await Promise.all([
+            expect(step.promise(new Promise(() => 0)).timeout(TIMEOUT)).to.eventually.rejectedWith('Timed out'),
+            expect(
+                step
+                    .poll(
+                        () => 0,
+                        () => false
+                    )
+                    .timeout(TIMEOUT)
+            ).to.eventually.rejectedWith('Timed out'),
+            expect(step.firstCall({ m: () => 0 }, 'm').timeout(TIMEOUT)).to.eventually.rejectedWith('Timed out'),
+        ]);
+        expect(step.mochaCtx.timeout()).to.equal(TIMEOUT * 4);
     });
 
-    describe('example', () => {
-        const fetchServerData = () => Promise.resolve('server data');
-        // {@label runSteps
-        it(
-            'runs the steps',
-            runSteps(function* () {
-                expect(yield step(Promise.resolve(1), 10, 'prep')).to.equal(1);
-                expect(yield step(fetchServerData(), 100, 'get data from server')).to.equal('server data');
-            })
-        );
-        // @}
+    describe('promise step', () => {
+        const LONG_TIME = 10;
+        const SHORT_TIME = 1;
+        withSteps.it('times out with the description', async (step) => {
+            await expect(
+                step.promise(sleep(LONG_TIME)).timeout(SHORT_TIME).description('test')
+            ).to.eventually.rejectedWith('test');
+        });
+        withSteps.it('fulfils the promise in the allotted time', async (step) => {
+            expect(await step.promise(sleep(SHORT_TIME).then(() => 'success')).timeout(LONG_TIME)).to.equal('success');
+        });
+    });
+    describe('poll step', () => {
+        withSteps.it('polls on the action every interval', async (step) => {
+            let count = 0;
+            const action = () => ++count;
+            expect(
+                await step
+                    .poll(action, () => count > 2)
+                    .interval(5)
+                    .timeout(50)
+            ).to.equal(3);
+            count = 0;
+            await expect(
+                step
+                    .poll(action, () => count > 10)
+                    .interval(5)
+                    .timeout(10)
+                    .description('timeout')
+            ).to.eventually.rejectedWith('timeout');
+        });
+        describe('error handling', () => {
+            let actionShouldThrow = true;
+            let predicateShouldThrow = true;
+            const throwingAction = () => {
+                if (actionShouldThrow) {
+                    actionShouldThrow = false;
+                    throw new Error('action error');
+                }
+                return 'success';
+            };
+            const throwingPredicate = () => {
+                if (predicateShouldThrow) {
+                    predicateShouldThrow = false;
+                    throw new Error('predicate error');
+                }
+                return true;
+            };
+            beforeEach(() => {
+                actionShouldThrow = true;
+                predicateShouldThrow = true;
+            });
+            describe('default behavior', () => {
+                withSteps.it('fails when the action throws', async (step) => {
+                    await expect(step.poll(throwingAction, () => true)).to.eventually.rejectedWith('action error');
+                });
+                withSteps.it('fails when the predicate throws', async (step) => {
+                    await expect(step.poll(() => 0, throwingPredicate)).to.eventually.rejectedWith('predicate error');
+                });
+            });
+            describe('allowErrors', () => {
+                withSteps.it('action errors', async (step) => {
+                    expect(await step.poll(throwingAction, () => true).allowErrors(true, false)).to.equal('success');
+
+                    await expect(step.poll(throwingAction, throwingPredicate)).to.eventually.rejectedWith(
+                        'predicate error'
+                    );
+                });
+                withSteps.it('predicate errors', async (step) => {
+                    expect(
+                        await step
+                            .poll(() => 'success', throwingPredicate)
+                            .allowErrors(false)
+                            .interval(5)
+                            .timeout(100)
+                    ).to.equal('success');
+                    await expect(step.poll(throwingAction, throwingPredicate)).to.eventually.rejectedWith(
+                        'action error'
+                    );
+                });
+                withSteps.it('all errors', async (step) => {
+                    expect(
+                        await step.poll(throwingAction, throwingPredicate).allowErrors().interval(5).timeout(100)
+                    ).to.equal('success');
+                    await expect(
+                        step.poll(
+                            () => {
+                                throw Error('action');
+                            },
+                            () => {
+                                throw Error('predicate');
+                            }
+                        )
+                    ).to.eventually.rejectedWith('action');
+                });
+            });
+        });
+    });
+    describe('firstCall', () => {
+        let target: { a: number; b: string; method: (a: number, b: string) => void };
+        beforeEach(() => {
+            target = {
+                a: 0,
+                b: '',
+                method(a: number, b: string) {
+                    this.a = a;
+                    this.b = b;
+                },
+            };
+        });
+        withSteps.it('resolves with the call arguments', async (step) => {
+            const call = step.firstCall(target, 'method');
+            target.method(1, 'success');
+            expect(await call).to.eql([1, 'success']);
+        });
+        withSteps.it('times out if not called', async (step) => {
+            await expect(step.firstCall(target, 'method').timeout(1).description('timeout')).to.eventually.rejectedWith(
+                'timeout'
+            );
+        });
+        withSteps.it('calls thru to the original method', async (step) => {
+            const call = step.firstCall(target, 'method');
+            target.method(1, 'success');
+            await call;
+            expect(target).to.deep.contain({ a: 1, b: 'success' });
+        });
+        withSteps.it('restores the original method after the step is done', async (step) => {
+            const originalMethod = target.method;
+            const call = step.firstCall(target, 'method');
+            target.method(1, 'success');
+            await call;
+            expect(target.method).to.equal(originalMethod);
+        });
+    });
+
+    describe('asyncStub', () => {
+        withSteps.it('resolved to the args the stub was called with', async (steps) => {
+            expect(
+                await steps.asyncStub(async (stub) => {
+                    await sleep(1);
+                    stub('success');
+                })
+            ).to.eql(['success']);
+        });
+        withSteps.it('times out when the stub is not called', async (steps) => {
+            await expect(
+                steps
+                    .asyncStub(async (stub) => {
+                        await sleep(100);
+                        stub('success');
+                    })
+                    .timeout(10)
+            ).to.eventually.rejectedWith('Timed out');
+        });
     });
 });
