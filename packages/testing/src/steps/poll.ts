@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import { promiseStep } from './promise';
 
 export type PollStep<T> = Promise<T> & {
@@ -40,7 +41,7 @@ export function pollStep<T>(action: () => T, predicate: Predicate<T> | Awaited<T
 
     predicate = predicate || ((v: Awaited<T>) => !!v);
     const _predicate = (
-        typeof predicate === 'function' ? predicate : (v: Awaited<T>) => v === predicate
+        typeof predicate === 'function' ? predicate : (v: Awaited<T>) => expect(v).to.eql(predicate)
     ) as Predicate<T>;
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
