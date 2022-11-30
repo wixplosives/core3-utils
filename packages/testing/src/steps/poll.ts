@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../../../node_modules/@types/chai/index.d.ts" />
 import { expect } from 'chai';
 import { promiseStep } from './promise';
 

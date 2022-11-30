@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../dist/esm",
-    "module": "esnext"
+    "module": "esnext",
+    "types": ["mocha"]
   },
   "references": [{ "path": "../../common/src/tsconfig.esm.json" }]
 }
