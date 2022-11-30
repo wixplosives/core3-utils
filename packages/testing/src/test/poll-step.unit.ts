@@ -7,21 +7,29 @@ use(asPromised);
 describe('withSteps', () => {
     describe('poll step', () => {
         describe('usage', () => {
-            withSteps.it('runs action every interval until the predicate is satisfied', async (step) => {
-                step.defaults.poll.interval = 5;
-                step.defaults.step.timeout = 50;
+            withSteps.it('runs action every interval until the predicate is satisfied', async ({poll, defaults}) => {
+                defaults.poll.interval = 5;
+                defaults.step.timeout = 50;
                 let count = 0;
                 const action = () => ++count;
-                expect(await step.poll(action, (i) => i > 2).description('predicate returning boolean')).to.equal(3);
+                expect(await poll(action, (i) => i > 2).description('predicate returning boolean')).to.equal(3);
                 count = 0;
                 expect(
-                    await step
-                        .poll(action, (i) => expect(i).to.be.greaterThan(2))
+                    await poll(action, (i) => expect(i).to.be.greaterThan(2))
                         .description('predicate returning assertion')
                 ).to.equal(3);
                 count = 0;
-                expect(await step.poll(action, 3).description('predicated value')).to.equal(3);
+                expect(await poll(action, 3).description('predicated value')).to.equal(3);
             });
+
+            
+            withSteps.it('compares predicated value using chai expect.eql', async ({poll}) => {
+                expect(await poll(()=>[1,2,3], [1,2,3])
+                .interval(1)
+                .description('predicated deep value')).to.eql([1,2,3]);
+            });
+
+
 
             withSteps.it('times out if the predicate is not satisfied in time', async ({ poll }) => {
                 const step = poll(

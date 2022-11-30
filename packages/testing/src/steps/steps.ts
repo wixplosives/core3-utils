@@ -46,12 +46,7 @@ class Steps {
             poll: { interval, allowActionError, allowPredicateError },
         } = this.defaults;
 
-        predicate = predicate || ((value: any) => !!value);
-        const _predicate: Predicate<T> = (
-            typeof predicate === 'function' ? predicate : (value: any) => value === predicate
-        ) as Predicate<T>;
-
-        const step = pollStep(action, _predicate, this.mochaCtx)
+        const step = pollStep(action, predicate, this.mochaCtx)
             .timeout(this.defaults.step.timeout)
             .description(`step ${this.stepCount++}`)
             .interval(interval)
