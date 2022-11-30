@@ -9,20 +9,24 @@ describe('withSteps', () => {
     // eslint-disable-next-line @typescript-eslint/require-await
     withSteps.it('each step timeout extends the test timeout', async (step) => {
         const TIMEOUT = 30;
-        step.mochaCtx.timeout(TIMEOUT);
+        const SAFETY_MARGIN = 20;
+        step.mochaCtx.timeout(1_000);
+        step.defaults.step.safetyMargin = SAFETY_MARGIN
+        step.defaults.step.timeout = TIMEOUT
         await Promise.all([
-            expect(step.promise(new Promise(() => 0)).timeout(TIMEOUT)).to.eventually.rejectedWith('Timed out'),
+            expect(step.promise(new Promise(() => 0))).to.eventually.rejectedWith('Timed out'),
             expect(
                 step
                     .poll(
                         () => 0,
                         () => false
                     )
-                    .timeout(TIMEOUT)
+                    
             ).to.eventually.rejectedWith('Timed out'),
-            expect(step.firstCall({ m: () => 0 }, 'm').timeout(TIMEOUT)).to.eventually.rejectedWith('Timed out'),
+            expect(step.firstCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
+            expect(step.asyncStub(()=>0)).to.eventually.rejectedWith('Timed out'),
         ]);
-        expect(step.mochaCtx.timeout()).to.equal(TIMEOUT * 4);
+        expect(step.mochaCtx.timeout()).to.equal(1_000 + TIMEOUT * 4 + SAFETY_MARGIN * 4);
     });
 
     describe('promise step', () => {
@@ -37,109 +41,7 @@ describe('withSteps', () => {
             expect(await step.promise(sleep(SHORT_TIME).then(() => 'success')).timeout(LONG_TIME)).to.equal('success');
         });
     });
-    describe('poll step', () => {
-        describe('default behavior', () => {
-            withSteps.it('polls on the action every interval until the predicate returns true', async (step) => {
-                let count = 0;
-                const action = () => ++count;
-                expect(
-                    await step
-                        .poll(action, () => count > 2)
-                        .interval(5)
-                        .timeout(50)
-                ).to.equal(3);
-            });
-            withSteps.it('when the predicate returns anything but false, it is treated as true', async (step) => {
-                expect(
-                    await step
-                        .poll(
-                            () => 'success',
-                            (result) => expect(result).to.equal('success')
-                        )
-                        .interval(5)
-                        .timeout(50)
-                ).to.equal('success');
-            });
-            withSteps.it('times out if the predicate returns false', async (step) => {
-                await expect(
-                    step
-                        .poll(
-                            () => 0,
-                            () => false
-                        )
-                        .interval(5)
-                        .timeout(20)
-                        .description('timeout')
-                ).to.eventually.rejectedWith('timeout');
-            });
-        });
-        describe('error handling', () => {
-            let actionShouldThrow = true;
-            let predicateShouldThrow = true;
-            const throwingAction = () => {
-                if (actionShouldThrow) {
-                    actionShouldThrow = false;
-                    throw new Error('action error');
-                }
-                return 'success';
-            };
-            const throwingPredicate = () => {
-                if (predicateShouldThrow) {
-                    predicateShouldThrow = false;
-                    throw new Error('predicate error');
-                }
-                return true;
-            };
-            beforeEach(() => {
-                actionShouldThrow = true;
-                predicateShouldThrow = true;
-            });
-            describe('default behavior', () => {
-                withSteps.it('fails when the action throws', async (step) => {
-                    await expect(step.poll(throwingAction, () => true)).to.eventually.rejectedWith('action error');
-                });
-                withSteps.it('does not fails when the predicate throws', async (step) => {
-                    expect(await step.poll(() => 0, throwingPredicate)).to.equal(0);
-                });
-            });
-            describe('allowErrors', () => {
-                withSteps.it('action errors', async (step) => {
-                    expect(await step.poll(throwingAction, () => true).allowErrors(true, false)).to.equal('success');
-                });
-                withSteps.it('does not run the predicate if the action threw', async (step) => {
-                    await expect(
-                        step.poll(throwingAction, throwingPredicate).allowErrors(true, false)
-                    ).to.eventually.rejectedWith('predicate error');
-                });
-                withSteps.it('predicate errors (default)', async (step) => {
-                    expect(
-                        await step
-                            .poll(() => 'success', throwingPredicate)
-                            .interval(5)
-                            .timeout(100)
-                    ).to.equal('success');
-                    await expect(step.poll(throwingAction, throwingPredicate)).to.eventually.rejectedWith(
-                        'action error'
-                    );
-                });
-                withSteps.it('all errors', async (step) => {
-                    expect(
-                        await step.poll(throwingAction, throwingPredicate).allowErrors().interval(5).timeout(100)
-                    ).to.equal('success');
-                    await expect(
-                        step.poll(
-                            () => {
-                                throw Error('action');
-                            },
-                            () => {
-                                throw Error('predicate');
-                            }
-                        )
-                    ).to.eventually.rejectedWith('action');
-                });
-            });
-        });
-    });
+
     describe('firstCall', () => {
         let target: { a: number; b: string; method: (a: number, b: string) => void };
         beforeEach(() => {
