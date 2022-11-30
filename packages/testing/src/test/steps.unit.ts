@@ -11,20 +11,18 @@ describe('withSteps', () => {
         const TIMEOUT = 30;
         const SAFETY_MARGIN = 20;
         step.mochaCtx.timeout(1_000);
-        step.defaults.step.safetyMargin = SAFETY_MARGIN
-        step.defaults.step.timeout = TIMEOUT
+        step.defaults.step.safetyMargin = SAFETY_MARGIN;
+        step.defaults.step.timeout = TIMEOUT;
         await Promise.all([
             expect(step.promise(new Promise(() => 0))).to.eventually.rejectedWith('Timed out'),
             expect(
-                step
-                    .poll(
-                        () => 0,
-                        () => false
-                    )
-                    
+                step.poll(
+                    () => 0,
+                    () => false
+                )
             ).to.eventually.rejectedWith('Timed out'),
             expect(step.firstCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
-            expect(step.asyncStub(()=>0)).to.eventually.rejectedWith('Timed out'),
+            expect(step.asyncStub(() => 0)).to.eventually.rejectedWith('Timed out'),
         ]);
         expect(step.mochaCtx.timeout()).to.equal(1_000 + TIMEOUT * 4 + SAFETY_MARGIN * 4);
     });
