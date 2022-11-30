@@ -5,5 +5,8 @@
     "module": "esnext",
     "types": ["mocha"]
   },
-  "references": [{ "path": "../../common/src/tsconfig.esm.json" }]
+  "references": [
+    { "path": "../../common/src/tsconfig.esm.json" },
+    { "path": "../../patterns/src/tsconfig.esm.json" }
+  ]
 }
