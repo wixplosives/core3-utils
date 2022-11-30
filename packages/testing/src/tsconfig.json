@@ -4,5 +4,8 @@
     "outDir": "../dist/cjs",
     "types": ["mocha"]
   },
-  "references": [{ "path": "../../common/src" }]
+  "references": [
+    { "path": "../../common/src" },
+    { "path": "../../patterns/src" }
+]
 }
