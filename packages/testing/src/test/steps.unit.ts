@@ -78,13 +78,17 @@ describe('withSteps', () => {
     });
 
     describe('asyncStub', () => {
-        withSteps.it('resolved to the args the stub was called with', async (steps) => {
+        withSteps.it('resolves to {callArgs, returned}', async (steps) => {
             expect(
                 await steps.asyncStub(async (stub) => {
                     await sleep(1);
                     stub('success');
+                    return 'action!';
                 })
-            ).to.eql(['success']);
+            ).to.eql({
+                callArgs: ['success'],
+                returned: 'action!',
+            });
         });
         withSteps.it('times out when the stub is not called', async (steps) => {
             await expect(

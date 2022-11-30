@@ -4,8 +4,8 @@ import { pollStep, Predicate } from './poll';
 import { PromiseStep, promiseStep } from './promise';
 
 type CaptureStackFn = (s: { stack: string }) => void;
-
-class Steps {
+type Stub = (...args: any[]) => void;
+export class Steps {
     constructor(readonly mochaCtx: Mocha.Context) {}
     defaults = {
         step: {
@@ -90,10 +90,14 @@ class Steps {
             throw new Error('Invalid method name' + methodName);
         }
     };
-    asyncStub = (fn: (stub: (...args: any[]) => void) => any) => {
+    asyncStub = <T>(action: (stub: Stub) => T, waitForAction = true) => {
         const d = deferred<any[]>();
-        fn((...args: any[]) => d.resolve(args));
-        const step = this.promise(d.promise);
+        const returned = action((...args: any[]) => d.resolve(args));
+        const step = this.promise(
+            waitForAction
+                ? Promise.all([returned, d.promise]).then(([returned, callArgs]) => ({ returned, callArgs }))
+                : d.promise.then((callArgs) => ({ returned, callArgs }))
+        );
         step.stack = this.getStack();
         return step;
     };
