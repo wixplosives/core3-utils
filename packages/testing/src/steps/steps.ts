@@ -10,7 +10,7 @@ class Steps {
     defaults = {
         step: {
             timeout: 1000,
-            safetyMargin: 50
+            safetyMargin: 50,
         },
         poll: {
             interval: 100,
@@ -28,11 +28,11 @@ class Steps {
         return stack.split('\n').slice(7).join('\n');
     }
     private addTimeoutSafetyMargin() {
-        this.mochaCtx.timeout(this.mochaCtx.timeout() + this.defaults.step.safetyMargin)
+        this.mochaCtx.timeout(this.mochaCtx.timeout() + this.defaults.step.safetyMargin);
     }
 
     promise = <T>(action: Promise<T>) => {
-        this.addTimeoutSafetyMargin()
+        this.addTimeoutSafetyMargin();
         const step = promiseStep(action, this.mochaCtx)
             .timeout(this.defaults.step.timeout)
             .description(`step ${this.stepCount++}`);
@@ -41,17 +41,12 @@ class Steps {
     };
 
     poll = <T>(action: () => T, predicate?: Predicate<T> | Awaited<T>) => {
-        this.addTimeoutSafetyMargin()
+        this.addTimeoutSafetyMargin();
         const {
             poll: { interval, allowActionError, allowPredicateError },
         } = this.defaults;
 
-        predicate = predicate || ((value: any) => !!value);
-        const _predicate: Predicate<T> = (
-            typeof predicate === 'function' ? predicate : (value: any) => value === predicate
-        ) as Predicate<T>;
-
-        const step = pollStep(action, _predicate, this.mochaCtx)
+        const step = pollStep(action, predicate, this.mochaCtx)
             .timeout(this.defaults.step.timeout)
             .description(`step ${this.stepCount++}`)
             .interval(interval)

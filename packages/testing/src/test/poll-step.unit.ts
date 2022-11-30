@@ -7,20 +7,28 @@ use(asPromised);
 describe('withSteps', () => {
     describe('poll step', () => {
         describe('usage', () => {
-            withSteps.it('runs action every interval until the predicate is satisfied', async (step) => {
-                step.defaults.poll.interval = 5;
-                step.defaults.step.timeout = 50;
+            withSteps.it('runs action every interval until the predicate is satisfied', async ({ poll, defaults }) => {
+                defaults.poll.interval = 5;
+                defaults.step.timeout = 50;
                 let count = 0;
                 const action = () => ++count;
-                expect(await step.poll(action, (i) => i > 2).description('predicate returning boolean')).to.equal(3);
+                expect(await poll(action, (i) => i > 2).description('predicate returning boolean')).to.equal(3);
                 count = 0;
                 expect(
-                    await step
-                        .poll(action, (i) => expect(i).to.be.greaterThan(2))
-                        .description('predicate returning assertion')
+                    await poll(action, (i) => expect(i).to.be.greaterThan(2)).description(
+                        'predicate returning assertion'
+                    )
                 ).to.equal(3);
                 count = 0;
-                expect(await step.poll(action, 3).description('predicated value')).to.equal(3);
+                expect(await poll(action, 3).description('predicated value')).to.equal(3);
+            });
+
+            withSteps.it('compares predicated value using chai expect.eql', async ({ poll }) => {
+                expect(
+                    await poll(() => [1, 2, 3], [1, 2, 3])
+                        .interval(1)
+                        .description('predicated deep value')
+                ).to.eql([1, 2, 3]);
             });
 
             withSteps.it('times out if the predicate is not satisfied in time', async ({ poll }) => {
@@ -67,25 +75,25 @@ describe('withSteps', () => {
                 });
             });
             describe('allowErrors', () => {
-                withSteps.it('allow only action errors', async ({poll}) => {
+                withSteps.it('allow only action errors', async ({ poll }) => {
                     expect(
                         await poll(throwingAction, () => true)
                             .allowErrors(true, false)
                             .description('action throws in first execution')
                     ).to.equal('success');
                     const step = poll(throwingAction, throwingPredicate)
-                    .allowErrors(true, false)
-                    .description('predicate throws when allowPredicateErrors=false')
+                        .allowErrors(true, false)
+                        .description('predicate throws when allowPredicateErrors=false');
                     await expect(step).to.eventually.rejectedWith('predicate throws when allowPredicateErrors=false');
                     await expect(step).to.eventually.rejectedWith('predicate error');
                 });
-                withSteps.it('allow only predicate errors (default)', async ({poll}) => {
+                withSteps.it('allow only predicate errors (default)', async ({ poll }) => {
                     expect(
                         await poll(() => 'success', throwingPredicate)
                             .interval(5)
                             .description('predicate throws in first execution')
                     ).to.equal('success');
-                    const step = poll(throwingAction, throwingPredicate)
+                    const step = poll(throwingAction, throwingPredicate);
                     await expect(step).to.eventually.rejectedWith('step 2');
                     await expect(step).to.eventually.rejectedWith('action error');
                 });

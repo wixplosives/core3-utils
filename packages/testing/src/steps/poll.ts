@@ -16,7 +16,11 @@ export type PollStep<T> = Promise<T> & {
 
 export type Predicate<T> = (a: Awaited<T>) => boolean | Chai.Assertion | void;
 
-export function pollStep<T>(action: () => T, predicate: Predicate<T> | Awaited<T>, ctx: Mocha.Context): PollStep<T> {
+export function pollStep<T>(
+    action: () => T,
+    predicate: Predicate<T> | Awaited<T> | undefined,
+    ctx: Mocha.Context
+): PollStep<T> {
     let intervalId!: number;
     let resolve: (value: T | PromiseLike<T>) => void;
     let reject: (reason?: any) => void;
