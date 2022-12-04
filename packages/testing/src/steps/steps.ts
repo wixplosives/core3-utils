@@ -18,6 +18,7 @@ export class Steps {
             allowPredicateError: true,
         },
     };
+    static timeDilation = 1;
     private stepCount = 1;
     private getStack() {
         const captureStackTrace: CaptureStackFn =
@@ -90,6 +91,7 @@ export class Steps {
             throw new Error('Invalid method name' + methodName);
         }
     };
+
     waitForStubCall = <T>(action: (stub: Stub) => T, waitForAction = true) => {
         const d = deferred<any[]>();
         const returned = action((...args: any[]) => d.resolve(args));
@@ -98,6 +100,16 @@ export class Steps {
                 ? Promise.all([returned, d.promise]).then(([returned, callArgs]) => ({ returned, callArgs }))
                 : d.promise.then((callArgs) => ({ returned, callArgs }))
         );
+        step.stack = this.getStack();
+        return step;
+    };
+
+    sleep = (ms?: number) => {
+        this.addTimeoutSafetyMargin();
+        const step = promiseStep(new Promise(noop), this.mochaCtx, false)
+            .timeout(ms || this.defaults.step.timeout)
+            .description(`step ${this.stepCount++}`);
+
         step.stack = this.getStack();
         return step;
     };
