@@ -124,10 +124,20 @@ describe('withSteps', () => {
                         .waitForStubCall(async (stub) => {
                             await sleep(100);
                             stub('success');
-                            return 'action!';
                         })
                         .timeout(10)
                 ).to.eventually.rejectedWith('Timed out');
+            })
+        );
+    });
+
+    describe('sleep', () => {
+        it(
+            'sleep',
+            withSteps(async (steps) => {
+                steps.defaults.step.timeout = 50;
+                expect(await steps.withTimeout(steps.sleep(1))).not.to.throw;
+                await expect(steps.withTimeout(steps.sleep(1000))).to.eventually.rejectedWith('Timed out');
             })
         );
     });

@@ -91,6 +91,7 @@ export class Steps {
             throw new Error('Invalid method name' + methodName);
         }
     };
+
     waitForStubCall = <T>(action: (stub: Stub) => T, waitForAction = true) => {
         const d = deferred<any[]>();
         const returned = action((...args: any[]) => d.resolve(args));
