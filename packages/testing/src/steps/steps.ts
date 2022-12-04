@@ -10,13 +10,13 @@ export class Steps {
     defaults = {
         step: {
             timeout: 1000,
-            safetyMargin: 50,
+            safetyMargin: 50
         },
         poll: {
             interval: 100,
             allowActionError: false,
-            allowPredicateError: true,
-        },
+            allowPredicateError: true
+        }
     };
     static timeDilation = 1;
     private stepCount = 1;
@@ -44,7 +44,7 @@ export class Steps {
     poll = <T>(action: () => T, predicate?: Predicate<T> | Awaited<T>) => {
         this.addTimeoutSafetyMargin();
         const {
-            poll: { interval, allowActionError, allowPredicateError },
+            poll: { interval, allowActionError, allowPredicateError }
         } = this.defaults;
 
         const step = pollStep(action, predicate, this.mochaCtx)
@@ -91,7 +91,6 @@ export class Steps {
             throw new Error('Invalid method name' + methodName);
         }
     };
-
     waitForStubCall = <T>(action: (stub: Stub) => T, waitForAction = true) => {
         const d = deferred<any[]>();
         const returned = action((...args: any[]) => d.resolve(args));

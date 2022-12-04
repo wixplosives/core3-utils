@@ -11,7 +11,7 @@ describe('withSteps', () => {
                 'runs action every interval until the predicate is satisfied',
                 withSteps(async ({ poll, defaults }) => {
                     defaults.poll.interval = 5;
-                    defaults.step.timeout = 200;
+                    defaults.step.timeout = 100;
                     let count = 0;
                     const action = () => ++count;
                     expect(await poll(action, (i) => i > 2).description('predicate returning boolean')).to.equal(3);
