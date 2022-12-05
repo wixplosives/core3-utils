@@ -1,25 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../../../node_modules/@types/chai/index.d.ts" />
 import { expect } from 'chai';
-import { promiseStep } from './promise';
-
-export type PollStep<T> = Promise<T> & {
-    timeout: (ms: number) => PollStep<T>;
-    description: (description: string) => PollStep<T>;
-    interval: (ms: number) => PollStep<T>;
-    allowErrors: (action?: boolean, predicate?: boolean) => PollStep<T>;
-    _description: Readonly<string>;
-    stack: string;
-    info: any;
-    lastPolledValue: T;
-};
-
-export type Predicate<T> = (a: Awaited<T>) => boolean | Chai.Assertion | void;
+import { Description, promiseStep, Timeout } from './promise';
 
 export function pollStep<T>(
     action: () => T,
     predicate: Predicate<T> | Awaited<T> | undefined,
-    ctx: Mocha.Context
+    ctx: Mocha.Context,
+    timeDilation:number
 ): PollStep<T> {
     let intervalId!: number;
     let resolve: (value: T | PromiseLike<T>) => void;
@@ -51,7 +39,7 @@ export function pollStep<T>(
     ) as Predicate<T>;
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-    const p = promiseStep(intervalPromise, ctx) as PollStep<T>;
+    const p = promiseStep(intervalPromise, ctx, true, timeDilation) as PollStep<T>;
     p.interval = (ms: number) => {
         clearInterval(intervalId);
         intervalId = setInterval(async () => {
@@ -83,3 +71,15 @@ export function pollStep<T>(
 
     return p;
 }
+
+export type PollStep<T> = Promise<T> & {
+    timeout: Timeout<PollStep<T>>;
+    description: Description<PollStep<T>>;    
+    interval: (ms: number) => PollStep<T>;    
+    allowErrors: (action?: boolean, predicate?: boolean) => PollStep<T>;
+    stack: string;
+    info: any;
+    lastPolledValue: T;
+};
+
+export type Predicate<T> = (a: Awaited<T>) => boolean | Chai.Assertion | void;
