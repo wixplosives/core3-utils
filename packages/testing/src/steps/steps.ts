@@ -1,24 +1,27 @@
 import { isString, noop } from '@wixc3/common';
 import { deferred, timeout as _timeout } from 'promise-assist';
+import { getIntervalPerformance } from '../measure-machine';
 import { pollStep, Predicate } from './poll';
 import { PromiseStep, promiseStep } from './promise';
 
 type CaptureStackFn = (s: { stack: string }) => void;
 type Stub = (...args: any[]) => void;
+
 export class Steps {
     constructor(readonly mochaCtx: Mocha.Context) {}
+    static timeDilation: number;
     defaults = {
         step: {
             timeout: 1000,
             safetyMargin: 50,
+            adjustToMachinePower: true
         },
         poll: {
             interval: 100,
             allowActionError: false,
-            allowPredicateError: true,
-        },
+            allowPredicateError: true
+        }
     };
-    static timeDilation = 1;
     private stepCount = 1;
     private getStack() {
         const captureStackTrace: CaptureStackFn =
@@ -29,13 +32,13 @@ export class Steps {
         return stack.split('\n').slice(7).join('\n');
     }
     private addTimeoutSafetyMargin() {
-        this.mochaCtx.timeout(this.mochaCtx.timeout() + this.defaults.step.safetyMargin);
+        this.mochaCtx.timeout(this.mochaCtx.timeout() + this.defaults.step.safetyMargin * Steps.timeDilation);
     }
 
     withTimeout = <T>(action: Promise<T>) => {
         this.addTimeoutSafetyMargin();
-        const step = promiseStep(action, this.mochaCtx)
-            .timeout(this.defaults.step.timeout)
+        const step = promiseStep(action, this.mochaCtx, true, Steps.timeDilation)
+            .timeout(this.defaults.step.timeout, this.defaults.step.adjustToMachinePower)
             .description(`step ${this.stepCount++}`);
         step.stack = this.getStack();
         return step;
@@ -44,10 +47,10 @@ export class Steps {
     poll = <T>(action: () => T, predicate?: Predicate<T> | Awaited<T>) => {
         this.addTimeoutSafetyMargin();
         const {
-            poll: { interval, allowActionError, allowPredicateError },
+            poll: { interval, allowActionError, allowPredicateError }
         } = this.defaults;
 
-        const step = pollStep(action, predicate, this.mochaCtx)
+        const step = pollStep(action, predicate, this.mochaCtx, Steps.timeDilation)
             .timeout(this.defaults.step.timeout)
             .description(`step ${this.stepCount++}`)
             .interval(interval)
@@ -106,14 +109,19 @@ export class Steps {
 
     sleep = (ms?: number) => {
         this.addTimeoutSafetyMargin();
-        const step = promiseStep(new Promise(noop), this.mochaCtx, false)
-            .timeout(ms || this.defaults.step.timeout)
+        const step = promiseStep(new Promise(noop), this.mochaCtx, false, Steps.timeDilation)
+            .timeout(ms || this.defaults.step.timeout, this.defaults.step.adjustToMachinePower)
             .description(`step ${this.stepCount++}`);
-
         step.stack = this.getStack();
         return step;
     };
 }
+
+before(async () => {
+    Steps.timeDilation = await getIntervalPerformance();
+    // eslint-disable-next-line no-console
+    console.log(`Time dilation due to machine power: ${Steps.timeDilation}`);
+});
 
 type Stepped = (this: Mocha.Context, steps: Steps) => Promise<any>;
 export function withSteps(test: Stepped): Mocha.Func {

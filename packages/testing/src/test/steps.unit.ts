@@ -1,7 +1,7 @@
 import { sleep } from 'promise-assist';
 import { expect, use } from 'chai';
 import asPromised from 'chai-as-promised';
-import { withSteps } from '../steps';
+import { Steps, withSteps } from '../steps';
 
 use(asPromised);
 
@@ -24,9 +24,12 @@ describe('withSteps', () => {
                     )
                 ).to.eventually.rejectedWith('Timed out'),
                 expect(step.waitForCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
-                expect(step.waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out'),
+                expect(step.waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out')
             ]);
-            expect(step.mochaCtx.timeout()).to.equal(1_000 + TIMEOUT * 4 + SAFETY_MARGIN * 4);
+            expect(step.mochaCtx.timeout()).to.be.approximately(
+                1_000 + Steps.timeDilation * (+4 * TIMEOUT + 4 * SAFETY_MARGIN),
+                2
+            );
         })
     );
 
@@ -60,7 +63,7 @@ describe('withSteps', () => {
                 method(a: number, b: string) {
                     this.a = a;
                     this.b = b;
-                },
+                }
             };
         });
         it(
@@ -112,7 +115,7 @@ describe('withSteps', () => {
                     })
                 ).to.eql({
                     callArgs: ['success'],
-                    returned: 'action!',
+                    returned: 'action!'
                 });
             })
         );
