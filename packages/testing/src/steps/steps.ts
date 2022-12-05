@@ -18,6 +18,7 @@ export class Steps {
             allowPredicateError: true,
         },
     };
+    static timeDilation = 1;
     private stepCount = 1;
     private getStack() {
         const captureStackTrace: CaptureStackFn =
@@ -31,7 +32,7 @@ export class Steps {
         this.mochaCtx.timeout(this.mochaCtx.timeout() + this.defaults.step.safetyMargin);
     }
 
-    promise = <T>(action: Promise<T>) => {
+    withTimeout = <T>(action: Promise<T>) => {
         this.addTimeoutSafetyMargin();
         const step = promiseStep(action, this.mochaCtx)
             .timeout(this.defaults.step.timeout)
@@ -56,13 +57,13 @@ export class Steps {
         return step;
     };
 
-    firstCall = <S extends object>(scope: S, method: keyof S | S[keyof S]): PromiseStep<any[]> => {
+    waitForCall = <S extends object>(scope: S, method: keyof S | S[keyof S]): PromiseStep<any[]> => {
         const def = deferred<any[]>();
         let methodName = '';
         if (isString(method)) {
             methodName = method;
         } else {
-            if (method instanceof Function) {
+            if (typeof method === 'function') {
                 methodName = method.name;
             }
         }
@@ -78,7 +79,7 @@ export class Steps {
                 // eslint-disable-next-line
                 return (original as Function).bind(scope)(...args);
             };
-            const p = this.promise(def.promise);
+            const p = this.withTimeout(def.promise);
             p.stack = this.getStack();
 
             p.then(restore).catch((e) => {
@@ -90,14 +91,25 @@ export class Steps {
             throw new Error('Invalid method name' + methodName);
         }
     };
-    asyncStub = <T>(action: (stub: Stub) => T, waitForAction = true) => {
+
+    waitForStubCall = <T>(action: (stub: Stub) => T, waitForAction = true) => {
         const d = deferred<any[]>();
         const returned = action((...args: any[]) => d.resolve(args));
-        const step = this.promise(
+        const step = this.withTimeout(
             waitForAction
                 ? Promise.all([returned, d.promise]).then(([returned, callArgs]) => ({ returned, callArgs }))
                 : d.promise.then((callArgs) => ({ returned, callArgs }))
         );
+        step.stack = this.getStack();
+        return step;
+    };
+
+    sleep = (ms?: number) => {
+        this.addTimeoutSafetyMargin();
+        const step = promiseStep(new Promise(noop), this.mochaCtx, false)
+            .timeout(ms || this.defaults.step.timeout)
+            .description(`step ${this.stepCount++}`);
+
         step.stack = this.getStack();
         return step;
     };
@@ -110,39 +122,3 @@ export function withSteps(test: Stepped): Mocha.Func {
         return test.bind(this)(new Steps(this));
     };
 }
-
-interface TestFunctionWithSteps {
-    (title: string, test: Stepped): Mocha.Test;
-    only: (title: string, test: Stepped) => Mocha.Test;
-    skip: (title: string, test: Stepped) => Mocha.Test;
-}
-
-withSteps.it = function (title: string, test: Stepped): Mocha.Test {
-    return it(title, withSteps(test));
-} as TestFunctionWithSteps;
-
-withSteps.it.only = function (title: string, test: Stepped): Mocha.Test {
-    // eslint-disable-next-line no-only-tests/no-only-tests
-    return it.only(title, withSteps(test));
-};
-
-withSteps.it.skip = function (title: string, test: Stepped): Mocha.Test {
-    // eslint-disable-next-line no-only-tests/no-only-tests
-    return it.skip(title, withSteps(test));
-};
-
-withSteps.beforeEach = function (fn: Stepped): void {
-    return beforeEach(withSteps(fn));
-};
-
-withSteps.before = function (fn: Stepped): void {
-    return before(withSteps(fn));
-};
-
-withSteps.afterEach = function (fn: Stepped): void {
-    return afterEach(withSteps(fn));
-};
-
-withSteps.after = function (fn: Stepped): void {
-    return after(withSteps(fn));
-};

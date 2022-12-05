@@ -6,7 +6,11 @@ export type PromiseStep<T> = Promise<T> & {
     stack: string;
 };
 
-export function promiseStep<T, S extends PromiseStep<T>>(src: Promise<T>, ctx: Mocha.Context): S {
+export function promiseStep<T, S extends PromiseStep<T>>(
+    src: Promise<T>,
+    ctx: Mocha.Context,
+    rejectAfterTimeout = true
+): S {
     let timerId: number;
     let timeout = 0;
     let resolve: (value: T | PromiseLike<T>) => void;
@@ -36,16 +40,21 @@ export function promiseStep<T, S extends PromiseStep<T>>(src: Promise<T>, ctx: M
     }) as S;
 
     p.timeout = (ms: number) => {
+        ms = ms * ((globalThis as { timeDilution?: number }).timeDilution || 1);
         const diff = ms - timeout;
         timeout = ms;
         ctx.timeout(ctx.timeout() + diff);
         clearTimeout(timerId);
         timerId = setTimeout(() => {
-            const err = new Error(
-                `Timed out in step "${p._description}" after ${ms}ms${p.info ? `\nInfo: ${p.info}` : ''}`
-            );
-            err.stack = p.stack || err.stack;
-            reject(err);
+            if (rejectAfterTimeout) {
+                const err = new Error(
+                    `Timed out in step "${p._description}" after ${ms}ms${p.info ? `\nInfo: ${p.info}` : ''}`
+                );
+                err.stack = p.stack || err.stack;
+                reject(err);
+            } else {
+                resolve(null as T);
+            }
         }, ms);
         return p;
     };
