@@ -14,13 +14,13 @@ export class Steps {
         step: {
             timeout: 1000,
             safetyMargin: 50,
-            adjustToMachinePower: true
+            adjustToMachinePower: true,
         },
         poll: {
             interval: 100,
             allowActionError: false,
-            allowPredicateError: true
-        }
+            allowPredicateError: true,
+        },
     };
     private stepCount = 1;
     private getStack() {
@@ -47,7 +47,7 @@ export class Steps {
     poll = <T>(action: () => T, predicate?: Predicate<T> | Awaited<T>) => {
         this.addTimeoutSafetyMargin();
         const {
-            poll: { interval, allowActionError, allowPredicateError }
+            poll: { interval, allowActionError, allowPredicateError },
         } = this.defaults;
 
         const step = pollStep(action, predicate, this.mochaCtx, Steps.timeDilation)

@@ -7,7 +7,7 @@ export function pollStep<T>(
     action: () => T,
     predicate: Predicate<T> | Awaited<T> | undefined,
     ctx: Mocha.Context,
-    timeDilation:number
+    timeDilation: number
 ): PollStep<T> {
     let intervalId!: number;
     let resolve: (value: T | PromiseLike<T>) => void;
@@ -74,8 +74,8 @@ export function pollStep<T>(
 
 export type PollStep<T> = Promise<T> & {
     timeout: Timeout<PollStep<T>>;
-    description: Description<PollStep<T>>;    
-    interval: (ms: number) => PollStep<T>;    
+    description: Description<PollStep<T>>;
+    interval: (ms: number) => PollStep<T>;
     allowErrors: (action?: boolean, predicate?: boolean) => PollStep<T>;
     stack: string;
     info: any;
