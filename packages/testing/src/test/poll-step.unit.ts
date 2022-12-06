@@ -123,4 +123,25 @@ describe('withSteps', () => {
             });
         });
     });
+    it(
+        `doesn't poll after the step is done`,
+        withSteps(async ({ poll, mochaCtx, sleep }) => {
+            mochaCtx.timeout();
+            let count = 0;
+            await poll(() => ++count, 3).interval(1);
+            await sleep(50);
+            expect(count).to.equal(3);
+            await expect(
+                poll(
+                    () => ++count,
+                    () => false
+                )
+                    .interval(1)
+                    .timeout(1)
+            ).to.eventually.rejectedWith('Timed out');
+            const lastCount = count;
+            await sleep(50);
+            expect(count).to.equal(lastCount);
+        })
+    );
 });
