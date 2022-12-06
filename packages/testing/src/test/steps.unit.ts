@@ -46,9 +46,9 @@ describe('withSteps', () => {
         it(
             'fulfils the promise in the allotted time',
             withSteps(async ({ sleep, withTimeout }) => {
-                expect(
-                    await withTimeout(sleep(SHORT_TIME * Steps.timeDilation).then(() => 'success')).timeout(LONG_TIME)
-                ).to.equal('success');
+                expect(await withTimeout(sleep(SHORT_TIME).then(() => 'success')).timeout(LONG_TIME)).to.equal(
+                    'success'
+                );
             })
         );
     });
