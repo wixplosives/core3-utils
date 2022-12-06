@@ -1,5 +1,5 @@
-import { isString, noop } from '@wixc3/common';
-import { deferred, timeout as _timeout } from 'promise-assist';
+import { isString } from '@wixc3/common';
+import { deferred } from 'promise-assist';
 import { getIntervalPerformance } from '../measure-machine';
 import { pollStep, Predicate } from './poll';
 import { PromiseStep, promiseStep } from './promise';
@@ -25,11 +25,14 @@ export class Steps {
     private stepCount = 1;
     private getStack() {
         const captureStackTrace: CaptureStackFn =
-            (Error as { captureStackTrace?: CaptureStackFn }).captureStackTrace || noop;
+            (Error as { captureStackTrace?: CaptureStackFn }).captureStackTrace || (() => void 0);
         const stackProvider = { stack: '' };
         captureStackTrace(stackProvider);
         const { stack } = stackProvider;
-        return stack.split('\n').slice(7).join('\n');
+        return stack
+            .split('\n')
+            .filter((i) => !i.match(/testing[\\/](dist|src)[\\/]steps[\\/]\w+\.(js|ts)/) && !i.match(/Steps\.\w+/))
+            .join('\n');
     }
     private addTimeoutSafetyMargin() {
         this.mochaCtx.timeout(this.mochaCtx.timeout() + this.defaults.step.safetyMargin * Steps.timeDilation);
@@ -84,11 +87,7 @@ export class Steps {
             };
             const p = this.withTimeout(def.promise);
             p.stack = this.getStack();
-
-            p.then(restore).catch((e) => {
-                restore();
-                return Promise.reject(e);
-            });
+            p.then(restore, restore);
             return p;
         } else {
             throw new Error('Invalid method name' + methodName);
@@ -109,7 +108,7 @@ export class Steps {
 
     sleep = (ms?: number) => {
         this.addTimeoutSafetyMargin();
-        const step = promiseStep(new Promise(noop), this.mochaCtx, false, Steps.timeDilation)
+        const step = promiseStep(new Promise(() => void 0), this.mochaCtx, false, Steps.timeDilation)
             .timeout(ms || this.defaults.step.timeout, this.defaults.step.adjustToMachinePower)
             .description(`step ${this.stepCount++}`);
         step.stack = this.getStack();

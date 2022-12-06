@@ -15,7 +15,7 @@ describe('withSteps', () => {
             step.mochaCtx.timeout(1_000);
             step.defaults.step.safetyMargin = SAFETY_MARGIN;
             step.defaults.step.timeout = TIMEOUT;
-            await Promise.all([
+            await Promise.allSettled([
                 expect(step.withTimeout(new Promise(() => 0))).to.eventually.rejectedWith('Timed out'),
                 expect(
                     step.poll(
