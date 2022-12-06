@@ -24,7 +24,7 @@ describe('withSteps', () => {
                     )
                 ).to.eventually.rejectedWith('Timed out'),
                 expect(step.waitForCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
-                expect(step.waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out'),
+                expect(step.waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out')
             ]);
             expect(step.mochaCtx.timeout()).to.be.approximately(
                 1_000 + Steps.timeDilation * (+4 * TIMEOUT + 4 * SAFETY_MARGIN),
@@ -40,16 +40,21 @@ describe('withSteps', () => {
             'times out with the description',
             withSteps(async (step) => {
                 await expect(
-                    step.withTimeout(sleep(LONG_TIME)).timeout(SHORT_TIME).description('test')
+                    step
+                        .withTimeout(sleep(LONG_TIME * Steps.timeDilation))
+                        .timeout(SHORT_TIME)
+                        .description('test')
                 ).to.eventually.rejectedWith('test');
             })
         );
         it(
             'fulfils the promise in the allotted time',
             withSteps(async (step) => {
-                expect(await step.withTimeout(sleep(SHORT_TIME).then(() => 'success')).timeout(LONG_TIME)).to.equal(
-                    'success'
-                );
+                expect(
+                    await step
+                        .withTimeout(sleep(SHORT_TIME * Steps.timeDilation).then(() => 'success'))
+                        .timeout(LONG_TIME)
+                ).to.equal('success');
             })
         );
     });
@@ -63,7 +68,7 @@ describe('withSteps', () => {
                 method(a: number, b: string) {
                     this.a = a;
                     this.b = b;
-                },
+                }
             };
         });
         it(
@@ -115,7 +120,7 @@ describe('withSteps', () => {
                     })
                 ).to.eql({
                     callArgs: ['success'],
-                    returned: 'action!',
+                    returned: 'action!'
                 });
             })
         );
