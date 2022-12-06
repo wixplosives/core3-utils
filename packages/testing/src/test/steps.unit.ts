@@ -1,4 +1,3 @@
-import { sleep } from 'promise-assist';
 import { expect, use } from 'chai';
 import asPromised from 'chai-as-promised';
 import { Steps, withSteps } from '../steps';
@@ -38,16 +37,16 @@ describe('withSteps', () => {
         const SHORT_TIME = 1;
         it(
             'times out with the description',
-            withSteps(async (step) => {
+            withSteps(async ({ sleep, withTimeout }) => {
                 await expect(
-                    step.withTimeout(sleep(LONG_TIME)).timeout(SHORT_TIME).description('test')
+                    withTimeout(sleep(LONG_TIME)).timeout(SHORT_TIME).description('test')
                 ).to.eventually.rejectedWith('test');
             })
         );
         it(
             'fulfils the promise in the allotted time',
-            withSteps(async (step) => {
-                expect(await step.withTimeout(sleep(SHORT_TIME).then(() => 'success')).timeout(LONG_TIME)).to.equal(
+            withSteps(async ({ sleep, withTimeout }) => {
+                expect(await withTimeout(sleep(SHORT_TIME).then(() => 'success')).timeout(LONG_TIME)).to.equal(
                     'success'
                 );
             })
@@ -106,9 +105,9 @@ describe('withSteps', () => {
     describe('waitForStubCall', () => {
         it(
             'resolves to {callArgs, returned}',
-            withSteps(async (steps) => {
+            withSteps(async ({ sleep, waitForStubCall }) => {
                 expect(
-                    await steps.waitForStubCall(async (stub) => {
+                    await waitForStubCall(async (stub) => {
                         await sleep(1);
                         stub('success');
                         return 'action!';
@@ -121,14 +120,12 @@ describe('withSteps', () => {
         );
         it(
             'times out when the stub is not called',
-            withSteps(async (steps) => {
+            withSteps(async ({ sleep, waitForStubCall }) => {
                 await expect(
-                    steps
-                        .waitForStubCall(async (stub) => {
-                            await sleep(100);
-                            stub('success');
-                        })
-                        .timeout(10)
+                    waitForStubCall(async (stub) => {
+                        await sleep(100);
+                        stub('success');
+                    }).timeout(10)
                 ).to.eventually.rejectedWith('Timed out');
             })
         );
