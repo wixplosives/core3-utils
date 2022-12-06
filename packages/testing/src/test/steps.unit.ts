@@ -23,7 +23,7 @@ describe('withSteps', () => {
                     )
                 ).to.eventually.rejectedWith('Timed out'),
                 expect(step.waitForCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
-                expect(step.waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out')
+                expect(step.waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out'),
             ]);
             expect(step.mochaCtx.timeout()).to.be.approximately(
                 1_000 + Steps.timeDilation * (+4 * TIMEOUT + 4 * SAFETY_MARGIN),
@@ -62,7 +62,7 @@ describe('withSteps', () => {
                 method(a: number, b: string) {
                     this.a = a;
                     this.b = b;
-                }
+                },
             };
         });
         it(
@@ -114,7 +114,7 @@ describe('withSteps', () => {
                     })
                 ).to.eql({
                     callArgs: ['success'],
-                    returned: 'action!'
+                    returned: 'action!',
                 });
             })
         );
