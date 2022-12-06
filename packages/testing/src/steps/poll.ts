@@ -33,7 +33,7 @@ export function pollStep<T>(
         }
     };
 
-    predicate = predicate || ((v: Awaited<T>) => !!v);
+    predicate = predicate === undefined ? ((v: Awaited<T>) => !!v) : predicate;
     const _predicate = (
         typeof predicate === 'function' ? predicate : (v: Awaited<T>) => expect(v).to.eql(predicate)
     ) as Predicate<T>;
