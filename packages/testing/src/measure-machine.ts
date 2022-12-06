@@ -1,17 +1,17 @@
 import { deferred } from 'promise-assist';
 
+export const intervalCount = 20,
+    busyBoxWorkSize = 1000,
+    intervalTime = 5,
+    ideaTime = intervalTime * intervalCount;
+
 export async function getIntervalPerformance() {
     performance.mark('intervalStart');
-    let intervalCount = 0;
-
-    const count = 20,
-        size = 1000,
-        intervalTime = 5,
-        ideaTime = intervalTime * count;
+    let count = 0;
 
     const done = deferred();
     const interval = setInterval(() => {
-        if (++intervalCount > count) {
+        if (++count >= intervalCount) {
             done.resolve();
         }
     }, intervalTime);
@@ -20,7 +20,7 @@ export async function getIntervalPerformance() {
     const bbResults: number[] = [];
     for (let i = 0; i < count * intervalTime * 10; i++) {
         busyBoxes[i] = setTimeout(() => {
-            const a = new Array(size).fill(0).map(() => Math.random());
+            const a = new Array(busyBoxWorkSize).fill(0).map(() => Math.random());
             bbResults.push(a.sort().reduce((sum, n) => sum + n, 0));
         }, i);
     }

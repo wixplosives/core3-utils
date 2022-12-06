@@ -1,6 +1,6 @@
 import { isString } from '@wixc3/common';
 import { deferred } from 'promise-assist';
-import { getIntervalPerformance } from '../measure-machine';
+import { getIntervalPerformance, ideaTime } from '../measure-machine';
 import { pollStep, Predicate } from './poll';
 import { PromiseStep, promiseStep } from './promise';
 
@@ -14,13 +14,13 @@ export class Steps {
         step: {
             timeout: 1000,
             safetyMargin: 50,
-            adjustToMachinePower: true,
+            adjustToMachinePower: true
         },
         poll: {
             interval: 100,
             allowActionError: false,
-            allowPredicateError: true,
-        },
+            allowPredicateError: true
+        }
     };
     private stepCount = 1;
     private getStack() {
@@ -50,7 +50,7 @@ export class Steps {
     poll = <T>(action: () => T, predicate?: Predicate<T> | Awaited<T>) => {
         this.addTimeoutSafetyMargin();
         const {
-            poll: { interval, allowActionError, allowPredicateError },
+            poll: { interval, allowActionError, allowPredicateError }
         } = this.defaults;
 
         const step = pollStep(action, predicate, this.mochaCtx, Steps.timeDilation)
@@ -116,7 +116,8 @@ export class Steps {
     };
 }
 
-before(async () => {
+before('check time', async function () {
+    this.timeout(ideaTime * 30);
     Steps.timeDilation = await getIntervalPerformance();
     // eslint-disable-next-line no-console
     console.log(`Time dilation due to machine power: ${Steps.timeDilation}`);
