@@ -13,7 +13,7 @@ export class Steps {
     static getTestSteps(ctx?: Mocha.Context) {
         ctx = ctx || mocha.suite.ctx.currentTest?.ctx;
         if (!ctx) {
-            throw new Error(`Can;t create test steps: invalid mocha context`);
+            throw new Error(`Can't create test steps: invalid mocha context`);
         }
         if (!Steps.runningTestsCtx.has(ctx)) {
             Steps.runningTestsCtx.set(ctx, new Steps(ctx));
