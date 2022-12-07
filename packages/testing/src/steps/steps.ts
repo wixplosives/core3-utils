@@ -8,8 +8,21 @@ type CaptureStackFn = (s: { stack: string }) => void;
 type Stub = (...args: any[]) => void;
 
 export class Steps {
-    constructor(readonly mochaCtx: Mocha.Context) {}
     static timeDilation: number;
+    private static runningTestsCtx = new WeakMap<Mocha.Context, Steps>();
+    static getTestSteps(ctx?: Mocha.Context) {
+        ctx = ctx || mocha.suite.ctx.currentTest?.ctx;
+        if (!ctx) {
+            throw new Error(`Can;t create test steps: invalid mocha context`);
+        }
+        if (!Steps.runningTestsCtx.has(ctx)) {
+            Steps.runningTestsCtx.set(ctx, new Steps(ctx));
+        }
+        return Steps.runningTestsCtx.get(ctx)!;
+    }
+    constructor(readonly mochaCtx: Mocha.Context) {
+        Steps.runningTestsCtx.set(mochaCtx, this);
+    }
     defaults = {
         step: {
             timeout: 1000,
@@ -31,7 +44,12 @@ export class Steps {
         const { stack } = stackProvider;
         return stack
             .split('\n')
-            .filter((i) => !i.match(/testing[\\/](dist|src)[\\/]steps[\\/]\w+\.(js|ts)/) && !i.match(/Steps\.\w+/))
+            .filter(
+                (i) =>
+                    !i.match(/testing[\\/](dist|src)[\\/]steps[\\/]\w+\.(js|ts)/) &&
+                    !i.match(/Steps\.\w+/) &&
+                    !i.match(/captureStackTrace\(.*/)
+            )
             .join('\n');
     }
     private addTimeoutSafetyMargin() {
