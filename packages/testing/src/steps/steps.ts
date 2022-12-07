@@ -65,6 +65,8 @@ export class Steps {
         return step;
     };
 
+    allWithTimeout = <T extends Readonly<any[]>>(...actions: T) => this.withTimeout(Promise.all(actions));
+
     poll = <T>(action: () => T, predicate?: Predicate<T> | Awaited<T>) => {
         this.addTimeoutSafetyMargin();
         const {

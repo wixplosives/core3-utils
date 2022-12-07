@@ -32,7 +32,7 @@ describe('withSteps', () => {
         })
     );
 
-    describe('promise step', () => {
+    describe('withTimeout step', () => {
         const LONG_TIME = 10;
         const SHORT_TIME = 1;
         it(
@@ -49,6 +49,36 @@ describe('withSteps', () => {
                 expect(await withTimeout(sleep(SHORT_TIME).then(() => 'success')).timeout(LONG_TIME)).to.equal(
                     'success'
                 );
+            })
+        );
+    });
+
+    describe('allWithTimeout step', () => {
+        const LONG_TIME = 10;
+        const SHORT_TIME = 1;
+        it(
+            'times out with the description',
+            withSteps(async ({ allWithTimeout, sleep }) => {
+                await expect(
+                    allWithTimeout(
+                        sleep(LONG_TIME).then(() => 1),
+                        sleep(SHORT_TIME).then(() => 'a'),
+                        sleep(SHORT_TIME).then(() => [])
+                    )
+                        .timeout(SHORT_TIME)
+                        .description('test')
+                ).to.eventually.rejectedWith('test');
+            })
+        );
+        it(
+            'fulfils the promise in the allotted time',
+            withSteps(async ({ sleep, allWithTimeout }) => {
+                const actual: [number, string, any[]] = await allWithTimeout(
+                    sleep(SHORT_TIME).then(() => 1),
+                    sleep(SHORT_TIME).then(() => 'a'),
+                    sleep(SHORT_TIME).then(() => [])
+                );
+                expect(actual).to.eql([1, 'a', []]);
             })
         );
     });
