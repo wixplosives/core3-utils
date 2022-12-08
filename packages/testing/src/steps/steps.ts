@@ -3,7 +3,6 @@ import { deferred } from 'promise-assist';
 import { getIntervalPerformance, ideaTime } from '../measure-machine';
 import { pollStep, Predicate } from './poll';
 import { PromiseStep, promiseStep } from './promise';
-import mocha from 'mocha';
 
 type CaptureStackFn = (s: { stack: string }) => void;
 type Stub = (...args: any[]) => void;
