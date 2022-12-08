@@ -14,7 +14,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "make-fetch-happen": "^11.0.1"
+    "make-fetch-happen": "^11.0.2"
   },
   "files": [
     "dist",
