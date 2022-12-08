@@ -3,6 +3,7 @@ import { deferred } from 'promise-assist';
 import { getIntervalPerformance, ideaTime } from '../measure-machine';
 import { pollStep, Predicate } from './poll';
 import { PromiseStep, promiseStep } from './promise';
+import mocha from 'mocha';
 
 type CaptureStackFn = (s: { stack: string }) => void;
 type Stub = (...args: any[]) => void;
@@ -10,11 +11,7 @@ type Stub = (...args: any[]) => void;
 export class Steps {
     static timeDilation: number;
     private static runningTestsCtx = new WeakMap<Mocha.Context, Steps>();
-    static getTestSteps(ctx?: Mocha.Context) {
-        ctx = ctx || mocha.suite.ctx.currentTest?.ctx;
-        if (!ctx) {
-            throw new Error(`Can't create test steps: invalid mocha context`);
-        }
+    static getTestSteps(ctx: Mocha.Context) {
         if (!Steps.runningTestsCtx.has(ctx)) {
             Steps.runningTestsCtx.set(ctx, new Steps(ctx));
         }
@@ -27,13 +24,13 @@ export class Steps {
         step: {
             timeout: 1000,
             safetyMargin: 50,
-            adjustToMachinePower: true,
+            adjustToMachinePower: true
         },
         poll: {
             interval: 100,
             allowActionError: false,
-            allowPredicateError: true,
-        },
+            allowPredicateError: true
+        }
     };
     private stepCount = 1;
     private getStack() {
@@ -70,7 +67,7 @@ export class Steps {
     poll = <T>(action: () => T, predicate?: Predicate<T> | Awaited<T>) => {
         this.addTimeoutSafetyMargin();
         const {
-            poll: { interval, allowActionError, allowPredicateError },
+            poll: { interval, allowActionError, allowPredicateError }
         } = this.defaults;
 
         const step = pollStep(action, predicate, this.mochaCtx, Steps.timeDilation)
