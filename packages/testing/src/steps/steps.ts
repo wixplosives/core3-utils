@@ -154,7 +154,7 @@ before('check time', async function () {
     this.timeout(ideaTime * 30);
     timeDilation(await getIntervalPerformance());
     // eslint-disable-next-line no-console
-    console.log(`Time dilation due to machine power: ${timeDilation}`);
+    console.log(`Time dilation due to machine power: ${timeDilation()}`);
 });
 
 beforeEach('save current test context', function () {
