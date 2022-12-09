@@ -1,86 +1,79 @@
 import { expect, use } from 'chai';
 import asPromised from 'chai-as-promised';
-import { Steps, withSteps } from '../steps';
+import {
+    allWithTimeout,
+    defaults,
+    mochaCtx,
+    poll,
+    sleep,
+    timeDilation,
+    waitForCall,
+    waitForStubCall,
+    withTimeout,
+} from '../steps';
 
 use(asPromised);
 
 describe('withSteps', () => {
     // eslint-disable-next-line @typescript-eslint/require-await
-    it(
-        'each step timeout extends the test timeout',
-        withSteps(async (step) => {
-            const TIMEOUT = 30;
-            const SAFETY_MARGIN = 20;
-            step.mochaCtx.timeout(1_000);
-            step.defaults.step.safetyMargin = SAFETY_MARGIN;
-            step.defaults.step.timeout = TIMEOUT;
-            await Promise.all([
-                expect(step.withTimeout(new Promise(() => 0))).to.eventually.rejectedWith('Timed out'),
-                expect(
-                    step.poll(
-                        () => 0,
-                        () => false
-                    )
-                ).to.eventually.rejectedWith('Timed out'),
-                expect(step.waitForCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
-                expect(step.waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out'),
-            ]);
-            expect(step.mochaCtx.timeout()).to.be.approximately(
-                1_000 + Steps.timeDilation * (+4 * TIMEOUT + 4 * SAFETY_MARGIN),
-                2
-            );
-        })
-    );
+    it('each step timeout extends the test timeout', async () => {
+        const TIMEOUT = 30;
+        const SAFETY_MARGIN = 20;
+        mochaCtx().timeout(1_000);
+        defaults().step.safetyMargin = SAFETY_MARGIN;
+        defaults().step.timeout = TIMEOUT;
+        await Promise.all([
+            expect(withTimeout(new Promise(() => 0))).to.eventually.rejectedWith('Timed out'),
+            expect(
+                poll(
+                    () => 0,
+                    () => false
+                )
+            ).to.eventually.rejectedWith('Timed out'),
+            expect(waitForCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
+            expect(waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out'),
+        ]);
+        expect(mochaCtx().timeout()).to.be.approximately(
+            1_000 + timeDilation() * (+4 * TIMEOUT + 4 * SAFETY_MARGIN),
+            2
+        );
+    });
 
     describe('withTimeout step', () => {
         const LONG_TIME = 10;
         const SHORT_TIME = 1;
-        it(
-            'times out with the description',
-            withSteps(async ({ sleep, withTimeout }) => {
-                await expect(
-                    withTimeout(sleep(LONG_TIME)).timeout(SHORT_TIME).description('test')
-                ).to.eventually.rejectedWith('test');
-            })
-        );
-        it(
-            'fulfils the promise in the allotted time',
-            withSteps(async ({ sleep, withTimeout }) => {
-                expect(await withTimeout(sleep(SHORT_TIME).then(() => 'success')).timeout(LONG_TIME)).to.equal(
-                    'success'
-                );
-            })
-        );
+        it('times out with the description', async () => {
+            await expect(
+                withTimeout(sleep(LONG_TIME)).timeout(SHORT_TIME).description('test')
+            ).to.eventually.rejectedWith('test');
+        });
+        it('fulfils the promise in the allotted time', async () => {
+            expect(await withTimeout(sleep(SHORT_TIME).then(() => 'success')).timeout(LONG_TIME)).to.equal('success');
+        });
     });
 
     describe('allWithTimeout step', () => {
         const LONG_TIME = 10;
         const SHORT_TIME = 1;
-        it(
-            'times out with the description',
-            withSteps(async ({ allWithTimeout, sleep }) => {
-                await expect(
-                    allWithTimeout(
-                        sleep(LONG_TIME).then(() => 1),
-                        sleep(SHORT_TIME).then(() => 'a'),
-                        sleep(SHORT_TIME).then(() => [])
-                    )
-                        .timeout(SHORT_TIME)
-                        .description('test')
-                ).to.eventually.rejectedWith('test');
-            })
-        );
-        it(
-            'fulfils the promise in the allotted time',
-            withSteps(async ({ sleep, allWithTimeout }) => {
-                const actual: [number, string, any[]] = await allWithTimeout(
-                    sleep(SHORT_TIME).then(() => 1),
+        it('times out with the description', async () => {
+            await expect(
+                allWithTimeout(
+                    sleep(LONG_TIME).then(() => 1),
                     sleep(SHORT_TIME).then(() => 'a'),
                     sleep(SHORT_TIME).then(() => [])
-                );
-                expect(actual).to.eql([1, 'a', []]);
-            })
-        );
+                )
+                    .timeout(SHORT_TIME)
+                    .description('test')
+            ).to.eventually.rejectedWith('test');
+        });
+        it('fulfils the promise in the allotted time', async () => {
+            const actual: [number, string, any[]] = await allWithTimeout(
+                sleep(SHORT_TIME).then(() => 1),
+                sleep(SHORT_TIME).then(() => 'a'),
+                sleep(SHORT_TIME).then(() => [])
+            );
+            expect(actual).to.eql([1, 'a', []]);
+        });
     });
 
     describe('firstCall', () => {
@@ -95,80 +88,76 @@ describe('withSteps', () => {
                 },
             };
         });
-        it(
-            'resolves with the call arguments',
-            withSteps(async (step) => {
-                const call = step.waitForCall(target, 'method');
-                target.method(1, 'success');
-                expect(await call).to.eql([1, 'success']);
-            })
-        );
-        it(
-            'times out if not called',
-            withSteps(async (step) => {
-                await expect(
-                    step.waitForCall(target, 'method').timeout(1).description('timeout')
-                ).to.eventually.rejectedWith('timeout');
-            })
-        );
-        it(
-            'calls thru to the original method',
-            withSteps(async (step) => {
-                const call = step.waitForCall(target, 'method');
-                target.method(1, 'success');
-                await call;
-                expect(target).to.deep.contain({ a: 1, b: 'success' });
-            })
-        );
-        it(
-            'restores the original method after the step is done',
-            withSteps(async (step) => {
-                const originalMethod = target.method;
-                const call = step.waitForCall(target, 'method');
-                target.method(1, 'success');
-                await call;
-                expect(target.method).to.equal(originalMethod);
-            })
-        );
+        it('resolves with the call arguments', async () => {
+            const call = waitForCall(target, 'method');
+            target.method(1, 'success');
+            expect(await call).to.eql([1, 'success']);
+        });
+        it('times out if not called', async () => {
+            await expect(waitForCall(target, 'method').timeout(1).description('timeout')).to.eventually.rejectedWith(
+                'timeout'
+            );
+        });
+        it('calls thru to the original method', async () => {
+            const call = waitForCall(target, 'method');
+            target.method(1, 'success');
+            await call;
+            expect(target).to.deep.contain({ a: 1, b: 'success' });
+        });
+        it('restores the original method after the step is done', async () => {
+            const originalMethod = target.method;
+            const call = waitForCall(target, 'method');
+            target.method(1, 'success');
+            await call;
+            expect(target.method).to.equal(originalMethod);
+        });
     });
 
     describe('waitForStubCall', () => {
-        it(
-            'resolves to {callArgs, returned}',
-            withSteps(async ({ sleep, waitForStubCall }) => {
-                expect(
-                    await waitForStubCall(async (stub) => {
-                        await sleep(1);
-                        stub('success');
-                        return 'action!';
-                    })
-                ).to.eql({
-                    callArgs: ['success'],
-                    returned: 'action!',
-                });
-            })
-        );
-        it(
-            'times out when the stub is not called',
-            withSteps(async ({ sleep, waitForStubCall }) => {
-                await expect(
-                    waitForStubCall(async (stub) => {
-                        await sleep(100);
-                        stub('success');
-                    }).timeout(10)
-                ).to.eventually.rejectedWith('Timed out');
-            })
-        );
-    });
+        it('resolves to {callArgs, returned}', async () => {
+            expect(
+                await waitForStubCall(async (stub) => {
+                    await sleep(1);
+                    stub('success');
+                    return 'action!';
+                })
+            ).to.eql({
+                callArgs: ['success'],
+                returned: 'action!',
+            });
+        });
+        it('times out when the stub is not called', async () => {
+            await expect(
+                waitForStubCall(async (stub) => {
+                    await sleep(100);
+                    stub('success');
+                }).timeout(10)
+            ).to.eventually.rejectedWith('Timed out');
+        });
 
-    describe('sleep', () => {
-        it(
-            'sleep',
-            withSteps(async (steps) => {
-                steps.defaults.step.timeout = 50;
-                expect(await steps.withTimeout(steps.sleep(1))).not.to.throw;
-                await expect(steps.withTimeout(steps.sleep(1000))).to.eventually.rejectedWith('Timed out');
-            })
-        );
+        describe('sleep', () => {
+            it('sleep', async () => {
+                defaults().step.timeout = 50;
+                expect(await withTimeout(sleep(1))).not.to.throw;
+                await expect(withTimeout(sleep(1000))).to.eventually.rejectedWith('Timed out');
+            });
+        });
+
+        describe(`usage in beforeEach`, () => {
+            beforeEach(async () => {
+                defaults().poll.interval = 1234;
+                await sleep(1);
+                await sleep(1);
+                await sleep(1);
+            });
+            it(`does not share step count with beforeEach`, async () => {
+                await expect(withTimeout(sleep(100)).timeout(1)).to.be.eventually.rejectedWith('step 1');
+            });
+            it(`share defaults with beforeEach`, () => {
+                expect(defaults().poll.interval).to.equal(1234);
+            });
+        });
     });
 });
+
+expect(() => sleep(0), 'Usage outside of mocha test').to.throw('Invalid use of the testing package')
