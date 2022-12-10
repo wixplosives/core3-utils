@@ -4,12 +4,16 @@ import { disposeAfter } from '../dispose';
 import { getIntervalPerformance, ideaTime } from '../measure-machine';
 import { pollStep } from './poll';
 import { promiseStep } from './promise';
-import type { Predicate } from './types';
+import type { PollStep, Predicate, PromiseAll, PromiseWithTimeout, StepsDefaults } from './types';
 type CaptureStackFn = (s: { stack: string }) => void;
-type Stub = (...args: any[]) => void;
+/**
+ * A generated stub
+ */
+export type Stub = (...args: any[]) => void;
 
 let stepsCountByTest = new WeakMap<Mocha.Test, number>();
-let stepsDefaults: ReturnType<typeof getDefaults>;
+
+let stepsDefaults: StepsDefaults;
 let currentTest: Mocha.Test;
 const increaseStepsCount = () => {
     const count = stepsCountByTest.get(currentTest.ctx?.test as Mocha.Test) || 1;
@@ -24,7 +28,7 @@ const ctx = () => {
     return currentTest.ctx;
 };
 
-const getDefaults = () => ({
+const getDefaults = (): StepsDefaults => ({
     step: {
         timeout: 1000,
         safetyMargin: 50,
@@ -38,7 +42,18 @@ const getDefaults = () => ({
 });
 
 let _timeDilation: number;
+
+/**
+ * Get current test step time dilation
+ *
+ * - All timeout set in tests will be multiplied by timeDilation()
+ */
 export function timeDilation(): number;
+/**
+ * Set current test step time dilation
+ *
+ * - All timeout set in tests will be multiplied by timeDilation()
+ */
 export function timeDilation(value: number): number;
 export function timeDilation(value?: number) {
     if (value && value > 0) {
@@ -65,7 +80,20 @@ const addTimeoutSafetyMargin = () => {
     ctx().timeout(ctx().timeout() + stepsDefaults.step.safetyMargin * timeDilation());
 };
 
-export function withTimeout<T>(action: Promise<T>) {
+/**
+ * Limits the time a promise can take
+ *
+ * - Note: useable only within a mocha test/hook.
+ * The total test timeout will be adjusted to make sure the test
+ * will not time out waiting for this step
+ *
+ * @example
+ * ```ts
+ * await withTimeout(sleep(1000)).description('will time out').timeout(10)
+ * ```
+ * @param action a promise that should be settled before the timeout
+ */
+export function withTimeout<T>(action: Promise<T>): PromiseWithTimeout<T> {
     addTimeoutSafetyMargin();
     const step = promiseStep(action, ctx(), true, timeDilation())
         .timeout(stepsDefaults.step.timeout, stepsDefaults.step.adjustToMachinePower)
@@ -74,11 +102,50 @@ export function withTimeout<T>(action: Promise<T>) {
     return step;
 }
 
-export function allWithTimeout<T extends Readonly<any[]>>(...actions: T) {
+/**
+ * Limits the time a list of promises can take
+ *
+ * - Note: useable only within a mocha test/hook.
+ * The total test timeout will be adjusted to make sure the test
+ * will not time out waiting for this step
+ *
+ * {@link @wixc3/testing#Expected | Has helpful predicator creators }
+ *
+ * @example
+ * ```ts
+ * await allWithTimeout(sleep(1000), sleep(99)).description('will time out').timeout(10)
+ * ```
+ * @param action promises that should be settled before the timeout
+ */
+export function allWithTimeout<T extends Readonly<any[]>>(...actions: T): PromiseWithTimeout<PromiseAll<T>> {
     return withTimeout(Promise.all(actions));
 }
 
-export function poll<T>(action: () => T, predicate?: Predicate<T> | Awaited<T>) {
+/**
+ * Checks the return value of am action until it satisfies the predicate
+ *
+ * Error handling can be changed using allowErrors. the default behavior is:
+ *
+ * - When the action throws the step fails
+ *
+ * - When the predicate throws the polling continues
+ *
+ * @example
+ * ```ts
+ * await poll(()=>getValue(), {a:0}).description('value matches {a:0}').timeout(100).interval(10)
+ * ```
+ * @example
+ * ```ts
+ * await poll(()=>getValue(), v => expect(v).to.be.approximately(10, 1)).description('value is 10+-1')
+ * ```
+ * @example
+ * ```ts
+ * await poll(()=>mightThrow(), {a:0}).description('value matches {a:0}').allowErrors()
+ * ```
+ * @param predicate predicated value (compared with expect.eql)
+ * *or* a predicate function that will be considered satisfied when returning **values other than false**
+ */
+export function poll<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): PollStep<T> {
     addTimeoutSafetyMargin();
     const {
         poll: { interval, allowActionError, allowPredicateError },
@@ -93,7 +160,18 @@ export function poll<T>(action: () => T, predicate?: Predicate<T> | Awaited<T>) 
     return step;
 }
 
-export function waitForCall<S extends object>(scope: S, method: keyof S | S[keyof S]) {
+/**
+ * Spies on an object method, waiting until it's called.
+ * The spy is removed once called
+ *
+ * @example
+ * ```ts
+ * const call = waitForSpyCall(target, 'method');
+ * target.method(1, 'success');
+ * expect(await call).to.eql([1, 'success']);
+ * ```
+ */
+export function waitForSpyCall<S extends object>(scope: S, method: keyof S | S[keyof S]): PromiseWithTimeout<any[]> {
     const def = deferred<any[]>();
     let methodName = '';
     if (isString(method)) {
@@ -123,7 +201,28 @@ export function waitForCall<S extends object>(scope: S, method: keyof S | S[keyo
     }
 }
 
-export function waitForStubCall<T>(action: (stub: Stub) => T, waitForAction = true) {
+/**
+ * Creates a stub, then waits for it to be called
+ * @example
+ * ```ts
+ *  expect(await waitForStubCall(async (stub) => {
+ *      await sleep(1);
+ *      stub('success');
+ *      return 'action!';
+ *  })).to.eql({
+ *      callArgs: ['success'],
+ *      returned: 'action!',
+ *  });
+ * ```
+ * @param waitForAction when false the action is not awaited, waits only for the stub to be called
+ */
+export function waitForStubCall<T>(
+    action: (stub: Stub) => T,
+    waitForAction = true
+): PromiseWithTimeout<{
+    returned: T;
+    callArgs: any[];
+}> {
     const d = deferred<any[]>();
     const returned = action((...args: any[]) => d.resolve(args));
     const step = withTimeout(
@@ -134,19 +233,28 @@ export function waitForStubCall<T>(action: (stub: Stub) => T, waitForAction = tr
     return step;
 }
 
-export function sleep(ms?: number) {
+/**
+ * Resolves after ms milliseconds
+ */
+export function sleep(ms?: number): PromiseWithTimeout<void> {
     addTimeoutSafetyMargin();
-    return promiseStep(new Promise(() => void 0), ctx(), false, timeDilation()).timeout(
+    return promiseStep(new Promise<void>(() => void 0), ctx(), false, timeDilation()).timeout(
         ms || stepsDefaults.step.timeout,
         stepsDefaults.step.adjustToMachinePower
     );
 }
 
-export function defaults() {
+/**
+ * default values for steps of the current test
+ */
+export function defaults(): StepsDefaults {
     return stepsDefaults;
 }
 
-export function mochaCtx() {
+/**
+ * active mocha context
+ */
+export function mochaCtx(): Mocha.Context {
     return currentTest.ctx!;
 }
 
