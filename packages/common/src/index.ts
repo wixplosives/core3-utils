@@ -3,6 +3,7 @@
  * Useful utils for strings, iterables, objects, maps, promises and other commonly used structures
  */
 export * from './strings';
+export * from './arrays';
 export * from './numbers';
 export * from './objects';
 export * from './iterables';
