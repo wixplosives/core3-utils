@@ -1,77 +1,131 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../../../node_modules/@types/chai/index.d.ts" />
+
 /**
- * Errors
+ * @internal
+ * Promise.all return type
  */
-type Info = { description: string; timeout: number };
-type StepPromise<T extends Info = Info, R = any> = Promise<R> & {
+export type _PromiseAll<T extends Readonly<any[]>> = { -readonly [P in keyof T]: Awaited<T[P]> };
+
+/**
+ * Step info base, added step errors
+ */
+export interface Info {
+    description: string;
+    timeout: number;
+}
+
+/**
+ * Steps base
+ */
+export interface Step<T extends Info = Info, R = any> extends Promise<R> {
     stack: string;
     info: T;
+    /**
+     * @internal
+     * parses the info field for the error message
+     */
     _parseInfoForErrorMessage: (info: T) => string;
-};
-
-export class StepError<T extends Info> extends Error {
-    constructor(message: string, p: StepPromise<T>, cause?: unknown) {
-        super(message, { cause });
-        this.info = p.info;
-        this.stack = p.stack || this.stack;
-    }
-    info: T;
-}
-
-export class TimeoutError<T extends Info> extends StepError<T> {
-    constructor(p: StepPromise<T>) {
-        super(
-            `Timed out in step "${p.info.description}" after ${p.info.timeout}ms${
-                p.info ? `\nInfo: ${p._parseInfoForErrorMessage(p.info)}` : ''
-            }`,
-            p
-        );
-    }
-}
-
-export class RejectedError<T extends Info> extends StepError<T> {
-    constructor(p: StepPromise<T>, reason: any) {
-        super(
-            `Error in step "${p.info.description}"\ncause: ${
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                reason?.message || reason
-            }\n${p.stack}`,
-            p,
-            reason
-        );
-    }
 }
 
 /**
- * PromiseWithTimeout
+ * Sets step timeout
  */
 export type Timeout<T> = (ms: number, adjustToMachinePower?: boolean) => T;
 
+/**
+ * Sets step description
+ */
 export type Description<T> = (description: string) => T;
 
-export type PromiseWithTimeout<T> = StepPromise<Info, T> & {
+/**
+ * WithTimeout API
+ */
+export interface PromiseWithTimeout<T> extends Step<Info, T> {
     timeout: Timeout<PromiseWithTimeout<T>>;
     description: Description<PromiseWithTimeout<T>>;
     info: Info;
     stack: string;
-};
+}
 
 /**
- * PollStep
+ * Polling API
  */
-export type PollStep<T> = StepPromise<PollInfo, T> & {
+export interface PollStep<T> extends Step<PollInfo, T> {
     timeout: Timeout<PollStep<T>>;
     description: Description<PollStep<T>>;
     interval: (ms: number) => PollStep<T>;
     allowErrors: (action?: boolean, predicate?: boolean) => PollStep<T>;
     stack: string;
     info: PollInfo;
-};
-export type Stage = 'action' | 'predicate';
-export type AllowedErrors = { [_ in Stage]: boolean };
+}
+
+/**
+ * Info added to polling exceptions
+ */
 export interface PollInfo extends Info {
     polledValues: ({ action: any } | { predicate: any })[];
     interval: number;
     timeout: number;
-    allowErrors: AllowedErrors;
+    allowErrors: {
+        action: boolean;
+        predicate: boolean;
+    };
 }
-export type Predicate<T> = (a: Awaited<T>) => boolean | Chai.Assertion | void;
+/**
+ * A predicate function
+ *
+ * Any return value other than **false** or throwing is considered as satisfying the predicate
+ */
+export type Predicate<T> = (actionResult: Awaited<T>) => boolean | Chai.Assertion | void;
+
+/**
+ * Test step defaults
+ */
+export interface StepsDefaults {
+    /**
+     * Common to all step types
+     */
+    step: TimeoutDefaults;
+    /**
+     * Poll steps defaults
+     */
+    poll: PollDefaults;
+}
+
+/**
+ * Step timeout defaults
+ */
+export interface TimeoutDefaults {
+    /**
+     * @defaultValue 1000
+     */
+    timeout: number;
+    /**
+     * Added per each step used in a test
+     * @defaultValue 50
+     */
+    safetyMargin: number;
+    /**
+     * @defaultValue true
+     */
+    adjustToMachinePower: boolean;
+}
+
+/**
+ * Defaults for poll steps
+ */
+export interface PollDefaults {
+    /**
+     * @defaultValue 100
+     */
+    interval: number;
+    /**
+     * @defaultValue false
+     */
+    allowActionError: boolean;
+    /**
+     * @defaultValue true
+     */
+    allowPredicateError: boolean;
+}

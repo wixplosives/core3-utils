@@ -7,7 +7,7 @@ import {
     poll,
     sleep,
     timeDilation,
-    waitForCall,
+    waitForSpyCall,
     waitForStubCall,
     withTimeout,
 } from '../steps';
@@ -30,7 +30,7 @@ describe('withSteps', () => {
                     () => false
                 )
             ).to.eventually.rejectedWith('Timed out'),
-            expect(waitForCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
+            expect(waitForSpyCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
             expect(waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out'),
         ]);
         expect(mochaCtx().timeout()).to.be.approximately(
@@ -89,24 +89,24 @@ describe('withSteps', () => {
             };
         });
         it('resolves with the call arguments', async () => {
-            const call = waitForCall(target, 'method');
+            const call = waitForSpyCall(target, 'method');
             target.method(1, 'success');
             expect(await call).to.eql([1, 'success']);
         });
         it('times out if not called', async () => {
-            await expect(waitForCall(target, 'method').timeout(1).description('timeout')).to.eventually.rejectedWith(
+            await expect(waitForSpyCall(target, 'method').timeout(1).description('timeout')).to.eventually.rejectedWith(
                 'timeout'
             );
         });
         it('calls thru to the original method', async () => {
-            const call = waitForCall(target, 'method');
+            const call = waitForSpyCall(target, 'method');
             target.method(1, 'success');
             await call;
             expect(target).to.deep.contain({ a: 1, b: 'success' });
         });
         it('restores the original method after the step is done', async () => {
             const originalMethod = target.method;
-            const call = waitForCall(target, 'method');
+            const call = waitForSpyCall(target, 'method');
             target.method(1, 'success');
             await call;
             expect(target.method).to.equal(originalMethod);

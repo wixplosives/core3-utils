@@ -1,13 +1,13 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="../../../../node_modules/@types/chai/index.d.ts" />
 import { last } from '@wixc3/common';
 import { expect } from 'chai';
 import { promiseStep } from './promise';
-import type { PollInfo, PollStep, Predicate, Stage } from './types';
+import type { PollInfo, PollStep, Predicate } from './types';
+
+type Stage = 'action' | 'predicate';
 
 export function pollStep<T>(
     action: () => T,
-    predicate: Predicate<T> | Awaited<T> | undefined,
+    predicate: Predicate<T> | Awaited<T>,
     ctx: Mocha.Context,
     timeDilation: number
 ): PollStep<T> {
@@ -31,7 +31,6 @@ export function pollStep<T>(
         }
     };
 
-    predicate = predicate === undefined ? (v: Awaited<T>) => !!v : predicate;
     const _predicate = (
         typeof predicate === 'function' ? predicate : (v: Awaited<T>) => expect(v).to.eql(predicate)
     ) as Predicate<T>;
