@@ -4,7 +4,7 @@ import { disposeAfter } from '../dispose';
 import { getIntervalPerformance, ideaTime } from '../measure-machine';
 import { pollStep } from './poll';
 import { promiseStep } from './promise';
-import type {Predicate} from './types'
+import type { Predicate } from './types';
 type CaptureStackFn = (s: { stack: string }) => void;
 type Stub = (...args: any[]) => void;
 
@@ -18,11 +18,11 @@ const increaseStepsCount = () => {
 };
 
 const ctx = () => {
-    if (!currentTest?.ctx){
-        throw new Error(`Invalid use of the testing package: no mocha test context`)
+    if (!currentTest?.ctx) {
+        throw new Error(`Invalid use of the testing package: no mocha test context`);
     }
-    return currentTest.ctx
-}
+    return currentTest.ctx;
+};
 
 const getDefaults = () => ({
     step: {

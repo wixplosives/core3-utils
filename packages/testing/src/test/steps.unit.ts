@@ -160,4 +160,4 @@ describe('withSteps', () => {
     });
 });
 
-expect(() => sleep(0), 'Usage outside of mocha test').to.throw('Invalid use of the testing package')
+expect(() => sleep(0), 'Usage outside of mocha test').to.throw('Invalid use of the testing package');

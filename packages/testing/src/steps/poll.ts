@@ -3,7 +3,7 @@
 import { last } from '@wixc3/common';
 import { expect } from 'chai';
 import { promiseStep } from './promise';
-import type {  PollInfo, PollStep, Predicate, Stage } from './types';
+import type { PollInfo, PollStep, Predicate, Stage } from './types';
 
 export function pollStep<T>(
     action: () => T,
@@ -21,10 +21,10 @@ export function pollStep<T>(
         reject = _reject;
     });
 
-    const handleError = (e: any, type:Stage) => {
+    const handleError = (e: any, type: Stage) => {
         if (p.info.allowErrors[type]) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            p.info.polledValues.push({[type]:e} as Record<Stage,any> )
+            p.info.polledValues.push({ [type]: e } as Record<Stage, any>);
         } else {
             clearInterval(intervalId);
             reject(e);
@@ -38,16 +38,16 @@ export function pollStep<T>(
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const p = promiseStep<T>(intervalPromise, ctx, true, timeDilation) as unknown as PollStep<T>;
-    p._parseInfoForErrorMessage =_parseInfoForErrorMessage
-    
-    p.info = initialInfo()
+    p._parseInfoForErrorMessage = _parseInfoForErrorMessage;
+
+    p.info = initialInfo();
 
     p.interval = (ms: number) => {
         clearInterval(intervalId);
         intervalId = setInterval(async () => {
             try {
                 value = await Promise.resolve(action());
-                p.info.polledValues.push({'action':value});
+                p.info.polledValues.push({ action: value });
                 try {
                     if (_predicate(value!) !== false) {
                         clearInterval(intervalId);
@@ -73,25 +73,25 @@ export function pollStep<T>(
     return p;
 }
 
-function _parseInfoForErrorMessage (p:PollInfo) {
-    const logEntry = last(p.polledValues)
+function _parseInfoForErrorMessage(p: PollInfo) {
+    const logEntry = last(p.polledValues);
     if (logEntry) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const [type, value] = Object.entries(logEntry)[0]!
-        return `last ${type} returned: ${JSON.stringify(value, null,2)}`
+        const [type, value] = Object.entries(logEntry)[0]!;
+        return `last ${type} returned: ${JSON.stringify(value, null, 2)}`;
     }
-    return `No values polled`
+    return `No values polled`;
 }
 
 function initialInfo(): PollInfo {
     return {
-        description:'',
-        polledValues:[],
-        interval:0,
-        timeout:0,
-        allowErrors:{
-            action:false,
-            predicate:true
-        }
-    }
+        description: '',
+        polledValues: [],
+        interval: 0,
+        timeout: 0,
+        allowErrors: {
+            action: false,
+            predicate: true,
+        },
+    };
 }

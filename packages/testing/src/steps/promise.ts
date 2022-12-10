@@ -1,4 +1,4 @@
-import { PromiseWithTimeout, RejectedError, TimeoutError } from "./types";
+import { PromiseWithTimeout, RejectedError, TimeoutError } from './types';
 
 export function promiseStep<T>(
     src: Promise<T>,
@@ -21,12 +21,12 @@ export function promiseStep<T>(
             },
             (reason) => {
                 clearTimeout(timerId);
-                reject(new RejectedError(p,reason));
+                reject(new RejectedError(p, reason));
             }
         );
     }) as PromiseWithTimeout<T>;
-    p._parseInfoForErrorMessage = (info:any) => JSON.stringify(info, null, 2)
-    p.info = {description:'', timeout:0}
+    p._parseInfoForErrorMessage = (info: any) => JSON.stringify(info, null, 2);
+    p.info = { description: '', timeout: 0 };
 
     const _timeout = (ms: number, adjustToMachinePower = true) => {
         if (adjustToMachinePower) {
@@ -57,4 +57,3 @@ export function promiseStep<T>(
 
     return p;
 }
-
