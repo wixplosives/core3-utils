@@ -1,16 +1,16 @@
 import { expect } from 'chai';
-import { getCartesianProductOfArrays } from '..';
+import { getCartesianProduct } from '..';
 
 describe('getCartesianProductOfArrays', () => {
     describe('get all combinations of one from each array', () => {
         it('no arrays', () => {
-            expect(getCartesianProductOfArrays([])).to.deep.equal([]);
+            expect(getCartesianProduct([])).to.deep.equal([]);
         });
         it('one array', () => {
-            expect(getCartesianProductOfArrays([[1, 2, 3]])).to.deep.equal([[1], [2], [3]]);
+            expect(getCartesianProduct([[1, 2, 3]])).to.deep.equal([[1], [2], [3]]);
         });
         it('two arrays', () => {
-            const combos = getCartesianProductOfArrays([
+            const combos = getCartesianProduct([
                 [1, 2],
                 [3, 4],
             ]);
@@ -21,7 +21,7 @@ describe('getCartesianProductOfArrays', () => {
             expect(combos).to.have.lengthOf(4);
         });
         it('three arrays', () => {
-            const combos = getCartesianProductOfArrays([
+            const combos = getCartesianProduct([
                 [1, 2],
                 [3, 4],
                 [5, 6],

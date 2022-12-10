@@ -92,23 +92,6 @@ export async function awaitRecord<
     return out as Out;
 }
 
-export function getCartesianProductOfArrays<T>(arrays: T[][]): T[][] {
-    if (arrays.length === 0) {
-        return [];
-    } else if (arrays.length === 1) {
-        return arrays[0]!.map((elem) => [elem]);
-    } else {
-        const otherCombinations = getCartesianProductOfArrays(arrays.slice(1));
-        const finalCombinations: T[][] = [];
-        for (const elem of arrays[0]!) {
-            for (const combo of otherCombinations) {
-                finalCombinations.push([elem, ...combo]);
-            }
-        }
-        return finalCombinations;
-    }
-}
-
 export const newMacrotask = () => sleep(0);
 
 /**
