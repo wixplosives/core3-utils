@@ -2,9 +2,9 @@ import { isString } from '@wixc3/common';
 import { deferred } from 'promise-assist';
 import { disposeAfter } from '../dispose';
 import { getIntervalPerformance, ideaTime } from '../measure-machine';
-import { pollStep, Predicate } from './poll';
+import { pollStep } from './poll';
 import { promiseStep } from './promise';
-
+import type {Predicate} from './types'
 type CaptureStackFn = (s: { stack: string }) => void;
 type Stub = (...args: any[]) => void;
 

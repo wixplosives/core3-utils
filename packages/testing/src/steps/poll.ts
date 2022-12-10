@@ -1,7 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../../../node_modules/@types/chai/index.d.ts" />
+import { last } from '@wixc3/common';
 import { expect } from 'chai';
-import { Description, promiseStep, Timeout } from './promise';
+import { promiseStep } from './promise';
+import type {  PollInfo, PollStep, Predicate, Stage } from './types';
 
 export function pollStep<T>(
     action: () => T,
@@ -12,21 +14,17 @@ export function pollStep<T>(
     let intervalId!: number;
     let resolve: (value: T | PromiseLike<T>) => void;
     let reject: (reason?: any) => void;
-    let allowErrors = {
-        predicate: false,
-        action: false,
-    };
     let value: Awaited<T>;
 
-    const intervalPromise = new Promise((_resolve, _reject) => {
+    const intervalPromise = new Promise<T>((_resolve, _reject) => {
         resolve = _resolve;
         reject = _reject;
     });
 
-    const handleError = (e: any, type: 'action' | 'predicate') => {
-        if (allowErrors[type]) {
+    const handleError = (e: any, type:Stage) => {
+        if (p.info.allowErrors[type]) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            p.info = `last ${type} error: ${e}`;
+            p.info.polledValues.push({[type]:e} as Record<Stage,any> )
         } else {
             clearInterval(intervalId);
             reject(e);
@@ -39,14 +37,17 @@ export function pollStep<T>(
     ) as Predicate<T>;
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-    const p = promiseStep(intervalPromise, ctx, true, timeDilation) as PollStep<T>;
+    const p = promiseStep<T>(intervalPromise, ctx, true, timeDilation) as unknown as PollStep<T>;
+    p._parseInfoForErrorMessage =_parseInfoForErrorMessage
+    
+    p.info = initialInfo()
+
     p.interval = (ms: number) => {
         clearInterval(intervalId);
         intervalId = setInterval(async () => {
             try {
                 value = await Promise.resolve(action());
-                p.info = `last polled value: ${value}`;
-                p.lastPolledValue = value;
+                p.info.polledValues.push({'action':value});
                 try {
                     if (_predicate(value!) !== false) {
                         clearInterval(intervalId);
@@ -62,7 +63,7 @@ export function pollStep<T>(
         return p;
     };
     p.allowErrors = (action = true, predicate = true) => {
-        allowErrors = { action, predicate };
+        p.info.allowErrors = { action, predicate };
         return p;
     };
     p.catch(() => {
@@ -72,14 +73,25 @@ export function pollStep<T>(
     return p;
 }
 
-export type PollStep<T> = Promise<T> & {
-    timeout: Timeout<PollStep<T>>;
-    description: Description<PollStep<T>>;
-    interval: (ms: number) => PollStep<T>;
-    allowErrors: (action?: boolean, predicate?: boolean) => PollStep<T>;
-    stack: string;
-    info: any;
-    lastPolledValue: T;
-};
+function _parseInfoForErrorMessage (p:PollInfo) {
+    const logEntry = last(p.polledValues)
+    if (logEntry) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const [type, value] = Object.entries(logEntry)[0]!
+        return `last ${type} returned: ${JSON.stringify(value, null,2)}`
+    }
+    return `No values polled`
+}
 
-export type Predicate<T> = (a: Awaited<T>) => boolean | Chai.Assertion | void;
+function initialInfo(): PollInfo {
+    return {
+        description:'',
+        polledValues:[],
+        interval:0,
+        timeout:0,
+        allowErrors:{
+            action:false,
+            predicate:true
+        }
+    }
+}
