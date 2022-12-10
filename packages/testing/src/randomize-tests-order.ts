@@ -2,10 +2,9 @@ import { shuffle } from '@wixc3/common';
 
 let _shouldRandomize = false;
 let wasSet = false;
-
 export function randomizeTestsOrder(shouldRandomize = true) {
-    if (wasSet) {
-        throw new Error('randomizeTestsOrder was already called');
+    if (wasSet && shouldRandomize !== _shouldRandomize) {
+        throw new Error(`conflicting randomizeTestsOrder randomizeTestsOrder(${_shouldRandomize})`);
     }
     _shouldRandomize = shouldRandomize;
     wasSet = true;
