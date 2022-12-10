@@ -1,14 +1,14 @@
-import { shuffle } from "@wixc3/common";
+import { shuffle } from '@wixc3/common';
 
 let _shouldRandomize = false;
 let wasSet = false;
 
 export function randomizeTestsOrder(shouldRandomize = true) {
     if (wasSet) {
-        throw new Error('randomizeTestsOrder was already called')
+        throw new Error('randomizeTestsOrder was already called');
     }
     _shouldRandomize = shouldRandomize;
-    wasSet = true
+    wasSet = true;
 }
 const shuffleTests = (s: Mocha.Suite) => {
     shuffle(s.tests);
@@ -29,4 +29,3 @@ before(function () {
         }
     }
 });
-

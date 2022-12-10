@@ -2,22 +2,22 @@
  * Shuffles an array
  * @returns a new array with the same elements in a random order
  */
-export function shuffle<T>(array: T[]):T[] {
-    const order = randomizedOrder(array.length)
-    return array.map((_,i)=>array[order[i]!]!)
+export function shuffle<T>(array: T[]): T[] {
+    const order = randomizedOrder(array.length);
+    return array.map((_, i) => array[order[i]!]!);
 }
 
 /**
- * 
+ *
  * @returns an array of integers in range [0..size-1] in random order
  */
-export function randomizedOrder(size:number) {
-    const arr = new Array(size).fill(0).map((_,i)=>i)
+export function randomizedOrder(size: number) {
+    const arr = new Array(size).fill(0).map((_, i) => i);
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         swap(arr, i, j);
     }
-    return arr
+    return arr;
 }
 
 /**
