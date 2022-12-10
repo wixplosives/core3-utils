@@ -23,11 +23,6 @@
 | [@wixc3/node](https://wixplosives.github.io/core3-utils/node)                         |                                                                                                      |
 | [@wixc3/patterns](https://wixplosives.github.io/core3-utils/patterns)                 | Useful data structures such as LRU-Cache, set-multi-map, Signal, EventEmitter, Disposable, Debouncer |
 | [@wixc3/performance](https://wixplosives.github.io/core3-utils/performance)           | Performance measuring                                                                                |
-| [@wixc3/testing](https://wixplosives.github.io/core3-utils/testing)                   | <p>Utils for making mocha + chai testing easy and fun</p><p>### Steps                                |
-
-Steps are a convenient way to craft async tests. A step has a timeout and a description, making test timeouts easy to understand and debug. Each step timeout auto increases the test timeout, assuring the step will time out before the test</p><p>#### Available steps:
-
-- [poll()](https://wixplosives.github.io/core3-utils/testing.poll)</p><p>- [withTimeout()](https://wixplosives.github.io/core3-utils/testing.withtimeout)</p><p>- [allWithTimeout()](https://wixplosives.github.io/core3-utils/testing.allwithtimeout)</p><p>- [waitForSpyCall()](https://wixplosives.github.io/core3-utils/testing.waitforspycall)</p><p>- [waitForStubCall()](https://wixplosives.github.io/core3-utils/testing.waitforstubcall)</p><p>- [sleep()](https://wixplosives.github.io/core3-utils/testing.sleep)</p><p>### Other goodies
-</p><p>- [disposeAfter()](https://wixplosives.github.io/core3-utils/testing.disposeafter) will dispose of test resources after the test is done</p><p>- [useSafeFakeTimers()](https://wixplosives.github.io/core3-utils/testing.usesafefaketimers) makes it easy to safely use fake timers</p><p>- [randomizeTestsOrder()](https://wixplosives.github.io/core3-utils/testing.randomizetestsorder) will randomize testing order to make sure tests are isolated and distribute load more uniformly when running parallel tests</p> |
-|  [@wixc3/typescript](https://wixplosives.github.io/core3-utils/typescript) | TypeScript utilities |
-|  [@wixc3/wait-for-call](https://wixplosives.github.io/core3-utils/wait-for-call) | A handy way to test callbacks |
+| [@wixc3/testing](https://wixplosives.github.io/core3-utils/testing)                   | Utils for making mocha + chai testing easy and fun                                                   |
+| [@wixc3/typescript](https://wixplosives.github.io/core3-utils/typescript)             | TypeScript utilities                                                                                 |
+| [@wixc3/wait-for-call](https://wixplosives.github.io/core3-utils/wait-for-call)       | A handy way to test callbacks                                                                        |

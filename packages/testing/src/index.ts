@@ -1,7 +1,8 @@
 /**
  * @packageDocumentation
  * Utils for making mocha + chai testing easy and fun
- *
+ * 
+ * @remarks
  * [[[h 3 Steps]]]
  * Steps are a convenient way to craft async tests.
  * A step has a timeout and a description, making test timeouts easy to understand and debug.

@@ -9,6 +9,8 @@
 
 Utils for making mocha + chai testing easy and fun
 
+## Remarks
+
 ### Steps
 
 Steps are a convenient way to craft async tests. A step has a timeout and a description, making test timeouts easy to understand and debug. Each step timeout auto increases the test timeout, assuring the step will time out before the test
