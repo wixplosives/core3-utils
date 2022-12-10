@@ -7,15 +7,76 @@
 
 ## testing package
 
+Utils for making mocha + chai testing easy and fun
+
+### Steps
+
+Steps are a convenient way to craft async tests. A step has a timeout and a description, making test timeouts easy to understand and debug. Each step timeout auto increases the test timeout, assuring the step will time out before the test
+
+#### Available steps:
+
+- [poll()](https://wixplosives.github.io/core3-utils/testing.poll)
+
+- [withTimeout()](https://wixplosives.github.io/core3-utils/testing.withtimeout)
+
+- [allWithTimeout()](https://wixplosives.github.io/core3-utils/testing.allwithtimeout)
+
+- [waitForSpyCall()](https://wixplosives.github.io/core3-utils/testing.waitforspycall)
+
+- [waitForStubCall()](https://wixplosives.github.io/core3-utils/testing.waitforstubcall)
+
+- [sleep()](https://wixplosives.github.io/core3-utils/testing.sleep)
+
+### Other goodies
+
+- [disposeAfter()](https://wixplosives.github.io/core3-utils/testing.disposeafter) will dispose of test resources after the test is done
+
+- [useSafeFakeTimers()](https://wixplosives.github.io/core3-utils/testing.usesafefaketimers) makes it easy to safely use fake timers
+
+- [randomizeTestsOrder()](https://wixplosives.github.io/core3-utils/testing.randomizetestsorder) will randomize testing order to make sure tests are isolated and distribute load more uniformly when running parallel tests
+
+## Classes
+
+| Class                                                                  | Description                                                                                 |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [Expected](https://wixplosives.github.io/core3-utils/testing.expected) | Handy predicate creators for [poll](https://wixplosives.github.io/core3-utils/testing.poll) |
+
 ## Functions
 
-| Function                                                                                     | Description  |
-| -------------------------------------------------------------------------------------------- | ------------ |
-| [runSteps(steps)](https://wixplosives.github.io/core3-utils/testing.runsteps)                |              |
-| [step(action, timeout, description)](https://wixplosives.github.io/core3-utils/testing.step) | Step creator |
+| Function                                                                                                      | Description                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [allWithTimeout(actions)](https://wixplosives.github.io/core3-utils/testing.allwithtimeout)                   | <p>Limits the time a list of promises can take</p><p>- Note: useable only within a mocha test/hook. The total test timeout will be adjusted to make sure the test will not time out waiting for this step</p>                                                                                                                                                                   |
+| [defaults()](https://wixplosives.github.io/core3-utils/testing.defaults)                                      | default values for steps of the current test                                                                                                                                                                                                                                                                                                                                    |
+| [disposeAfter(disposable)](https://wixplosives.github.io/core3-utils/testing.disposeafter)                    | Disposes of test resources after the test is done                                                                                                                                                                                                                                                                                                                               |
+| [mochaCtx()](https://wixplosives.github.io/core3-utils/testing.mochactx)                                      | active mocha context                                                                                                                                                                                                                                                                                                                                                            |
+| [poll(action, predicate)](https://wixplosives.github.io/core3-utils/testing.poll)                             | <p>Checks the return value of am action until it satisfies the predicate</p><p>Error handling can be changed using allowErrors. the default behavior is:</p><p>- When the action throws the step fails</p><p>- When the predicate throws the polling continues</p><p>[Expected](https://wixplosives.github.io/core3-utils/testing.expected) as helpful predicator creators.</p> |
+| [randomizeTestsOrder(shouldRandomize)](https://wixplosives.github.io/core3-utils/testing.randomizetestsorder) | <p>Randomizes tests order</p><p>To avoid confusion, it can only be set once, before the testing begins (i.e. not in a running test)</p>                                                                                                                                                                                                                                         |
+| [sleep(ms)](https://wixplosives.github.io/core3-utils/testing.sleep)                                          | Resolves after ms milliseconds                                                                                                                                                                                                                                                                                                                                                  |
+| [timeDilation()](https://wixplosives.github.io/core3-utils/testing.timedilation)                              | <p>Get current test step time dilation</p><p>- All timeout set in tests will be multiplied by timeDilation()</p>                                                                                                                                                                                                                                                                |
+| [timeDilation(value)](https://wixplosives.github.io/core3-utils/testing.timedilation_1)                       | <p>Set current test step time dilation</p><p>- All timeout set in tests will be multiplied by timeDilation()</p>                                                                                                                                                                                                                                                                |
+| [useSafeFakeTimers()](https://wixplosives.github.io/core3-utils/testing.usesafefaketimers)                    | Makes it easy to safely use fake timers                                                                                                                                                                                                                                                                                                                                         |
+| [waitForSpyCall(scope, method)](https://wixplosives.github.io/core3-utils/testing.waitforspycall)             | Spies on an object method, waiting until it's called. The spy is removed once called                                                                                                                                                                                                                                                                                            |
+| [waitForStubCall(action, waitForAction)](https://wixplosives.github.io/core3-utils/testing.waitforstubcall)   | Creates a stub, then waits for it to be called                                                                                                                                                                                                                                                                                                                                  |
+| [withTimeout(action)](https://wixplosives.github.io/core3-utils/testing.withtimeout)                          | <p>Limits the time a promise can take</p><p>- Note: useable only within a mocha test/hook. The total test timeout will be adjusted to make sure the test will not time out waiting for this step</p>                                                                                                                                                                            |
+
+## Interfaces
+
+| Interface                                                                                  | Description                       |
+| ------------------------------------------------------------------------------------------ | --------------------------------- |
+| [Info](https://wixplosives.github.io/core3-utils/testing.info)                             | Step info base, added step errors |
+| [PollDefaults](https://wixplosives.github.io/core3-utils/testing.polldefaults)             | Defaults for poll steps           |
+| [PollInfo](https://wixplosives.github.io/core3-utils/testing.pollinfo)                     | Info added to polling exceptions  |
+| [PollStep](https://wixplosives.github.io/core3-utils/testing.pollstep)                     | Polling API                       |
+| [PromiseWithTimeout](https://wixplosives.github.io/core3-utils/testing.promisewithtimeout) | WithTimeout API                   |
+| [Step](https://wixplosives.github.io/core3-utils/testing.step)                             | Steps base                        |
+| [StepsDefaults](https://wixplosives.github.io/core3-utils/testing.stepsdefaults)           | Test step defaults                |
+| [TimeoutDefaults](https://wixplosives.github.io/core3-utils/testing.timeoutdefaults)       | Step timeout defaults             |
 
 ## Type Aliases
 
-| Type Alias                                                     | Description |
-| -------------------------------------------------------------- | ----------- |
-| [Step](https://wixplosives.github.io/core3-utils/testing.step) | A test step |
+| Type Alias                                                                   | Description                                                                                                                       |
+| ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| [Description](https://wixplosives.github.io/core3-utils/testing.description) | Sets step description                                                                                                             |
+| [Predicate](https://wixplosives.github.io/core3-utils/testing.predicate)     | <p>A predicate function</p><p>Any return value other than \*\*false\*\* or throwing is considered as satisfying the predicate</p> |
+| [Stub](https://wixplosives.github.io/core3-utils/testing.stub)               | A generated stub                                                                                                                  |
+| [Timeout](https://wixplosives.github.io/core3-utils/testing.timeout)         | Sets step timeout                                                                                                                 |
