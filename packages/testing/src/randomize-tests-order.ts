@@ -2,6 +2,12 @@ import { shuffle } from '@wixc3/common';
 
 let _shouldRandomize = false;
 let wasSet = false;
+
+/**
+ * Randomizes tests order
+ *
+ * To avoid confusion, it can only be set once, before the testing begins (i.e. not in a running test)
+ */
 export function randomizeTestsOrder(shouldRandomize = true) {
     if (wasSet && shouldRandomize !== _shouldRandomize) {
         throw new Error(`conflicting randomizeTestsOrder randomizeTestsOrder(${_shouldRandomize})`);

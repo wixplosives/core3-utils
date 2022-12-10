@@ -1,9 +1,21 @@
-import { createDisposables } from '@wixc3/patterns';
+import { createDisposables, Disposable } from '@wixc3/patterns';
 
 const disposables = createDisposables();
 
-// eslint-disable-next-line @typescript-eslint/unbound-method
-export const disposeAfter = disposables.add;
+/**
+ * Disposes of test resources after the test is done
+ * @example
+ * ```ts
+ * it('test', () => {
+ *      const listener = () =>{}
+ *      someService.on('event', listener)
+ *      disposeAfter(() => someService.off('event', listener))
+ * })
+ * ```
+ */
+export function disposeAfter(disposable: Disposable) {
+    disposables.add(disposable);
+}
 
 afterEach('disposing', () => {
     return disposables.dispose();

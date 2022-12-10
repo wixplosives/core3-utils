@@ -398,7 +398,14 @@
       "ae-missing-release-tag": {
         "logLevel": "none",
         "addToApiReportFile": false
+      },
+     
+      "ae-forgotten-export": {
+        "logLevel": "none",
+        "addToApiReportFile": false
       }
+
+    
       //
       // . . .
     },
@@ -414,14 +421,11 @@
       "default": {
         "logLevel": "warning"
         // "addToApiReportFile": false
+      },
+      "tsdoc-param-tag-missing-hyphen": {
+        "logLevel": "none",
+        "addToApiReportFile": true
       }
-
-      // "tsdoc-link-tag-unescaped-text": {
-      //   "logLevel": "warning",
-      //   "addToApiReportFile": true
-      // },
-      //
-      // . . .
     }
   }
 }

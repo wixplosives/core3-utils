@@ -18,15 +18,27 @@ export class Expected {
 
     /**
      * Satisfied when the action result deep includes the expected value
+     * @example
+     * ```ts
+     * wait poll(()=>[{},1], Expected.includesStrict({}) // pass
+     * wait poll(()=>[{},1], Expected.includesStrict(1) // pass
+     * wait poll(()=>[{},1], Expected.includesStrict(null) // fail
+     * ```
      */
-    static includesDeep(expected: any): Predicate<any> {
+    static includes(expected: any): Predicate<any> {
         return (actual: object) => expect(actual).to.deep.include(expected);
     }
 
     /**
-     * Satisfied when the action result includes the expected value
+     * Satisfied when the action result is an array that strictly includes the expected value
+     * @example
+     * ```ts
+     * wait poll(()=>[{},1], Expected.includesStrict({}) // fail
+     * wait poll(()=>[{},1], Expected.includesStrict(1) // pass
+     *
+     * ```
      */
-    static includes(expected: any): Predicate<any> {
+    static includesStrict(expected: any): Predicate<any> {
         return (actual: object) => expect(actual).to.include(expected);
     }
 
@@ -34,13 +46,13 @@ export class Expected {
      * Satisfied when the action result deep contains the expected value
      * @example
      * ```ts
-     * wait poll(()=>({a:{}, b:1}), Expected.containsSimilar({a:{}})) // pass
-     * wait poll(()=>({a:{}, b:1}), Expected.containsSimilar({a:{c:{}}})) // fail
-     * wait poll(()=>({a:{}, b:1}), Expected.containsSimilar({b:1})) // pass
-     * wait poll(()=>({a:{}, b:1}), Expected.containsSimilar({b:2})) // fail
+     * wait poll(()=>({a:{}, b:1}), Expected.contains({a:{}})) // pass
+     * wait poll(()=>({a:{}, b:1}), Expected.contains({a:{c:{}}})) // fail
+     * wait poll(()=>({a:{}, b:1}), Expected.contains({b:1})) // pass
+     * wait poll(()=>({a:{}, b:1}), Expected.contains({b:2})) // fail
      * ```
      */
-    static containsSimilar(expected: any): Predicate<any> {
+    static contains(expected: any): Predicate<any> {
         return (actual: object) => expect(actual).to.deep.contain(expected);
     }
 
@@ -49,14 +61,14 @@ export class Expected {
      * @example
      * ```ts
      * const v = {}
-     * wait poll(()=>({a:v, b:1}), Expected.containsSimilar({a:v})) // pass
-     * wait poll(()=>({a:{}, b:1}), Expected.containsSimilar({a:{}})) // fail
-     * wait poll(()=>({a:{}, b:1}), Expected.containsSimilar({a:{c:{}}})) // fail
-     * wait poll(()=>({a:{}, b:1}), Expected.containsSimilar({b:1})) // pass
-     * wait poll(()=>({a:{}, b:1}), Expected.containsSimilar({b:2})) // fail
+     * wait poll(()=>({a:v, b:1}), Expected.containsStrict({a:v})) // pass
+     * wait poll(()=>({a:{}, b:1}), Expected.containsStrict({a:{}})) // fail
+     * wait poll(()=>({a:{}, b:1}), Expected.containsStrict({a:{c:{}}})) // fail
+     * wait poll(()=>({a:{}, b:1}), Expected.containsStrict({b:1})) // pass
+     * wait poll(()=>({a:{}, b:1}), Expected.containsStrict({b:2})) // fail
      * ```
      */
-    static contains(expected: any): Predicate<any> {
+    static containsStrict(expected: any): Predicate<any> {
         return (actual: object) => expect(actual).to.contain(expected);
     }
 }

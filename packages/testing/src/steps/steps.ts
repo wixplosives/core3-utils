@@ -4,7 +4,7 @@ import { disposeAfter } from '../dispose';
 import { getIntervalPerformance, ideaTime } from '../measure-machine';
 import { pollStep } from './poll';
 import { promiseStep } from './promise';
-import type { PollStep, Predicate, PromiseAll, PromiseWithTimeout, StepsDefaults } from './types';
+import type { PollStep, Predicate, _PromiseAll, PromiseWithTimeout, StepsDefaults } from './types';
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
  * A generated stub
@@ -108,16 +108,13 @@ export function withTimeout<T>(action: Promise<T>): PromiseWithTimeout<T> {
  * - Note: useable only within a mocha test/hook.
  * The total test timeout will be adjusted to make sure the test
  * will not time out waiting for this step
- *
- * {@link @wixc3/testing#Expected | Has helpful predicator creators }
- *
  * @example
  * ```ts
  * await allWithTimeout(sleep(1000), sleep(99)).description('will time out').timeout(10)
  * ```
  * @param action promises that should be settled before the timeout
  */
-export function allWithTimeout<T extends Readonly<any[]>>(...actions: T): PromiseWithTimeout<PromiseAll<T>> {
+export function allWithTimeout<T extends Readonly<any[]>>(...actions: T): PromiseWithTimeout<_PromiseAll<T>> {
     return withTimeout(Promise.all(actions));
 }
 
@@ -129,6 +126,8 @@ export function allWithTimeout<T extends Readonly<any[]>>(...actions: T): Promis
  * - When the action throws the step fails
  *
  * - When the predicate throws the polling continues
+ *
+ *  {@link @wixc3/testing#Expected} as helpful predicator creators.
  *
  * @example
  * ```ts

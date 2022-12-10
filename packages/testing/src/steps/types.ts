@@ -5,7 +5,7 @@
  * @internal
  * Promise.all return type
  */
-export type PromiseAll<T extends Readonly<any[]>> = { -readonly [P in keyof T]: Awaited<T[P]> };
+export type _PromiseAll<T extends Readonly<any[]>> = { -readonly [P in keyof T]: Awaited<T[P]> };
 
 /**
  * Step info base, added step errors
@@ -93,33 +93,39 @@ export interface StepsDefaults {
     poll: PollDefaults;
 }
 
+/**
+ * Step timeout defaults
+ */
 export interface TimeoutDefaults {
     /**
-     * @default {1000}
+     * @defaultValue 1000
      */
     timeout: number;
     /**
      * Added per each step used in a test
-     * @default {50}
+     * @defaultValue 50
      */
     safetyMargin: number;
     /**
-     * @default {true}
+     * @defaultValue true
      */
     adjustToMachinePower: boolean;
 }
 
+/**
+ * Defaults for poll steps
+ */
 export interface PollDefaults {
     /**
-     * @default {100}
+     * @defaultValue 100
      */
     interval: number;
     /**
-     * @default {false}
+     * @defaultValue false
      */
     allowActionError: boolean;
     /**
-     * @default {true}
+     * @defaultValue true
      */
     allowPredicateError: boolean;
 }
