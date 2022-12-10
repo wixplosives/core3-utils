@@ -1,9 +1,11 @@
-export function promiseStep<T, S extends PromiseStep<T>>(
+import { PromiseWithTimeout, RejectedError, TimeoutError } from "./types";
+
+export function promiseStep<T>(
     src: Promise<T>,
     ctx: Mocha.Context,
     rejectAfterTimeout: boolean,
     timeDilation: number
-): S {
+): PromiseWithTimeout<T> {
     let timerId: number;
     let timeout = 0;
     let resolve: (value: T | PromiseLike<T>) => void;
@@ -19,18 +21,12 @@ export function promiseStep<T, S extends PromiseStep<T>>(
             },
             (reason) => {
                 clearTimeout(timerId);
-                const err = new Error(
-                    `Error in step "${p.description.current}"\ncause: ${
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                        reason?.message || reason
-                    }\n${p.stack}`,
-                    { cause: reason }
-                );
-                err.stack = p.stack || err.stack;
-                reject(err);
+                reject(new RejectedError(p,reason));
             }
         );
-    }) as S;
+    }) as PromiseWithTimeout<T>;
+    p._parseInfoForErrorMessage = (info:any) => JSON.stringify(info, null, 2)
+    p.info = {description:'', timeout:0}
 
     const _timeout = (ms: number, adjustToMachinePower = true) => {
         if (adjustToMachinePower) {
@@ -42,11 +38,7 @@ export function promiseStep<T, S extends PromiseStep<T>>(
         clearTimeout(timerId);
         timerId = setTimeout(() => {
             if (rejectAfterTimeout) {
-                const err = new Error(
-                    `Timed out in step "${p.description.current}" after ${ms}ms${p.info ? `\nInfo: ${p.info}` : ''}`
-                );
-                err.stack = p.stack || err.stack;
-                reject(err);
+                reject(new TimeoutError(p));
             } else {
                 resolve(null as T);
             }
@@ -57,7 +49,7 @@ export function promiseStep<T, S extends PromiseStep<T>>(
     p.timeout = _timeout;
 
     const _description = (_description: string) => {
-        p.description.current = _description;
+        p.info.description = _description;
         return p;
     };
     _description.current = '';
@@ -66,18 +58,3 @@ export function promiseStep<T, S extends PromiseStep<T>>(
     return p;
 }
 
-export interface Timeout<T> {
-    (ms: number, adjustToMachinePower?: boolean): T;
-    current: number;
-}
-export interface Description<T> {
-    (description: string): T;
-    current: Readonly<string>;
-}
-
-export type PromiseStep<T> = Promise<T> & {
-    timeout: Timeout<PromiseStep<T>>;
-    description: Description<PromiseStep<T>>;
-    info: any;
-    stack: string;
-};

@@ -40,7 +40,7 @@ describe('withSteps', () => {
                     .timeout(20)
                     .description('timeout');
                 await expect(step).to.eventually.rejectedWith('Timed out in step "timeout"');
-                await expect(step).to.eventually.rejectedWith('Info: last polled value: 0');
+                await expect(step).to.eventually.rejectedWith('Info: last action returned: 0');
             });
         });
         describe('error handling', () => {
