@@ -1,6 +1,6 @@
 import { expect, use } from 'chai';
 import asPromised from 'chai-as-promised';
-import { defaults, mochaCtx, poll, sleep } from '../steps';
+import { defaults, mochaCtx, poll, sleep } from '..';
 
 use(asPromised);
 

@@ -1,7 +1,7 @@
 import { isString } from '@wixc3/common';
 import { deferred } from 'promise-assist';
 import { disposeAfter } from '../dispose';
-import { getIntervalPerformance, ideaTime } from '../measure-machine';
+import { adjustTestTime, mochaCtx } from './mocha-ctx';
 import { createPollStep } from './poll';
 import { createTimeoutStep } from './promise';
 import type { PollStep, Predicate, _PromiseAll, PromiseWithTimeout, StepsDefaults } from './types';
@@ -14,25 +14,16 @@ export type Stub = (...args: any[]) => void;
 let stepsCountByTest = new WeakMap<Mocha.Test, number>();
 
 let stepsDefaults: StepsDefaults;
-let currentTest: Mocha.Test;
 const increaseStepsCount = () => {
-    const count = stepsCountByTest.get(currentTest.ctx?.test as Mocha.Test) || 1;
-    stepsCountByTest.set(currentTest.ctx?.test as Mocha.Test, count + 1);
+    const count = stepsCountByTest.get(mochaCtx()?.test as Mocha.Test) || 1;
+    stepsCountByTest.set(mochaCtx()?.test as Mocha.Test, count + 1);
     return count;
-};
-
-const ctx = () => {
-    if (!currentTest?.ctx) {
-        throw new Error(`Invalid use of the testing package: no mocha test context`);
-    }
-    return currentTest.ctx;
 };
 
 const getDefaults = (): StepsDefaults => ({
     step: {
         timeout: 1000,
         safetyMargin: 50,
-        adjustToMachinePower: true,
     },
     poll: {
         interval: 100,
@@ -40,27 +31,6 @@ const getDefaults = (): StepsDefaults => ({
         allowPredicateError: true,
     },
 });
-
-let _timeDilation: number;
-
-/**
- * Get current test step time dilation
- *
- * - All timeout set in tests will be multiplied by timeDilation()
- */
-export function timeDilation(): number;
-/**
- * Set current test step time dilation
- *
- * - All timeout set in tests will be multiplied by timeDilation()
- */
-export function timeDilation(value: number): number;
-export function timeDilation(value?: number) {
-    if (value && value > 0) {
-        _timeDilation = value;
-    }
-    return _timeDilation;
-}
 
 const getStack = () => {
     const captureStackTrace: CaptureStackFn =
@@ -76,9 +46,9 @@ const getStack = () => {
         .join('\n');
 };
 
-const addTimeoutSafetyMargin = () => {
-    ctx().timeout(ctx().timeout() + stepsDefaults.step.safetyMargin * timeDilation());
-};
+const addTimeoutSafetyMargin = () =>
+    mochaCtx() &&    
+    adjustTestTime(stepsDefaults.step.safetyMargin);
 
 /**
  * Limits the time a promise can take
@@ -95,8 +65,8 @@ const addTimeoutSafetyMargin = () => {
  */
 export function withTimeout<T>(action: Promise<T>): PromiseWithTimeout<T> {
     addTimeoutSafetyMargin();
-    const step = createTimeoutStep(action, ctx(), true, timeDilation())
-        .timeout(stepsDefaults.step.timeout, stepsDefaults.step.adjustToMachinePower)
+    const step = createTimeoutStep(action,  true, )
+        .timeout(stepsDefaults.step.timeout)
         .description(`step ${increaseStepsCount()}`);
     step.stack = getStack();
     return step;
@@ -150,7 +120,7 @@ export function poll<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): 
         poll: { interval, allowActionError, allowPredicateError },
     } = stepsDefaults;
 
-    const step = createPollStep(action, predicate, ctx(), timeDilation())
+    const step = createPollStep(action, predicate)
         .timeout(stepsDefaults.step.timeout)
         .description(`step ${increaseStepsCount()}`)
         .interval(interval)
@@ -237,9 +207,8 @@ export function waitForStubCall<T>(
  */
 export function sleep(ms?: number): PromiseWithTimeout<void> {
     addTimeoutSafetyMargin();
-    return createTimeoutStep(new Promise<void>(() => void 0), ctx(), false, timeDilation()).timeout(
-        ms || stepsDefaults.step.timeout,
-        stepsDefaults.step.adjustToMachinePower
+    return createTimeoutStep(new Promise<void>(() => void 0), false).timeout(
+        ms || stepsDefaults.step.timeout
     );
 }
 
@@ -250,24 +219,10 @@ export function defaults(): StepsDefaults {
     return stepsDefaults;
 }
 
-/**
- * active mocha context
- */
-export function mochaCtx(): Mocha.Context {
-    return currentTest.ctx!;
-}
-
-before('check time', async function () {
-    this.timeout(ideaTime * 30);
-    timeDilation(await getIntervalPerformance());
-    // eslint-disable-next-line no-console
-    console.log(`Time dilation due to machine power: ${timeDilation()}`);
-});
-
 beforeEach('save current test context', function () {
-    currentTest = this.currentTest!;
     stepsDefaults = getDefaults();
     disposeAfter(() => {
         stepsCountByTest = new WeakMap();
     });
 });
+

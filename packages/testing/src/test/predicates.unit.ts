@@ -1,6 +1,6 @@
 import { expect, use } from 'chai';
 import asPromised from 'chai-as-promised';
-import { defaults, poll, Expected } from '../steps';
+import { defaults, poll, Expected } from '..';
 
 use(asPromised);
 

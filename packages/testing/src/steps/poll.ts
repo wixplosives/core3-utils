@@ -8,8 +8,6 @@ type Stage = 'action' | 'predicate';
 export function createPollStep<T>(
     action: () => T,
     predicate: Predicate<T> | Awaited<T>,
-    ctx: Mocha.Context,
-    timeDilation: number
 ): PollStep<T> {
     let intervalId!: number;
     const clearPollingInterval = () => clearInterval(intervalId);
@@ -19,7 +17,7 @@ export function createPollStep<T>(
         typeof predicate === 'function' ? predicate : (v: Awaited<T>) => expect(v).to.eql(predicate)
     ) as Predicate<T>;
 
-    const p = createTimeoutStep<T>(intervalPromise, ctx, true, timeDilation) as unknown as PollStep<T>;
+    const p = createTimeoutStep<T>(intervalPromise, true) as unknown as PollStep<T>;
 
     p._parseInfoForErrorMessage = _parseInfoForErrorMessage;
     p.info = initialInfo();
