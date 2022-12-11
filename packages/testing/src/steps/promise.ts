@@ -1,42 +1,22 @@
-import { RejectedError, TimeoutError } from './errors';
+import { RejectedError, StepError, TimeoutError } from './errors';
 import type { PromiseWithTimeout } from './types';
 
-export function promiseStep<T>(
+export function createTimeoutStep<T>(
     src: Promise<T>,
     ctx: Mocha.Context,
     rejectAfterTimeout: boolean,
     timeDilation: number
 ): PromiseWithTimeout<T> {
     let timerId: number;
-    let timeout = 0;
-    let resolve: (value: T | PromiseLike<T>) => void;
-    let reject: (reason?: any) => void;
+    const clearPromiseTimeout = () => clearTimeout(timerId)
+    const {p,resolve,reject} = createTimeoutPromise(src, clearPromiseTimeout)
 
-    const p = new Promise<T>((_resolve, _reject) => {
-        resolve = _resolve;
-        reject = _reject;
-        src.then(
-            (value) => {
-                clearTimeout(timerId);
-                resolve(value);
-            },
-            (reason) => {
-                clearTimeout(timerId);
-                reject(new RejectedError(p, reason));
-            }
-        );
-    }) as PromiseWithTimeout<T>;
     p._parseInfoForErrorMessage = (info: any) => JSON.stringify(info, null, 2);
     p.info = { description: '', timeout: 0 };
 
     p.timeout = (ms: number, adjustToMachinePower = true) => {
-        if (adjustToMachinePower) {
-            ms = ms * timeDilation;
-        }
-        const diff = ms - timeout;
-        timeout = ms;
-        ctx.timeout(ctx.timeout() + diff);
-        clearTimeout(timerId);
+        ms = adjustMochaTimeout<T>(adjustToMachinePower, ms, timeDilation, p, ctx);
+        clearPromiseTimeout()
         timerId = setTimeout(() => {
             if (rejectAfterTimeout) {
                 reject(new TimeoutError(p));
@@ -53,4 +33,36 @@ export function promiseStep<T>(
     };
 
     return p;
+}
+
+
+function adjustMochaTimeout<T>(adjustToMachinePower: boolean, ms: number, timeDilation: number, p: PromiseWithTimeout<T>, ctx: Mocha.Context) {
+    if (adjustToMachinePower) {
+        ms = ms * timeDilation;
+    }
+    const diff = ms - p.info.timeout;
+    p.info.timeout = ms;
+    ctx.timeout(ctx.timeout() + diff);
+    return ms;
+}
+
+function createTimeoutPromise<T>(src:Promise<T>, clearPromiseTimeout:()=>void){
+    let resolve!: (value: T) => void;
+    let reject!: (reason?: any) => void;
+
+    const p = new Promise<T>((_resolve, _reject) => {
+        resolve = (value:T)=>{
+            clearPromiseTimeout()
+            _resolve(value);
+        }
+        reject = (reason:any)=>{
+            clearPromiseTimeout()
+            _reject(reason instanceof StepError 
+                ? reason 
+                : new RejectedError(p, reason))
+        }
+        src.then(resolve, reject);
+    }) as PromiseWithTimeout<T>;
+
+    return {p, resolve, reject}
 }
