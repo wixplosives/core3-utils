@@ -12,13 +12,12 @@ export type _PromiseAll<T extends Readonly<any[]>> = { -readonly [P in keyof T]:
  */
 export interface Info {
     description: string;
-    timeout: number;
 }
 
 /**
- * Steps base
+ * Common step props
  */
-export interface Step<T extends Info = Info, R = any> extends Promise<R> {
+export interface StepBase<T extends Info = Info, R = any> extends Promise<R> {
     stack: string;
     info: T;
     /**
@@ -26,6 +25,10 @@ export interface Step<T extends Info = Info, R = any> extends Promise<R> {
      * parses the info field for the error message
      */
     _parseInfoForErrorMessage: (info: T) => string;
+}
+
+export interface PromiseStep<T> extends StepBase<Info, T> {
+    description: Description<PromiseStep<T>>;
 }
 
 /**
@@ -41,23 +44,19 @@ export type Description<T> = (description: string) => T;
 /**
  * WithTimeout API
  */
-export interface PromiseWithTimeout<T> extends Step<Info, T> {
+export interface PromiseWithTimeout<T> extends StepBase<Info & { timeout: number }, T> {
     timeout: Timeout<PromiseWithTimeout<T>>;
     description: Description<PromiseWithTimeout<T>>;
-    info: Info;
-    stack: string;
 }
 
 /**
  * Polling API
  */
-export interface PollStep<T> extends Step<PollInfo, T> {
+export interface PollStep<T> extends StepBase<PollInfo, T> {
     timeout: Timeout<PollStep<T>>;
     description: Description<PollStep<T>>;
     interval: (ms: number) => PollStep<T>;
     allowErrors: (action?: boolean, predicate?: boolean) => PollStep<T>;
-    stack: string;
-    info: PollInfo;
 }
 
 /**

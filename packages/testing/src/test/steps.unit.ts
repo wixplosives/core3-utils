@@ -6,6 +6,7 @@ import {
     mochaCtx,
     poll,
     sleep,
+    step,
     timeDilation,
     waitForSpyCall,
     waitForStubCall,
@@ -37,6 +38,21 @@ describe('steps', () => {
             1_000 + timeDilation() * (+4 * TIMEOUT + 4 * SAFETY_MARGIN),
             2
         );
+    });
+
+    describe(`usage in beforeEach`, () => {
+        beforeEach(async () => {
+            defaults().poll.interval = 1234;
+            await sleep(1);
+            await sleep(1);
+            await sleep(1);
+        });
+        it(`does not share step count with beforeEach`, async () => {
+            await expect(withTimeout(sleep(100)).timeout(1)).to.be.eventually.rejectedWith('step 1');
+        });
+        it(`share defaults with beforeEach`, () => {
+            expect(defaults().poll.interval).to.equal(1234);
+        });
     });
 });
 
@@ -74,6 +90,17 @@ describe('allWithTimeout step', () => {
             sleep(SHORT_TIME).then(() => [])
         );
         expect(actual).to.eql([1, 'a', []]);
+    });
+});
+
+describe('step', () => {
+    it('rejects with a step error', async () => {
+        await expect(step(Promise.reject('source info')).description('step info')).to.eventually.rejectedWith(
+            'step info'
+        );
+        await expect(step(Promise.reject('source info')).description('step info')).to.eventually.rejectedWith(
+            'source info'
+        );
     });
 });
 
@@ -127,6 +154,7 @@ describe('waitForStubCall', () => {
             returned: 'action!',
         });
     });
+
     it('times out when the stub is not called', async () => {
         await expect(
             waitForStubCall(async (stub) => {
@@ -141,21 +169,6 @@ describe('waitForStubCall', () => {
             defaults().step.timeout = 50;
             expect(await withTimeout(sleep(1))).not.to.throw;
             await expect(withTimeout(sleep(1000))).to.eventually.rejectedWith('Timed out');
-        });
-    });
-
-    describe(`usage in beforeEach`, () => {
-        beforeEach(async () => {
-            defaults().poll.interval = 1234;
-            await sleep(1);
-            await sleep(1);
-            await sleep(1);
-        });
-        it(`does not share step count with beforeEach`, async () => {
-            await expect(withTimeout(sleep(100)).timeout(1)).to.be.eventually.rejectedWith('step 1');
-        });
-        it(`share defaults with beforeEach`, () => {
-            expect(defaults().poll.interval).to.equal(1234);
         });
     });
 });

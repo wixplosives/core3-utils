@@ -33,10 +33,10 @@ export function once<T extends (...args: any[]) => any>(fn: T): T {
  * // if `func` is called 3 times in a row:
  * func(1); func(2); func(3);
  * // it will wait `wait` ms between each run:
- * func(1); 
- * await sleep(wait); 
- * func(2); 
- * await sleep(wait); 
+ * func(1);
+ * await sleep(wait);
+ * func(2);
+ * await sleep(wait);
  * func(3);`
  * ```
  * This is not throttling (!) since eventually all calls will be ran,

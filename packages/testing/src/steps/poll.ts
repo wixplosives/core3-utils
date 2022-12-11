@@ -1,14 +1,11 @@
 import { last } from '@wixc3/common';
 import { expect } from 'chai';
-import { createTimeoutStep as createTimeoutStep } from './promise';
+import { createTimeoutStep as createTimeoutStep } from './with-timeout';
 import type { PollInfo, PollStep, Predicate } from './types';
 
 type Stage = 'action' | 'predicate';
 
-export function createPollStep<T>(
-    action: () => T,
-    predicate: Predicate<T> | Awaited<T>,
-): PollStep<T> {
+export function createPollStep<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): PollStep<T> {
     let intervalId!: number;
     const clearPollingInterval = () => clearInterval(intervalId);
     const { intervalPromise, resolve, reject } = createIntervalPromise<T>(clearPollingInterval);

@@ -3,8 +3,9 @@ import { deferred } from 'promise-assist';
 import { disposeAfter } from '../dispose';
 import { adjustTestTime, mochaCtx } from './mocha-ctx';
 import { createPollStep } from './poll';
-import { createTimeoutStep } from './promise';
-import type { PollStep, Predicate, _PromiseAll, PromiseWithTimeout, StepsDefaults } from './types';
+import { createTimeoutStep } from './with-timeout';
+import type { PollStep, Predicate, _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep } from './types';
+import { createPromiseStep } from './no-timeout';
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
  * A generated stub
@@ -46,9 +47,7 @@ const getStack = () => {
         .join('\n');
 };
 
-const addTimeoutSafetyMargin = () =>
-    mochaCtx() &&    
-    adjustTestTime(stepsDefaults.step.safetyMargin);
+const addTimeoutSafetyMargin = () => mochaCtx() && adjustTestTime(stepsDefaults.step.safetyMargin);
 
 /**
  * Limits the time a promise can take
@@ -65,9 +64,28 @@ const addTimeoutSafetyMargin = () =>
  */
 export function withTimeout<T>(action: Promise<T>): PromiseWithTimeout<T> {
     addTimeoutSafetyMargin();
-    const step = createTimeoutStep(action,  true, )
+    const step = createTimeoutStep(action, true)
         .timeout(stepsDefaults.step.timeout)
         .description(`step ${increaseStepsCount()}`);
+    step.stack = getStack();
+    return step;
+}
+
+/**
+ * Adds a step description to a promise if it's rejected
+ *
+ * * - Note: useable only within a mocha test/hook.
+ * The total test timeout will be adjusted to make sure the test
+ * will not time out waiting for this step
+ *
+ * @example
+ * ```ts
+ * await step(somePromise).description('Add this to rejection message')
+ * ```
+ * @param action a promise that should be settled before the timeout
+ */
+export function step<T>(action: Promise<T>): PromiseStep<T> {
+    const step = createPromiseStep(action).description(`step ${increaseStepsCount()}`);
     step.stack = getStack();
     return step;
 }
@@ -207,9 +225,7 @@ export function waitForStubCall<T>(
  */
 export function sleep(ms?: number): PromiseWithTimeout<void> {
     addTimeoutSafetyMargin();
-    return createTimeoutStep(new Promise<void>(() => void 0), false).timeout(
-        ms || stepsDefaults.step.timeout
-    );
+    return createTimeoutStep(new Promise<void>(() => void 0), false).timeout(ms || stepsDefaults.step.timeout);
 }
 
 /**
@@ -225,4 +241,3 @@ beforeEach('save current test context', function () {
         stepsCountByTest = new WeakMap();
     });
 });
-
