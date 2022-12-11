@@ -14,6 +14,7 @@ let currentTest: Mocha.Test;
 
 /**
  * Add ms to current test timeout
+ * @param allowTimeDilation when true (default) ms is multiplied by {@link timeDilation | timeDilation() }
  */
 export function adjustTestTime(ms:number, allowTimeDilation=true) {
     mochaCtx().timeout(mochaCtx().timeout() + ms * (allowTimeDilation ? timeDilation() :1));
