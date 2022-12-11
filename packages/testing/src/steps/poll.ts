@@ -12,8 +12,8 @@ export function createPollStep<T>(
     timeDilation: number
 ): PollStep<T> {
     let intervalId!: number;
-    const clearPollingInterval = () => clearInterval(intervalId)
-    const {intervalPromise, resolve, reject} = createIntervalPromise<T>(clearPollingInterval)
+    const clearPollingInterval = () => clearInterval(intervalId);
+    const { intervalPromise, resolve, reject } = createIntervalPromise<T>(clearPollingInterval);
 
     const _predicate = (
         typeof predicate === 'function' ? predicate : (v: Awaited<T>) => expect(v).to.eql(predicate)
@@ -25,8 +25,9 @@ export function createPollStep<T>(
     p.info = initialInfo();
     p.interval = (ms: number) => {
         clearInterval(intervalId);
-        intervalId = setPollingInterval(ms, p, {predicate:_predicate, resolve, reject, action})
-        p.info.interval = ms
+        intervalId = setPollingInterval(ms, { p, predicate: _predicate, resolve, reject, action });
+        p.info.interval = ms;
+        setTimeout(() => pollOnce({ p, predicate: _predicate, resolve, reject, action }), 0);
         return p;
     };
     p.allowErrors = (action = true, predicate = true) => {
@@ -40,50 +41,51 @@ export function createPollStep<T>(
     return p;
 }
 
-
-function createIntervalPromise<T>(clearInterval: ()=>void){
+function createIntervalPromise<T>(clearInterval: () => void) {
     let resolve!: (value: T) => void;
     let reject!: (reason?: any) => void;
     const intervalPromise = new Promise<T>((_resolve, _reject) => {
-        resolve = (value:T) => {
-            clearInterval()
-            _resolve(value)
+        resolve = (value: T) => {
+            clearInterval();
+            _resolve(value);
         };
-        reject = (reason:any) => {
-            clearInterval()
-            _reject(reason)
+        reject = (reason: any) => {
+            clearInterval();
+            _reject(reason);
         };
     });
-    return {intervalPromise, resolve, reject}
+    return { intervalPromise, resolve, reject };
 }
 
-type Privates<T> = {
-    predicate:Predicate<T>, 
-    resolve:(v:T)=>void,
-     reject:(r:any)=>void, 
-     action:()=>T
+type PollHelpers<T> = {
+    predicate: Predicate<T>;
+    resolve: (v: T) => void;
+    reject: (r: any) => void;
+    action: () => T;
+    p: PollStep<T>;
+};
+
+function setPollingInterval<T>(ms: number, helpers: PollHelpers<T>) {
+    return setInterval(() => pollOnce<T>(helpers), ms);
 }
 
-function setPollingInterval<T>(ms:number, p:PollStep<T>, { predicate ,resolve , reject , action}:Privates<T>) {
-    return setInterval(async () => {
+async function pollOnce<T>({ p, action, predicate, resolve, reject }: PollHelpers<T>) {
+    try {
+        const value = await Promise.resolve(action());
+        p.info.polledValues.push({ action: value });
         try {
-            const value = await Promise.resolve(action());
-            p.info.polledValues.push({ action: value });
-            try {
-                if (predicate(value) !== false) {
-                    resolve(value);
-                }
-            } catch (e) {
-                handleError(e, 'predicate', p, reject);
+            if (predicate(value) !== false) {
+                resolve(value);
             }
         } catch (e) {
-            handleError(e, 'action', p, reject);
+            handleError(e, 'predicate', p, reject);
         }
-    }, ms);
+    } catch (e) {
+        handleError(e, 'action', p, reject);
+    }
 }
 
-
-function handleError<T>(e: any, type: Stage, p:PollStep<T>, reject:(reason:any)=>void) {
+function handleError<T>(e: any, type: Stage, p: PollStep<T>, reject: (reason: any) => void) {
     if (p.info.allowErrors[type]) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         p.info.polledValues.push({ [type]: e } as Record<Stage, any>);
@@ -91,7 +93,6 @@ function handleError<T>(e: any, type: Stage, p:PollStep<T>, reject:(reason:any)=
         reject(e);
     }
 }
-
 
 function _parseInfoForErrorMessage(p: PollInfo) {
     const logEntry = last(p.polledValues);
