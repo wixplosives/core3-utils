@@ -27,7 +27,7 @@ export function createPollStep<T>(
         clearInterval(intervalId);
         intervalId = setPollingInterval(ms,  {p, predicate:_predicate, resolve, reject, action})
         p.info.interval = ms
-        void pollOnce({p, predicate:_predicate, resolve, reject, action})
+        setTimeout(()=> pollOnce({p, predicate:_predicate, resolve, reject, action}),0)
         return p;
     };
     p.allowErrors = (action = true, predicate = true) => {
@@ -67,9 +67,7 @@ type PollHelpers<T> = {
 }
 
 function setPollingInterval<T>(ms:number, helpers:PollHelpers<T>) {
-    return setInterval(async () => {
-        await pollOnce<T>(helpers);
-    }, ms);
+    return setInterval( () =>  pollOnce<T>(helpers), ms);
 }
 
 

@@ -118,4 +118,5 @@ describe('withSteps', () => {
         await sleep(50);
         expect(count).to.equal(lastCount);
     });
+    it('polls as soon as the interval is set', () =>  poll(()=>true, true).timeout(10).interval(1000))
 });
