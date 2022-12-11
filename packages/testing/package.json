@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/testing",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "Making mocha/chai testing easier",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
