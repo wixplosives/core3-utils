@@ -25,8 +25,9 @@ export function createPollStep<T>(
     p.info = initialInfo();
     p.interval = (ms: number) => {
         clearInterval(intervalId);
-        intervalId = setPollingInterval(ms, p, {predicate:_predicate, resolve, reject, action})
+        intervalId = setPollingInterval(ms,  {p, predicate:_predicate, resolve, reject, action})
         p.info.interval = ms
+        void pollOnce({p, predicate:_predicate, resolve, reject, action})
         return p;
     };
     p.allowErrors = (action = true, predicate = true) => {
@@ -57,31 +58,36 @@ function createIntervalPromise<T>(clearInterval: ()=>void){
     return {intervalPromise, resolve, reject}
 }
 
-type Privates<T> = {
+type PollHelpers<T> = {
     predicate:Predicate<T>, 
     resolve:(v:T)=>void,
      reject:(r:any)=>void, 
      action:()=>T
+     p:PollStep<T>
 }
 
-function setPollingInterval<T>(ms:number, p:PollStep<T>, { predicate ,resolve , reject , action}:Privates<T>) {
+function setPollingInterval<T>(ms:number, helpers:PollHelpers<T>) {
     return setInterval(async () => {
-        try {
-            const value = await Promise.resolve(action());
-            p.info.polledValues.push({ action: value });
-            try {
-                if (predicate(value) !== false) {
-                    resolve(value);
-                }
-            } catch (e) {
-                handleError(e, 'predicate', p, reject);
-            }
-        } catch (e) {
-            handleError(e, 'action', p, reject);
-        }
+        await pollOnce<T>(helpers);
     }, ms);
 }
 
+
+async function pollOnce<T>({p, action, predicate, resolve, reject}:PollHelpers<T>) {
+    try {
+        const value = await Promise.resolve(action());
+        p.info.polledValues.push({ action: value });
+        try {
+            if (predicate(value) !== false) {
+                resolve(value);
+            }
+        } catch (e) {
+            handleError(e, 'predicate', p, reject);
+        }
+    } catch (e) {
+        handleError(e, 'action', p, reject);
+    }
+}
 
 function handleError<T>(e: any, type: Stage, p:PollStep<T>, reject:(reason:any)=>void) {
     if (p.info.allowErrors[type]) {
