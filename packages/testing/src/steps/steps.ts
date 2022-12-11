@@ -2,8 +2,8 @@ import { isString } from '@wixc3/common';
 import { deferred } from 'promise-assist';
 import { disposeAfter } from '../dispose';
 import { getIntervalPerformance, ideaTime } from '../measure-machine';
-import { pollStep } from './poll';
-import { promiseStep } from './promise';
+import { createPollStep } from './poll';
+import { createTimeoutStep } from './promise';
 import type { PollStep, Predicate, _PromiseAll, PromiseWithTimeout, StepsDefaults } from './types';
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
@@ -95,7 +95,7 @@ const addTimeoutSafetyMargin = () => {
  */
 export function withTimeout<T>(action: Promise<T>): PromiseWithTimeout<T> {
     addTimeoutSafetyMargin();
-    const step = promiseStep(action, ctx(), true, timeDilation())
+    const step = createTimeoutStep(action, ctx(), true, timeDilation())
         .timeout(stepsDefaults.step.timeout, stepsDefaults.step.adjustToMachinePower)
         .description(`step ${increaseStepsCount()}`);
     step.stack = getStack();
@@ -150,7 +150,7 @@ export function poll<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): 
         poll: { interval, allowActionError, allowPredicateError },
     } = stepsDefaults;
 
-    const step = pollStep(action, predicate, ctx(), timeDilation())
+    const step = createPollStep(action, predicate, ctx(), timeDilation())
         .timeout(stepsDefaults.step.timeout)
         .description(`step ${increaseStepsCount()}`)
         .interval(interval)
@@ -237,7 +237,7 @@ export function waitForStubCall<T>(
  */
 export function sleep(ms?: number): PromiseWithTimeout<void> {
     addTimeoutSafetyMargin();
-    return promiseStep(new Promise<void>(() => void 0), ctx(), false, timeDilation()).timeout(
+    return createTimeoutStep(new Promise<void>(() => void 0), ctx(), false, timeDilation()).timeout(
         ms || stepsDefaults.step.timeout,
         stepsDefaults.step.adjustToMachinePower
     );
