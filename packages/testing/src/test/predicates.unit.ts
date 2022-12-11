@@ -1,5 +1,4 @@
 import { createNodeFs } from '@file-services/node';
-import type { IFileSystem } from '@file-services/types';
 import { expect, use } from 'chai';
 import asPromised from 'chai-as-promised';
 import { createTempDirectorySync } from 'create-temp-directory';
