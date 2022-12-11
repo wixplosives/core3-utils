@@ -76,7 +76,7 @@ export class Expected {
 export class Path {
     static exists(): FsPredicate {
         return ({ fs, path, stats }) => {
-            expect(stats || fs.existsSync(path), `path "${path}" doesn't exist`).not.to.equal(false)
+            expect(stats || fs.existsSync(path), `path "${path}" doesn't exist`).not.to.equal(false);
         };
     }
 

@@ -127,7 +127,6 @@ export interface PollDefaults {
     allowPredicateError: boolean;
 }
 
-
 interface FileInfo extends Info {
     path: string;
     exists: boolean;

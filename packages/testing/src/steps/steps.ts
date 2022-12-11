@@ -4,7 +4,15 @@ import { disposeAfter } from '../dispose';
 import { adjustTestTime, mochaCtx } from './mocha-ctx';
 import { createPollStep } from './poll';
 import { createTimeoutStep } from './with-timeout';
-import type { PollStep, Predicate, _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep, FsPredicate } from './types';
+import type {
+    PollStep,
+    Predicate,
+    _PromiseAll,
+    PromiseWithTimeout,
+    StepsDefaults,
+    PromiseStep,
+    FsPredicate,
+} from './types';
 import { createPromiseStep } from './no-timeout';
 import type { IFileSystem } from '@file-services/types';
 import { pathStep } from './path-step';
