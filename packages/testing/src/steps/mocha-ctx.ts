@@ -17,7 +17,10 @@ let currentTest: Mocha.Test;
  * @param allowTimeDilation when true (default) ms is multiplied by {@link timeDilation | timeDilation() }
  */
 export function adjustTestTime(ms:number, allowTimeDilation=true) {
-    mochaCtx().timeout(mochaCtx().timeout() + ms * (allowTimeDilation ? timeDilation() :1));
+    if (allowTimeDilation) {
+        ms *= timeDilation()
+    }
+    mochaCtx().timeout(mochaCtx().timeout() + ms);
     return ms;
 }
 
