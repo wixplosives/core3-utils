@@ -94,6 +94,19 @@ export class Path {
     }
 
     /**
+     * Satisfied when the path doesn't exists
+     * @example
+     * ```ts
+     * await waitForPath(fs, 'some-path', Path.exists());
+     * ```
+     */
+    static notExists(): FsPredicate {
+        return ({ fs, path, stats }) => {
+            expect(stats || fs.existsSync(path), `path "${path}" doesn't exist`).to.equal(false);
+        };
+    }
+
+    /**
      * Satisfied when the path is a file
      * @example
      * ```ts

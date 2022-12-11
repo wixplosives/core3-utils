@@ -70,7 +70,13 @@ describe('Path', () => {
         await expect(waitForPath(fs, file, Path.exists())).to.eventually.be.rejectedWith(`Timed out`);
         const step = waitForPath(fs, file, Path.exists());
         fs.writeFileSync(file, 'created');
-        return step;
+        await step;
+    });
+
+    it('notExists', async () => {
+        await waitForPath(fs, file, Path.notExists());
+        fs.writeFileSync(file, 'created');
+        await expect(waitForPath(fs, file, Path.notExists())).to.eventually.be.rejectedWith(`Timed out`);
     });
 
     it('isFile', async () => {
@@ -96,6 +102,6 @@ describe('Path', () => {
         await expect(waitForPath(fs, file, Path.hasContent('wrong'))).to.eventually.be.rejectedWith(`Timed out`);
         const step = waitForPath(fs, file, Path.hasContent('success'));
         fs.writeFileSync(file, 'success');
-        return step;
+        await step;
     });
 });
