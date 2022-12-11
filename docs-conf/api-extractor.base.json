@@ -399,13 +399,12 @@
         "logLevel": "none",
         "addToApiReportFile": false
       },
-     
+
       "ae-forgotten-export": {
         "logLevel": "none",
         "addToApiReportFile": false
       }
 
-    
       //
       // . . .
     },

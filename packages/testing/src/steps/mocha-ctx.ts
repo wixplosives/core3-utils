@@ -1,11 +1,11 @@
-import { timeDilation } from "./time-dilation";
+import { timeDilation } from './time-dilation';
 
 let currentTest: Mocha.Test;
 
 /**
  * Active mocha context
  */
- export function mochaCtx(): Mocha.Context {
+export function mochaCtx(): Mocha.Context {
     if (!currentTest?.ctx) {
         throw new Error(`Invalid use of the testing package: no mocha test context`);
     }
@@ -16,9 +16,9 @@ let currentTest: Mocha.Test;
  * Add ms to current test timeout
  * @param allowTimeDilation when true (default) ms is multiplied by {@link timeDilation | timeDilation() }
  */
-export function adjustTestTime(ms:number, allowTimeDilation=true) {
+export function adjustTestTime(ms: number, allowTimeDilation = true) {
     if (allowTimeDilation) {
-        ms *= timeDilation()
+        ms *= timeDilation();
     }
     mochaCtx().timeout(mochaCtx().timeout() + ms);
     return ms;

@@ -1,7 +1,7 @@
 /**
  * @packageDocumentation
  * Utils for making mocha + chai testing easy and fun
- * 
+ *
  * @remarks
  * [[[h 3 Steps]]]
  * Steps are a convenient way to craft async tests.

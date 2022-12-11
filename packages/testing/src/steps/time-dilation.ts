@@ -1,5 +1,4 @@
-
-let _timeDilation=1;
+let _timeDilation = 1;
 
 /**
  * Get current test step time dilation
