@@ -31,7 +31,7 @@ export interface Step<T extends Info = Info, R = any> extends Promise<R> {
 /**
  * Sets step timeout
  */
-export type Timeout<T> = (ms: number, adjustToMachinePower?: boolean) => T;
+export type Timeout<T> = (ms: number) => T;
 
 /**
  * Sets step description
@@ -98,18 +98,14 @@ export interface StepsDefaults {
  */
 export interface TimeoutDefaults {
     /**
-     * @defaultValue 1000
+     * default: 1000
      */
     timeout: number;
     /**
      * Added per each step used in a test
-     * @defaultValue 50
+     * default: 50
      */
     safetyMargin: number;
-    /**
-     * @defaultValue true
-     */
-    adjustToMachinePower: boolean;
 }
 
 /**
@@ -117,15 +113,15 @@ export interface TimeoutDefaults {
  */
 export interface PollDefaults {
     /**
-     * @defaultValue 100
+     * default: 100
      */
     interval: number;
     /**
-     * @defaultValue false
+     * default: false
      */
     allowActionError: boolean;
     /**
-     * @defaultValue true
+     * default: true
      */
     allowPredicateError: boolean;
 }

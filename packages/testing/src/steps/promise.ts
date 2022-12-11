@@ -1,11 +1,11 @@
 import { RejectedError, StepError, TimeoutError } from './errors';
+import { adjustTestTime } from './mocha-ctx';
+import { timeDilation } from './time-dilation';
 import type { PromiseWithTimeout } from './types';
 
 export function createTimeoutStep<T>(
     src: Promise<T>,
-    ctx: Mocha.Context,
     rejectAfterTimeout: boolean,
-    timeDilation: number
 ): PromiseWithTimeout<T> {
     let timerId: number;
     const clearPromiseTimeout = () => clearTimeout(timerId);
@@ -14,8 +14,8 @@ export function createTimeoutStep<T>(
     p._parseInfoForErrorMessage = (info: any) => JSON.stringify(info, null, 2);
     p.info = { description: '', timeout: 0 };
 
-    p.timeout = (ms: number, adjustToMachinePower = true) => {
-        ms = adjustMochaTimeout<T>(adjustToMachinePower, ms, timeDilation, p, ctx);
+    p.timeout = (ms: number) => {
+        ms = adjustMochaTimeout<T>(ms, p);
         clearPromiseTimeout();
         timerId = setTimeout(() => {
             if (rejectAfterTimeout) {
@@ -36,19 +36,13 @@ export function createTimeoutStep<T>(
 }
 
 function adjustMochaTimeout<T>(
-    adjustToMachinePower: boolean,
     ms: number,
-    timeDilation: number,
-    p: PromiseWithTimeout<T>,
-    ctx: Mocha.Context
+    p: PromiseWithTimeout<T>
 ) {
-    if (adjustToMachinePower) {
-        ms = ms * timeDilation;
-    }
+    ms = ms * timeDilation();
     const diff = ms - p.info.timeout;
     p.info.timeout = ms;
-    ctx.timeout(ctx.timeout() + diff);
-    return ms;
+    return adjustTestTime(diff, false);
 }
 
 function createTimeoutPromise<T>(src: Promise<T>, clearPromiseTimeout: () => void) {

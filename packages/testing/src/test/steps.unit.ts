@@ -10,7 +10,7 @@ import {
     waitForSpyCall,
     waitForStubCall,
     withTimeout,
-} from '../steps';
+} from '..';
 
 use(asPromised);
 
