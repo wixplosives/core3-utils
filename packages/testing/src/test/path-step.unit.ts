@@ -5,9 +5,6 @@ import { createTempDirectorySync } from 'create-temp-directory';
 
 describe('waitForPath', () => {
     const fs = createNodeFs();
-    it('resolved immediately when predicate is satisfied', async () => {
-        await waitForPath(fs, 'path', () => true).timeout(100);
-    });
 
     it('resolves when the predicate is satisfied', async () => {
         // eslint-disable-next-line @typescript-eslint/unbound-method
