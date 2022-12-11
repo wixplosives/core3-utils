@@ -1,6 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../../../node_modules/@types/chai/index.d.ts" />
 
+import type { IFileSystem, IWatchEvent } from '@file-services/types';
+
 /**
  * @internal
  * Promise.all return type
@@ -123,4 +125,19 @@ export interface PollDefaults {
      * default: true
      */
     allowPredicateError: boolean;
+}
+
+
+interface FileInfo extends Info {
+    path: string;
+    exists: boolean;
+    fs: IFileSystem;
+    history: any[];
+}
+
+export type FsPredicate = Predicate<IWatchEvent & { fs: IFileSystem }>;
+export interface FsStep extends StepBase<PollInfo & FileInfo, IWatchEvent & { fs: IFileSystem }> {
+    timeout: Timeout<FsStep>;
+    description: Description<FsStep>;
+    interval: (ms: number) => FsStep;
 }

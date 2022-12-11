@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { size } from '@wixc3/common';
-import type { Predicate } from './types';
+import type { FsPredicate, Predicate } from './types';
 
 /**
  * Handy predicate creators for {@link @wixc3/testing#poll | poll}
@@ -70,5 +70,44 @@ export class Expected {
      */
     static containsStrict(expected: any): Predicate<any> {
         return (actual: object) => expect(actual).to.contain(expected);
+    }
+}
+
+export class Path {
+    static exists(): FsPredicate {
+        return ({ fs, path, stats }) => {
+            expect(stats || fs.existsSync(path), `path "${path}" doesn't exist`).not.to.equal(false)
+        };
+    }
+
+    static isFile(): FsPredicate {
+        return ({ fs, path, stats }) => {
+            expect(
+                stats?.isFile() || fs.statSync(path, { throwIfNoEntry: true }).isFile(),
+                `path "${path}" isn't a file`
+            ).to.equal(true);
+        };
+    }
+
+    static isDir(): FsPredicate {
+        return ({ fs, path, stats }) => {
+            expect(
+                stats?.isDirectory() || fs.statSync(path, { throwIfNoEntry: true }).isDirectory(),
+                `path "${path}" isn't a directory`
+            ).to.equal(true);
+        };
+    }
+
+    static hasContent(predicate: string | RegExp | ((actual: string) => boolean)): FsPredicate {
+        return ({ fs, path }) => {
+            const content = fs.readFileSync(path, 'utf8');
+            if (typeof predicate === 'string') {
+                expect(content).to.equal(predicate);
+            } else if (predicate instanceof RegExp) {
+                expect(content).to.match(predicate);
+            } else {
+                expect(predicate(content), 'file content predicate').to.equal(true);
+            }
+        };
     }
 }

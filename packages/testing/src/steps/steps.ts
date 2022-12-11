@@ -4,8 +4,10 @@ import { disposeAfter } from '../dispose';
 import { adjustTestTime, mochaCtx } from './mocha-ctx';
 import { createPollStep } from './poll';
 import { createTimeoutStep } from './with-timeout';
-import type { PollStep, Predicate, _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep } from './types';
+import type { PollStep, Predicate, _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep, FsPredicate } from './types';
 import { createPromiseStep } from './no-timeout';
+import type { IFileSystem } from '@file-services/types';
+import { pathStep } from './path-step';
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
  * A generated stub
@@ -145,6 +147,10 @@ export function poll<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): 
         .allowErrors(allowActionError, allowPredicateError);
     step.stack = getStack();
     return step;
+}
+
+export function waitForPath(fs: IFileSystem, path: string, predicate: FsPredicate) {
+    return pathStep(fs, path, predicate);
 }
 
 /**
