@@ -73,13 +73,33 @@ export class Expected {
     }
 }
 
+/**
+ * Handy predicate creators for {@link @wixc3/testing#waitForPath | waitForPath}
+ *
+ * @privateRemarks
+ * These functions are defined as a class static simply to make the generated docs look nice
+ */
 export class Path {
+    /**
+     * Satisfied when the path exists
+     * @example
+     * ```ts
+     * await waitForPath(fs, 'some-path', Path.exists());
+     * ```
+     */
     static exists(): FsPredicate {
         return ({ fs, path, stats }) => {
             expect(stats || fs.existsSync(path), `path "${path}" doesn't exist`).not.to.equal(false);
         };
     }
 
+    /**
+     * Satisfied when the path is a file
+     * @example
+     * ```ts
+     * await waitForPath(fs, 'file', Path.isFile());
+     * ```
+     */
     static isFile(): FsPredicate {
         return ({ fs, path, stats }) => {
             expect(
@@ -89,6 +109,13 @@ export class Path {
         };
     }
 
+    /**
+     * Satisfied when the path is a directory
+     * @example
+     * ```ts
+     * await waitForPath(fs, 'dir', Path.isDir());
+     * ```
+     */
     static isDir(): FsPredicate {
         return ({ fs, path, stats }) => {
             expect(
@@ -98,6 +125,21 @@ export class Path {
         };
     }
 
+    /**
+     * Satisfied when the path is a file with given content
+     * @example
+     * ```ts
+     * await waitForPath(fs, 'file', Path.hasContent('success!'));
+     * ```
+     * @example
+     * ```ts
+     * await waitForPath(fs, 'file', Path.hasContent(/success!?/));
+     * ```
+     * @example
+     * ```ts
+     * await waitForPath(fs, 'file', Path.hasContent((content)=>content.startWith('success)));
+     * ```
+     */
     static hasContent(predicate: string | RegExp | ((actual: string) => boolean)): FsPredicate {
         return ({ fs, path }) => {
             const content = fs.readFileSync(path, 'utf8');

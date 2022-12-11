@@ -157,6 +157,22 @@ export function poll<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): 
     return step;
 }
 
+/**
+ * waits for a path to satisfy the predicate
+ *
+ *  {@link @wixc3/testing#Path | Path} as helpful predicator creators.
+ *
+ * @example
+ * ```ts
+ * await waitForPath('some-file', ({stats}) => stats?.isSymbolicLink() || false)
+ * ```
+ * @example
+ * ```ts
+ * await waitForPath('some-file', Path.isFile())
+ * await waitForPath('some-file', Path.exists())
+ * await waitForPath('some-file', Path.hasContent('success!'))
+ * ```
+ */
 export function waitForPath(fs: IFileSystem, path: string, predicate: FsPredicate) {
     return pathStep(fs, path, predicate);
 }
