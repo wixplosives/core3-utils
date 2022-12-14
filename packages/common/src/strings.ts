@@ -249,7 +249,7 @@ export function minimalIndent(str: string) {
 export function noWhiteSpace(str: string) {
     return str
         .split('\n')
-        .map((line) => line.replaceAll(/\s+/g, ' ').trim())
+        .map((line) => line.replace(/\s+/g, ' ').trim())
         .filter((i) => i)
         .join('\n');
 }
@@ -300,5 +300,5 @@ export function escapeRegExp(str: string) {
  * Note that there's lexical no parsing, so stuff like "//'//" will not work
  */
 export function naiveStripComments(str: string) {
-    return str.replaceAll(/\/\*.+?\*\//gs, '').replaceAll(/\s*(?<!:)\/\/.*\n?/g, '');
+    return str.replace(/\/\*.+?\*\//gs, '').replace(/\s*(?<!:)\/\/.*\n?/g, '');
 }
