@@ -24,7 +24,7 @@
   "dependencies": {
     "@microsoft/api-documenter": "^7.19.25",
     "@microsoft/api-extractor": "^7.33.6",
-    "@microsoft/api-extractor-model": "^7.25.2",
+    "@microsoft/api-extractor-model": "^7.25.3",
     "@wixc3/common": "^5.2.4",
     "@wixc3/fs-utils": "^5.2.4",
     "@wixc3/typescript": "^5.2.4",
