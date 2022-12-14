@@ -16,6 +16,7 @@ import type {
 import { createPromiseStep } from './no-timeout';
 import type { IFileSystem } from '@file-services/types';
 import { pathStep } from './path-step';
+import { setFirstHook } from './mocha-helpers';
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
  * A generated stub
@@ -57,7 +58,7 @@ const getStack = () => {
         .join('\n');
 };
 
-const addTimeoutSafetyMargin = () => mochaCtx() && adjustTestTime(stepsDefaults.step.safetyMargin);
+const addTimeoutSafetyMargin = () => mochaCtx() && adjustTestTime(defaults().step.safetyMargin);
 
 /**
  * Limits the time a promise can take
@@ -75,7 +76,7 @@ const addTimeoutSafetyMargin = () => mochaCtx() && adjustTestTime(stepsDefaults.
 export function withTimeout<T>(action: Promise<T>): PromiseWithTimeout<T> {
     addTimeoutSafetyMargin();
     const step = createTimeoutStep(action, true)
-        .timeout(stepsDefaults.step.timeout)
+        .timeout(defaults().step.timeout)
         .description(`step ${increaseStepsCount()}`);
     step.stack = getStack();
     return step;
@@ -146,10 +147,11 @@ export function poll<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): 
     addTimeoutSafetyMargin();
     const {
         poll: { interval, allowActionError, allowPredicateError },
-    } = stepsDefaults;
+        step: { timeout },
+    } = defaults();
 
     const step = createPollStep(action, predicate)
-        .timeout(stepsDefaults.step.timeout)
+        .timeout(timeout)
         .description(`step ${increaseStepsCount()}`)
         .interval(interval)
         .allowErrors(allowActionError, allowPredicateError);
@@ -265,9 +267,12 @@ export function defaults(): StepsDefaults {
     return stepsDefaults;
 }
 
-beforeEach('save current test context', function () {
+function createDefaults() {
     stepsDefaults = getDefaults();
     disposeAfter(() => {
         stepsCountByTest = new WeakMap();
     });
-});
+}
+
+beforeEach('create steps defaults', createDefaults);
+setFirstHook(createDefaults);

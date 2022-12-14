@@ -1,3 +1,4 @@
+import { setFirstHook } from './mocha-helpers';
 import { timeDilation } from './time-dilation';
 
 let currentTest: Mocha.Test;
@@ -24,6 +25,9 @@ export function adjustTestTime(ms: number, allowTimeDilation = true) {
     return ms;
 }
 
-beforeEach('save current test context', function () {
+function saveMochaCtx(this: Mocha.Context) {
     currentTest = this.currentTest!;
-});
+}
+
+beforeEach('save current test context', saveMochaCtx);
+setFirstHook(saveMochaCtx);
