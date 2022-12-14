@@ -67,6 +67,10 @@ describe('withTimeout step', () => {
     it('fulfils the promise in the allotted time', async () => {
         expect(await withTimeout(sleep(SHORT_TIME).then(() => 'success')).timeout(LONG_TIME)).to.equal('success');
     });
+    it('handles changes to timeout', async  ()=>{
+        await withTimeout(sleep(10)).timeout(1000).timeout(20)
+        await withTimeout(sleep(10)).timeout(2).timeout(20)
+    })
 });
 
 describe('allWithTimeout step', () => {

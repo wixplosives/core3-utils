@@ -37,5 +37,6 @@ function adjustMochaTimeout<T>(ms: number, p: PromiseWithTimeout<T>) {
     ms = ms * timeDilation();
     const diff = ms - p.info.timeout;
     p.info.timeout = ms;
-    return adjustTestTime(diff, false);
+    adjustTestTime(diff, false);
+    return ms
 }
