@@ -17,25 +17,29 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 #### Available steps:
 
-- [poll()](https://wixplosives.github.io/core3-utils/testing.poll)
+- [poll()](https://wixplosives.github.io/core3-utils/testing.poll) until a predicate is satisfied
 
-- [withTimeout()](https://wixplosives.github.io/core3-utils/testing.withtimeout)
+- [withTimeout()](https://wixplosives.github.io/core3-utils/testing.withtimeout) adds timeout and description to a promise\]
 
-- [allWithTimeout()](https://wixplosives.github.io/core3-utils/testing.allwithtimeout)
+- [allWithTimeout()](https://wixplosives.github.io/core3-utils/testing.allwithtimeout) time limited Promise.all
 
-- [waitForSpyCall()](https://wixplosives.github.io/core3-utils/testing.waitforspycall)
+- [waitForSpyCall()](https://wixplosives.github.io/core3-utils/testing.waitforspycall) spies on a method and wait for first call
 
-- [waitForStubCall()](https://wixplosives.github.io/core3-utils/testing.waitforstubcall)
+- [waitForStubCall()](https://wixplosives.github.io/core3-utils/testing.waitforstubcall) creates a one off stub and wait for it to be called
 
-- [sleep()](https://wixplosives.github.io/core3-utils/testing.sleep)
+- [step()](https://wixplosives.github.io/core3-utils/testing.step) adds a description (but not timeout) to a promise, useful for playwright locator waitFor
 
-### Other goodies
+- [sleep()](https://wixplosives.github.io/core3-utils/testing.sleep) sleep (and adjust test time)
 
-- [disposeAfter()](https://wixplosives.github.io/core3-utils/testing.disposeafter) will dispose of test resources after the test is done
+### Test timeout manipulation
 
-- [useSafeFakeTimers()](https://wixplosives.github.io/core3-utils/testing.usesafefaketimers) makes it easy to safely use fake timers
+When waiting for things that are not steps, these
 
-- [randomizeTestsOrder()](https://wixplosives.github.io/core3-utils/testing.randomizetestsorder) will randomize testing order to make sure tests are isolated and distribute load more uniformly when running parallel tests
+- multiplies step timeouts when debugging or running on slow CI machines
+
+- [adjustTestTime()](https://wixplosives.github.io/core3-utils/testing.adjusttesttime) adjusts current test timeout (for use in non step async actions)
+
+- [locatorTimeout()](https://wixplosives.github.io/core3-utils/testing.locatortimeout) creates a locator timeout and adjust the current test
 
 ## Classes
 
@@ -52,6 +56,7 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 | [allWithTimeout(actions)](https://wixplosives.github.io/core3-utils/testing.allwithtimeout)                   | <p>Limits the time a list of promises can take</p><p>- Note: useable only within a mocha test/hook. The total test timeout will be adjusted to make sure the test will not time out waiting for this step</p>                                                                                                                                                                   |
 | [defaults()](https://wixplosives.github.io/core3-utils/testing.defaults)                                      | default values for steps of the current test                                                                                                                                                                                                                                                                                                                                    |
 | [disposeAfter(disposable)](https://wixplosives.github.io/core3-utils/testing.disposeafter)                    | Disposes of test resources after the test is done                                                                                                                                                                                                                                                                                                                               |
+| [locatorTimeout(ms)](https://wixplosives.github.io/core3-utils/testing.locatortimeout)                        | Creates a playwright locator options with timeout and adjust the current test timeout accordingly                                                                                                                                                                                                                                                                               |
 | [mochaCtx()](https://wixplosives.github.io/core3-utils/testing.mochactx)                                      | Active mocha context                                                                                                                                                                                                                                                                                                                                                            |
 | [poll(action, predicate)](https://wixplosives.github.io/core3-utils/testing.poll)                             | <p>Checks the return value of am action until it satisfies the predicate</p><p>Error handling can be changed using allowErrors. the default behavior is:</p><p>- When the action throws the step fails</p><p>- When the predicate throws the polling continues</p><p>[Expected](https://wixplosives.github.io/core3-utils/testing.expected) as helpful predicator creators.</p> |
 | [randomizeTestsOrder(shouldRandomize)](https://wixplosives.github.io/core3-utils/testing.randomizetestsorder) | <p>Randomizes tests order</p><p>To avoid confusion, it can only be set once, before the testing begins (i.e. not in a running test)</p>                                                                                                                                                                                                                                         |
