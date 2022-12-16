@@ -9,29 +9,32 @@
  * Each step timeout auto increases the test timeout, assuring the step will time out before the test
  *
  * [[[h 4 Available steps:]]]
- * - {@link @wixc3/testing#poll}
+ * - {@link @wixc3/testing#poll} until a predicate is satisfied
  *
- * - {@link @wixc3/testing#withTimeout}
+ * - {@link @wixc3/testing#withTimeout} adds timeout and description to a promise]
  *
- * - {@link @wixc3/testing#allWithTimeout}
+ * - {@link @wixc3/testing#allWithTimeout} time limited Promise.all
  *
- * - {@link @wixc3/testing#waitForSpyCall}
+ * - {@link @wixc3/testing#waitForSpyCall} spies on a method and wait for first call
  *
- * - {@link @wixc3/testing#waitForStubCall}
+ * - {@link @wixc3/testing#waitForStubCall} creates a one off stub and wait for it to be called
  *
- * - {@link @wixc3/testing#sleep}
+ * - {@link @wixc3/testing#step} adds a description (but not timeout) to a promise, useful for playwright locator waitFor
  *
- *
- * [[[h 3 Other goodies]]]
- *
- * - {@link @wixc3/testing#disposeAfter} will dispose of test resources after the test is done
- *
- * - {@link @wixc3/testing#useSafeFakeTimers} makes it easy to safely use fake timers
- *
- * - {@link @wixc3/testing#randomizeTestsOrder} will randomize testing order to make sure tests are isolated
- * and distribute load more uniformly when running parallel tests
+ * - {@link @wixc3/testing#sleep} sleep (and adjust test time)
+ * 
+ * [[[h 3 Test timeout manipulation]]]
+ * When waiting for things that are not steps, these  
+ * 
+ * - {@link @wixc3/testing#timeDilation} multiplies step timeouts when debugging or running on slow CI machines
+ * 
+ * - {@link @wixc3/testing#adjustTestTime} adjusts current test timeout (for use in non step async actions)
+ * 
+ * - {@link @wixc3/testing#locatorTimeout} creates a locator timeout and adjust the current test
  */
 export * from './steps';
 export * from './safe-fake-timer';
 export * from './dispose';
 export * from './randomize-tests-order';
+export * from './mocha-ctx'
+export * from './time-dilation'
