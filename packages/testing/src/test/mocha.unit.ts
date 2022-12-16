@@ -1,5 +1,6 @@
 import { expect } from 'chai';
-import { adjustTestTime, mochaCtx, timeDilation } from '../steps';
+import { adjustTestTime, mochaCtx } from '../mocha-ctx';
+import { timeDilation } from '../time-dilation';
 
 describe('adjustTestTime', () => {
     let dilation: number;

@@ -25,6 +25,14 @@ export function adjustTestTime(ms: number, allowTimeDilation = true) {
     return ms;
 }
 
+/**
+ * Creates a playwright locator options with timeout 
+ * and adjust the current test timeout accordingly
+ */
+export function locatorTimeout(ms=1_000) {
+    return {timeout:adjustTestTime(ms)}
+}
+
 function saveMochaCtx(this: Mocha.Context) {
     currentTest = this.currentTest!;
 }

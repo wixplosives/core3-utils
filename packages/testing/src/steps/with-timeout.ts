@@ -1,7 +1,7 @@
 import { parseInfoJson, wrapPromise } from './common';
 import { TimeoutError } from './errors';
-import { adjustTestTime } from './mocha-ctx';
-import { timeDilation } from './time-dilation';
+import { adjustTestTime } from '../mocha-ctx';
+import { timeDilation } from '../time-dilation';
 import type { PromiseWithTimeout } from './types';
 
 export function createTimeoutStep<T>(src: Promise<T>, rejectAfterTimeout: boolean): PromiseWithTimeout<T> {
