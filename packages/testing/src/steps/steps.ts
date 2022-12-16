@@ -1,7 +1,7 @@
 import { isString } from '@wixc3/common';
 import { deferred } from 'promise-assist';
 import { disposeAfter } from '../dispose';
-import { adjustTestTime, mochaCtx } from './mocha-ctx';
+import { adjustTestTime, mochaCtx } from '../mocha-ctx';
 import { createPollStep } from './poll';
 import { createTimeoutStep } from './with-timeout';
 import type {
@@ -16,7 +16,7 @@ import type {
 import { createPromiseStep } from './no-timeout';
 import type { IFileSystem } from '@file-services/types';
 import { pathStep } from './path-step';
-import { setFirstHook } from './mocha-helpers';
+import { setFirstHook } from '../mocha-helpers';
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
  * A generated stub
