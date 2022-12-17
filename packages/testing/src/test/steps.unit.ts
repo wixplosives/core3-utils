@@ -20,7 +20,7 @@ describe('steps', () => {
     it('each step timeout extends the test timeout', async () => {
         const TIMEOUT = 30;
         const SAFETY_MARGIN = 20;
-        mochaCtx().timeout(1_000);
+        mochaCtx()?.timeout(1_000);
         defaults().step.safetyMargin = SAFETY_MARGIN;
         defaults().step.timeout = TIMEOUT;
         await Promise.all([
@@ -34,7 +34,7 @@ describe('steps', () => {
             expect(waitForSpyCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
             expect(waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out'),
         ]);
-        expect(mochaCtx().timeout()).to.be.approximately(
+        expect(mochaCtx()?.timeout()).to.be.approximately(
             1_000 + timeDilation() * (+4 * TIMEOUT + 4 * SAFETY_MARGIN),
             2
         );
@@ -176,5 +176,3 @@ describe('waitForStubCall', () => {
         });
     });
 });
-
-expect(() => sleep(0), 'Usage outside of mocha test').to.throw('Invalid use of the testing package');

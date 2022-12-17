@@ -1,6 +1,6 @@
 import { expect, use } from 'chai';
 import asPromised from 'chai-as-promised';
-import { defaults, mochaCtx, poll, sleep } from '..';
+import { defaults, poll, sleep } from '..';
 
 use(asPromised);
 
@@ -98,7 +98,6 @@ describe('poll step', () => {
     });
 });
 it(`doesn't poll after the step is done`, async () => {
-    mochaCtx().timeout();
     let count = 0;
     await poll(() => ++count, 3).interval(1);
     await sleep(50);

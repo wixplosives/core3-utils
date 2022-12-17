@@ -6,10 +6,7 @@ let currentTest: Mocha.Test;
 /**
  * Active mocha context
  */
-export function mochaCtx(): Mocha.Context {
-    if (!currentTest?.ctx) {
-        throw new Error(`Invalid use of the testing package: no mocha test context`);
-    }
+export function mochaCtx(): Mocha.Context|undefined {
     return currentTest.ctx;
 }
 
@@ -21,7 +18,8 @@ export function adjustTestTime(ms: number, allowTimeDilation = true) {
     if (allowTimeDilation) {
         ms *= timeDilation();
     }
-    mochaCtx().timeout(mochaCtx().timeout() + ms);
+    const ctx = mochaCtx()
+    ctx?.timeout(ctx?.timeout() + ms);
     return ms;
 }
 
