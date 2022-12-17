@@ -11,7 +11,7 @@ export const _before = globalThis.before ? globalThis.before : () => void 0
 export const _afterEach = globalThis.afterEach ? globalThis.afterEach : () => void 0
 export const _after = globalThis.after ? globalThis.after : () => void 0
 
-before(function () {
+_before(function () {
     const root = getCtxRoot(this);
     ensureFirst.forEach((h) => goFirst(h, root));
 });
