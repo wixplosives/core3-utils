@@ -1,4 +1,5 @@
 import { createDisposables, Disposable } from '@wixc3/patterns';
+import { _afterEach } from './mocha-helpers';
 
 const disposables = createDisposables();
 
@@ -17,6 +18,6 @@ export function disposeAfter(disposable: Disposable) {
     disposables.add(disposable);
 }
 
-afterEach('disposing', () => {
+_afterEach('disposing', () => {
     return disposables.dispose();
 });

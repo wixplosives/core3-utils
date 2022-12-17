@@ -16,7 +16,7 @@ import type {
 import { createPromiseStep } from './no-timeout';
 import type { IFileSystem } from '@file-services/types';
 import { pathStep } from './path-step';
-import { setFirstHook } from '../mocha-helpers';
+import { setFirstHook, _beforeEach } from '../mocha-helpers';
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
  * A generated stub
@@ -274,5 +274,5 @@ function createDefaults() {
     });
 }
 
-beforeEach('create steps defaults', createDefaults);
+_beforeEach('create steps defaults', createDefaults);
 setFirstHook(createDefaults);

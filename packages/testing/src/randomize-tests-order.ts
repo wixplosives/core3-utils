@@ -1,4 +1,5 @@
 import { shuffle } from '@wixc3/common';
+import { getCtxRoot, _before } from './mocha-helpers';
 
 let _shouldRandomize = false;
 let wasSet = false;
@@ -15,18 +16,16 @@ export function randomizeTestsOrder(shouldRandomize = true) {
     _shouldRandomize = shouldRandomize;
     wasSet = true;
 }
+
 const shuffleTests = (s: Mocha.Suite) => {
-    shuffle(s.tests);
-    shuffle(s.suites);
+    s.tests = shuffle(s.tests);
+    s.suites = shuffle(s.suites);
     s.suites.forEach(shuffleTests);
 };
 
-before(function () {
+_before(function () {
     if (_shouldRandomize) {
-        let root = this.test?.parent;
-        while (root && !root.root) {
-            root = root?.parent;
-        }
+        const root = getCtxRoot(this)
         if (root) {
             shuffleTests(root);
         } else {
