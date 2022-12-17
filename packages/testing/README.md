@@ -33,9 +33,9 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 ### Test timeout manipulation
 
-When waiting for things that are not steps, these
+- DEBUG=true env variable will set test timeouts and time dilation to infinity so tests (that don't explicitly override timeout) will not time out on breakpoints
 
-- multiplies step timeouts when debugging or running on slow CI machines
+- multiplies [step()](https://wixplosives.github.io/core3-utils/testing.step) timeouts when debugging or running on slow CI machines
 
 - [adjustTestTime()](https://wixplosives.github.io/core3-utils/testing.adjusttesttime) adjusts current test timeout (for use in non step async actions)
 

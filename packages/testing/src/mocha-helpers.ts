@@ -5,12 +5,18 @@ export const setFirstHook = (fn: () => void) => {
     ensureFirst.push(fn);
 };
 
+/** safe calls to mocha globals (noop if not running in a mocha environment) */
+export const _beforeEach = globalThis.beforeEach ? globalThis.beforeEach : () => void 0
+export const _before = globalThis.before ? globalThis.before : () => void 0
+export const _afterEach = globalThis.afterEach ? globalThis.afterEach : () => void 0
+export const _after = globalThis.after ? globalThis.after : () => void 0
+
 before(function () {
     const root = getCtxRoot(this);
     ensureFirst.forEach((h) => goFirst(h, root));
 });
 
-function getCtxRoot(ctx: Mocha.Context) {
+export function getCtxRoot(ctx: Mocha.Context) {
     let root = ctx.test?.parent;
     while (root && !root.root) {
         root = root?.parent;
