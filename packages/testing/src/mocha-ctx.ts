@@ -7,7 +7,7 @@ let currentTest: Mocha.Test;
  * Active mocha context
  */
 export function mochaCtx(): Mocha.Context|undefined {
-    return currentTest.ctx;
+    return currentTest?.ctx;
 }
 
 /**
