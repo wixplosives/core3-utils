@@ -1,7 +1,10 @@
-import { timeDilation } from "./time-dilation";
+import { timeDilation } from './time-dilation';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-if ((globalThis as {process?:{env:{DEBUG?:string}}})?.process?.env?.DEBUG === 'true') {
+const debug = (globalThis as { process?: { env: { DEBUG?: string } } })?.process?.env?.DEBUG;
+if (debug === 'true' || parseInt(debug || '0') > 0) {
+    // eslint-disable-next-line no-console
+    console.log('Testing in debug mode');
     timeDilation(Number.POSITIVE_INFINITY);
-    (globalThis as {mocha?:Mocha})?.mocha?.timeout(Number.POSITIVE_INFINITY)
+    (globalThis as { mocha?: Mocha })?.mocha?.timeout(Number.POSITIVE_INFINITY);
 }
