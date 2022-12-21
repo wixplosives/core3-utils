@@ -97,24 +97,41 @@ describe('poll step', () => {
         });
     });
 });
-it(`doesn't poll after the step is done`, async () => {
-    let count = 0;
-    await poll(() => ++count, 3).interval(1);
-    await sleep(50);
-    expect(count).to.equal(3);
-    await expect(
-        poll(
-            () => ++count,
-            () => false
-        )
-            .interval(1)
-            .timeout(1)
-    ).to.eventually.rejectedWith('Timed out');
-    const lastCount = count;
-    await sleep(50);
-    expect(count).to.equal(lastCount);
+describe('technical requirements', () => {
+    it(`doesn't poll after the step is done`, async () => {
+        let count = 0;
+        await poll(() => ++count, 3).interval(1);
+        await sleep(50);
+        expect(count).to.equal(3);
+        await expect(
+            poll(
+                () => ++count,
+                () => false
+            )
+                .interval(1)
+                .timeout(1)
+        ).to.eventually.rejectedWith('Timed out');
+        const lastCount = count;
+        await sleep(50);
+        expect(count).to.equal(lastCount);
+    });
+
+    it('polls as soon as the interval is set', () =>
+        poll(() => true, true)
+            .timeout(10)
+            .interval(1000));
+
+    it(`doesn't poll in parallel`, async () => {
+        let count = 0;
+        await expect(
+            poll(async () => {
+                count++;
+                await sleep(50);
+                return false;
+            }, true)
+                .timeout(100)
+                .interval(10)
+        ).to.be.rejectedWith('Timed out');
+        expect(count).to.eq(2);
+    });
 });
-it('polls as soon as the interval is set', () =>
-    poll(() => true, true)
-        .timeout(10)
-        .interval(1000));
