@@ -38,7 +38,7 @@ const getDefaults = (): StepsDefaults => ({
         safetyMargin: 50,
     },
     poll: {
-        interval: 100,
+        interval: 10,
         allowActionError: false,
         allowPredicateError: true,
     },
