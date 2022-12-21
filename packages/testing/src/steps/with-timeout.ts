@@ -4,7 +4,11 @@ import { adjustTestTime } from '../mocha-ctx';
 import { timeDilation } from '../time-dilation';
 import type { PromiseWithTimeout } from './types';
 
-export function createTimeoutStep<T>(src: Promise<T>, rejectAfterTimeout: boolean): PromiseWithTimeout<T> {
+export function createTimeoutStep<T>(
+    src: Promise<T>,
+    rejectAfterTimeout: boolean,
+    adjustTestTime = true
+): PromiseWithTimeout<T> {
     let timerId: number;
     const clearPromiseTimeout = () => clearTimeout(timerId);
     const { p, resolve, reject } = wrapPromise<T, PromiseWithTimeout<T>>(src, clearPromiseTimeout);
@@ -13,7 +17,7 @@ export function createTimeoutStep<T>(src: Promise<T>, rejectAfterTimeout: boolea
     p.info = { description: '', timeout: 0 };
 
     p.timeout = (ms: number) => {
-        ms = adjustMochaTimeout<T>(ms, p);
+        ms = adjustTimeout<T>(ms, p, adjustTestTime);
         clearPromiseTimeout();
         timerId = setTimeout(() => {
             if (rejectAfterTimeout) {
@@ -33,10 +37,10 @@ export function createTimeoutStep<T>(src: Promise<T>, rejectAfterTimeout: boolea
     return p;
 }
 
-function adjustMochaTimeout<T>(ms: number, p: PromiseWithTimeout<T>) {
+function adjustTimeout<T>(ms: number, p: PromiseWithTimeout<T>, adjust: boolean) {
     ms = ms * timeDilation();
     const diff = ms - p.info.timeout;
     p.info.timeout = ms;
-    adjustTestTime(diff, false);
-    return ms
+    if (adjust) adjustTestTime(diff, false);
+    return ms;
 }

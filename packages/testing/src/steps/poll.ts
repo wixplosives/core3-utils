@@ -2,89 +2,94 @@ import { last } from '@wixc3/common';
 import { expect } from 'chai';
 import { createTimeoutStep as createTimeoutStep } from './with-timeout';
 import type { PollInfo, PollStep, Predicate } from './types';
+import { deferred } from 'promise-assist';
 
 type Stage = 'action' | 'predicate';
 
 export function createPollStep<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): PollStep<T> {
-    let intervalId!: number;
-    const clearPollingInterval = () => clearInterval(intervalId);
-    const { intervalPromise, resolve, reject } = createIntervalPromise<T>(clearPollingInterval);
-
-    const _predicate = (
-        typeof predicate === 'function' ? predicate : (v: Awaited<T>) => expect(v).to.eql(predicate)
-    ) as Predicate<T>;
-
-    const p = createTimeoutStep<T>(intervalPromise, true) as unknown as PollStep<T>;
+    const { promise, reject, resolve } = deferred<T>();
+    const state: PollState<T> = {
+        reject,
+        resolve,
+        predicate: (typeof predicate === 'function'
+            ? predicate
+            : (v: Awaited<T>) => expect(v).to.eql(predicate)) as Predicate<T>,
+        p: createTimeoutStep<T>(promise, true) as unknown as PollStep<T>,
+        action,
+        isSettled: false,
+    };
+    const p = state.p;
 
     p._parseInfoForErrorMessage = _parseInfoForErrorMessage;
     p.info = initialInfo();
     p.interval = (ms: number) => {
-        clearInterval(intervalId);
-        intervalId = setPollingInterval(ms, { p, predicate: _predicate, resolve, reject, action });
         p.info.interval = ms;
-        setTimeout(() => pollOnce({ p, predicate: _predicate, resolve, reject, action }), 0);
         return p;
     };
     p.allowErrors = (action = true, predicate = true) => {
         p.info.allowErrors = { action, predicate };
         return p;
     };
-    p.catch(() => {
-        clearInterval(intervalId);
+    p.catch((e) => {
+        state.isSettled = true;
+        reject(e);
     });
+
+    setTimeout(() => poll(state), 0);
 
     return p;
 }
 
-function createIntervalPromise<T>(clearInterval: () => void) {
-    let resolve!: (value: T) => void;
-    let reject!: (reason?: any) => void;
-    const intervalPromise = new Promise<T>((_resolve, _reject) => {
-        resolve = (value: T) => {
-            clearInterval();
-            _resolve(value);
-        };
-        reject = (reason: any) => {
-            clearInterval();
-            _reject(reason);
-        };
-    });
-    return { intervalPromise, resolve, reject };
-}
-
-type PollHelpers<T> = {
+type PollState<T> = {
     predicate: Predicate<T>;
     resolve: (v: T) => void;
     reject: (r: any) => void;
     action: () => T;
     p: PollStep<T>;
+    isSettled: boolean;
 };
 
-function setPollingInterval<T>(ms: number, helpers: PollHelpers<T>) {
-    return setInterval(() => pollOnce<T>(helpers), ms);
-}
-
-async function pollOnce<T>({ p, action, predicate, resolve, reject }: PollHelpers<T>) {
-    try {
-        const value = await Promise.resolve(action());
-        p.info.polledValues.push({ action: value });
+async function poll<T>(state: PollState<T>) {
+    while (!state.isSettled) {
         try {
-            if (predicate(value) !== false) {
-                resolve(value);
+            const {
+                action,
+                p: {
+                    info: { polledValues },
+                },
+                resolve,
+                predicate,
+            } = state;
+
+            const value = await Promise.resolve(action());
+            polledValues.push({ action: value });
+            try {
+                if (predicate(value) !== false) {
+                    state.isSettled = true;
+                    resolve(value);
+                }
+            } catch (e) {
+                handleError(e, 'predicate', state);
             }
         } catch (e) {
-            handleError(e, 'predicate', p, reject);
+            handleError(e, 'action', state);
         }
-    } catch (e) {
-        handleError(e, 'action', p, reject);
+        if (!state.isSettled) {
+            await createTimeoutStep(new Promise<void>(() => void 0), false, false).timeout(state.p.info.interval);
+        }
     }
 }
 
-function handleError<T>(e: any, type: Stage, p: PollStep<T>, reject: (reason: any) => void) {
-    if (p.info.allowErrors[type]) {
+function handleError<T>(e: any, type: Stage, state: PollState<T>) {
+    const {
+        p: { info },
+        reject,
+    } = state;
+    if (info.allowErrors[type]) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        p.info.polledValues.push({ [type]: e } as Record<Stage, any>);
+        info.polledValues.push({ [type]: e } as Record<Stage, any>);
     } else {
+        state.isSettled = true;
         reject(e);
     }
 }
