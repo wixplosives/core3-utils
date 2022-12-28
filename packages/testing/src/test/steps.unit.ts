@@ -64,6 +64,13 @@ describe('withTimeout step', () => {
             'test'
         );
     });
+    it('times out with extra info', async () => {
+        await expect(
+            withTimeout(sleep(LONG_TIME))
+                .timeout(SHORT_TIME)
+                .description('test', () => Promise.resolve({ data: 1 }))
+        ).to.eventually.rejectedWith(`"data": 1`);
+    });
     it('fulfils the promise in the allotted time', async () => {
         expect(await withTimeout(sleep(SHORT_TIME).then(() => 'success')).timeout(LONG_TIME)).to.equal('success');
     });
