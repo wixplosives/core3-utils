@@ -14,6 +14,7 @@ export type _PromiseAll<T extends Readonly<any[]>> = { -readonly [P in keyof T]:
  */
 export interface Info {
     description: string;
+    extra?: object | string;
 }
 
 /**
@@ -27,6 +28,7 @@ export interface StepBase<T extends Info = Info, R = any> extends Promise<R> {
      * parses the info field for the error message
      */
     _parseInfoForErrorMessage: (info: T) => string;
+    description: Description<StepBase<T>>;
 }
 
 export interface PromiseStep<T> extends StepBase<Info, T> {
@@ -41,7 +43,7 @@ export type Timeout<T> = (ms: number) => T;
 /**
  * Sets step description
  */
-export type Description<T> = (description: string) => T;
+export type Description<T> = (description: string, extraInfo?: () => object | string | Promise<object | string>) => T;
 
 /**
  * WithTimeout API
