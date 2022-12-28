@@ -3,7 +3,7 @@ import { join } from 'path';
 import { Config, _config, _docs } from '../common';
 import { init } from '../init';
 import { buildDocs } from '../build-docs/build-docs';
-import { escapeRegExp, isString, naiveStripComments } from '@wixc3/common';
+import { escapeRegExp, isString } from '@wixc3/common';
 import type { Macro } from '../macros.types';
 
 export const config: Config = {
@@ -21,6 +21,14 @@ export const config: Config = {
         repo: 'repo',
     },
 };
+
+/**
+ * Removes comments from string
+ * Note that there's lexical no parsing, so stuff like "//'//" will not work
+ */
+export function naiveStripComments(str: string) {
+    return str.replace(/\/\*.+?\*\//gs, '').replace(/\s*(?<!:)\/\/.*\n?/g, '');
+}
 
 export const loadJson = (...paths: string[]) => {
     const path = join(...paths);

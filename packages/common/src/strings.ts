@@ -294,11 +294,3 @@ export function escapeRegExp(str: string) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     // $& means the whole matched string
 }
-
-/**
- * Removes comments from string
- * Note that there's lexical no parsing, so stuff like "//'//" will not work
- */
-export function naiveStripComments(str: string) {
-    return str.replace(/\/\*.+?\*\//gs, '').replace(/\s*(?<!:)\/\/.*\n?/g, '');
-}
