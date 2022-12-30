@@ -24,7 +24,7 @@
     "@types/node": "16",
     "@types/sinon": "^10.0.13",
     "@types/sinon-chai": "^3.2.9",
-    "@types/yargs": "^17.0.17",
+    "@types/yargs": "^17.0.18",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
     "chai": "^4.3.7",
