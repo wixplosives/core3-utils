@@ -1,7 +1,13 @@
 import { createDisposables, Disposable } from '@wixc3/patterns';
 import { _afterEach } from './mocha-helpers';
 
-const disposables = createDisposables();
+const disposables = {
+    first: createDisposables(),
+    normal: createDisposables(),
+    last: createDisposables(),
+} as const;
+
+type BUCKET = keyof typeof disposables;
 
 /**
  * Disposes of test resources after the test is done
@@ -14,10 +20,12 @@ const disposables = createDisposables();
  * })
  * ```
  */
-export function disposeAfter(disposable: Disposable) {
-    disposables.add(disposable);
+export function disposeAfter(disposable: Disposable, bucket: BUCKET = 'normal') {
+    disposables[bucket].add(disposable);
 }
 
-_afterEach('disposing', () => {
-    return disposables.dispose();
+_afterEach('disposing', async () => {
+    await disposables['first'].dispose();
+    await disposables['normal'].dispose();
+    await disposables['last'].dispose();
 });
