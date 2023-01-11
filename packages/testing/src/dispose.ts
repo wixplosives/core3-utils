@@ -1,14 +1,11 @@
-import { createDisposables, Disposable } from '@wixc3/patterns';
+import { createDisposables, Disposable, Disposables } from '@wixc3/patterns';
 import { _afterEach } from './mocha-helpers';
 
-const disposables = {
-    first: createDisposables(),
-    normal: createDisposables(),
-    last: createDisposables(),
-} as const;
+const disposables: Disposables[] = [];
 
-type BUCKET = keyof typeof disposables;
-
+export const NORMAL = 10;
+export const BEFORE = 5;
+export const AFTER = 15;
 /**
  * Disposes of test resources after the test is done
  * @example
@@ -20,12 +17,17 @@ type BUCKET = keyof typeof disposables;
  * })
  * ```
  */
-export function disposeAfter(disposable: Disposable, bucket: BUCKET = 'normal') {
-    disposables[bucket].add(disposable);
+export function disposeAfter(disposable: Disposable, group = NORMAL) {
+    if (group < 0 || group !== (group | 0)) {
+        throw new Error(`Invalid disposal group ${group}, must be a non negative integer`);
+    }
+    const _disposables = disposables[group] || createDisposables();
+    _disposables.add(disposable);
+    disposables[group] = _disposables;
 }
 
 _afterEach('disposing', async () => {
-    await disposables['first'].dispose();
-    await disposables['normal'].dispose();
-    await disposables['last'].dispose();
+    for (const disposable of disposables) {
+        await disposable?.dispose();
+    }
 });
