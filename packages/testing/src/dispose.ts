@@ -26,6 +26,16 @@ export function disposeAfter(disposable: Disposable, group = NORMAL) {
     disposables[group] = _disposables;
 }
 
+export async function initAndDisposeAfter<T extends (...args: any[]) => any>(
+    target: { init: T } & Disposable,
+    ...args: Parameters<T>
+): Promise<Awaited<ReturnType<T>>> {
+    disposeAfter(target);
+    const res = target.init(...args) as ReturnType<T>;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return await Promise.resolve(res);
+}
+
 _afterEach('disposing', async () => {
     for (const disposable of disposables) {
         await disposable?.dispose();
