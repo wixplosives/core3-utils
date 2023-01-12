@@ -26,9 +26,11 @@ export function disposeAfter(disposable: Disposable, group = DisposalGroups.DEFA
  * Creates a new disposal group
  * @example
  * ```ts
- * createDisposalGroup('group1', { before: DisposalGroups.DEFAULT_GROUP })
- * disposeAfter(() => {}) // will be disposed in default group
- * disposeAfter(() => {}, 'group1') // will be disposed before the default group
+ * it('test', () => {
+ *      createDisposalGroup('group1', { before: DisposalGroups.DEFAULT_GROUP })
+ *      disposeAfter(() => {}) // will be disposed in default group
+ *      disposeAfter(() => {}, 'group1') // will be disposed before the default group
+ * })
  * ```
  *
  * @param name disposal group name, must be unique
@@ -40,6 +42,17 @@ export function createDisposalGroup(name: string, constraints: GroupConstraints[
 
 /**
  * Runs target.init and disposes of it after the test is done
+ *  * @example
+ * ```ts
+ * it('test', async () => {
+ *      const myService = {
+ *         init: (a:string) => {console.log(a)},
+ *         dispose: () => {console.log('disposed')}
+ *      }
+ *      await initAndDisposeAfter(myService, 'hello') // logs 'hello'
+ * })
+ * // logs 'disposed' after the test is done
+ * ```
  * @returns init result
  */
 export async function initAndDisposeAfter<T extends (...args: any[]) => any>(
