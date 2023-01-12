@@ -22,19 +22,20 @@
  * - {@link step} adds a description (but not timeout) to a promise, useful for playwright locator waitFor
  *
  * - {@link sleep} sleep (and adjust test time)
- * 
+ *
  * [[[h 3 Test timeout manipulation]]]
  * - DEBUG=true env variable will set test timeouts and time dilation to infinity so tests (that don't explicitly override timeout) will not time out on breakpoints
- * 
+ *
  * - {@link timeDilation} multiplies {@link step} timeouts when debugging or running on slow CI machines
- * 
+ *
  * - {@link adjustTestTime} adjusts current test timeout (for use in non step async actions)
- * 
+ *
  * - {@link locatorTimeout} creates a locator timeout and adjust the current test
  */
 export * from './steps';
 export * from './safe-fake-timer';
 export * from './dispose';
 export * from './randomize-tests-order';
-export * from './mocha-ctx'
-export * from './time-dilation'
+export * from './mocha-ctx';
+export * from './time-dilation';
+export * from './temp-test-dir';
