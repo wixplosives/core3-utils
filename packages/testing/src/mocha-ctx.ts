@@ -20,7 +20,9 @@ export function adjustTestTime(ms: number, allowTimeDilation = true) {
         ms *= timeDilation();
     }
     const ctx = mochaCtx();
-    ctx?.timeout(ctx?.timeout() + ms);
+    if (ctx?.timeout()) {
+        ctx?.timeout(ctx?.timeout() + ms);
+    }
     return ms;
 }
 
