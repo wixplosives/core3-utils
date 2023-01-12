@@ -1,11 +1,9 @@
-import { createDisposables, Disposable, Disposables } from '@wixc3/patterns';
+import type { Disposable } from '@wixc3/patterns';
+import { DisposalGroups, GroupConstraints } from './disposal-group';
 import { _afterEach } from './mocha-helpers';
 
-const disposables: Disposables[] = [];
+const disposables = new DisposalGroups();
 
-export const NORMAL = 10;
-export const BEFORE = 5;
-export const AFTER = 15;
 /**
  * Disposes of test resources after the test is done
  * @example
@@ -16,16 +14,33 @@ export const AFTER = 15;
  *      disposeAfter(() => someService.off('event', listener))
  * })
  * ```
+ *
+ * @param group disposal group name. disposal groups let you specify disposal constrains. see: {@link createDisposalGroup}
  */
-export function disposeAfter(disposable: Disposable, group = NORMAL) {
-    if (group < 0 || group !== (group | 0)) {
-        throw new Error(`Invalid disposal group ${group}, must be a non negative integer`);
-    }
-    const _disposables = disposables[group] || createDisposables();
-    _disposables.add(disposable);
-    disposables[group] = _disposables;
+export function disposeAfter(disposable: Disposable, group = DisposalGroups.DEFAULT_GROUP) {
+    disposables.addToGroup(disposable, group);
 }
 
+/**
+ * Creates a new disposal group
+ * @example
+ * ```ts
+ * createDisposalGroup('group1', { before: DisposalGroups.DEFAULT_GROUP })
+ * disposeAfter(() => {}) // will be disposed in default group
+ * disposeAfter(() => {}, 'group1') // will be disposed before the default group
+ * ```
+ *
+ * @param name disposal group name, must be unique
+ * @param constraints disposal group must have constrains, either before or after another group(s)
+ */
+export function createDisposalGroup(name: string, constraints: GroupConstraints[] | GroupConstraints) {
+    disposables.registerGroup(name, constraints);
+}
+
+/**
+ * Runs target.init and disposes of it after the test is done
+ * @returns init result
+ */
 export async function initAndDisposeAfter<T extends (...args: any[]) => any>(
     target: { init: T } & Disposable,
     ...args: Parameters<T>
@@ -36,8 +51,4 @@ export async function initAndDisposeAfter<T extends (...args: any[]) => any>(
     return await Promise.resolve(res);
 }
 
-_afterEach('disposing', async () => {
-    for (const disposable of disposables) {
-        await disposable?.dispose();
-    }
-});
+_afterEach('disposing', disposables.dispose);
