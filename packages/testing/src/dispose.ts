@@ -3,6 +3,7 @@ import { DisposalGroups, GroupConstraints } from './disposal-group';
 import { _afterEach } from './mocha-helpers';
 
 const disposables = new DisposalGroups();
+export const DEFAULT_DISPOSAL_GROUP = DisposalGroups.DEFAULT_GROUP;
 
 /**
  * Disposes of test resources after the test is done
