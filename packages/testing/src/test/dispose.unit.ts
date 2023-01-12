@@ -1,33 +1,46 @@
 import { expect } from 'chai';
-import { AFTER, BEFORE, disposeAfter, initAndDisposeAfter } from '../dispose';
+import { createDisposalGroup, disposeAfter, initAndDisposeAfter } from '../dispose';
 
 describe('dispose', () => {
-    const events = [] as string[];
+    describe('disposeAfter default behavior', () => {
+        const events = [] as string[];
 
-    it('setup dispose after', () => {
-        disposeAfter(() => events.push('first in default group'));
-        disposeAfter(() => events.push('second in default group'));
-        disposeAfter(() => events.push('last in default group'));
-        disposeAfter(() => events.push('first in group AFTER'), AFTER);
-        disposeAfter(() => events.push('second in group AFTER'), AFTER);
-        disposeAfter(() => events.push('last in group AFTER'), AFTER);
-        disposeAfter(() => events.push('first in group BEFORE'), BEFORE);
-        disposeAfter(() => events.push('second in group BEFORE'), BEFORE);
-        disposeAfter(() => events.push('last in group BEFORE'), BEFORE);
+        it('setup dispose after', () => {
+            disposeAfter(() => events.push('first in default group'));
+            disposeAfter(() => events.push('second in default group'));
+            disposeAfter(() => events.push('last in default group'));
+        });
+
+        it('runs the dispose functions in reverse order', () => {
+            expect(events).to.eql(['last in default group', 'second in default group', 'first in default group']);
+        });
     });
+    describe('disposeAfter with groups', () => {
+        const events = [] as string[];
+        before(() => {
+            createDisposalGroup('before', { before: 'default' });
+            createDisposalGroup('after', { after: 'default' });
+        });
 
-    it('runs the dispose functions of a group in reverse order', () => {
-        expect(events).to.eql([
-            'last in group BEFORE',
-            'second in group BEFORE',
-            'first in group BEFORE',
-            'last in default group',
-            'second in default group',
-            'first in default group',
-            'last in group AFTER',
-            'second in group AFTER',
-            'first in group AFTER',
-        ]);
+        it('setup dispose after', () => {
+            disposeAfter(() => events.push('first in default group'));
+            disposeAfter(() => events.push('last in default group'));
+            disposeAfter(() => events.push('first in before'), 'before');
+            disposeAfter(() => events.push('last in before'), 'before');
+            disposeAfter(() => events.push('first in after'), 'after');
+            disposeAfter(() => events.push('last in after'), 'after');
+        });
+
+        it('runs the dispose functions of a group in reverse order', () => {
+            expect(events).to.eql([
+                'last in before',
+                'first in before',
+                'last in default group',
+                'first in default group',
+                'last in after',
+                'first in after',
+            ]);
+        });
     });
 });
 
