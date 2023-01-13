@@ -4,18 +4,8 @@ import { disposeAfter } from '../dispose';
 import { adjustTestTime, mochaCtx } from '../mocha-ctx';
 import { createPollStep } from './poll';
 import { createTimeoutStep } from './with-timeout';
-import type {
-    PollStep,
-    Predicate,
-    _PromiseAll,
-    PromiseWithTimeout,
-    StepsDefaults,
-    PromiseStep,
-    FsPredicate,
-} from './types';
+import type { PollStep, Predicate, _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep } from './types';
 import { createPromiseStep } from './no-timeout';
-import type { IFileSystem } from '@file-services/types';
-import { pathStep } from './path-step';
 import { setFirstHook, _beforeEach } from '../mocha-helpers';
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
@@ -157,26 +147,6 @@ export function poll<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): 
         .allowErrors(allowActionError, allowPredicateError);
     step.stack = getStack();
     return step;
-}
-
-/**
- * waits for a path to satisfy the predicate
- *
- *  {@link @wixc3/testing#Path | Path} as helpful predicator creators.
- *
- * @example
- * ```ts
- * await waitForPath('some-file', ({stats}) => stats?.isSymbolicLink() || false)
- * ```
- * @example
- * ```ts
- * await waitForPath('some-file', Path.isFile())
- * await waitForPath('some-file', Path.exists())
- * await waitForPath('some-file', Path.hasContent('success!'))
- * ```
- */
-export function waitForPath(fs: IFileSystem, path: string, predicate: FsPredicate) {
-    return pathStep(fs, path, predicate);
 }
 
 /**

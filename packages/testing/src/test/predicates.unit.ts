@@ -1,8 +1,6 @@
-import { createNodeFs } from '@file-services/node';
 import { expect, use } from 'chai';
 import asPromised from 'chai-as-promised';
-import { createTempDirectorySync } from 'create-temp-directory';
-import { defaults, poll, Expected, disposeAfter, Path, waitForPath } from '..';
+import { defaults, poll, Expected } from '..';
 
 use(asPromised);
 
@@ -49,59 +47,5 @@ describe('Expected', () => {
         defaults().step.timeout = 50;
         await poll(() => [], Expected.size(0));
         await expect(poll(() => [1], Expected.size(0))).to.eventually.rejectedWith('expected 1 to equal +0');
-    });
-});
-
-describe('Path', () => {
-    let tempDir: string, file: string;
-    const fs = createNodeFs();
-
-    beforeEach(() => {
-        // eslint-disable-next-line @typescript-eslint/unbound-method
-        const { path: _path, remove } = createTempDirectorySync();
-        tempDir = _path;
-        file = fs.join(tempDir, 'file.tmp');
-        disposeAfter(remove);
-        defaults().poll.interval = 10;
-        defaults().step.timeout = 200;
-    });
-
-    it('exists', async () => {
-        await expect(waitForPath(fs, file, Path.exists())).to.eventually.be.rejectedWith(`Timed out`);
-        const step = waitForPath(fs, file, Path.exists());
-        fs.writeFileSync(file, 'created');
-        await step;
-    });
-
-    it('notExists', async () => {
-        await waitForPath(fs, file, Path.notExists());
-        fs.writeFileSync(file, 'created');
-        await expect(waitForPath(fs, file, Path.notExists())).to.eventually.be.rejectedWith(`Timed out`);
-    });
-
-    it('isFile', async () => {
-        fs.writeFileSync(file, 'created');
-        await expect(waitForPath(fs, fs.join(tempDir, 'missing'), Path.isFile())).to.eventually.be.rejectedWith(
-            `Timed out`
-        );
-        await expect(waitForPath(fs, tempDir, Path.isFile())).to.eventually.be.rejectedWith(`Timed out`);
-        await waitForPath(fs, file, Path.isFile());
-    });
-
-    it('isDir', async () => {
-        fs.writeFileSync(file, 'created');
-        await expect(waitForPath(fs, fs.join(tempDir, 'missing'), Path.isDir())).to.eventually.be.rejectedWith(
-            `Timed out`
-        );
-        await expect(waitForPath(fs, file, Path.isDir())).to.eventually.be.rejectedWith(`Timed out`);
-        await waitForPath(fs, tempDir, Path.isDir());
-    });
-
-    it('isFileWithContent', async () => {
-        await expect(waitForPath(fs, file, Path.hasContent('missing'))).to.eventually.be.rejectedWith(`Timed out`);
-        await expect(waitForPath(fs, file, Path.hasContent('wrong'))).to.eventually.be.rejectedWith(`Timed out`);
-        const step = waitForPath(fs, file, Path.hasContent('success'));
-        fs.writeFileSync(file, 'success');
-        await step;
     });
 });
