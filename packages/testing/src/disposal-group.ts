@@ -10,11 +10,12 @@ const createGroup = (name: string): DisposalGroup => ({
     disposables: createDisposables(),
 });
 
-export type GroupConstraints = { before: string } | { after: string };
+export type GroupConstraints = { before: string; after?: string } | { after: string; before?: string };
 
 export class DisposalGroups {
     static readonly DEFAULT_GROUP = 'default';
     private groups: DisposalGroup[] = [createGroup(DisposalGroups.DEFAULT_GROUP)];
+
     registerGroup(name: string, constraints: GroupConstraints[] | GroupConstraints) {
         const _constraints: GroupConstraints[] = this.normalizeConstraints(constraints, name);
         const { lastAfter, firstBefore } = this.getValidatedConstantsGroups(_constraints);
@@ -25,32 +26,32 @@ export class DisposalGroups {
             this.groups.splice(firstBefore, 0, createGroup(name));
         }
     }
+
     private getValidatedConstantsGroups(_constraints: GroupConstraints[]) {
         let lastAfter = -1,
             firstBefore = Number.MAX_SAFE_INTEGER;
-        _constraints.forEach(
-            // @ts-expect-error TS is not handling union type well here
-            ({ before, after }) => {
-                if (before) {
-                    const index = this.groups.findIndex((g) => g.name === before);
-                    if (index === -1) {
-                        throw new Error(`Invalid constraint: "before: ${before}" - group not found`);
-                    }
-                    firstBefore = Math.min(firstBefore, index);
+        _constraints.forEach(({ before, after }) => {
+            if (before) {
+                const index = this.groups.findIndex((g) => g.name === before);
+                if (index === -1) {
+                    throw new Error(`Invalid constraint: "before: ${before}" - group not found`);
                 }
-                if (after) {
-                    const index = this.groups.findIndex((g) => g.name === after);
-                    if (index === -1) {
-                        throw new Error(`Invalid constraint: "after: ${after}" - group not found`);
-                    }
-                    lastAfter = Math.max(lastAfter, index);
-                }
+                firstBefore = Math.min(firstBefore, index);
             }
-        );
-        if (lastAfter <= firstBefore && firstBefore !== Number.MAX_SAFE_INTEGER && lastAfter !== -1) {
-            throw new Error(
-                `Invalid constraints: ${this.groups[lastAfter]?.name} runs after ${this.groups[firstBefore]?.name}, which contradicts prior constraints`
-            );
+            if (after) {
+                const index = this.groups.findIndex((g) => g.name === after);
+                if (index === -1) {
+                    throw new Error(`Invalid constraint: "after: ${after}" - group not found`);
+                }
+                lastAfter = Math.max(lastAfter, index);
+            }
+        });
+        if (firstBefore !== Number.MAX_SAFE_INTEGER && lastAfter !== -1) {
+            if (lastAfter >= firstBefore) {
+                throw new Error(
+                    `Invalid constraints: ${this.groups[lastAfter]?.name} runs after ${this.groups[firstBefore]?.name}, which contradicts prior constraints`
+                );
+            }
         }
         return { lastAfter, firstBefore };
     }
@@ -73,6 +74,7 @@ export class DisposalGroups {
         }
         group.disposables.add(disposable);
     }
+
     dispose = async () => {
         for (const { disposables } of this.groups) {
             await disposables.dispose();
