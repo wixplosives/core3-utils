@@ -1,9 +1,8 @@
 import { createTempDirectorySync } from 'create-temp-directory';
-import { DisposalGroups } from './disposal-group';
-import { createDisposalGroup, disposeAfter } from './dispose';
+import { createDisposalGroup, disposeAfter, DEFAULT_DISPOSAL_GROUP } from '@wixc3/testing';
 
 export const DISPOSE_OF_TEMP_DIRS = 'DISPOSE_OF_TEMP_DIRS';
-createDisposalGroup(DISPOSE_OF_TEMP_DIRS, { after: DisposalGroups.DEFAULT_GROUP });
+createDisposalGroup(DISPOSE_OF_TEMP_DIRS, { after: DEFAULT_DISPOSAL_GROUP });
 
 /**
  * Creates a test temporary directory

@@ -32,9 +32,6 @@
  *
  * - {@link locatorTimeout} creates a locator timeout and adjust the current test
  */
-export * from './steps';
-export * from './safe-fake-timer';
-export * from './dispose';
-export * from './randomize-tests-order';
-export * from './mocha-ctx';
-export * from './time-dilation';
+export { waitForPath, FsPredicate, FsStep } from './path-step';
+export * from './predicates';
+export * from './temp-test-dir';
