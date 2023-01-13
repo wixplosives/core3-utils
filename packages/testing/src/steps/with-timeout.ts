@@ -1,6 +1,6 @@
 import { wrapPromise } from './common';
 import { TimeoutError } from './errors';
-import { adjustTestTime } from '../mocha-ctx';
+import { adjustTestTime, mochaCtx } from '../mocha-ctx';
 import { timeDilation } from '../time-dilation';
 import type { Info, PromiseWithTimeout } from './types';
 
@@ -19,14 +19,16 @@ export function createTimeoutStep<T>(
 
     p.timeout = (ms: number) => {
         ms = adjustTimeout<T>(ms, p, adjustTestTime);
-        clearPromiseTimeout();
-        timerId = setTimeout(async () => {
-            if (rejectAfterTimeout) {
-                await reject(TimeoutError);
-            } else {
-                resolve(null as T);
-            }
-        }, ms);
+        if (mochaCtx()?.timeout()) {
+            clearPromiseTimeout();
+            timerId = setTimeout(async () => {
+                if (rejectAfterTimeout) {
+                    await reject(TimeoutError);
+                } else {
+                    resolve(null as T);
+                }
+            }, ms);
+        }
         return p;
     };
     return p;
