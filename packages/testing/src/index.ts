@@ -32,9 +32,9 @@
  *
  * - {@link locatorTimeout} creates a locator timeout and adjust the current test
  */
+export * from './mocha-ctx';
 export * from './steps';
 export * from './safe-fake-timer';
 export * from './dispose';
-export * from './randomize-tests-order';
-export * from './mocha-ctx';
+// export * from './randomize-tests-order';
 export * from './time-dilation';

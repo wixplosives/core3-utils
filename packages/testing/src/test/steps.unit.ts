@@ -150,6 +150,38 @@ describe('firstCall', () => {
         await call;
         expect(target.method).to.equal(originalMethod);
     });
+
+    // eslint-disable-next-line no-only-tests/no-only-tests
+    describe.only('defaults', () => {
+        // must be tested outside a test context
+        expect(defaults).to.throw(
+            'defaults can only be used within a test or a hook, use beforeEach to set suite defaults'
+        );
+        beforeEach(() => {
+            defaults().step.timeout = 111;
+        });
+        it('uses the default set in the suite', () => {
+            expect(defaults().step.timeout).to.equal(111);
+        });
+        describe('before and beforeEach overrides', () => {
+            before(() => {
+                defaults().poll.interval = 222;
+            });
+            beforeEach(() => {
+                defaults().step.timeout = 333;
+            });
+            it(`setup: test defaults don't affect other tests`, () => {
+                defaults().step.timeout = 444;
+            });
+            it('uses the default set in the before hooks', () => {
+                expect(defaults().step.timeout).to.equal(111);
+                expect(defaults().poll.interval).to.equal(222);
+            });
+        });
+        it('uses the default set in the suite after it was overridden in a child suite', () => {
+            expect(defaults().step.timeout).to.equal(111);
+        });
+    });
 });
 
 describe('waitForStubCall', () => {

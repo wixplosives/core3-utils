@@ -22,19 +22,25 @@ const increaseStepsCount = () => {
     return count;
 };
 
-const getDefaults = (): StepsDefaults => ({
-    step: {
-        timeout: 1000,
-        safetyMargin: 50,
-    },
-    poll: {
-        interval: 10,
-        allowActionError: false,
-        allowPredicateError: true,
-    },
-});
+const getDefaults = (): StepsDefaults => {
+    // const ctx = mochaCtx();
 
-const getStack = () => {
+    // // eslint-disable-next-line no-console
+    // console.log('ctx', ctx);
+    return {
+        step: {
+            timeout: 1000,
+            safetyMargin: 50,
+        },
+        poll: {
+            interval: 10,
+            allowActionError: false,
+            allowPredicateError: true,
+        },
+    };
+};
+
+const getFilteredStack = () => {
     const captureStackTrace: CaptureStackFn =
         (Error as { captureStackTrace?: CaptureStackFn }).captureStackTrace || (() => void 0);
     const stackProvider = { stack: '' };
@@ -68,7 +74,7 @@ export function withTimeout<T>(action: Promise<T>): PromiseWithTimeout<T> {
     const step = createTimeoutStep(action, true)
         .timeout(defaults().step.timeout)
         .description(`step ${increaseStepsCount()}`);
-    step.stack = getStack();
+    step.stack = getFilteredStack();
     return step;
 }
 
@@ -87,7 +93,7 @@ export function withTimeout<T>(action: Promise<T>): PromiseWithTimeout<T> {
  */
 export function step<T>(action: Promise<T>): PromiseStep<T> {
     const step = createPromiseStep(action).description(`step ${increaseStepsCount()}`);
-    step.stack = getStack();
+    step.stack = getFilteredStack();
     return step;
 }
 
@@ -145,7 +151,7 @@ export function poll<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): 
         .description(`step ${increaseStepsCount()}`)
         .interval(interval)
         .allowErrors(allowActionError, allowPredicateError);
-    step.stack = getStack();
+    step.stack = getFilteredStack();
     return step;
 }
 
@@ -234,6 +240,9 @@ export function sleep(ms?: number): PromiseWithTimeout<void> {
  * default values for steps of the current test
  */
 export function defaults(): StepsDefaults {
+    if (!stepsDefaults) {
+        throw new Error('defaults can only be used within a test or a hook, use beforeEach to set suite defaults');
+    }
     return stepsDefaults;
 }
 
