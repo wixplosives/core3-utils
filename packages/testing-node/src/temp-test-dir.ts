@@ -2,7 +2,12 @@ import { createTempDirectorySync } from 'create-temp-directory';
 import { createDisposalGroup, disposeAfter, DEFAULT_DISPOSAL_GROUP } from '@wixc3/testing';
 import fs from '@file-services/node';
 export const DISPOSE_OF_TEMP_DIRS = 'DISPOSE_OF_TEMP_DIRS';
-createDisposalGroup(DISPOSE_OF_TEMP_DIRS, { after: DEFAULT_DISPOSAL_GROUP });
+try {
+    createDisposalGroup(DISPOSE_OF_TEMP_DIRS, { after: DEFAULT_DISPOSAL_GROUP });
+} catch {
+    // eslint-disable-next-line no-console
+    console.warn('DISPOSE_OF_TEMP_DIRS disposal group already exists');
+}
 
 /**
  * Creates a test temporary directory
