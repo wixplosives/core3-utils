@@ -1,6 +1,6 @@
 import { createTempDirectorySync } from 'create-temp-directory';
 import { createDisposalGroup, disposeAfter, DEFAULT_DISPOSAL_GROUP } from '@wixc3/testing';
-
+import fs from '@file-services/node';
 export const DISPOSE_OF_TEMP_DIRS = 'DISPOSE_OF_TEMP_DIRS';
 createDisposalGroup(DISPOSE_OF_TEMP_DIRS, { after: DEFAULT_DISPOSAL_GROUP });
 
@@ -13,5 +13,5 @@ export function createTestDir(prefix?: string | undefined, disposalGroup = DISPO
     const dir = createTempDirectorySync(prefix);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     disposeAfter(dir.remove, disposalGroup);
-    return dir.path;
+    return fs.realpathSync.native(dir.path);
 }
