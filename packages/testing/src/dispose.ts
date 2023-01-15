@@ -57,9 +57,10 @@ export function createDisposalGroup(name: string, constraints: GroupConstraints[
  */
 export async function initAndDisposeAfter<T extends (...args: any[]) => any>(
     target: { init: T } & Disposable,
+    disposalGroup = DEFAULT_DISPOSAL_GROUP,
     ...args: Parameters<T>
 ): Promise<Awaited<ReturnType<T>>> {
-    disposeAfter(target);
+    disposeAfter(target, disposalGroup);
     const res = target.init(...args) as ReturnType<T>;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await Promise.resolve(res);

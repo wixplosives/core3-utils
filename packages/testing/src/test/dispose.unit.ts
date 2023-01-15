@@ -55,7 +55,7 @@ describe('initAndDisposeAfter', () => {
             },
             dispose: () => events.push('dispose'),
         };
-        expect(await initAndDisposeAfter(initiable, 'arg')).to.eql('initialized');
+        expect(await initAndDisposeAfter(initiable, 'default', 'arg')).to.eql('initialized');
     });
 
     it('disposed of the target', () => {
