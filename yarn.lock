@@ -2159,12 +2159,10 @@ cosmiconfig@^7.0.0:
     path-type "^4.0.0"
     yaml "^1.10.0"
 
-create-temp-directory@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/create-temp-directory/-/create-temp-directory-2.0.0.tgz#e877038c1e4abf60f457e0d224d12ff9cd1e7e1d"
-  integrity sha512-xknNJwYaW3W58615hs6+hejY6ym5GDI5ddbsyxmitmKoEpV8jPoBuVO2nkGrQuvZtcR6dyMEVzD5F+y7twedPA==
-  dependencies:
-    rimraf "^3.0.2"
+create-temp-directory@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/create-temp-directory/-/create-temp-directory-2.2.0.tgz#d859f128e0dd68d8ec637be7cc854cf3fa39251a"
+  integrity sha512-3fIsITx6mgnvC/P2skjm3b5abcjvI4VVP2EwaxEFJDExythKvY21/x6xd4am3Rq8HC0f5omeiE4uHg5uHS5yaA==
 
 cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   version "7.0.3"
