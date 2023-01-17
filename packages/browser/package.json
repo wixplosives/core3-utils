@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@file-services/path": "^7.2.0",
-    "@file-services/types": "^7.2.0"
+    "@file-services/path": "^7.2.3",
+    "@file-services/types": "^7.2.3"
   }
 }
