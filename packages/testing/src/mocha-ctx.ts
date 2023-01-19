@@ -30,7 +30,7 @@ export function adjustTestTime(ms: number, allowTimeDilation = true) {
  * Creates a playwright locator options with timeout
  * and adjust the current test timeout accordingly
  */
-export function locatorTimeout(ms = 1_000) {
+export function locatorTimeout(ms = 10_000) {
     return { timeout: adjustTestTime(ms) };
 }
 

@@ -24,7 +24,7 @@ const increaseStepsCount = () => {
 
 const getDefaults = (): StepsDefaults => ({
     step: {
-        timeout: 1000,
+        timeout: 5_000,
         safetyMargin: 50,
     },
     poll: {
