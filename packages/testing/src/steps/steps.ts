@@ -17,8 +17,11 @@ let stepsCountByTest = new WeakMap<Mocha.Test, number>();
 
 let stepsDefaults: StepsDefaults;
 const increaseStepsCount = () => {
-    const count = stepsCountByTest.get(mochaCtx()?.test as Mocha.Test) || 1;
-    stepsCountByTest.set(mochaCtx()?.test as Mocha.Test, count + 1);
+    const test = mochaCtx()?.test;
+    if (test === undefined ) return 1;
+
+    const count = stepsCountByTest.get(test as Mocha.Test) || 1;
+    stepsCountByTest.set(test as Mocha.Test, count + 1);
     return count;
 };
 
