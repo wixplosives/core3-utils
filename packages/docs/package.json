@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@microsoft/api-documenter": "^7.19.28",
-    "@microsoft/api-extractor": "^7.33.8",
+    "@microsoft/api-extractor": "^7.34.0",
     "@microsoft/api-extractor-model": "^7.25.3",
     "@wixc3/common": "^7.0.3",
     "@wixc3/fs-utils": "^7.0.3",
