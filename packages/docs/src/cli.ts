@@ -64,7 +64,7 @@ export function cli() {
                 }
             }
         )
-        .command('validate', 'create README.md for all the packages', { conf }, ({ conf }) => {
+        .command('validate', 'validate `@example`s for all the packages', { conf }, ({ conf }) => {
             try {
                 validateExamples(loadConfig(conf));
             } catch (e) {
