@@ -11,7 +11,7 @@
  * [[[h 4 Available steps:]]]
  * - {@link poll} until a predicate is satisfied
  *
- * - {@link withTimeout} adds timeout and description to a promise]
+ * - {@link withTimeout} adds timeout and description to a promise
  *
  * - {@link allWithTimeout} time limited Promise.all
  *
