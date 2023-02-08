@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import ts from 'typescript';
 import { compileCode } from '../compile';
 import { isSame, match } from '../match';
 import { getText } from './helpers';
@@ -45,6 +46,12 @@ describe(`match`, function () {
 
         expect(() => match(code, `const a=1;const b=2`)).to.throw();
     });
+    it('Throws a helpful error when parents are not set', () => {
+        const code = ts.createSourceFile('a.tsx', `const c=false`, ts.ScriptTarget.Latest);
+        expect(() => match(code, `const a=1;`)).to.throw(
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+        );
+    });
 });
 
 describe(`isSame`, function () {
@@ -72,5 +79,11 @@ describe(`isSame`, function () {
         const c = compileCode(`(a,b)=>{}`);
         const d = compileCode('(a,b,c)=>{}');
         expect(isSame(c, d)).to.eql(false);
+    });
+    it('Throws a helpful error when parents are not set', () => {
+        const code = ts.createSourceFile('a.tsx', `const c=false`, ts.ScriptTarget.Latest);
+        expect(() => isSame(code, code)).to.throw(
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+        );
     });
 });

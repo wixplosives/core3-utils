@@ -24,27 +24,11 @@ describe(`findNode`, function () {
             )
         ).to.equal('c');
     });
-    it('works with sourceFiles created by ts', () => {
-        const code = ts.createSourceFile(
-            'a.tsx',
-            `(a)=>{ 
-            const b=true 
-            const c=false
-        }`,
-            ts.ScriptTarget.Latest
+    it('Throws a helpful error when parents are not set', () => {
+        const code = ts.createSourceFile('a.tsx', `const c=false`, ts.ScriptTarget.Latest);
+        expect(() => findNode(code, () => true)).to.throw(
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
         );
-        expect(getText(findNode(code, (n) => ts.isIdentifier(n)))).to.equal('a');
-        expect(
-            getText(
-                findNode(
-                    code,
-                    (n) =>
-                        ts.isIdentifier(n) &&
-                        ts.isVariableDeclaration(n.parent) &&
-                        n.parent.initializer?.getText() === 'false'
-                )
-            )
-        ).to.equal('c');
     });
 });
 
@@ -57,6 +41,12 @@ describe(`findAllNodes`, function () {
         }`);
         const found = findAllNodes(code, (n) => ts.isIdentifier(n));
         expect(getText(found)).to.eql(['a', 'b', 'c']);
+    });
+    it('Throws a helpful error when parents are not set', () => {
+        const code = ts.createSourceFile('a.tsx', `const c=false`, ts.ScriptTarget.Latest);
+        expect(() => findAllNodes(code, () => true)).to.throw(
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+        );
     });
 });
 
@@ -127,5 +117,11 @@ describe(`findNodeAfterComment`, function () {
         const f = findNodeAfterComment(code, 'test');
 
         expect(getText(f)).to.eql([`true`]);
+    });
+    it('Throws a helpful error when parents are not set', () => {
+        const code = ts.createSourceFile('a.tsx', `const c=false`, ts.ScriptTarget.Latest);
+        expect(() => findNodeAfterComment(code, 'test')).to.throw(
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+        );
     });
 });
