@@ -24,6 +24,28 @@ describe(`findNode`, function () {
             )
         ).to.equal('c');
     });
+    it('works with sourceFiles created by ts', () => {
+        const code = ts.createSourceFile(
+            'a.tsx',
+            `(a)=>{ 
+            const b=true 
+            const c=false
+        }`,
+            ts.ScriptTarget.Latest
+        );
+        expect(getText(findNode(code, (n) => ts.isIdentifier(n)))).to.equal('a');
+        expect(
+            getText(
+                findNode(
+                    code,
+                    (n) =>
+                        ts.isIdentifier(n) &&
+                        ts.isVariableDeclaration(n.parent) &&
+                        n.parent.initializer?.getText() === 'false'
+                )
+            )
+        ).to.equal('c');
+    });
 });
 
 describe(`findAllNodes`, function () {
