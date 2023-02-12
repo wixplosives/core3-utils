@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { isString } from '@wixc3/common';
-import { dirname, join } from 'path';
 import * as ts from 'typescript';
 
 /**
@@ -8,51 +6,5 @@ import * as ts from 'typescript';
  * @param fakePath - path the virtual file of the code
  */
 export function compileCode(code: string, fakePath = 'index.ts') {
-    const configFile = ts.findConfigFile(fakePath, ts.sys.fileExists.bind(ts.sys));
-    const options = getTsConfigCompilerOptions(configFile);
-
-    const host = ts.createCompilerHost(options, true);
-    host.readFile = (path) => {
-        if (path === fakePath) {
-            return code;
-        } else {
-            return '';
-        }
-    };
-    const program = ts.createProgram({
-        rootNames: [fakePath],
-        options,
-        host,
-    });
-    return program.getSourceFile(fakePath)!;
-}
-
-/**
- * Compiles a single file to typescript AST
- */
-export function compileFile(sourceFilePath: string) {
-    const configFile = ts.findConfigFile(sourceFilePath, ts.sys.fileExists.bind(ts.sys));
-    const options = getTsConfigCompilerOptions(configFile);
-    const host = ts.createCompilerHost(options, true);
-    const program = ts.createProgram({
-        rootNames: [sourceFilePath],
-        options,
-        host,
-    });
-    return program.getSourceFile(sourceFilePath);
-}
-
-/**
- * Calculates the effective tsconfig compiler options
- */
-export function getTsConfigCompilerOptions(tsConfigJsonPath?: string): ts.CompilerOptions {
-    if (tsConfigJsonPath) {
-        const { config } = ts.readConfigFile(tsConfigJsonPath, ts.sys.readFile) as { config: { extends?: string } };
-        const { options } = ts.parseJsonConfigFileContent(config, ts.sys, '.');
-        const ext = isString(config.extends) ? join(dirname(tsConfigJsonPath), config.extends) : undefined;
-        return {
-            ...getTsConfigCompilerOptions(ext),
-            ...options,
-        };
-    } else return {};
+    return ts.createSourceFile(fakePath, code, ts.ScriptTarget.Latest, true);
 }
