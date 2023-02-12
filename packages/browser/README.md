@@ -9,9 +9,9 @@
 
 Browser utilities
 
-## Classes
+## Abstract Classes
 
-| Class                                                                                                | Description |
+| Abstract Class                                                                                       | Description |
 | ---------------------------------------------------------------------------------------------------- | ----------- |
 | [AnimationFrameScheduler](https://wixplosives.github.io/core3-utils/browser.animationframescheduler) |             |
 
