@@ -11,8 +11,14 @@ export function findAllNodes(source: ts.Node | ts.Node[], predicate: Predicate<t
             [] as Iterable<ts.Node>
         );
 
-    if (source instanceof Array) {
+    if (Array.isArray(source)) {
         return findInNodes(source);
+    } else {
+        if (!source.parent && !ts.isSourceFile(source)) {
+            throw new Error(
+                'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+            );
+        }
     }
     if (ts.isSourceFile(source) || ts.isBlock(source)) {
         return findInNodes(source.statements);
@@ -36,6 +42,12 @@ export function findNode(source: ts.Node | ts.Node[], predicate: Predicate<ts.No
     }
     if (ts.isSourceFile(source)) {
         return findInNodes(source.statements);
+    } else {
+        if (!source.parent) {
+            throw new Error(
+                'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+            );
+        }
     }
 
     return predicate(source) ? source : findInNodes(source.getChildren());
