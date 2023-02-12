@@ -19,7 +19,7 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 - [poll()](https://wixplosives.github.io/core3-utils/testing.poll) until a predicate is satisfied
 
-- [withTimeout()](https://wixplosives.github.io/core3-utils/testing.withtimeout) adds timeout and description to a promise\]
+- [withTimeout()](https://wixplosives.github.io/core3-utils/testing.withtimeout) adds timeout and description to a promise
 
 - [allWithTimeout()](https://wixplosives.github.io/core3-utils/testing.allwithtimeout) time limited Promise.all
 
