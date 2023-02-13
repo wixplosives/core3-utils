@@ -18,7 +18,7 @@ let stepsCountByTest = new WeakMap<Mocha.Test, number>();
 let stepsDefaults: StepsDefaults;
 const increaseStepsCount = () => {
     const test = mochaCtx()?.test;
-    if (test === undefined ) return 1;
+    if (test === undefined) return 1;
 
     const count = stepsCountByTest.get(test as Mocha.Test) ?? 1;
     stepsCountByTest.set(test as Mocha.Test, count + 1);
@@ -64,6 +64,7 @@ const addTimeoutSafetyMargin = () => mochaCtx() && adjustTestTime(defaults().ste
  * ```ts
  * await withTimeout(sleep(1000)).description('will time out').timeout(10)
  * ```
+ * @default timeout: 5000
  * @param action a promise that should be settled before the timeout
  */
 export function withTimeout<T>(action: Promise<T>): PromiseWithTimeout<T> {
