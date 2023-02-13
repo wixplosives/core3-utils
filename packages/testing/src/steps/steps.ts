@@ -64,6 +64,7 @@ const addTimeoutSafetyMargin = () => mochaCtx() && adjustTestTime(defaults().ste
  * ```ts
  * await withTimeout(sleep(1000)).description('will time out').timeout(10)
  * ```
+ * @default timeout: 5000
  * @param action a promise that should be settled before the timeout
  */
 export function withTimeout<T>(action: Promise<T>): PromiseWithTimeout<T> {

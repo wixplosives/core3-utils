@@ -99,7 +99,7 @@ export interface StepsDefaults {
  */
 export interface TimeoutDefaults {
     /**
-     * default: 1000
+     * default: 5000
      */
     timeout: number;
     /**
