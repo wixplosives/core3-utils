@@ -19,7 +19,7 @@ export function createTimeoutStep<T>(
 
     p.timeout = (ms: number) => {
         ms = adjustTimeout<T>(ms, p, adjustTestTime);
-        if (mochaCtx()?.timeout()) {
+        if (mochaCtx()?.timeout() || !rejectAfterTimeout) {
             clearPromiseTimeout();
             timerId = setTimeout(async () => {
                 if (rejectAfterTimeout) {
