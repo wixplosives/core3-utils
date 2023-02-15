@@ -21,7 +21,7 @@
     "@wixc3/common": "^7.0.3",
     "@wixc3/patterns": "^7.0.3",
     "chai": "^4.3.7",
-    "create-temp-directory": "^2.2.0",
+    "create-temp-directory": "^2.3.0",
     "promise-assist": "^2.0.1"
   }
 }
