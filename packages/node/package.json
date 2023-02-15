@@ -20,6 +20,6 @@
   "dependencies": {
     "@file-services/node": "^7.2.3",
     "@file-services/path": "^7.2.3",
-    "@file-services/types": "^7.2.3"
+    "@file-services/types": "^7.2.4"
   }
 }

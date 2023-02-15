@@ -22,6 +22,6 @@
     "@wixc3/common": "^7.0.3"
   },
   "devDependencies": {
-    "@file-services/types": "^7.2.3"
+    "@file-services/types": "^7.2.4"
   }
 }
