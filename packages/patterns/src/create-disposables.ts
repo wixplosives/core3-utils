@@ -3,22 +3,25 @@
  * when dispose is called, these functions will be run sequentially
  */
 export function createDisposables() {
-    const disposables = new Set<() => unknown>();
+    const disposables = new Set<Disposable>();
 
     return {
         async dispose() {
             const toDispose = Array.from(disposables).reverse();
             disposables.clear();
             for (const dispose of toDispose) {
-                await dispose();
+                if (typeof dispose === 'function') {
+                    await dispose();
+                } else {
+                    await dispose.dispose();
+                }
             }
         },
         add(disposable: Disposable) {
-            if (typeof disposable === 'function') {
-                disposables.add(disposable);
-            } else {
-                disposables.add(() => disposable.dispose());
-            }
+            disposables.add(disposable);
+        },
+        remove(disposable: Disposable) {
+            disposables.delete(disposable);
         },
     };
 }
