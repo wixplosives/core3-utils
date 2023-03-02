@@ -1,22 +1,20 @@
 import { ApiPackage, ApiDeclaredItem, ApiItem } from '@microsoft/api-extractor-model';
-import { GlobSync } from 'glob';
+import { globSync } from 'glob';
 import { UserConfig, getPackageByName, Package, _packages, _temp, Config } from './common';
 import { readFileSync } from 'fs';
 import { expect } from 'chai';
 import { compileCode, isSame } from '@wixc3/typescript';
 
 export function validateExamples(config: Config, apiJsons = '*.api.json') {
-    const glob = new GlobSync(_temp(config, apiJsons));
-    let found = false;
-    for (const apiJson of glob.found) {
-        found = true;
+    const apiJsonPaths = globSync(_temp(config, apiJsons));
+    if (!apiJsonPaths.length) {
+        throw new Error(`No packages api found, make sure you used "yarn docs build" before validating examples`);
+    }
+    for (const apiJson of apiJsonPaths) {
         const api = ApiPackage.loadFromJsonFile(apiJson);
         const pkg = getPackageByName(config, api.name);
         const examples = new Map<string, string>();
         validateNode(config, api, pkg, examples);
-    }
-    if (!found) {
-        throw new Error(`No packages api found, make sure you used "yarn docs build" before validating examples`);
     }
 }
 
@@ -75,8 +73,8 @@ function findAllExamples(config: UserConfig, pkg: Package, type: string | undefi
         } else {
             type = '*.{ts,js,cjs,mjs}{,x}';
         }
-        const glob = new GlobSync(_packages(config, pkg.dir, config.examples, '**', type));
-        for (const file of glob.found) {
+        const filePaths = globSync(_packages(config, pkg.dir, config.examples, '**', type));
+        for (const file of filePaths) {
             const content = readFileSync(file, 'utf8');
             const foundExamples = content.matchAll(/\/\/\s*\{@label[ \t]+(\w+)\s*\n(.*?)\/\/\s*@}/gs);
             for (const [_, label, example] of foundExamples) {
