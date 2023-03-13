@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/isomorphic-fetch",
-  "version": "7.2.0",
+  "version": "8.0.0",
   "description": "isomorphic fetch, for browsers and Node.js",
   "main": "./dist/node.js",
   "browser": "./dist/cjs/browser.js",
