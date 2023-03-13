@@ -1,9 +1,9 @@
-import type { Disposable } from '@wixc3/patterns';
-import { DisposalGroups, GroupConstraints } from './disposal-group';
+import { createDisposables, DEFAULT_GROUP, GroupConstraints } from '@wixc3/patterns';
+import type { Disposable } from '@wixc3/patterns/src/disposables/disposable';
 import { _afterEach } from './mocha-helpers';
 
-const disposables = new DisposalGroups();
-export const DEFAULT_DISPOSAL_GROUP = DisposalGroups.DEFAULT_GROUP;
+const disposables = createDisposables();
+export const DEFAULT_DISPOSAL_GROUP = DEFAULT_GROUP;
 
 /**
  * Disposes of test resources after the test is done
@@ -18,8 +18,8 @@ export const DEFAULT_DISPOSAL_GROUP = DisposalGroups.DEFAULT_GROUP;
  *
  * @param group disposal group name. disposal groups let you specify disposal constrains. see: {@link createDisposalGroup}
  */
-export function disposeAfter(disposable: Disposable, group = DisposalGroups.DEFAULT_GROUP) {
-    disposables.addToGroup(disposable, group);
+export function disposeAfter(disposable: Disposable, group = DEFAULT_GROUP) {
+    disposables.add(disposable, group);
 }
 
 /**

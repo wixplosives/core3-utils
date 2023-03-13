@@ -2,7 +2,7 @@
  * Disposables allow adding of disposal async functions,
  * when dispose is called, these functions will be run sequentially
  */
-export function createDisposables() {
+export function createSimpleDisposable() {
     const disposables = new Set<Disposable>();
 
     return {
@@ -28,4 +28,4 @@ export function createDisposables() {
 
 export type DisposeFunction = () => unknown;
 export type Disposable = { dispose: DisposeFunction } | DisposeFunction;
-export type Disposables = ReturnType<typeof createDisposables>;
+export type Disposables = ReturnType<typeof createSimpleDisposable>;
