@@ -64,13 +64,13 @@
     "@file-services/types" "^7.2.4"
     "@file-services/utils" "^7.2.4"
 
-"@file-services/node@^7.2.4":
-  version "7.2.4"
-  resolved "https://registry.yarnpkg.com/@file-services/node/-/node-7.2.4.tgz#5a7748a6c5eea7ccbad4ea43ccadc54aead8219a"
-  integrity sha512-9ymcdRRaFO4tQEh+Wp8/Zp/HP3Ra/BUI1PSmttZd0onylwEXY06PMzjSJ9NzS5pKp2nvJwTUx3+MUQS8L0WmCg==
+"@file-services/node@^7.2.5":
+  version "7.2.5"
+  resolved "https://registry.yarnpkg.com/@file-services/node/-/node-7.2.5.tgz#24412867fd223586d7463c1c00d4d1fbc538fd92"
+  integrity sha512-aujaIg8f0kOKGlW1LBTM+dk8MrhMp3sQSRoZ1lJyeZOlHpOcfL/TrncW34Co0S5sxd3FyOptJo+kBlyfsPVLoQ==
   dependencies:
-    "@file-services/types" "^7.2.4"
-    "@file-services/utils" "^7.2.4"
+    "@file-services/types" "^7.2.5"
+    "@file-services/utils" "^7.2.5"
 
 "@file-services/path@^7.2.4":
   version "7.2.4"
@@ -79,17 +79,17 @@
   dependencies:
     "@file-services/types" "^7.2.4"
 
-"@file-services/types@^7.2.4":
-  version "7.2.4"
-  resolved "https://registry.yarnpkg.com/@file-services/types/-/types-7.2.4.tgz#ac650214d5bffd85dff92315c2467c9ec011fdb0"
-  integrity sha512-AATlgLt+Lezd/nch9bR900fbFzjlxbRybyd3Kobd3ELIIiZXGJqD6noD61Vmooa+SvnuAVqVde8Xk8mY00CsVg==
+"@file-services/types@^7.2.4", "@file-services/types@^7.2.5":
+  version "7.2.5"
+  resolved "https://registry.yarnpkg.com/@file-services/types/-/types-7.2.5.tgz#a4bdc51a94c71998f12eb42f7910dadbeb78b275"
+  integrity sha512-+ED491/MHemP0Kg6AjWmrUGz7BMTE0eP7rTWt6csUPkW6valBsVpZhdAm+5N4d0xkhlcRwIyZ5wRSq4lReWIKg==
 
-"@file-services/utils@^7.2.4":
-  version "7.2.4"
-  resolved "https://registry.yarnpkg.com/@file-services/utils/-/utils-7.2.4.tgz#b688c613a1f378ab85f60ac05a41f2c2e418b39c"
-  integrity sha512-auCqZ6fIQ4W3bycq/FY5J9GJk3suKbXlTGJNp5vTewcTCC2Pi9dZCKfYkier6FrHgr8ajiQ3aAgcvgh3/tY9eg==
+"@file-services/utils@^7.2.4", "@file-services/utils@^7.2.5":
+  version "7.2.5"
+  resolved "https://registry.yarnpkg.com/@file-services/utils/-/utils-7.2.5.tgz#cdb4b76b2071a3a64bfd9291d1d6dbf2ecc58157"
+  integrity sha512-ta3Um+scOxT+eNg+/wrNOF9Fgt2ila5temox35p5hNQUvRcJDRiqrfSqvKJhN/cwQu6yseJtkZiXX4sezkBKng==
   dependencies:
-    "@file-services/types" "^7.2.4"
+    "@file-services/types" "^7.2.5"
 
 "@gar/promisify@^1.1.3":
   version "1.1.3"
