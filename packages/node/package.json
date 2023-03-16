@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@file-services/node": "^7.2.4",
-    "@file-services/path": "^7.2.4",
+    "@file-services/path": "^7.2.5",
     "@file-services/types": "^7.2.4"
   }
 }
