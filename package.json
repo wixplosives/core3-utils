@@ -14,7 +14,7 @@
     "prettify": "npx prettier . --write"
   },
   "devDependencies": {
-    "@file-services/types": "^7.2.4",
+    "@file-services/types": "^7.2.5",
     "@types/chai": "^4.3.4",
     "@types/chai-as-promised": "^7.1.5",
     "@types/glob": "^8.1.0",

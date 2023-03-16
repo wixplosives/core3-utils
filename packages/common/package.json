@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@file-services/path": "^7.2.4",
-    "@file-services/types": "^7.2.4",
+    "@file-services/types": "^7.2.5",
     "promise-assist": "^2.0.1"
   }
 }
