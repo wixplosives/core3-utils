@@ -32,7 +32,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-no-only-tests": "^3.1.0",
     "expose-gc": "^1.0.0",
-    "lerna": "^6.5.1",
+    "lerna": "^6.6.0",
     "mocha": "^10.2.0",
     "rimraf": "^4.4.0",
     "sinon": "^15.0.2",
