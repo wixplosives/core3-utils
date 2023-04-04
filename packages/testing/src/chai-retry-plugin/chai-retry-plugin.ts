@@ -104,7 +104,8 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
         }
 
         const assertionStack: AssertionStackItem[] = [];
-        const options: Required<RetryOptions> = { timeout: 5000, retries: Infinity, delay: 0, ...retryOptions };
+        const defaultRetryOptions: Required<RetryOptions> = { timeout: 5000, retries: Infinity, delay: 0 };
+        const options: Required<RetryOptions> = { ...defaultRetryOptions, ...retryOptions };
 
         // Fake assertion object for catching calls of chained methods
         const proxyTarget = new Assertion({});
