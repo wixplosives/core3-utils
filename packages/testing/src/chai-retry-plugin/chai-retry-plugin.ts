@@ -22,12 +22,8 @@ declare global {
     }
 }
 
-const retryFunctionAndAssertResult = async ({
-    functionToRetry,
-    retries,
-    delay,
-    assertionStack,
-}: RetryAndAssertProps): Promise<void> => {
+const retryFunctionAndAssertResult = async ({ functionToRetry, options, assertionStack }: RetryAndAssertProps) => {
+    const { retries, delay } = options;
     let retriesCount = 0;
 
     while (retriesCount < retries) {
@@ -67,6 +63,10 @@ const retryFunctionAndAssertResult = async ({
     throw new Error(`Limit of ${retries} retries exceeded!`);
 };
 
+const getRetryPromiseWithTimeout = (retryAndAssertProps: RetryAndAssertProps): Promise<void> => {
+    return addTimeoutToPromise(retryFunctionAndAssertResult(retryAndAssertProps), retryAndAssertProps.options.timeout);
+};
+
 /**
  * Adds the `retry` method to Chai assertions, which allows to check the return value of a function until it satisfies the chained assertions.
  *
@@ -84,7 +84,7 @@ const retryFunctionAndAssertResult = async ({
  * ```
  */
 export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) {
-    Assertion.addMethod('retry', function (options: RetryOptions = {}): PromiseLikeAssertion {
+    Assertion.addMethod('retry', function (retryOptions: RetryOptions = {}): PromiseLikeAssertion {
         const functionToRetry: FunctionToRetry = this._obj as FunctionToRetry;
 
         if (typeof functionToRetry !== 'function') {
@@ -92,6 +92,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
         }
 
         const assertionStack: AssertionStackItem[] = [];
+        const options: Required<RetryOptions> = { timeout: 5000, retries: Infinity, delay: 0, ...retryOptions };
 
         // Fake assertion object for catching calls of chained methods
         const proxyTarget = new Assertion({});
@@ -144,16 +145,11 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
             }),
             {
                 then: (resolve: () => void, reject: () => void) => {
-                    const { timeout = 5000, retries = Infinity, delay = 0 } = options;
-
-                    const retryPromise = retryFunctionAndAssertResult({
+                    return getRetryPromiseWithTimeout({
                         functionToRetry,
-                        retries,
-                        delay,
+                        options,
                         assertionStack,
-                    });
-
-                    return addTimeoutToPromise<void>(retryPromise, timeout).then(resolve, reject);
+                    }).then(resolve, reject);
                 },
             }
         ) as unknown as PromiseLikeAssertion;

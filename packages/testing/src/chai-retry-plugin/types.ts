@@ -2,7 +2,6 @@ import type { Assertion } from 'chai';
 
 // Type of `this` in `addMethod` function
 export type AssertionStatic = typeof Assertion;
-
 export type AssertionMethod = (...args: unknown[]) => AssertionStatic;
 
 // Function provided as argument of `expect`
@@ -10,11 +9,9 @@ export type FunctionToRetry = (...args: unknown[]) => unknown | Promise<unknown>
 
 // Assertions gathered in a stack to re-assert the provided function's results
 export type AssertionStackItem = { method?: AssertionMethod; args?: unknown[]; isNegate?: boolean };
-
 export type RetryAndAssertProps = {
     functionToRetry: FunctionToRetry;
-    retries: number;
-    delay: number;
+    options: Required<RetryOptions>;
     assertionStack: AssertionStackItem[];
 };
 
