@@ -114,9 +114,11 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
         // Fake assertion object for catching calls of chained methods
         const proxyTarget = new Assertion({});
 
-        // This is needed to handle cases when assertion ends with property, for example:
-        // await expect(func).retry().to.be.null;
-        const assertionPropertyNames = [
+        /**
+         * This is needed to handle cases when assertion ends with property, for example:
+         * await expect(func).retry().to.be.null;
+         */
+        const assertionPropertyKeys = [
             'ok',
             'true',
             'null',
@@ -134,7 +136,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
         const assertionProxy: PromiseLikeAssertion = Object.assign(
             new Proxy(proxyTarget, {
                 get: function (target: Chai.Assertion, key: string) {
-                    if (assertionPropertyNames.includes(key)) {
+                    if (assertionPropertyKeys.includes(key)) {
                         assertionStack.push({ key });
 
                         return assertionProxy;
