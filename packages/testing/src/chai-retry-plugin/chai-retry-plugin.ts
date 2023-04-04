@@ -50,7 +50,7 @@ const retryFunctionAndAssertResult = async ({ functionToRetry, options, assertio
                 }
 
                 if (negationIsApplied) {
-                    throw new Error("Negation should be successful but assertion didn't throw an error.");
+                    throw new Error('Negated assertion should throw an error, but it finished successfully.');
                 }
             }
 
@@ -132,11 +132,11 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
                         return (...args: unknown[]) => {
                             if (propName === 'then') {
                                 return (value as unknown as AssertionMethod)(...args);
-                            } else {
-                                assertionStack.push({ method: value as unknown as AssertionMethod, args });
-
-                                return assertionProxy;
                             }
+
+                            assertionStack.push({ method: value as unknown as AssertionMethod, args });
+
+                            return assertionProxy;
                         };
                     }
 

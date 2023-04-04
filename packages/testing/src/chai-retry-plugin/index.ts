@@ -1,2 +1,2 @@
 export * from './chai-retry-plugin';
-export { RetryOptions } from './types';
+export { RetryOptions, PromiseLikeAssertion } from './types';
