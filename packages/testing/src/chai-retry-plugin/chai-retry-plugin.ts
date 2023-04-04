@@ -19,7 +19,7 @@ declare global {
         interface Assertion {
             /**
              * Allows to retry the function passed to `expect` and assert the result until retries ended or timeout exceeded
-             * @param options retry options: timeout, retries, delay
+             * @param options retry options: `timeout`, `retries`, `delay`
              */
             retry(options?: RetryOptions): PromiseLikeAssertion;
         }
