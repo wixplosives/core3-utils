@@ -37,13 +37,17 @@ const retryFunctionAndAssertResult = async ({ functionToRetry, options, assertio
             const assertion = expect(result);
             let negationIsApplied = false;
 
-            for (const { isNegate, method, args = [] } of assertionStack) {
+            for (const { isNegate, method, args = [], key } of assertionStack) {
                 if (isNegate) {
-                    negationIsApplied = isNegate;
+                    negationIsApplied = true;
                     continue;
                 }
 
                 try {
+                    if (key) {
+                        assertion.to.be[key as keyof AssertionPropertyKeys];
+                    }
+
                     method?.apply(assertion, args);
                 } catch (error) {
                     if (error instanceof AssertionError && negationIsApplied) {
@@ -110,40 +114,44 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
         // Fake assertion object for catching calls of chained methods
         const proxyTarget = new Assertion({});
 
-        // This is needed to retrieve the expected value for cases when assertion ends with property, for example:
+        // This is needed to handle cases when assertion ends with property, for example:
         // await expect(func).retry().to.be.null;
-        const assertionPropertiesMappedToValue = {
-            ok: true,
-            true: true,
-            false: false,
-            null: null,
-            undefined: undefined,
-        };
+        const assertionPropertyNames = [
+            'ok',
+            'true',
+            'null',
+            'false',
+            'undefined',
+            'empty',
+            'NaN',
+            'finite',
+            'exist',
+            'arguments',
+            'all',
+            'own',
+        ];
 
         const assertionProxy: PromiseLikeAssertion = Object.assign(
             new Proxy(proxyTarget, {
-                get: function (target: Chai.Assertion, propName: string) {
-                    if (propName in assertionPropertiesMappedToValue) {
-                        assertionStack.push({
-                            method: target.equal as unknown as AssertionMethod,
-                            args: [assertionPropertiesMappedToValue[propName as AssertionPropertyKeys]],
-                        });
+                get: function (target: Chai.Assertion, key: string) {
+                    if (assertionPropertyNames.includes(key)) {
+                        assertionStack.push({ key });
 
                         return assertionProxy;
                     }
 
-                    if (propName === 'not') {
+                    if (key === 'not') {
                         assertionStack.push({ isNegate: true });
 
                         return assertionProxy;
                     }
 
                     // Handle native Chai's assertion methods and 'then' call
-                    const value = target[propName as keyof Chai.Assertion];
+                    const value = target[key as keyof Chai.Assertion];
 
                     if (typeof value === 'function') {
                         return (...args: unknown[]) => {
-                            if (propName === 'then') {
+                            if (key === 'then') {
                                 return (value as unknown as AssertionMethod)(...args);
                             }
 

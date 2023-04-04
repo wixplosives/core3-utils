@@ -8,7 +8,7 @@ export type AssertionMethod = (...args: unknown[]) => AssertionStatic;
 export type FunctionToRetry = (...args: unknown[]) => unknown | Promise<unknown>;
 
 // Assertions gathered in a stack to re-assert the provided function's results
-export type AssertionStackItem = { method?: AssertionMethod; args?: unknown[]; isNegate?: boolean };
+export type AssertionStackItem = { method?: AssertionMethod; args?: unknown[]; isNegate?: boolean; key?: string };
 export type RetryAndAssertProps = {
     functionToRetry: FunctionToRetry;
     options: Required<RetryOptions>;
@@ -41,6 +41,7 @@ type Promisify<T> = {
 // Type for Promise-like Chai Assertion
 export type PromiseLikeAssertion = Promisify<Chai.Assertion> & PromiseLike<void>;
 
-export type AssertionPropertyKeys = 'true' | 'null' | 'undefined' | 'false' | 'ok';
-
-
+export type AssertionPropertyKeys = Pick<
+    Chai.Assertion,
+    'ok' | 'true' | 'null' | 'false' | 'undefined' | 'empty' | 'NaN' | 'finite' | 'exist' | 'arguments' | 'all' | 'own'
+>;
