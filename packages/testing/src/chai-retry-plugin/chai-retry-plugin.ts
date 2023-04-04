@@ -17,6 +17,10 @@ declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Chai {
         interface Assertion {
+            /**
+             * Allows to retry the function passed to `expect` and assert the result until retries ended or timeout exceeded
+             * @param options retry options: timeout, retries, delay
+             */
             retry(options?: RetryOptions): PromiseLikeAssertion;
         }
     }
@@ -69,7 +73,15 @@ const getRetryPromiseWithTimeout = (retryAndAssertProps: RetryAndAssertProps): P
 
 /**
  * Adds the `retry` method to Chai assertions, which allows to check the return value of a function until it satisfies the chained assertions.
+ * Should be applied through `Chai.use` function, for example:
+ * ```ts
+ * import Chai from 'chai';
+ * import { chaiRetryPlugin } from '@wixc3/testing';
  *
+ * Chai.use(chaiRetryPlugin);
+ * ```
+ *
+ * Examples of usage:
  * @example
  * ```ts
  * await expect(funcToRetry).retry({ timeout: 7000, retries: 5 }).have.property('value').and.be.above(4);
