@@ -222,7 +222,7 @@ describe('chai-retry-plugin', () => {
     });
 
     describe('should work with various assertion methods:', () => {
-        it('satisfy', async () => {
+        it('.satisfy()', async () => {
             let attempts = 0;
 
             const funcToRetry = () => {
@@ -250,7 +250,7 @@ describe('chai-retry-plugin', () => {
             expect(attempts).to.equal(5);
         });
 
-        it('.to.increase, .by', async () => {
+        it('.to.increase(), .by()', async () => {
             let attempts = 0;
             const myObj = { val: 1 };
 
@@ -264,7 +264,7 @@ describe('chai-retry-plugin', () => {
             expect(attempts).to.equal(1);
         });
 
-        it('.oneOf', async () => {
+        it('.oneOf()', async () => {
             let attempts = 0;
 
             const funcToRetry = () => {
@@ -277,7 +277,7 @@ describe('chai-retry-plugin', () => {
             expect(attempts).to.equal(4);
         });
 
-        it('.change', async () => {
+        it('.change()', async () => {
             let attempts = 0;
             const myObj = { dots: '', comas: '' };
 
