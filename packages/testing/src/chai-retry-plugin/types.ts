@@ -1,4 +1,5 @@
 import type { Assertion } from 'chai';
+import { assertionPropertyKeys } from './constants';
 
 // Type of `this` in `addMethod` function
 export type AssertionStatic = typeof Assertion;
@@ -43,5 +44,5 @@ export type PromiseLikeAssertion = Promisify<Chai.Assertion> & PromiseLike<void>
 
 export type AssertionPropertyKeys = Pick<
     Chai.Assertion,
-    'ok' | 'true' | 'null' | 'false' | 'undefined' | 'empty' | 'NaN' | 'finite' | 'exist' | 'arguments' | 'all' | 'own'
+    Extract<typeof assertionPropertyKeys[number], keyof Chai.Assertion>
 >;

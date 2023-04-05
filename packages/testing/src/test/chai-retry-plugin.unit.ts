@@ -113,6 +113,19 @@ describe('chai-retry-plugin', () => {
             expect(attempts).to.equal(3);
         });
 
+        it('assert number with `not` on the beginning of chain', async () => {
+            let attempts = 0;
+
+            const funcToRetry = () => {
+                attempts++;
+                return attempts;
+            };
+
+            await expect(funcToRetry).retry().to.not.lessThanOrEqual(5).to.equal(6);
+
+            expect(attempts).to.equal(7);
+        });
+
         it('assert array that does not include a specific element', async () => {
             let attempts = 0;
             const array: number[] = [1, 2, 3, 4, 5];
