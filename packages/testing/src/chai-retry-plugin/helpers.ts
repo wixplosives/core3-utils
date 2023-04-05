@@ -1,43 +1,36 @@
-import Chai, { AssertionError } from 'chai';
+import Chai from 'chai';
 import { timeout as addTimeoutToPromise, sleep } from 'promise-assist';
 
-import type { AssertionPropertyKeys, RetryAndAssertProps } from './types';
+import type { AssertionMethodStackItem, AssertionPropertyKeys, AssertionStackItem, RetryAndAssertProps } from './types';
 
 const { expect } = Chai;
 
-const performRetries = async ({ functionToRetry, options, assertionStack }: RetryAndAssertProps) => {
+function isAssertionMethodStackItem(item: AssertionStackItem): item is AssertionMethodStackItem {
+    return 'method' in item && 'args' in item;
+}
+
+const performRetries = async ({
+    functionToRetry,
+    options,
+    assertionStack,
+    isFunctionCallHandledByChai,
+}: RetryAndAssertProps) => {
     const { retries, delay } = options;
     let retriesCount = 0;
 
     while (retriesCount < retries) {
         try {
             retriesCount++;
-            const result = await functionToRetry();
-            const assertion = expect(result);
-            let isNegationApplied = false;
+            const result = isFunctionCallHandledByChai ? functionToRetry : await functionToRetry();
+            let assertion = expect(result);
 
-            for (const { isNegate, method, args = [], key } of assertionStack) {
-                if (isNegate) {
-                    isNegationApplied = true;
-                    continue;
-                }
-
-                try {
-                    if (key) {
-                        assertion.to.be[key as keyof AssertionPropertyKeys];
-                    }
-
-                    method?.apply(assertion, args);
-                } catch (error) {
-                    if (error instanceof AssertionError && isNegationApplied) {
-                        continue;
-                    }
-
-                    throw error;
-                }
-
-                if (isNegationApplied) {
-                    throw new Error('Negated assertion should throw an error, but it finished successfully.');
+            for (const item of assertionStack) {
+                if (isAssertionMethodStackItem(item)) {
+                    const { method, args } = item;
+                    assertion = method.apply(assertion, args);
+                } else {
+                    const { property } = item;
+                    assertion = assertion.to.be[property as keyof AssertionPropertyKeys];
                 }
             }
 

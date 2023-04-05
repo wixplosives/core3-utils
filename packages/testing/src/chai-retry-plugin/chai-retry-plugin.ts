@@ -1,5 +1,5 @@
 import Chai from 'chai';
-import { assertionPropertyKeys } from './constants';
+import { assertionPropertyKeys, chaiMethodsThatHandleFunction } from './constants';
 import { retryFunctionAndAssertions } from './helpers';
 
 import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions, PromiseLikeAssertion } from './types';
@@ -13,9 +13,10 @@ declare global {
             /**
              * Allows to retry the function passed to `expect` and assert the result until retries ended or timeout exceeded
              * @param options Settings for retry logic:
-             * - `timeout`: The maximum duration in milliseconds to wait before failing the retry operation. Default: 5000.
-             * - `retries`: The number of times to retry the function before failing. Default: Infinity.
-             * - `delay`: The delay in milliseconds between retries. Default: 0.
+             * - `timeout`: The maximum duration in milliseconds to wait before failing the retry operation.
+             * - `retries`: The number of times to retry the function before failing.
+             * - `delay`: The delay in milliseconds between retries.
+             * @default { timeout: 5000, delay: 0, retries: Infinity }
              */
             retry(options?: RetryOptions): PromiseLikeAssertion;
         }
@@ -25,6 +26,7 @@ declare global {
 /**
  * Adds the `retry` method to Chai assertions, which allows to check the return value of a function until it satisfies the chained assertions.
  * Should be applied through `Chai.use` function, for example:
+ * @example
  * ```ts
  * import Chai from 'chai';
  * import { chaiRetryPlugin } from '@wixc3/testing';
@@ -57,6 +59,8 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
         const assertionStack: AssertionStackItem[] = [];
         const defaultRetryOptions: Required<RetryOptions> = { timeout: 5000, retries: Infinity, delay: 0 };
         const options: Required<RetryOptions> = { ...defaultRetryOptions, ...retryOptions };
+        // to handle assertions that accept a function
+        let isFunctionCallHandledByChai = false;
 
         // Fake assertion object for catching calls of chained methods
         const proxyTarget = new Assertion({});
@@ -65,13 +69,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
             new Proxy(proxyTarget, {
                 get: function (target: Chai.Assertion, key: string) {
                     if (assertionPropertyKeys.includes(key)) {
-                        assertionStack.push({ key });
-
-                        return assertionProxy;
-                    }
-
-                    if (key === 'not') {
-                        assertionStack.push({ isNegate: true });
+                        assertionStack.push({ property: key });
 
                         return assertionProxy;
                     }
@@ -83,6 +81,10 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
                         return (...args: unknown[]) => {
                             if (key === 'then') {
                                 return (value as unknown as AssertionMethod)(...args);
+                            }
+
+                            if (chaiMethodsThatHandleFunction.includes(key)) {
+                                isFunctionCallHandledByChai = true;
                             }
 
                             assertionStack.push({ method: value as unknown as AssertionMethod, args });
@@ -100,6 +102,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
                         functionToRetry,
                         options,
                         assertionStack,
+                        isFunctionCallHandledByChai,
                     }).then(resolve, reject);
                 },
             }

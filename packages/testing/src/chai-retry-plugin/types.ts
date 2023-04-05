@@ -3,17 +3,21 @@ import { assertionPropertyKeys } from './constants';
 
 // Type of `this` in `addMethod` function
 export type AssertionStatic = typeof Assertion;
-export type AssertionMethod = (...args: unknown[]) => AssertionStatic;
+export type AssertionMethod = (...args: unknown[]) => Chai.Assertion;
 
 // Function provided as argument of `expect`
 export type FunctionToRetry = (...args: unknown[]) => unknown | Promise<unknown>;
 
+export type AssertionPropertyStackItem = { property: string };
+export type AssertionMethodStackItem = { method: AssertionMethod; args: unknown[] };
+
 // Assertions gathered in a stack to re-assert the provided function's results
-export type AssertionStackItem = { method?: AssertionMethod; args?: unknown[]; isNegate?: boolean; key?: string };
+export type AssertionStackItem = AssertionMethodStackItem | AssertionPropertyStackItem;
 export type RetryAndAssertProps = {
     functionToRetry: FunctionToRetry;
     options: Required<RetryOptions>;
     assertionStack: AssertionStackItem[];
+    isFunctionCallHandledByChai: boolean;
 };
 
 /**

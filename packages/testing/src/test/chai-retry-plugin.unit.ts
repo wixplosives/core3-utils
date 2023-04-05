@@ -142,8 +142,32 @@ describe('chai-retry-plugin', () => {
         });
     });
 
+    describe('should work with chained properties:', () => {
+        it('.deep', async () => {
+            let attempt = 0;
+            const sometimes = () => {
+                attempt += 1;
+                return attempt !== 5 ? null : { c: { b: { a: 1 } } };
+            };
+
+            await expect(sometimes)
+                .retry()
+                .to.deep.equal({ c: { b: { a: 1 } } });
+        });
+
+        it('.nested', async () => {
+            let attempt = 0;
+            const sometimes = () => {
+                attempt += 1;
+                return attempt !== 5 ? null : { a: { b: ['x', 'y'] } };
+            };
+
+            await expect(sometimes).retry().to.have.nested.property('a.b[1]');
+        });
+    });
+
     describe('should pass the assertions that ends with properties:', () => {
-        it('null', async () => {
+        it('.null', async () => {
             let attempt = 0;
             const sometimesNullFunction = () => {
                 attempt += 1;
@@ -155,7 +179,7 @@ describe('chai-retry-plugin', () => {
             expect(attempt).to.equal(5);
         });
 
-        it('undefined', async () => {
+        it('.undefined', async () => {
             let attempt = 0;
             const sometimesUndefinedFunction = () => {
                 attempt += 1;
@@ -167,7 +191,7 @@ describe('chai-retry-plugin', () => {
             expect(attempt).to.equal(5);
         });
 
-        it('empty', async () => {
+        it('.empty', async () => {
             let attempt = 0;
             const sometimes = () => {
                 attempt += 1;
@@ -177,6 +201,23 @@ describe('chai-retry-plugin', () => {
             await expect(sometimes).retry({ retries: 10 }).to.be.empty;
 
             expect(attempt).to.equal(5);
+        });
+
+        it('.sealed', async () => {
+            const sealedObject = Object.seal({ prop1: 'value1', prop2: 'value2' });
+
+            await expect(() => sealedObject).retry().to.be.sealed;
+        });
+
+        it('.not.sealed', async () => {
+            const notSealedObject = { prop1: 'value1', prop2: 'value2' };
+
+            try {
+                await expect(() => notSealedObject).retry({ retries: 3 }).to.be.sealed;
+            } catch (error: unknown) {
+                expect(error).to.be.an.instanceOf(Error);
+                expect((error as Error).message).to.include('3 retries');
+            }
         });
     });
 
@@ -207,6 +248,48 @@ describe('chai-retry-plugin', () => {
             await expect(funcToRetry).retry({ retries: 5, delay: 10 }).have.property('value').and.be.above(4);
 
             expect(attempts).to.equal(5);
+        });
+
+        it('.to.increase, .by', async () => {
+            let attempts = 0;
+            const myObj = { val: 1 };
+
+            const addTwo = () => {
+                attempts++;
+                myObj.val += 2;
+            };
+
+            await expect(addTwo).retry().to.increase(myObj, 'val').by(2);
+
+            expect(attempts).to.equal(1);
+        });
+
+        it('.oneOf', async () => {
+            let attempts = 0;
+
+            const funcToRetry = () => {
+                attempts++;
+
+                return attempts;
+            };
+
+            await expect(funcToRetry).retry().to.not.be.oneOf([1, 2, 3]);
+            expect(attempts).to.equal(4);
+        });
+
+        it('.change', async () => {
+            let attempts = 0;
+            const myObj = { dots: '', comas: '' };
+
+            const addDot = () => {
+                attempts++;
+                myObj.dots += '.';
+            };
+
+            await expect(addDot).retry().to.change(myObj, 'dots');
+            await expect(addDot).retry().to.not.change(myObj, 'comas');
+
+            expect(attempts).to.equal(2);
         });
     });
 });
