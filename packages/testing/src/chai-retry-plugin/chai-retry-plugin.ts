@@ -68,7 +68,6 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
                     let value: Chai.Assertion | undefined = undefined;
                     try {
                         value = target[key as keyof Chai.Assertion] as Chai.Assertion;
-                        // eslint-disable-next-line
                     } catch (error) {
                         // to catch AssertionError of getter properties that immediately perform the assertion
                     }

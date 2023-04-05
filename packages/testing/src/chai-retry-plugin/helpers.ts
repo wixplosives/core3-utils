@@ -14,8 +14,8 @@ const performRetries = async ({ functionToRetry, options, assertionStack }: Retr
         try {
             retriesCount++;
             /**
-             * This is needed to handle cases when function that user passes to `expect`
-             * should be called through the native chai's implementation rather then  within `chaiRetryPlugin`, for example:
+             * If assertion chain includes such method as `change`, `decrease` or `increase` that means function passed to the `expect`
+             * will be called by Chai itself, for example:
              *
              * const myObj = { val: 1 },
              *       addTwo = () => {
