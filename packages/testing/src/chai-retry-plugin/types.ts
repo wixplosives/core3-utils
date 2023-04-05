@@ -13,7 +13,7 @@ export type AssertionMethodStackItem = { method: AssertionMethod; args: unknown[
 
 // Assertions gathered in a stack to re-assert the provided function's results
 export type AssertionStackItem = AssertionMethodStackItem | AssertionPropertyStackItem;
-export type retryAndAssertArguments = {
+export type RetryAndAssertArguments = {
     functionToRetry: FunctionToRetry;
     options: Required<RetryOptions>;
     assertionStack: AssertionStackItem[];
@@ -43,7 +43,6 @@ type Promisify<T> = {
         : Promisify<T[Key]> & PromiseLike<any>;
 };
 
-// Type for Promise-like Chai Assertion
 export type PromiseLikeAssertion = Promisify<Chai.Assertion> & PromiseLike<void>;
 
 export type AssertionPropertyKeys = Pick<

@@ -5,7 +5,7 @@ import type {
     AssertionMethodStackItem,
     AssertionPropertyKeys,
     AssertionStackItem,
-    retryAndAssertArguments,
+    RetryAndAssertArguments,
 } from './types';
 
 const { expect } = Chai;
@@ -19,7 +19,7 @@ const performRetries = async ({
     options,
     assertionStack,
     isFunctionCallHandledByChai,
-}: retryAndAssertArguments) => {
+}: RetryAndAssertArguments) => {
     const { retries, delay } = options;
     let retriesCount = 0;
 
@@ -35,7 +35,7 @@ const performRetries = async ({
                     assertion = method.apply(assertion, args);
                 } else {
                     const { property } = item;
-                    assertion = assertion.to.be[property as keyof AssertionPropertyKeys];
+                    assertion = assertion[property as keyof AssertionPropertyKeys];
                 }
             }
 
@@ -48,6 +48,6 @@ const performRetries = async ({
     throw new Error(`Limit of ${retries} retries exceeded!`);
 };
 
-export const retryFunctionAndAssertions = (retryAndAssertArguments: retryAndAssertArguments): Promise<void> => {
+export const retryFunctionAndAssertions = (retryAndAssertArguments: RetryAndAssertArguments): Promise<void> => {
     return addTimeoutToPromise(performRetries(retryAndAssertArguments), retryAndAssertArguments.options.timeout);
 };
