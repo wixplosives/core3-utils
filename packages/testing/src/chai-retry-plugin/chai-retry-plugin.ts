@@ -67,11 +67,11 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
 
         const assertionProxy: PromiseLikeAssertion = Object.assign(
             new Proxy(proxyTarget, {
-                get: function (target: Chai.Assertion, key: string) {
+                get: function (target: Chai.Assertion, key: string, proxySelf: Chai.Assertion) {
                     if (assertionPropertyKeys.includes(key)) {
                         assertionStack.push({ property: key });
 
-                        return assertionProxy;
+                        return proxySelf;
                     }
 
                     // Handle native Chai's assertion methods and 'then' call
@@ -89,11 +89,11 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
 
                             assertionStack.push({ method: value as unknown as AssertionMethod, args });
 
-                            return assertionProxy;
+                            return proxySelf;
                         };
                     }
 
-                    return assertionProxy;
+                    return proxySelf;
                 },
             }),
             {
