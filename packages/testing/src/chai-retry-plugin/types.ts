@@ -13,7 +13,7 @@ export type AssertionMethodStackItem = { method: AssertionMethod; args: unknown[
 
 // Assertions gathered in a stack to re-assert the provided function's results
 export type AssertionStackItem = AssertionMethodStackItem | AssertionPropertyStackItem;
-export type RetryAndAssertProps = {
+export type retryAndAssertArguments = {
     functionToRetry: FunctionToRetry;
     options: Required<RetryOptions>;
     assertionStack: AssertionStackItem[];

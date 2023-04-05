@@ -1,7 +1,12 @@
 import Chai from 'chai';
 import { timeout as addTimeoutToPromise, sleep } from 'promise-assist';
 
-import type { AssertionMethodStackItem, AssertionPropertyKeys, AssertionStackItem, RetryAndAssertProps } from './types';
+import type {
+    AssertionMethodStackItem,
+    AssertionPropertyKeys,
+    AssertionStackItem,
+    retryAndAssertArguments,
+} from './types';
 
 const { expect } = Chai;
 
@@ -14,7 +19,7 @@ const performRetries = async ({
     options,
     assertionStack,
     isFunctionCallHandledByChai,
-}: RetryAndAssertProps) => {
+}: retryAndAssertArguments) => {
     const { retries, delay } = options;
     let retriesCount = 0;
 
@@ -43,6 +48,6 @@ const performRetries = async ({
     throw new Error(`Limit of ${retries} retries exceeded!`);
 };
 
-export const retryFunctionAndAssertions = (retryAndAssertProps: RetryAndAssertProps): Promise<void> => {
-    return addTimeoutToPromise(performRetries(retryAndAssertProps), retryAndAssertProps.options.timeout);
+export const retryFunctionAndAssertions = (retryAndAssertArguments: retryAndAssertArguments): Promise<void> => {
+    return addTimeoutToPromise(performRetries(retryAndAssertArguments), retryAndAssertArguments.options.timeout);
 };
