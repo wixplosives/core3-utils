@@ -1,14 +1,10 @@
-import type { Assertion } from 'chai';
-import { assertionPropertyKeys } from './constants';
-
 // Type of `this` in `addMethod` function
-export type AssertionStatic = typeof Assertion;
 export type AssertionMethod = (...args: unknown[]) => Chai.Assertion;
 
 // Function provided as argument of `expect`
 export type FunctionToRetry = (...args: unknown[]) => unknown | Promise<unknown>;
 
-export type AssertionPropertyStackItem = { property: string };
+export type AssertionPropertyStackItem = { propertyName: string };
 export type AssertionMethodStackItem = { method: AssertionMethod; args: unknown[] };
 
 // Assertions gathered in a stack to re-assert the provided function's results
@@ -44,8 +40,3 @@ type Promisify<T> = {
 };
 
 export type PromiseLikeAssertion = Promisify<Chai.Assertion> & PromiseLike<void>;
-
-export type AssertionPropertyKeys = Pick<
-    Chai.Assertion,
-    Extract<typeof assertionPropertyKeys[number], keyof Chai.Assertion>
->;

@@ -1,12 +1,7 @@
 import Chai from 'chai';
 import { timeout as addTimeoutToPromise, sleep } from 'promise-assist';
 
-import type {
-    AssertionMethodStackItem,
-    AssertionPropertyKeys,
-    AssertionStackItem,
-    RetryAndAssertArguments,
-} from './types';
+import type { AssertionMethodStackItem, AssertionStackItem, RetryAndAssertArguments } from './types';
 
 const { expect } = Chai;
 
@@ -29,13 +24,13 @@ const performRetries = async ({
             const result = isFunctionCallHandledByChai ? functionToRetry : await functionToRetry();
             let assertion = expect(result);
 
-            for (const item of assertionStack) {
-                if (isAssertionMethodStackItem(item)) {
-                    const { method, args } = item;
+            for (const assertionStackItem of assertionStack) {
+                if (isAssertionMethodStackItem(assertionStackItem)) {
+                    const { method, args } = assertionStackItem;
                     assertion = method.apply(assertion, args);
                 } else {
-                    const { property } = item;
-                    assertion = assertion[property as keyof AssertionPropertyKeys];
+                    const { propertyName } = assertionStackItem;
+                    assertion = assertion[propertyName as keyof Chai.Assertion] as Chai.Assertion;
                 }
             }
 

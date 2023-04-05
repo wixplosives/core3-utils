@@ -1,5 +1,5 @@
 import Chai from 'chai';
-import { assertionPropertyKeys, chaiMethodsThatHandleFunction } from './constants';
+import { chaiMethodsThatHandleFunction } from './constants';
 import { retryFunctionAndAssertions } from './helpers';
 
 import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions, PromiseLikeAssertion } from './types';
@@ -68,14 +68,13 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
         const assertionProxy: PromiseLikeAssertion = Object.assign(
             new Proxy(proxyTarget, {
                 get: function (target: Chai.Assertion, key: string, proxySelf: Chai.Assertion) {
-                    if (assertionPropertyKeys.includes(key)) {
-                        assertionStack.push({ property: key });
-
-                        return proxySelf;
+                    let value: Chai.Assertion | undefined = undefined;
+                    try {
+                        value = target[key as keyof Chai.Assertion] as Chai.Assertion;
+                        // eslint-disable-next-line
+                    } catch (error) {
+                        // to prevent AssertionError off getter properties
                     }
-
-                    // Handle native Chai's assertion methods and 'then' call
-                    const value = target[key as keyof Chai.Assertion];
 
                     if (typeof value === 'function') {
                         return (...args: unknown[]) => {
@@ -83,14 +82,19 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
                                 return (value as unknown as AssertionMethod)(...args);
                             }
 
-                            if (chaiMethodsThatHandleFunction.includes(key)) {
+                            if (chaiMethodsThatHandleFunction.includes(key as keyof Chai.Assertion)) {
                                 isFunctionCallHandledByChai = true;
                             }
 
-                            assertionStack.push({ method: value as unknown as AssertionMethod, args });
+                            assertionStack.push({
+                                method: value as unknown as AssertionMethod,
+                                args,
+                            });
 
                             return proxySelf;
                         };
+                    } else {
+                        assertionStack.push({ propertyName: key });
                     }
 
                     return proxySelf;

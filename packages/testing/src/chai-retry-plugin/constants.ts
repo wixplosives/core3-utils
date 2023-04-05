@@ -1,32 +1,4 @@
-/**
- * This is needed to handle cases when assertion ends with property or have property calls within, for example:
- * @example
- * await expect(func).retry().to.be.null;
- */
-export const assertionPropertyKeys = [
-    'ok',
-    'true',
-    'null',
-    'false',
-    'undefined',
-    'empty',
-    'NaN',
-    'finite',
-    'exist',
-    'exists',
-    'itself',
-    'extensible',
-    'sealed',
-    'arguments',
-    'all',
-    'own',
-    'deep',
-    'nested',
-    'not',
-    'own',
-    'ordered',
-    'any',
-];
+import { expect } from "chai";
 
 /**
  * This is needed to handle cases when function should be called through native chai's implementation rather then  within `chaiRetryPlugin`, for example:
@@ -38,4 +10,4 @@ export const assertionPropertyKeys = [
  *          };
  * await expect(addTwo).retry().to.increase(myObj, 'val').by(2);
  */
-export const chaiMethodsThatHandleFunction = ['change', 'decrease', 'increase'];
+export const chaiMethodsThatHandleFunction: (keyof ReturnType<typeof expect>)[] = ['change', 'decrease', 'increase'];
