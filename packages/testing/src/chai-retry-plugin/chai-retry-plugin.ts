@@ -59,7 +59,17 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
         const assertionStack: AssertionStackItem[] = [];
         const defaultRetryOptions: Required<RetryOptions> = { timeout: 5000, retries: Infinity, delay: 0 };
         const options: Required<RetryOptions> = { ...defaultRetryOptions, ...retryOptions };
-        // to handle assertions that accept a function
+        /**
+         * This is needed to handle cases when function that user passes to `expect`
+         * should be called through the native chai's implementation rather then  within `chaiRetryPlugin`, for example:
+         * @example
+         * const myObj = { val: 1 },
+         *       addTwo = () => {
+         *              attempts++;
+         *              myObj.val += 2;
+         *          };
+         * await expect(addTwo).retry().to.increase(myObj, 'val').by(2);
+         */
         let isFunctionCallHandledByChai = false;
 
         // Fake assertion object for catching calls of chained methods
@@ -73,7 +83,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
                         value = target[key as keyof Chai.Assertion] as Chai.Assertion;
                         // eslint-disable-next-line
                     } catch (error) {
-                        // to prevent AssertionError off getter properties
+                        // to catch AssertionError of getter properties that immediately perform the assertion
                     }
 
                     if (typeof value === 'function') {
