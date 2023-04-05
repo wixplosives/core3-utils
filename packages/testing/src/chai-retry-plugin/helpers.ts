@@ -1,23 +1,22 @@
 import Chai from 'chai';
 import { timeout as addTimeoutToPromise, sleep } from 'promise-assist';
+import { chaiMethodsThatHandleFunction } from './constants';
 
 import type { RetryAndAssertArguments } from './types';
 
 const { expect } = Chai;
 
-const performRetries = async ({
-    functionToRetry,
-    options,
-    assertionStack,
-    isFunctionCallHandledByChai,
-}: RetryAndAssertArguments) => {
+const performRetries = async ({ functionToRetry, options, assertionStack }: RetryAndAssertArguments) => {
     const { retries, delay } = options;
     let retriesCount = 0;
 
     while (retriesCount < retries) {
         try {
             retriesCount++;
-            const valueToAssert = isFunctionCallHandledByChai ? functionToRetry : await functionToRetry();
+            const shouldAssertFunctionValue = assertionStack.some((stackItem) =>
+                chaiMethodsThatHandleFunction.includes(stackItem.propertyName)
+            );
+            const valueToAssert = shouldAssertFunctionValue ? functionToRetry : await functionToRetry();
             let assertion = expect(valueToAssert);
 
             for (const { propertyName, method, args } of assertionStack) {

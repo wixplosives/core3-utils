@@ -1,5 +1,4 @@
 import Chai from 'chai';
-import { chaiMethodsThatHandleFunction } from './constants';
 import { retryFunctionAndAssertions } from './helpers';
 
 import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions, PromiseLikeAssertion } from './types';
@@ -69,7 +68,6 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
          *          };
          * await expect(addTwo).retry().to.increase(myObj, 'val').by(2);
          */
-        let isFunctionCallHandledByChai = false;
 
         // Fake assertion object for catching calls of chained methods
         const proxyTarget = new Assertion({});
@@ -89,10 +87,6 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
                         return (...args: unknown[]) => {
                             if (key === 'then') {
                                 return (value as unknown as AssertionMethod)(...args);
-                            }
-
-                            if (chaiMethodsThatHandleFunction.includes(key as keyof Chai.Assertion)) {
-                                isFunctionCallHandledByChai = true;
                             }
 
                             assertionStack.push({
@@ -116,7 +110,6 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
                         functionToRetry,
                         options,
                         assertionStack,
-                        isFunctionCallHandledByChai,
                     }).then(resolve, reject);
                 },
             }

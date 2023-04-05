@@ -7,13 +7,12 @@ export type FunctionToRetry = (...args: unknown[]) => unknown | Promise<unknown>
 export type AssertionStackItem = {
     propertyName: keyof Chai.Assertion;
     method?: AssertionMethod;
-    args?: unknown[]
-}
+    args?: unknown[];
+};
 export type RetryAndAssertArguments = {
     functionToRetry: FunctionToRetry;
     options: Required<RetryOptions>;
     assertionStack: AssertionStackItem[];
-    isFunctionCallHandledByChai: boolean;
 };
 
 /**
