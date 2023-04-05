@@ -4,11 +4,11 @@ export type AssertionMethod = (...args: unknown[]) => Chai.Assertion;
 // Function provided as argument of `expect`
 export type FunctionToRetry = (...args: unknown[]) => unknown | Promise<unknown>;
 
-export type AssertionPropertyStackItem = { propertyName: string };
-export type AssertionMethodStackItem = { method: AssertionMethod; args: unknown[] };
-
-// Assertions gathered in a stack to re-assert the provided function's results
-export type AssertionStackItem = AssertionMethodStackItem | AssertionPropertyStackItem;
+export type AssertionStackItem = {
+    propertyName: keyof Chai.Assertion;
+    method?: AssertionMethod;
+    args?: unknown[]
+}
 export type RetryAndAssertArguments = {
     functionToRetry: FunctionToRetry;
     options: Required<RetryOptions>;

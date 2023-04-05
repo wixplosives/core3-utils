@@ -62,10 +62,9 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
         /**
          * This is needed to handle cases when function that user passes to `expect`
          * should be called through the native chai's implementation rather then  within `chaiRetryPlugin`, for example:
-         * @example
+         *
          * const myObj = { val: 1 },
          *       addTwo = () => {
-         *              attempts++;
          *              myObj.val += 2;
          *          };
          * await expect(addTwo).retry().to.increase(myObj, 'val').by(2);
@@ -97,6 +96,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
                             }
 
                             assertionStack.push({
+                                propertyName: key as keyof Chai.Assertion,
                                 method: value as unknown as AssertionMethod,
                                 args,
                             });
@@ -104,7 +104,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
                             return proxySelf;
                         };
                     } else {
-                        assertionStack.push({ propertyName: key });
+                        assertionStack.push({ propertyName: key as keyof Chai.Assertion });
                     }
 
                     return proxySelf;
