@@ -7,7 +7,7 @@ import type { RetryAndAssertArguments } from './types';
 const { expect } = Chai;
 
 export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryAndAssertArguments): Promise<void> => {
-    let lastThrownError: Error | undefined;
+    let assertionError: Error | undefined;
 
     const performRetries = async ({ functionToRetry, options, assertionStack }: RetryAndAssertArguments) => {
         const { retries, delay } = options;
@@ -36,24 +36,22 @@ export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryA
 
                 return;
             } catch (error: unknown) {
-                lastThrownError = error as Error;
+                assertionError = error as Error;
                 await sleep(delay);
             }
         }
 
-        throw new Error(
-            `Limit of ${retries} retries exceeded! ${lastThrownError ? `Last thrown error: ${lastThrownError}` : ''}`
-        );
+        throw new Error(`Limit of ${retries} retries exceeded! AssertionError: ${assertionError}`);
     };
 
-    try {
-        await timeoutPromise(performRetries(retryAndAssertArguments), retryAndAssertArguments.options.timeout);
-    } catch (error) {
-        const errorMessage = (error as Error).message;
-        if (errorMessage.includes('timed out')) {
-            throw new Error(`${errorMessage}. ${lastThrownError ? `Last thrown error: ${lastThrownError}` : ''}`);
-        } else {
-            throw error;
-        }
-    }
+    const getTimeoutError = () =>
+        `Timed out after ${retryAndAssertArguments.options.timeout}ms. ${
+            assertionError ? `AssertionError: ${assertionError}` : ''
+        }`;
+
+    return timeoutPromise(
+        performRetries(retryAndAssertArguments),
+        retryAndAssertArguments.options.timeout,
+        getTimeoutError
+    );
 };

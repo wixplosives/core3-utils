@@ -49,7 +49,7 @@ describe('chai-retry-plugin', () => {
                 await expect(funcToRetry).retry({ timeout: 700 }).to.equal('Failure');
                 throw new Error('This should not be called');
             } catch (error: unknown) {
-                expect((error as Error).message).includes('timed out after 700ms');
+                expect((error as Error).message).includes('Timed out after 700ms');
             }
         });
 
