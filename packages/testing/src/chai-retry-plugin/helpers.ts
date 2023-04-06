@@ -1,5 +1,5 @@
 import Chai from 'chai';
-import { timeout as addTimeoutToPromise, sleep } from 'promise-assist';
+import { timeout as timeoutPromise, sleep } from 'promise-assist';
 import { chaiMethodsThatHandleFunction } from './constants';
 
 import type { RetryAndAssertArguments } from './types';
@@ -32,7 +32,7 @@ const performRetries = async ({ functionToRetry, options, assertionStack }: Retr
             }
 
             return;
-        } catch (error) {
+        } catch {
             await sleep(delay);
         }
     }
@@ -41,5 +41,5 @@ const performRetries = async ({ functionToRetry, options, assertionStack }: Retr
 };
 
 export const retryFunctionAndAssertions = (retryAndAssertArguments: RetryAndAssertArguments): Promise<void> => {
-    return addTimeoutToPromise(performRetries(retryAndAssertArguments), retryAndAssertArguments.options.timeout);
+    return timeoutPromise(performRetries(retryAndAssertArguments), retryAndAssertArguments.options.timeout);
 };

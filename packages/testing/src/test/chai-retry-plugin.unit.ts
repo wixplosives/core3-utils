@@ -1,4 +1,5 @@
 import Chai, { expect } from 'chai';
+import { sleep } from 'promise-assist';
 import { chaiRetryPlugin } from '../chai-retry-plugin/chai-retry-plugin';
 
 Chai.use(chaiRetryPlugin);
@@ -15,7 +16,7 @@ describe('chai-retry-plugin', () => {
             return 'Success';
         };
 
-        await expect(funcToRetry).to.retry({ retries: 5, delay: 10 });
+        await expect(funcToRetry).to.retry();
         expect(attempts).to.equal(3);
     });
 
@@ -41,12 +42,12 @@ describe('chai-retry-plugin', () => {
     describe('options should work correctly:', () => {
         it('timeout after the specified duration', async () => {
             const funcToRetry = async () => {
-                await new Promise((resolve) => setTimeout(resolve, 500));
+                await sleep(500);
                 return 'Success';
             };
 
             await expect(funcToRetry)
-                .retry({ retries: 2, timeout: 250 })
+                .retry({ timeout: 250 })
                 .then(
                     () => {
                         throw new Error('This should not be called');

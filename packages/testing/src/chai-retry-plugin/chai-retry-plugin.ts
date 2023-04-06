@@ -65,11 +65,12 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
         const assertionProxy: PromiseLikeAssertion = Object.assign(
             new Proxy(proxyTarget, {
                 get: function (target: Chai.Assertion, key: string, proxySelf: Chai.Assertion) {
-                    let value: Chai.Assertion | undefined = undefined;
+                    let value: Chai.Assertion | undefined;
                     try {
+                        // if `value` is a getter property that may immediately perform the assertion and throw the AssertionError
                         value = target[key as keyof Chai.Assertion] as Chai.Assertion;
                     } catch {
-                        // to catch AssertionError of getter properties that immediately perform the assertion
+                        //
                     }
 
                     if (typeof value === 'function') {
