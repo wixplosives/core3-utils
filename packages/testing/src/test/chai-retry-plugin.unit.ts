@@ -42,19 +42,20 @@ describe('chai-retry-plugin', () => {
     describe('options should work correctly:', () => {
         it('timeout after the specified duration', async () => {
             const funcToRetry = async () => {
-                await sleep(500);
+                await sleep(250);
                 return 'Success';
             };
 
             await expect(funcToRetry)
-                .retry({ timeout: 250 })
+                .retry({ timeout: 700 })
+                .to.equal('Failure')
                 .then(
                     () => {
                         throw new Error('This should not be called');
                     },
                     (error: Error) => {
                         expect(error).to.be.an.instanceOf(Error);
-                        expect(error.message).to.equal('timed out after 250ms');
+                        expect(error.message).includes('timed out after 700ms');
                     }
                 );
         });
@@ -77,7 +78,7 @@ describe('chai-retry-plugin', () => {
                     },
                     (error: Error) => {
                         expect(error).to.be.an.instanceOf(Error);
-                        expect(error.message).to.equal('Limit of 10 retries exceeded!');
+                        expect(error.message).to.includes('Limit of 10 retries exceeded!');
                     }
                 );
         });
@@ -119,10 +120,7 @@ describe('chai-retry-plugin', () => {
                 return { status: attempts === 3 ? 'success' : 'pending' };
             };
 
-            await expect(funcToRetry)
-                .retry()
-                .and.have.property('status')
-                .and.not.equal('pending');
+            await expect(funcToRetry).retry().and.have.property('status').and.not.equal('pending');
 
             expect(attempts).to.equal(3);
         });
@@ -243,6 +241,7 @@ describe('chai-retry-plugin', () => {
             try {
                 await expect(() => notSealedObject).retry({ retries: 3 }).to.be.sealed;
             } catch (error: unknown) {
+                console.log(error);
                 expect(error).to.be.an.instanceOf(Error);
                 expect((error as Error).message).to.include('3 retries');
             }

@@ -6,7 +6,11 @@ import type { RetryAndAssertArguments } from './types';
 
 const { expect } = Chai;
 
-const performRetries = async ({ functionToRetry, options, assertionStack }: RetryAndAssertArguments) => {
+const performRetries = async (
+    { functionToRetry, options, assertionStack }: RetryAndAssertArguments,
+    setLastThrownError: (error: Error) => void,
+    getLastThrownError: () => Error | undefined
+) => {
     const { retries, delay } = options;
     let retriesCount = 0;
 
@@ -32,14 +36,38 @@ const performRetries = async ({ functionToRetry, options, assertionStack }: Retr
             }
 
             return;
-        } catch {
+        } catch (error: unknown) {
+            setLastThrownError(error as Error);
             await sleep(delay);
         }
     }
 
-    throw new Error(`Limit of ${retries} retries exceeded!`);
+    const lastThrownError = getLastThrownError();
+    throw new Error(
+        `Limit of ${retries} retries exceeded! ${lastThrownError ? `Last thrown error: ${lastThrownError}` : ''}`
+    );
 };
 
-export const retryFunctionAndAssertions = (retryAndAssertArguments: RetryAndAssertArguments): Promise<void> => {
-    return timeoutPromise(performRetries(retryAndAssertArguments), retryAndAssertArguments.options.timeout);
+export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryAndAssertArguments): Promise<void> => {
+    let lastThrownError: Error | undefined;
+
+    const setLastThrownError = (error: Error) => {
+        lastThrownError = error;
+    };
+
+    const getLastThrownError = () => lastThrownError;
+
+    try {
+        await timeoutPromise(
+            performRetries(retryAndAssertArguments, setLastThrownError, getLastThrownError),
+            retryAndAssertArguments.options.timeout
+        );
+    } catch (error) {
+        const errorMessage = (error as Error).message;
+        if (errorMessage.includes('timed out')) {
+            throw new Error(`${errorMessage}. ${lastThrownError ? `Last thrown error: ${lastThrownError}` : ''}`);
+        } else {
+            throw error;
+        }
+    }
 };
