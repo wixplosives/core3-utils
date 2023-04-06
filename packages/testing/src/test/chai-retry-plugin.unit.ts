@@ -82,18 +82,31 @@ describe('chai-retry-plugin', () => {
                 );
         });
 
-        it('should retry a function that succeeds and assert the result with getter property', async () => {
+        it('should apply delay correctly', async () => {
             let attempts = 0;
-
+            let end = 0;
             const funcToRetry = () => {
                 attempts++;
-                if (attempts < 3) {
-                    throw new Error('Failed');
+
+                if (attempts === 5) {
+                    end = Date.now();
                 }
-                return { success: true };
+
+                return attempts;
             };
 
-            await expect(funcToRetry).retry({ retries: 5, delay: 10 }).and.have.property('success').and.be.true;
+            const start = Date.now();
+            await expect(funcToRetry).retry({ delay: 100 }).to.equal(5);
+
+            const elapsed = end - start;
+            const lowerBound = 400;
+            const upperBound = 420;
+
+            expect(elapsed).to.be.within(
+                lowerBound,
+                upperBound,
+                `Elapsed time should be within ${lowerBound}-${upperBound} ms`
+            );
         });
     });
 
@@ -202,6 +215,20 @@ describe('chai-retry-plugin', () => {
             await expect(sometimes).retry({ retries: 10 }).to.be.empty;
 
             expect(attempt).to.equal(5);
+        });
+
+        it('.property(), .true', async () => {
+            let attempts = 0;
+
+            const funcToRetry = () => {
+                attempts++;
+                if (attempts < 3) {
+                    throw new Error('Failed');
+                }
+                return { success: true };
+            };
+
+            await expect(funcToRetry).retry({ retries: 5, delay: 10 }).and.have.property('success').and.be.true;
         });
 
         it('.sealed', async () => {
