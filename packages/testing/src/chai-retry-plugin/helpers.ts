@@ -14,8 +14,8 @@ const performRetries = async ({ functionToRetry, options, assertionStack }: Retr
         try {
             retriesCount++;
             /**
-             * If assertion chain includes such method as `change`, `decrease` or `increase` that means function passed to the `expect`
-             * will be called by Chai itself, for example:
+             * If assertion chain includes such method as `change`, `decrease` or `increase` that means function passed to
+             * the `expect` will be called by Chai itself
              */
             const shouldAssertFunctionValue = assertionStack.some((stackItem) =>
                 chaiMethodsThatHandleFunction.includes(stackItem.propertyName)
