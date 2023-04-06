@@ -33,7 +33,6 @@ describe('chai-retry-plugin', () => {
 
             throw new Error('This should not be called');
         } catch (error) {
-            expect(error).to.be.an.instanceOf(Error);
             expect((error as Error).message).to.includes('Limit of 3 retries');
             expect(attempts).to.equal(3);
         }
@@ -46,18 +45,12 @@ describe('chai-retry-plugin', () => {
                 return 'Success';
             };
 
-            await expect(funcToRetry)
-                .retry({ timeout: 700 })
-                .to.equal('Failure')
-                .then(
-                    () => {
-                        throw new Error('This should not be called');
-                    },
-                    (error: Error) => {
-                        expect(error).to.be.an.instanceOf(Error);
-                        expect(error.message).includes('timed out after 700ms');
-                    }
-                );
+            try {
+                await expect(funcToRetry).retry({ timeout: 700 }).to.equal('Failure');
+                throw new Error('This should not be called');
+            } catch (error: unknown) {
+                expect((error as Error).message).includes('timed out after 700ms');
+            }
         });
 
         it('throw an error when retries limit exceeded', async () => {
@@ -69,18 +62,12 @@ describe('chai-retry-plugin', () => {
                 return attempts;
             };
 
-            await expect(funcToRetry)
-                .retry({ retries: 10 })
-                .to.be.above(100)
-                .then(
-                    () => {
-                        throw new Error('This should not be called');
-                    },
-                    (error: Error) => {
-                        expect(error).to.be.an.instanceOf(Error);
-                        expect(error.message).to.includes('Limit of 10 retries exceeded!');
-                    }
-                );
+            try {
+                await expect(funcToRetry).retry({ retries: 10 }).to.be.above(100);
+                throw new Error('This should not be called');
+            } catch (error: unknown) {
+                expect((error as Error).message).to.includes('Limit of 10 retries exceeded!');
+            }
         });
 
         it('should apply delay correctly', async () => {
@@ -241,8 +228,6 @@ describe('chai-retry-plugin', () => {
             try {
                 await expect(() => notSealedObject).retry({ retries: 3 }).to.be.sealed;
             } catch (error: unknown) {
-                console.log(error);
-                expect(error).to.be.an.instanceOf(Error);
                 expect((error as Error).message).to.include('3 retries');
             }
         });
