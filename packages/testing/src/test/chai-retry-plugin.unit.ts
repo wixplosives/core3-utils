@@ -1,5 +1,5 @@
 import Chai, { expect } from 'chai';
-import chaiRetryPlugin from '../chai-retry-plugin/chai-retry-plugin';
+import { chaiRetryPlugin } from '../chai-retry-plugin/chai-retry-plugin';
 
 Chai.use(chaiRetryPlugin);
 

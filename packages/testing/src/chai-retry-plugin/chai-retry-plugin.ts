@@ -107,5 +107,3 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
         return assertionProxy;
     });
 };
-
-export default chaiRetryPlugin;
