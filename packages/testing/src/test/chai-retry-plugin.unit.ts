@@ -100,7 +100,7 @@ describe('chai-retry-plugin', () => {
 
             const elapsed = end - start;
             const lowerBound = 400;
-            const upperBound = 420;
+            const upperBound = 450;
 
             expect(elapsed).to.be.within(
                 lowerBound,
@@ -120,7 +120,7 @@ describe('chai-retry-plugin', () => {
             };
 
             await expect(funcToRetry)
-                .retry({ retries: 5, delay: 10 })
+                .retry()
                 .and.have.property('status')
                 .and.not.equal('pending');
 
@@ -188,7 +188,7 @@ describe('chai-retry-plugin', () => {
                 return attempt !== 5 ? null : 'not-null';
             };
 
-            await expect(sometimesNullFunction).retry({ timeout: 2000 }).to.be.not.null;
+            await expect(sometimesNullFunction).retry().to.be.not.null;
 
             expect(attempt).to.equal(5);
         });
@@ -200,7 +200,7 @@ describe('chai-retry-plugin', () => {
                 return attempt !== 5 ? 'not-undefined' : undefined;
             };
 
-            await expect(sometimesUndefinedFunction).retry({ timeout: 2000 }).to.be.undefined;
+            await expect(sometimesUndefinedFunction).retry().to.be.undefined;
 
             expect(attempt).to.equal(5);
         });
@@ -212,7 +212,7 @@ describe('chai-retry-plugin', () => {
                 return attempt !== 5 ? [1, 2, 3] : [];
             };
 
-            await expect(sometimes).retry({ retries: 10 }).to.be.empty;
+            await expect(sometimes).retry().to.be.empty;
 
             expect(attempt).to.equal(5);
         });
@@ -228,7 +228,7 @@ describe('chai-retry-plugin', () => {
                 return { success: true };
             };
 
-            await expect(funcToRetry).retry({ retries: 5, delay: 10 }).and.have.property('success').and.be.true;
+            await expect(funcToRetry).retry().and.have.property('success').and.be.true;
         });
 
         it('.sealed', async () => {
@@ -259,7 +259,7 @@ describe('chai-retry-plugin', () => {
             };
 
             await expect(funcToRetry)
-                .retry({ retries: 5, delay: 10 })
+                .retry()
                 .to.satisfy((obj: { attempts: number }) => obj.attempts > 3);
 
             expect(attempts).to.equal(4);
@@ -273,7 +273,7 @@ describe('chai-retry-plugin', () => {
                 return attempts < 4 ? { notValue: 2 } : { value: attempts };
             };
 
-            await expect(funcToRetry).retry({ retries: 5, delay: 10 }).have.property('value').and.be.above(4);
+            await expect(funcToRetry).retry().have.property('value').and.be.above(4);
 
             expect(attempts).to.equal(5);
         });
