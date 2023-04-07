@@ -242,18 +242,16 @@ describe('chai-retry-plugin', () => {
         });
 
         it('.change()', async () => {
-            let attempts = 0;
             const myObj = { dots: '', comas: '' };
 
-            const addDot = () => {
-                attempts++;
+            const { funcToRetry, getAttempts } = withCallCount(() => {
                 myObj.dots += '.';
-            };
+            });
 
-            await expect(addDot).retry().to.change(myObj, 'dots');
-            await expect(addDot).retry().to.not.change(myObj, 'comas');
+            await expect(funcToRetry).retry().to.change(myObj, 'dots');
+            await expect(funcToRetry).retry().to.not.change(myObj, 'comas');
 
-            expect(attempts).to.equal(2);
+            expect(getAttempts()).to.equal(2);
         });
     });
 });

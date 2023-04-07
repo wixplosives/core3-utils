@@ -1,6 +1,6 @@
 import Chai from 'chai';
 
-import { retryFunctionAndAssertions, validateOptions } from './helpers';
+import { retryFunctionAndAssertions } from './helpers';
 import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions, PromiseLikeAssertion } from './types';
 
 /**
@@ -38,8 +38,6 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
 
         const defaultRetryOptions: Required<RetryOptions> = { timeout: 5000, retries: Infinity, delay: 0 };
         const options: Required<RetryOptions> = { ...defaultRetryOptions, ...retryOptions };
-
-        validateOptions(options);
 
         const assertionStack: AssertionStackItem[] = [];
         // Fake assertion object for catching calls of chained methods

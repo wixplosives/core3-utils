@@ -114,18 +114,23 @@ Chai.use(chaiRetryPlugin);
 
 ### Example
 
+Just retrying function until it passes
+
 ```ts
-let attempts = 0;
-const array: number[] = [1, 2, 3, 4, 5];
+let count = 0;
+await expect(() => {
+  if (count < 10) throw new Error('Failed. Try again');
+  count++;
+}).retry();
+```
 
-const funcToRetry = () => {
-  attempts++;
-  array.shift();
-  return array;
-};
+Retrying function and asserting result
 
-await expect(funcToRetry).retry({ retries: 4, timeout: 10_000, delay }).to.not.include(4);
-expect(attempts).to.equal(4);
+```ts
+let count = 0;
+await expect(() => count++)
+  .retry()
+  .to.equal(4);
 ```
 
 ### Functions
