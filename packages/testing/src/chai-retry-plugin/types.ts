@@ -19,9 +19,9 @@ export type RetryAndAssertArguments = {
  * The retry options for the `chaiRetryPlugin`.
  *
  * @typedef {Object} RetryOptions
+ * @property {number} [timeout] - The maximum duration in milliseconds to wait before failing the retry operation.
  * @property {number} [retries] - The number of times to retry the function before failing.
  * @property {number} [delay] - The delay in milliseconds between retries.
- * @property {number} [timeout] - The maximum duration in milliseconds to wait before failing the retry operation.
  */
 export type RetryOptions = {
     retries?: number;

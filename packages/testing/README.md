@@ -98,3 +98,46 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 | [Predicate](https://wixplosives.github.io/core3-utils/testing.predicate)     | <p>A predicate function</p><p>Any return value other than \*\*false\*\* or throwing is considered as satisfying the predicate</p> |
 | [Stub](https://wixplosives.github.io/core3-utils/testing.stub)               | A generated stub                                                                                                                  |
 | [Timeout](https://wixplosives.github.io/core3-utils/testing.timeout)         | Sets step timeout                                                                                                                 |
+
+## Chai Retry Plugin
+
+Plugin that allows to re-run function passed to `expect` until chained assertion will be passed or timeout exceeded or retries limit reached.
+
+### Usage
+
+```ts
+import Chai from 'chai';
+import { chaiRetryPlugin } from '@wixc3/testing';
+
+Chai.use(chaiRetryPlugin);
+```
+
+### Example
+
+```ts
+let attempts = 0;
+const array: number[] = [1, 2, 3, 4, 5];
+
+const funcToRetry = () => {
+  attempts++;
+  array.shift();
+  return array;
+};
+
+await expect(funcToRetry).retry({ retries: 4, timeout: 10_000, delay }).to.not.include(4);
+expect(attempts).to.equal(4);
+```
+
+### Functions
+
+| Function                         | Description                                                                             |
+| -------------------------------- | --------------------------------------------------------------------------------------- |
+| `.retry(options?: RetryOptions)` | Retrying function passed to `expect` according to passed options and chained assertions |
+
+### Retry Options
+
+| Option    | Description                                                                      | Default    |
+| --------- | -------------------------------------------------------------------------------- | ---------- |
+| `timeout` | The maximum duration in milliseconds to wait before failing the retry operation. | `5000`     |
+| `retries` | The number of times to retry the function before failing.                        | `Infinity` |
+| `delay`   | The delay in milliseconds between retries.                                       | `0`        |
