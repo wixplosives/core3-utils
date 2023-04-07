@@ -14,7 +14,7 @@ const getFunctionToRetry = (func: (attempts: number) => unknown) => {
 
     return {
         funcToRetry: wrapperFunc,
-        getAttempts() {
+        getAttempts: () => {
             return callCount;
         },
     };
