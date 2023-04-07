@@ -1,3 +1,20 @@
+declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    namespace Chai {
+        interface Assertion {
+            /**
+             * Allows to retry the function passed to `expect` and assert the result until retries ended or timeout exceeded
+             * @param options Settings for retry logic:
+             * - `timeout`: The maximum duration in milliseconds to wait before failing the retry operation.
+             * - `retries`: The number of times to retry the function before failing.
+             * - `delay`: The delay in milliseconds between retries.
+             * @default { timeout: 5000, delay: 0, retries: Infinity }
+             */
+            retry(options?: RetryOptions): PromiseLikeAssertion;
+        }
+    }
+}
+
 // Type of `this` in `addMethod` function
 export type AssertionMethod = (...args: unknown[]) => Chai.Assertion;
 

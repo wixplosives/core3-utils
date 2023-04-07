@@ -2,7 +2,7 @@ import Chai from 'chai';
 import { timeout as timeoutPromise, sleep } from 'promise-assist';
 import { chaiMethodsThatHandleFunction } from './constants';
 
-import type { RetryAndAssertArguments } from './types';
+import type { RetryAndAssertArguments, RetryOptions } from './types';
 
 const { expect } = Chai;
 
@@ -54,4 +54,18 @@ export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryA
         retryAndAssertArguments.options.timeout,
         getTimeoutError
     );
+};
+
+export const validateOptions = (options: Required<RetryOptions>) => {
+    if (options.retries < 1) {
+        throw new Error('`retries` option should be greater than 0.');
+    }
+
+    if (options.delay < 0) {
+        throw new Error('`delay` option should be a positive number.');
+    }
+
+    if (options.timeout <= 0) {
+        throw new Error('`timeout` option should be greater than 0.');
+    }
 };

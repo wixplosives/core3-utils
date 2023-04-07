@@ -1,26 +1,7 @@
 import Chai from 'chai';
-import { retryFunctionAndAssertions } from './helpers';
 
+import { retryFunctionAndAssertions, validateOptions } from './helpers';
 import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions, PromiseLikeAssertion } from './types';
-
-const { Assertion } = Chai;
-
-declare global {
-    // eslint-disable-next-line @typescript-eslint/no-namespace
-    namespace Chai {
-        interface Assertion {
-            /**
-             * Allows to retry the function passed to `expect` and assert the result until retries ended or timeout exceeded
-             * @param options Settings for retry logic:
-             * - `timeout`: The maximum duration in milliseconds to wait before failing the retry operation.
-             * - `retries`: The number of times to retry the function before failing.
-             * - `delay`: The delay in milliseconds between retries.
-             * @default { timeout: 5000, delay: 0, retries: Infinity }
-             */
-            retry(options?: RetryOptions): PromiseLikeAssertion;
-        }
-    }
-}
 
 /**
  * Adds the `retry` method to Chai assertions, which allows to check the return value of a function until it satisfies the chained assertions.
@@ -48,19 +29,21 @@ declare global {
  * ```
  */
 export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) {
-    Assertion.addMethod('retry', function (retryOptions: RetryOptions = {}): PromiseLikeAssertion {
+    Chai.Assertion.addMethod('retry', function (retryOptions: RetryOptions = {}): PromiseLikeAssertion {
         const functionToRetry: FunctionToRetry = this._obj as FunctionToRetry;
 
         if (typeof functionToRetry !== 'function') {
             throw new TypeError(utils.inspect(functionToRetry) + ' is not a function.');
         }
 
-        const assertionStack: AssertionStackItem[] = [];
         const defaultRetryOptions: Required<RetryOptions> = { timeout: 5000, retries: Infinity, delay: 0 };
         const options: Required<RetryOptions> = { ...defaultRetryOptions, ...retryOptions };
 
+        validateOptions(options);
+
+        const assertionStack: AssertionStackItem[] = [];
         // Fake assertion object for catching calls of chained methods
-        const proxyTarget = new Assertion({});
+        const proxyTarget = new Chai.Assertion({});
 
         const assertionProxy: PromiseLikeAssertion = Object.assign(
             new Proxy(proxyTarget, {

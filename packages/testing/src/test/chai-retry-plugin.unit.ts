@@ -100,6 +100,16 @@ describe('chai-retry-plugin', () => {
                 `Elapsed time should be within ${lowerBound}-${upperBound} ms`
             );
         });
+
+        it('should throw an error if timeout is negative', async () => {
+            try {
+                await expect(() => {
+                    return undefined;
+                }).retry({ timeout: -1 }).to.be.undefined;
+            } catch (error: unknown) {
+                expect((error as Error).message).to.equal('`timeout` option should be greater than 0.');
+            }
+        });
     });
 
     describe('should work with negated assertions:', () => {
