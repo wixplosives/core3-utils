@@ -101,7 +101,7 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 ## Chai Retry Plugin
 
-Plugin that allows to re-run function passed to `expect` until chained assertion will be passed or timeout exceeded or retries limit reached.
+Plugin that allows to re-run function passed to `expect` until the result will pass the chained assertion or timeout exceeded or retries limit reached.
 
 ### Usage
 

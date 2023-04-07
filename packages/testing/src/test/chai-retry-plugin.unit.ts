@@ -4,25 +4,9 @@ import { chaiRetryPlugin } from '../chai-retry-plugin/chai-retry-plugin';
 
 Chai.use(chaiRetryPlugin);
 
-const getFunctionToRetry = (func: (attempts: number) => unknown) => {
-    let callCount = 0;
-
-    const wrapperFunc = () => {
-        callCount++;
-        return func(callCount);
-    };
-
-    return {
-        funcToRetry: wrapperFunc,
-        getAttempts: () => {
-            return callCount;
-        },
-    };
-};
-
 describe('chai-retry-plugin', () => {
     it('should retry a function that eventually succeeds', async () => {
-        const { funcToRetry, getAttempts } = getFunctionToRetry((attempts: number) => {
+        const { funcToRetry, getAttempts } = withCallCount((attempts: number) => {
             if (attempts < 3) {
                 throw new Error('Failed');
             }
@@ -31,21 +15,6 @@ describe('chai-retry-plugin', () => {
 
         await expect(funcToRetry).to.retry().to.equal('Success');
         expect(getAttempts()).to.equal(3);
-    });
-
-    it('should retry a function that always fails and throw an error', async () => {
-        const { funcToRetry, getAttempts } = getFunctionToRetry(() => {
-            throw new Error('Failed');
-        });
-
-        try {
-            await expect(funcToRetry).to.retry({ retries: 3 });
-
-            throw new Error('This should not be called');
-        } catch (error) {
-            expect((error as Error).message).to.includes('Limit of 3 retries');
-            expect(getAttempts()).to.equal(3);
-        }
     });
 
     describe('options should work correctly:', () => {
@@ -64,7 +33,7 @@ describe('chai-retry-plugin', () => {
         });
 
         it('throw an error when retries limit exceeded', async () => {
-            const { funcToRetry } = getFunctionToRetry((attempts) => attempts);
+            const { funcToRetry } = withCallCount((attempts) => attempts);
 
             try {
                 await expect(funcToRetry).retry({ retries: 10 }).to.be.above(100);
@@ -114,7 +83,7 @@ describe('chai-retry-plugin', () => {
 
     describe('should work with negated assertions:', () => {
         it('assert object with a property `status` that does not match a specific value', async () => {
-            const { funcToRetry, getAttempts } = getFunctionToRetry((attempts) => ({
+            const { funcToRetry, getAttempts } = withCallCount((attempts) => ({
                 status: attempts === 3 ? 'success' : 'pending',
             }));
 
@@ -124,7 +93,7 @@ describe('chai-retry-plugin', () => {
         });
 
         it('assert number with `not` on the beginning of chain', async () => {
-            const { funcToRetry, getAttempts } = getFunctionToRetry((attempts) => attempts);
+            const { funcToRetry, getAttempts } = withCallCount((attempts) => attempts);
 
             await expect(funcToRetry).retry().to.not.lessThanOrEqual(5).to.equal(6);
 
@@ -149,7 +118,7 @@ describe('chai-retry-plugin', () => {
 
     describe('should work with chained properties:', () => {
         it('.deep', async () => {
-            const { funcToRetry, getAttempts } = getFunctionToRetry((attempts) =>
+            const { funcToRetry, getAttempts } = withCallCount((attempts) =>
                 attempts !== 5 ? null : { c: { b: { a: 1 } } }
             );
 
@@ -161,7 +130,7 @@ describe('chai-retry-plugin', () => {
         });
 
         it('.nested', async () => {
-            const { funcToRetry, getAttempts } = getFunctionToRetry((attempts) =>
+            const { funcToRetry, getAttempts } = withCallCount((attempts) =>
                 attempts !== 5 ? null : { a: { b: ['x', 'y'] } }
             );
 
@@ -173,7 +142,7 @@ describe('chai-retry-plugin', () => {
 
     describe('should pass the assertions that ends with properties:', () => {
         it('.null', async () => {
-            const { funcToRetry, getAttempts } = getFunctionToRetry((attempts) => (attempts !== 5 ? null : 'not-null'));
+            const { funcToRetry, getAttempts } = withCallCount((attempts) => (attempts !== 5 ? null : 'not-null'));
 
             await expect(funcToRetry).retry().to.be.not.null;
 
@@ -181,7 +150,7 @@ describe('chai-retry-plugin', () => {
         });
 
         it('.undefined', async () => {
-            const { funcToRetry, getAttempts } = getFunctionToRetry((attempts) =>
+            const { funcToRetry, getAttempts } = withCallCount((attempts) =>
                 attempts !== 5 ? 'not-undefined' : undefined
             );
 
@@ -191,7 +160,7 @@ describe('chai-retry-plugin', () => {
         });
 
         it('.empty', async () => {
-            const { funcToRetry, getAttempts } = getFunctionToRetry((attempts) => (attempts !== 5 ? [1, 2, 3] : []));
+            const { funcToRetry, getAttempts } = withCallCount((attempts) => (attempts !== 5 ? [1, 2, 3] : []));
 
             await expect(funcToRetry).retry().to.be.empty;
 
@@ -199,7 +168,7 @@ describe('chai-retry-plugin', () => {
         });
 
         it('.property(), .true', async () => {
-            const { funcToRetry, getAttempts } = getFunctionToRetry((attempts) => {
+            const { funcToRetry, getAttempts } = withCallCount((attempts) => {
                 if (attempts < 3) {
                     throw new Error('Failed');
                 }
@@ -230,7 +199,7 @@ describe('chai-retry-plugin', () => {
 
     describe('should work with various assertion methods:', () => {
         it('.satisfy()', async () => {
-            const { funcToRetry, getAttempts } = getFunctionToRetry((attempts) => ({
+            const { funcToRetry, getAttempts } = withCallCount((attempts) => ({
                 attempts,
             }));
 
@@ -242,7 +211,7 @@ describe('chai-retry-plugin', () => {
         });
 
         it('.have.property(), and.be.above()', async () => {
-            const { funcToRetry, getAttempts } = getFunctionToRetry((attempts) =>
+            const { funcToRetry, getAttempts } = withCallCount((attempts) =>
                 attempts < 4 ? { notValue: 2 } : { value: attempts }
             );
 
@@ -266,7 +235,7 @@ describe('chai-retry-plugin', () => {
         });
 
         it('.oneOf()', async () => {
-            const { funcToRetry, getAttempts } = getFunctionToRetry((attempts) => attempts);
+            const { funcToRetry, getAttempts } = withCallCount((attempts) => attempts);
 
             await expect(funcToRetry).retry().to.not.be.oneOf([1, 2, 3]);
             expect(getAttempts()).to.equal(4);
@@ -288,3 +257,19 @@ describe('chai-retry-plugin', () => {
         });
     });
 });
+
+const withCallCount = (func: (attempts: number) => unknown) => {
+    let callCount = 0;
+
+    const wrapperFunc = () => {
+        callCount++;
+        return func(callCount);
+    };
+
+    return {
+        funcToRetry: wrapperFunc,
+        getAttempts: () => {
+            return callCount;
+        },
+    };
+};
