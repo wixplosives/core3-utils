@@ -1,19 +1,18 @@
 import Chai from 'chai';
 import { timeout as timeoutPromise, sleep } from 'promise-assist';
+
 import { chaiMethodsThatHandleFunction } from './constants';
-
 import type { RetryAndAssertArguments, RetryOptions } from './types';
-
-const { expect } = Chai;
 
 export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryAndAssertArguments): Promise<void> => {
     let assertionError: Error | undefined;
+    let isTimeoutExceeded = false;
 
     const performRetries = async ({ functionToRetry, options, assertionStack }: RetryAndAssertArguments) => {
         const { retries, delay } = options;
         let retriesCount = 0;
 
-        while (retriesCount < retries) {
+        while (retriesCount < retries && !isTimeoutExceeded) {
             try {
                 retriesCount++;
                 /**
@@ -24,7 +23,7 @@ export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryA
                     chaiMethodsThatHandleFunction.includes(stackItem.propertyName)
                 );
                 const valueToAssert = shouldAssertFunctionValue ? functionToRetry : await functionToRetry();
-                let assertion = expect(valueToAssert);
+                let assertion = Chai.expect(valueToAssert);
 
                 for (const { propertyName, method, args } of assertionStack) {
                     if (method && args) {
@@ -44,10 +43,12 @@ export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryA
         throw new Error(`Limit of ${retries} retries exceeded! AssertionError: ${assertionError}`);
     };
 
-    const getTimeoutError = () =>
-        `Timed out after ${retryAndAssertArguments.options.timeout}ms. ${
+    const getTimeoutError = () => {
+        isTimeoutExceeded = true;
+        return `Timed out after ${retryAndAssertArguments.options.timeout}ms. ${
             assertionError ? `AssertionError: ${assertionError}` : ''
         }`;
+    };
 
     return timeoutPromise(
         performRetries(retryAndAssertArguments),
