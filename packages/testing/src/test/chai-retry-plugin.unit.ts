@@ -237,8 +237,6 @@ const withCallCount = (func: (callCount: number) => unknown) => {
 
     return {
         funcToRetry: wrapperFunc,
-        getCallCount: () => {
-            return callCount;
-        },
+        getCallCount: () => callCount,
     };
 };
