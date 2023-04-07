@@ -22,13 +22,13 @@
     "tsdocs": "bin/build-docs"
   },
   "dependencies": {
-    "@microsoft/api-documenter": "^7.21.6",
+    "@microsoft/api-documenter": "^7.21.7",
     "@microsoft/api-extractor": "^7.34.4",
     "@microsoft/api-extractor-model": "^7.26.4",
     "@wixc3/common": "^8.0.0",
     "@wixc3/fs-utils": "^8.0.0",
     "@wixc3/typescript": "^8.0.0",
-    "glob": "^9.3.0",
+    "glob": "^9.3.4",
     "yargs": "^17.7.1"
   }
 }
