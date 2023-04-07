@@ -8,10 +8,6 @@ export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryA
     let assertionError: Error | undefined;
     let isTimeoutExceeded = false;
 
-    setTimeout(() => {
-        isTimeoutExceeded = true;
-    }, retryAndAssertArguments.options.timeout);
-
     const performRetries = async ({ functionToRetry, options, assertionStack }: RetryAndAssertArguments) => {
         const { retries, delay } = options;
         let retriesCount = 0;
@@ -51,6 +47,10 @@ export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryA
         `Timed out after ${retryAndAssertArguments.options.timeout}ms. ${
             assertionError ? `AssertionError: ${assertionError}` : ''
         }`;
+
+    setTimeout(() => {
+        isTimeoutExceeded = true;
+    }, retryAndAssertArguments.options.timeout);
 
     return timeoutPromise(
         performRetries(retryAndAssertArguments),
