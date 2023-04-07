@@ -77,18 +77,16 @@ describe('chai-retry-plugin', () => {
         });
 
         it('assert array that does not include a specific element', async () => {
-            let callCount = 0;
             const array: number[] = [1, 2, 3, 4, 5];
 
-            const funcToRetry = () => {
-                callCount++;
+            const { funcToRetry, getCallCount } = withCallCount(() => {
                 array.shift();
                 return array;
-            };
+            });
 
             await expect(funcToRetry).retry({ retries: 4 }).to.not.include(4);
 
-            expect(callCount).to.equal(4);
+            expect(getCallCount()).to.equal(4);
         });
     });
 
@@ -197,17 +195,14 @@ describe('chai-retry-plugin', () => {
         });
 
         it('.to.increase(), .by()', async () => {
-            let callCount = 0;
             const myObj = { val: 1 };
-
-            const addTwo = () => {
-                callCount++;
+            const { funcToRetry, getCallCount } = withCallCount(() => {
                 myObj.val += 2;
-            };
+            });
 
-            await expect(addTwo).retry().to.increase(myObj, 'val').by(2);
+            await expect(funcToRetry).retry().to.increase(myObj, 'val').by(2);
 
-            expect(callCount).to.equal(1);
+            expect(getCallCount()).to.equal(1);
         });
 
         it('.oneOf()', async () => {
