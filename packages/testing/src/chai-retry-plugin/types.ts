@@ -15,7 +15,6 @@ declare global {
     }
 }
 
-// Type of `this` in `addMethod` function
 export type AssertionMethod = (...args: unknown[]) => Chai.Assertion;
 
 // Function provided as argument of `expect`
@@ -26,6 +25,7 @@ export type AssertionStackItem = {
     method?: AssertionMethod;
     args?: unknown[];
 };
+
 export type RetryAndAssertArguments = {
     functionToRetry: FunctionToRetry;
     options: Required<RetryOptions>;

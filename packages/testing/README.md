@@ -121,7 +121,7 @@ let count = 0;
 await expect(() => {
   if (count < 10) throw new Error('Failed. Try again');
   count++;
-}).retry();
+}).retry({ retries: 15, timeout: 2000, delay: 10 });
 ```
 
 Retrying function and asserting result

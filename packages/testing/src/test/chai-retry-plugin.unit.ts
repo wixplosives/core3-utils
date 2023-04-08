@@ -19,13 +19,13 @@ describe('chai-retry-plugin', () => {
 
     describe('options should work correctly:', () => {
         it('timeout after the specified duration', async () => {
-            const resultFunction = async () => {
+            const funcToRetry = async () => {
                 await sleep(250);
                 return 'Success';
             };
 
             try {
-                await expect(resultFunction).retry({ timeout: 700 }).to.equal('Failure');
+                await expect(funcToRetry).retry({ timeout: 700 }).to.equal('Failure');
                 throw new Error('This should not be called');
             } catch (error: unknown) {
                 expect((error as Error).message).includes('Timed out after 700ms');
@@ -40,6 +40,7 @@ describe('chai-retry-plugin', () => {
                 throw new Error('This should not be called');
             } catch (error: unknown) {
                 expect((error as Error).message).to.includes('Limit of 10 retries exceeded!');
+                expect((error as Error).message).to.include('to be above 100');
             }
         });
 
@@ -51,7 +52,7 @@ describe('chai-retry-plugin', () => {
             try {
                 await expect(resultFunction).retry({ delay: 50, timeout: 500 }).to.equal(5);
             } catch (error: unknown) {
-                expect((error as Error).message).includes('Timed out after 500ms. AssertionError: Error: Im throwing');
+                expect((error as Error).message).includes('Timed out after 500ms. Error: Im throwing');
                 expect(getCallCount()).to.be.within(9, 10, `Elapsed time should be within 9-10`);
             }
         });
@@ -64,7 +65,6 @@ describe('chai-retry-plugin', () => {
             }));
 
             await expect(resultFunction).retry().and.have.property('status').and.not.equal('pending');
-
             expect(getCallCount()).to.equal(3);
         });
 
@@ -72,7 +72,6 @@ describe('chai-retry-plugin', () => {
             const { resultFunction, getCallCount } = withCallCount((callCount) => callCount);
 
             await expect(resultFunction).retry().to.not.lessThanOrEqual(5).to.equal(6);
-
             expect(getCallCount()).to.equal(7);
         });
 
@@ -85,13 +84,12 @@ describe('chai-retry-plugin', () => {
             });
 
             await expect(resultFunction).retry({ retries: 4 }).to.not.include(4);
-
             expect(getCallCount()).to.equal(4);
         });
     });
 
     describe('should work with chained properties:', () => {
-        it('.deep', async () => {
+        it('.deep.equal()', async () => {
             const { resultFunction, getCallCount } = withCallCount((callCount) =>
                 callCount !== 5 ? null : { c: { b: { a: 1 } } }
             );
@@ -103,13 +101,12 @@ describe('chai-retry-plugin', () => {
             expect(getCallCount()).to.equal(5);
         });
 
-        it('.nested', async () => {
+        it('.nested.property()', async () => {
             const { resultFunction, getCallCount } = withCallCount((callCount) =>
                 callCount !== 5 ? null : { a: { b: ['x', 'y'] } }
             );
 
             await expect(resultFunction).retry().to.have.nested.property('a.b[1]');
-
             expect(getCallCount()).to.equal(5);
         });
     });
@@ -121,7 +118,6 @@ describe('chai-retry-plugin', () => {
             );
 
             await expect(resultFunction).retry().to.be.not.null;
-
             expect(getCallCount()).to.equal(5);
         });
 
@@ -131,7 +127,6 @@ describe('chai-retry-plugin', () => {
             );
 
             await expect(resultFunction).retry().to.be.undefined;
-
             expect(getCallCount()).to.equal(5);
         });
 
@@ -139,11 +134,10 @@ describe('chai-retry-plugin', () => {
             const { resultFunction, getCallCount } = withCallCount((callCount) => (callCount !== 5 ? [1, 2, 3] : []));
 
             await expect(resultFunction).retry().to.be.empty;
-
             expect(getCallCount()).to.equal(5);
         });
 
-        it('.property(), .true', async () => {
+        it('.true', async () => {
             const { resultFunction, getCallCount } = withCallCount((callCount) => {
                 if (callCount < 3) {
                     throw new Error('Failed');
@@ -152,7 +146,6 @@ describe('chai-retry-plugin', () => {
             });
 
             await expect(resultFunction).retry().and.have.property('success').and.be.true;
-
             expect(getCallCount()).to.equal(3);
         });
 
@@ -192,7 +185,6 @@ describe('chai-retry-plugin', () => {
             );
 
             await expect(resultFunction).retry().have.property('value').and.be.above(4);
-
             expect(getCallCount()).to.equal(5);
         });
 
@@ -203,7 +195,6 @@ describe('chai-retry-plugin', () => {
             });
 
             await expect(resultFunction).retry().to.increase(myObj, 'val').by(2);
-
             expect(getCallCount()).to.equal(1);
         });
 
@@ -216,14 +207,12 @@ describe('chai-retry-plugin', () => {
 
         it('.change()', async () => {
             const myObj = { dots: '', comas: '' };
-
             const { resultFunction, getCallCount } = withCallCount(() => {
                 myObj.dots += '.';
             });
 
             await expect(resultFunction).retry().to.change(myObj, 'dots');
             await expect(resultFunction).retry().to.not.change(myObj, 'comas');
-
             expect(getCallCount()).to.equal(2);
         });
     });

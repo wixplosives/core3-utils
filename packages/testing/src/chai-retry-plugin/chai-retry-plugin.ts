@@ -4,7 +4,8 @@ import { retryFunctionAndAssertions } from './helpers';
 import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions, PromiseLikeAssertion } from './types';
 
 /**
- * Adds the `retry` method to Chai assertions, which allows to check the return value of a function until it satisfies the chained assertions.
+ * Plugin that allows to re-run function passed to `expect` with new `retry` method, retrying would be performed until
+ * the result will pass the chained assertion or timeout exceeded or retries limit reached.
  * Should be applied through `Chai.use` function, for example:
  * @example
  * ```ts
@@ -17,15 +18,15 @@ import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions
  * Examples of usage:
  * @example
  * ```ts
- * await expect(funcToRetry).retry({ timeout: 7000, retries: 5 }).have.property('value').and.be.above(4);
+ * await expect(funcToRetry).retry().have.property('value').and.be.above(4);
  * ```
  * @example
  * ```ts
- * await expect(sometimesNullFunction).retry({ timeout: 2000 }).to.be.not.null;
+ * await expect(sometimesNullFunction).retry({ retries: 5, delay: 10, timeout: 2000 }).to.be.not.null;
  * ```
  * @example
  * ```ts
- * await expect(funcToRetry).retry({ retries: 5, delay: 10 }).and.have.property('success').and.be.true;
+ * await expect(funcToRetry).retry().and.have.property('success').and.be.true;
  * ```
  */
 export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) {
@@ -47,6 +48,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
             new Proxy(proxyTarget, {
                 get: function (target: Chai.Assertion, key: string, proxySelf: Chai.Assertion) {
                     let value: Chai.Assertion | undefined;
+
                     try {
                         // if `value` is a getter property that may immediately perform the assertion and throw the AssertionError
                         value = target[key as keyof Chai.Assertion] as Chai.Assertion;
