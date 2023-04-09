@@ -32,6 +32,7 @@ import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions
 export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) {
     Chai.Assertion.addMethod('retry', function (retryOptions: RetryOptions = {}): PromiseLikeAssertion {
         const functionToRetry: FunctionToRetry = this._obj as FunctionToRetry;
+        const description = utils.flag(this, 'message') as string;
 
         if (typeof functionToRetry !== 'function') {
             throw new TypeError(utils.inspect(functionToRetry) + ' is not a function.');
@@ -83,6 +84,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
                         functionToRetry,
                         options,
                         assertionStack,
+                        description,
                     }).then(resolve, reject);
                 },
             }

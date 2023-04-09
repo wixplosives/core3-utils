@@ -30,6 +30,7 @@ export type RetryAndAssertArguments = {
     functionToRetry: FunctionToRetry;
     options: Required<RetryOptions>;
     assertionStack: AssertionStackItem[];
+    description: string;
 };
 
 /**

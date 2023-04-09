@@ -36,11 +36,13 @@ describe('chai-retry-plugin', () => {
             const { resultFunction } = withCallCount((callCount) => callCount);
 
             try {
-                await expect(resultFunction).retry({ retries: 10 }).to.be.above(100);
+                await expect(resultFunction, 'Custom description').retry({ retries: 10 }).to.be.above(100);
                 throw new Error('This should not be called');
             } catch (error: unknown) {
-                expect((error as Error).message).to.includes('Limit of 10 retries exceeded!');
-                expect((error as Error).message).to.include('to be above 100');
+                const msg = (error as Error).message;
+                expect(msg).to.include('Custom description');
+                expect(msg).to.includes('Limit of 10 retries exceeded!');
+                expect(msg).to.include('to be above 100');
             }
         });
 

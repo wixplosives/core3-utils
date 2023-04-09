@@ -8,7 +8,12 @@ export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryA
     let assertionError: Error | undefined;
     let isTimeoutExceeded = false;
 
-    const performRetries = async ({ functionToRetry, options, assertionStack }: RetryAndAssertArguments) => {
+    const performRetries = async ({
+        functionToRetry,
+        options,
+        assertionStack,
+        description,
+    }: RetryAndAssertArguments) => {
         const { retries, delay } = options;
         let retriesCount = 0;
 
@@ -23,7 +28,7 @@ export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryA
                     chaiMethodsThatHandleFunction.includes(stackItem.propertyName)
                 );
                 const valueToAssert = shouldAssertFunctionValue ? functionToRetry : await functionToRetry();
-                let assertion = Chai.expect(valueToAssert);
+                let assertion = Chai.expect(valueToAssert, description);
 
                 for (const { propertyName, method, args } of assertionStack) {
                     if (method && args) {
