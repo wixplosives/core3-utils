@@ -3412,10 +3412,10 @@ make-fetch-happen@^10.0.3, make-fetch-happen@^10.0.6:
     socks-proxy-agent "^7.0.0"
     ssri "^9.0.0"
 
-make-fetch-happen@^11.0.0, make-fetch-happen@^11.0.1, make-fetch-happen@^11.0.3:
-  version "11.0.3"
-  resolved "https://registry.yarnpkg.com/make-fetch-happen/-/make-fetch-happen-11.0.3.tgz#ed83dd3685b97f75607156d2721848f6eca561b9"
-  integrity sha512-oPLh5m10lRNNZDjJ2kP8UpboUx2uFXVaVweVe/lWut4iHWcQEmfqSVJt2ihZsFI8HbpwyyocaXbCAWf0g1ukIA==
+make-fetch-happen@^11.0.0, make-fetch-happen@^11.0.1, make-fetch-happen@^11.1.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/make-fetch-happen/-/make-fetch-happen-11.1.0.tgz#f26b05e89317e960b75fd5e080e40d40f8d7b2a5"
+  integrity sha512-7ChuOzCb1LzdQZrTy0ky6RsCoMYeM+Fh4cY0+4zsJVhNcH5Q3OJojLY1mGkD0xAhWB29lskECVb6ZopofwjldA==
   dependencies:
     agentkeepalive "^4.2.1"
     cacache "^17.0.0"
