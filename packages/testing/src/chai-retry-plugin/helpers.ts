@@ -6,7 +6,7 @@ import { chaiMethodsThatHandleFunction } from './constants';
 import type { RetryAndAssertArguments } from './types';
 
 // Add ms to the current test time
-export const addTimeoutSafetyMargin = (ms: number) => mochaCtx() && adjustTestTime(ms);
+const addTimeoutSafetyMargin = (ms: number) => mochaCtx() && adjustTestTime(ms);
 
 function sleepWithSafetyMargin(ms: number): Promise<void> {
     addTimeoutSafetyMargin(ms);

@@ -58,6 +58,18 @@ describe('chai-retry-plugin', () => {
                 expect(getCallCount()).to.be.within(9, 10);
             }
         });
+
+        it(`should work when mocha's timeout less then time needed for test`, async function () {
+            this.timeout(100);
+            const { resultFunction } = withCallCount((callCount: number) => {
+                if (callCount < 3) {
+                    throw new Error('Failed');
+                }
+                return 'Success';
+            });
+
+            await expect(resultFunction).to.retry({ delay: 200 }).to.equal('Success');
+        });
     });
 
     describe('should work with negated assertions:', () => {
