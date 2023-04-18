@@ -219,19 +219,15 @@ describe('chai-retry-plugin', () => {
         });
 
         it('.respondTo()', async () => {
-            class EchoService {
-                echo: (() => void) | undefined;
-            }
+            const service: { test?: () => null } = {};
 
             setTimeout(() => {
-                EchoService.prototype.echo = () => {
-                    return;
-                };
+                service.test = () => null;
             }, 900);
 
-            await expect(() => new EchoService(), 'should respond')
+            await expect(() => service, 'should respond')
                 .retry({ timeout: 1000 })
-                .to.respondTo('echo');
+                .to.respondTo('test');
         });
 
         it('.keys()', async () => {
