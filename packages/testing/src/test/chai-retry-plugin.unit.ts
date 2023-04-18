@@ -231,8 +231,9 @@ describe('chai-retry-plugin', () => {
         });
 
         it('.keys()', async () => {
-            const testArray = [{}, { a: 1, b: 2 }, { a: 1, b: 2, c: 3 }, { a: 1, b: 2, c: 3, d: 4 }];
-            const { resultFunction, getCallCount } = withCallCount((count) => testArray[count - 1]);
+            const { resultFunction, getCallCount } = withCallCount((count) =>
+                count === 4 ? { a: 1, b: 2, c: 3, d: 4 } : { a: 1, b: 2, c: 3 }
+            );
 
             await expect(resultFunction).retry().to.have.keys(['a', 'b', 'c', 'd']);
             expect(getCallCount()).to.equal(4);
