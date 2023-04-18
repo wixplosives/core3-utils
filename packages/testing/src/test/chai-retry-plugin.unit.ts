@@ -58,6 +58,18 @@ describe('chai-retry-plugin', () => {
                 expect(getCallCount()).to.be.within(9, 10);
             }
         });
+
+        it(`should extend total test timeout`, async function () {
+            this.timeout(100);
+            const { resultFunction } = withCallCount((callCount: number) => {
+                if (callCount < 3) {
+                    throw new Error('Failed');
+                }
+                return 'Success';
+            });
+
+            await expect(resultFunction).to.retry({ delay: 200 }).to.equal('Success');
+        });
     });
 
     describe('should work with negated assertions:', () => {
@@ -216,6 +228,27 @@ describe('chai-retry-plugin', () => {
             await expect(resultFunction).retry().to.change(myObj, 'dots');
             await expect(resultFunction).retry().to.not.change(myObj, 'comas');
             expect(getCallCount()).to.equal(2);
+        });
+
+        it('.respondTo()', async () => {
+            const service: { test?: () => null } = {};
+
+            setTimeout(() => {
+                service.test = () => null;
+            }, 900);
+
+            await expect(() => service, 'should respond')
+                .retry({ timeout: 1000 })
+                .to.respondTo('test');
+        });
+
+        it('.keys()', async () => {
+            const { resultFunction, getCallCount } = withCallCount((count) =>
+                count === 4 ? { a: 1, b: 2, c: 3, d: 4 } : { a: 1, b: 2, c: 3 }
+            );
+
+            await expect(resultFunction).retry().to.have.keys(['a', 'b', 'c', 'd']);
+            expect(getCallCount()).to.equal(4);
         });
     });
 });
