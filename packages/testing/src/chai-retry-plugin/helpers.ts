@@ -1,8 +1,21 @@
 import Chai from 'chai';
-import { timeout as timeoutPromise, sleep } from 'promise-assist';
+import { timeout as timeoutPromise, sleep as sleepPromise } from 'promise-assist';
+import { adjustTestTime, mochaCtx } from '../mocha-ctx';
 
 import { chaiMethodsThatHandleFunction } from './constants';
 import type { RetryAndAssertArguments } from './types';
+
+export const addTimeoutSafetyMargin = (ms: number) => mochaCtx() && adjustTestTime(ms);
+
+function sleep(ms: number): Promise<void> {
+    addTimeoutSafetyMargin(ms);
+    return sleepPromise(ms);
+}
+
+function timeout(promise: Promise<void>, ms: number, getTimeoutError: () => string): Promise<void> {
+    addTimeoutSafetyMargin(ms);
+    return timeoutPromise(promise, ms, getTimeoutError);
+}
 
 export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryAndAssertArguments): Promise<void> => {
     let assertionError: Error | undefined;
@@ -55,9 +68,5 @@ export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryA
         isTimeoutExceeded = true;
     }, retryAndAssertArguments.options.timeout);
 
-    return timeoutPromise(
-        performRetries(retryAndAssertArguments),
-        retryAndAssertArguments.options.timeout,
-        getTimeoutError
-    );
+    return timeout(performRetries(retryAndAssertArguments), retryAndAssertArguments.options.timeout, getTimeoutError);
 };

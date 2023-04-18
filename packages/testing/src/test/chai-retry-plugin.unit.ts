@@ -217,6 +217,30 @@ describe('chai-retry-plugin', () => {
             await expect(resultFunction).retry().to.not.change(myObj, 'comas');
             expect(getCallCount()).to.equal(2);
         });
+
+        it('.respondTo()', async () => {
+            class EchoService {
+                echo: (() => void) | undefined;
+            }
+
+            setTimeout(() => {
+                EchoService.prototype.echo = () => {
+                    return;
+                };
+            }, 900);
+
+            await expect(() => new EchoService(), 'should respond')
+                .retry({ timeout: 1000 })
+                .to.respondTo('echo');
+        });
+
+        it('.keys()', async () => {
+            const arrayWithKeys = [{}, {}, {}, { a: 1, b: 2 }, { a: 1, b: 2, c: 3 }, { a: 1, b: 2, c: 3, d: 4 }];
+            const { resultFunction, getCallCount } = withCallCount((count) => arrayWithKeys[count]);
+
+            await expect(resultFunction).retry().to.have.keys(['a', 'b', 'c', 'd']);
+            expect(getCallCount()).to.equal(5);
+        });
     });
 });
 
