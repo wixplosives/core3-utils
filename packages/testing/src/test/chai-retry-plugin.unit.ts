@@ -59,7 +59,7 @@ describe('chai-retry-plugin', () => {
             }
         });
 
-        it(`should work when mocha's timeout less then time needed for test`, async function () {
+        it(`should extend total test timeout`, async function () {
             this.timeout(100);
             const { resultFunction } = withCallCount((callCount: number) => {
                 if (callCount < 3) {
