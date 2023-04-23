@@ -1,0 +1,10 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "Core 3 Utils",
+  "out": "_docs",
+  "entryPoints": ["packages/*/src/index.ts"],
+  "entryPointStrategy": "resolve",
+  "includeVersion": true,
+  "useTsLinkResolution": true,
+  "cleanOutputDir": true
+}
