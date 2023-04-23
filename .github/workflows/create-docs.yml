@@ -1,0 +1,32 @@
+name: Generate and Deploy Documentation
+
+on:
+  push:
+    branches:
+      - master
+      - omry/new-docs
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org/'
+          cache: yarn
+      - run: npm i -g yarn@1
+      - run: yarn config set network-timeout 300000
+      - run: yarn
+      - run: yarn build
+      - name: Generate documentation
+        run: yarn typedoc
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_docs
+          publish_branch: docs
