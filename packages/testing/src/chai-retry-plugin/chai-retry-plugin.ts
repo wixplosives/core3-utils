@@ -4,8 +4,9 @@ import { retryFunctionAndAssertions } from './helpers';
 import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions, PromiseLikeAssertion } from './types';
 
 /**
- * Plugin that allows to re-run function passed to `expect` with new `retry` method, retrying would be performed until
- * the result will pass the chained assertion or timeout exceeded or retries limit reached.
+ * Plugin that allows to re-run function passed to `expect`, in order to achieve that use new `retry` method, retrying would be performed until
+ * the result will pass the chained assertion or timeout exceeded or retries limit reached. The assertion chain eventually returns the last
+ * successfully asserted value.
  * Should be applied through `Chai.use` function, for example:
  * @example
  * ```ts
