@@ -1,9 +1,10 @@
 {
-  "name": "@wixc3/plugable-map",
+  "name": "@wixc3/plugable",
   "version": "1.0.1",
-  "main": "dist/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "scripts": {
-    "test": "mocha \"dist/test/**/*.unit.js\""
+    "test": "mocha \"dist/cjs/test/**/*.unit.js\""
   },
   "peerDependencies": {
     "react": "^17.0.2"

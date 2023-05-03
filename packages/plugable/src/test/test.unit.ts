@@ -4,89 +4,102 @@ import { createPlugable, createKey, inheritPlugable, set, get, on } from '../plu
 chai.use(chaiAsPromised);
 
 describe('Plugable', () => {
-  it('set and get', () => {
-    const rec = createPlugable();
-    const key = createKey<string>();
+    it('set and get', () => {
+        const rec = createPlugable();
+        const key = createKey<string>();
 
-    set(rec, key, 'hello');
-    expect(get(rec, key)).to.equal('hello');
-  });
+        set(rec, key, 'hello');
+        expect(get(rec, key)).to.equal('hello');
+    });
 
-  it('emit on set', () => {
-    const rec = createPlugable();
-    const key = createKey<string>();
-    const res = new Array<string>();
+    it('emit on set', () => {
+        const rec = createPlugable();
+        const key = createKey<string>();
+        const res = new Array<string>();
 
-    on(rec, key, res.push.bind(res));
-    set(rec, key, 'hello');
+        on(rec, key, res.push.bind(res));
+        set(rec, key, 'hello');
 
-    expect(res[0]).to.equal('hello');
-  });
+        expect(res[0]).to.equal('hello');
+    });
 
-  it('emit on child when set', () => {
-    const parent = createPlugable();
-    const child = inheritPlugable(parent);
-    const key = createKey<string>();
-    const res = new Array<string>();
+    it('emit on child when set', () => {
+        const parent = createPlugable();
+        const child = inheritPlugable(parent);
+        const key = createKey<string>();
+        const res = new Array<string>();
 
-    on(child, key, res.push.bind(res));
-    set(child, key, 'hello');
+        on(child, key, res.push.bind(res));
+        set(child, key, 'hello');
 
-    expect(res[0]).to.equal('hello');
-  });
+        expect(res[0]).to.equal('hello');
+    });
 
-  it('emit on child when set on parent (no child override)', () => {
-    const parent = createPlugable();
-    const child = inheritPlugable(parent);
-    const key = createKey<string>();
-    const res = new Array<string>();
+    it('emit on child when set on parent (no child override)', () => {
+        const parent = createPlugable();
+        const child = inheritPlugable(parent);
+        const key = createKey<string>();
+        const res = new Array<string>();
 
-    on(child, key, res.push.bind(res));
-    set(parent, key, 'hello');
+        on(child, key, res.push.bind(res));
+        set(parent, key, 'hello');
 
-    expect(res[0]).to.equal('hello');
-  });
+        expect(res[0]).to.equal('hello');
+    });
 
-  it('no emit on child when set on parent (when there is override)', () => {
-    const parent = createPlugable();
-    const child = inheritPlugable(parent);
-    const key = createKey<string>();
-    const res = new Array<string>();
+    it('no emit on child when set on parent (when there is override)', () => {
+        const parent = createPlugable();
+        const child = inheritPlugable(parent);
+        const key = createKey<string>();
+        const res = new Array<string>();
 
-    set(child, key, 'world');
-    on(child, key, res.push.bind(res));
-    set(parent, key, 'hello');
+        set(child, key, 'world');
+        on(child, key, res.push.bind(res));
+        set(parent, key, 'hello');
 
-    expect(res).to.be.empty;
-  });
+        expect(res).to.be.empty;
+    });
 
-  it('no emit on grandChild when set on parent (when there is override on child)', () => {
-    const parent = createPlugable();
-    const child = inheritPlugable(parent);
-    const grandChild = inheritPlugable(child);
-    const key = createKey<string>();
-    const res = new Array<string>();
+    it('no emit on grandChild when set on parent (when there is override on child)', () => {
+        const parent = createPlugable();
+        const child = inheritPlugable(parent);
+        const grandChild = inheritPlugable(child);
+        const key = createKey<string>();
+        const res = new Array<string>();
 
-    set(child, key, 'world');
-    on(grandChild, key, res.push.bind(res));
-    set(parent, key, 'hello');
+        set(child, key, 'world');
+        on(grandChild, key, res.push.bind(res));
+        set(parent, key, 'hello');
 
-    expect(res).to.be.empty;
+        expect(res).to.be.empty;
 
-    const value = get(grandChild, key);
-    expect(value).to.equal('world');
-  });
+        const value = get(grandChild, key);
+        expect(value).to.equal('world');
+    });
 
-  it('emit on grandChild when set on parent (when there is no override on child)', () => {
-    const parent = createPlugable();
-    const child = inheritPlugable(parent);
-    const grandChild = inheritPlugable(child);
-    const key = createKey<string>();
-    const res = new Array<string>();
+    it('emit on grandChild when set on parent (when there is no override on child)', () => {
+        const parent = createPlugable();
+        const child = inheritPlugable(parent);
+        const grandChild = inheritPlugable(child);
+        const key = createKey<string>();
+        const res = new Array<string>();
 
-    on(grandChild, key, res.push.bind(res));
-    set(parent, key, 'hello');
+        on(grandChild, key, res.push.bind(res));
+        set(parent, key, 'hello');
 
-    expect(res[0]).to.equal('hello');
-  });
+        expect(res[0]).to.equal('hello');
+    });
+});
+
+describe('Plugable (prototype api)', () => {
+    it('set and get and on', () => {
+        const rec = createPlugable();
+        const key = createKey<string>();
+        const res = new Array<string>();
+
+        rec.on(key, res.push.bind(res));
+        rec.set(key, 'hello');
+        expect(rec.get(key)).to.equal('hello');
+        expect(res[0]).to.equal('hello');
+    });
 });
