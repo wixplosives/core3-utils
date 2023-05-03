@@ -1,14 +1,15 @@
 {
   "name": "@wixc3/mark-text",
-  "version": "1.1.1",
-  "main": "dist/index.js",
+  "version": "8.0.0",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "scripts": {
-    "test": "mocha \"dist/test/**/*.unit.js\""
+    "test": "mocha \"dist/cjs/test/**/*.unit.js\""
   },
   "files": [
     "dist",
     "src",
-    "!dist/test",
+    "!dist/*/test",
     "!dist/tsconfig.tsbuildinfo"
   ],
   "license": "MIT",

@@ -1,0 +1,8 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../dist/cjs",
+    "types": ["mocha"]
+  },
+  "references": [{ "path": "../../common/src" }, { "path": "../../testing/src" }, { "path": "../../patterns/src" }]
+}

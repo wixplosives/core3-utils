@@ -1,0 +1,30 @@
+{
+  "name": "@wixc3/isomorphic-fetch",
+  "version": "8.2.0",
+  "description": "isomorphic fetch, for browsers and Node.js",
+  "main": "./dist/node.js",
+  "browser": "./dist/cjs/browser.js",
+  "types": "./dist/cjs/browser.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/cjs/browser.d.ts",
+      "browser": "./dist/cjs/browser.js",
+      "default": "./dist/cjs/node.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "make-fetch-happen": "^11.1.1"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!dist/tsconfig.tsbuildinfo"
+  ],
+  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Wix.com",
+  "license": "MIT"
+}

@@ -1,4 +1,4 @@
 module.exports = {
-  color: true,
-  'enable-source-maps': true,
+    color: true,
+    'enable-source-maps': true,
 };

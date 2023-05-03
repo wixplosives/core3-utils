@@ -1,8 +1,8 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../dist",
-    "types": ["mocha"]
-  },
-  "references": []
+    "outDir": "../dist/cjs",
+    "types": ["mocha"],
+    "esModuleInterop": true
+  }
 }

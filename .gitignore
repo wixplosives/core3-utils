@@ -88,6 +88,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
+dist-*
 dist
 
 # Gatsby files
@@ -120,3 +121,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+.DS_Store
+# Autodocs
+temp/
+_docs/
+tsdoc-metadata.json
+docs-test-project/

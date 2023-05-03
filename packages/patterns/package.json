@@ -1,0 +1,24 @@
+{
+  "name": "@wixc3/patterns",
+  "version": "8.2.0",
+  "description": "A utility for saving objects to be disposed",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "author": "Wix.com",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src",
+    "!dist/*/test",
+    "!dist/*/tsconfig.tsbuildinfo"
+  ],
+  "license": "MIT",
+  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@wixc3/common": "^8.2.0",
+    "promise-assist": "^2.0.1"
+  }
+}
