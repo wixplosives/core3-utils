@@ -1,7 +1,7 @@
 const secret = Symbol();
 export const internals = Symbol('internals');
 
-export type Key<V = unknown> = (string | symbol) & { [secret]: V | undefined };
+export type Key<V = unknown> = symbol & { [secret]: V | undefined };
 export type Val<T> = T extends Key<infer V> ? V : never;
 
 export type PlugableInternals = {
@@ -13,6 +13,9 @@ export type PlugableInternals = {
 };
 
 export type Plugable = {
-  [key: string]: never;
+  get<Value>(key: Key<Value>): Value | undefined;
+  set<Value>(key: Key<Value>, value: Value, isEqual?: (previous: Value | undefined, value: Value) => boolean): void;
+  on<K extends Key>(key: K, listener: (value: Val<K>) => void): () => void;
   [internals]: PlugableInternals;
 };
+

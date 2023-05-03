@@ -1,7 +1,24 @@
 import { type Plugable, type Key, internals, PlugableInternals, Val } from './types';
 
+const proto = {
+  get<Value>(this: Plugable, key: Key<Value>): Value | undefined {
+    return get(this, key);
+  },
+  set<Value>(
+    this: Plugable,
+    key: Key<Value>,
+    value: Value,
+    isEqual?: (previous: Value | undefined, value: Value) => boolean
+  ) {
+    set(this, key, value, isEqual);
+  },
+  on<K extends Key>(this: Plugable, key: K, listener: (value: Val<K>) => void) {
+    return on(this, key, listener);
+  },
+};
+
 export function createPlugable(): Plugable {
-  const rec = Object.create(null) as Plugable;
+  const rec = Object.create(proto) as Plugable;
   rec[internals] = {
     parent: undefined,
     listeners: new Map(),
@@ -45,25 +62,6 @@ export function set<Value>(
   }
 }
 
-function hasOwn(obj: unknown, key: string | symbol) {
-  return Object.prototype.hasOwnProperty.call(obj, key);
-}
-
-export function dispatch<T>(rec: Plugable, key: Key<T>, value: T) {
-  const { listeners, handlerToRec } = rec[internals];
-  listeners.get(key)?.forEach((listener) => shouldDispatch(rec, handlerToRec.get(listener), key) && listener(value));
-}
-
-function shouldDispatch(dispatcherRec: Plugable, handlerRec: Plugable | undefined, key: string | symbol): boolean {
-  if (dispatcherRec === handlerRec) {
-    return true;
-  } else if (handlerRec && !hasOwn(handlerRec, key)) {
-    return shouldDispatch(dispatcherRec, handlerRec[internals].parent, key);
-  } else {
-    return false;
-  }
-}
-
 export function on<K extends Key>(rec: Plugable, key: K, listener: (value: Val<K>) => void) {
   const { listeners, handlerToRec } = rec[internals];
   let handlers = listeners.get(key);
@@ -76,4 +74,23 @@ export function on<K extends Key>(rec: Plugable, key: K, listener: (value: Val<K
   return () => {
     handlers?.delete(listener);
   };
+}
+
+function dispatch<T>(rec: Plugable, key: Key<T>, value: T) {
+  const { listeners, handlerToRec } = rec[internals];
+  listeners.get(key)?.forEach((listener) => shouldDispatch(rec, handlerToRec.get(listener), key) && listener(value));
+}
+
+function hasOwn(obj: unknown, key: string | symbol) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+function shouldDispatch(dispatcherRec: Plugable, handlerRec: Plugable | undefined, key: string | symbol): boolean {
+  if (dispatcherRec === handlerRec) {
+    return true;
+  } else if (handlerRec && !hasOwn(handlerRec, key)) {
+    return shouldDispatch(dispatcherRec, handlerRec[internals].parent, key);
+  } else {
+    return false;
+  }
 }
