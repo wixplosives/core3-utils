@@ -13,6 +13,7 @@ export type PlugableInternals = {
 };
 
 export type PlugableApi = {
+    createKey<V extends NonNullable<unknown> = never>(debugName?: string): Key<V>;
     getThrow<Value>(key: Key<Value>): Value;
     get<Value>(key: Key<Value>): Value | undefined;
     set<Value>(key: Key<Value>, value: Value, isEqual?: (previous: Value | undefined, value: Value) => boolean): void;

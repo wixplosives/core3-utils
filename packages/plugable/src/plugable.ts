@@ -1,6 +1,9 @@
 import { type Plugable, type Key, internals, PlugableInternals, Val, PlugableApi } from './types';
 
 const proto: PlugableApi = {
+    createKey<V extends NonNullable<unknown> = never>(debugName?: string): Key<V> {
+        return createKey(debugName);
+    },
     getThrow<Value>(this: Plugable, key: Key<Value>): Value {
         return getThrow(this, key);
     },
@@ -37,7 +40,7 @@ export function inheritPlugable(rec: Plugable): Plugable {
     return inherited;
 }
 
-export function createKey<V = never>(debugName?: string): Key<V> {
+export function createKey<V extends NonNullable<unknown> = never>(debugName?: string): Key<V> {
     return Symbol(debugName) as Key<V>;
 }
 
