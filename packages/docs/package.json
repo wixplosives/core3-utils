@@ -28,7 +28,7 @@
     "@wixc3/common": "^8.2.0",
     "@wixc3/fs-utils": "^8.2.0",
     "@wixc3/typescript": "^8.0.0",
-    "glob": "^10.2.2",
+    "glob": "^10.2.3",
     "yargs": "^17.7.2"
   }
 }
