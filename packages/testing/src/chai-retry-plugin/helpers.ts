@@ -13,12 +13,12 @@ function sleepWithSafetyMargin(ms: number): Promise<void> {
     return promiseHelpers.sleep(ms);
 }
 
-function timeoutWithSafetyMargin(promise: Promise<unknown>, ms: number, getTimeoutError: () => string): Promise<unknown> {
+function timeoutWithSafetyMargin(promise: Promise<void>, ms: number, getTimeoutError: () => string): Promise<void> {
     addTimeoutSafetyMargin(ms);
     return promiseHelpers.timeout(promise, ms, getTimeoutError);
 }
 
-export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryAndAssertArguments): Promise<unknown> => {
+export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryAndAssertArguments): Promise<void> => {
     let assertionError: Error | undefined;
     let isTimeoutExceeded = false;
 
@@ -52,7 +52,7 @@ export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryA
                     }
                 }
 
-                return valueToAssert;
+                return;
             } catch (error: unknown) {
                 assertionError = error as Error;
                 await sleepWithSafetyMargin(delay);
