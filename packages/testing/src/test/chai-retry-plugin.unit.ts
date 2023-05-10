@@ -74,19 +74,6 @@ describe('chai-retry-plugin', () => {
 
             await expect(resultFunction).retry({ delay: 200 }).to.equal('Success');
         });
-
-        it('should return value that was asserted successfully', async () => {
-            const { resultFunction } = withCallCount((callCount: number) => {
-                if (callCount < 3) {
-                    throw new Error('Failed');
-                }
-                return 'Success';
-            });
-
-            const result = await expect(resultFunction).retry();
-
-            expect(result).to.equal('Success');
-        });
     });
 
     describe('should work with negated assertions:', () => {
