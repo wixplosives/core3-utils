@@ -1,6 +1,19 @@
 import type { IFileSystem, IWatchEvent } from '@file-services/types';
-import { Description, Info, poll, PollInfo, Predicate, StepBase, Timeout } from '@wixc3/testing';
+import {
+    chaiRetryPlugin,
+    Description,
+    Info,
+    PollInfo,
+    Predicate,
+    StepBase,
+    Timeout,
+    PromiseLikeAssertion,
+    RetryOptions,
+} from '@wixc3/testing';
 import _fs from '@file-services/node';
+import chai, { expect } from 'chai';
+
+chai.use(chaiRetryPlugin);
 
 interface FileInfo extends Info {
     path: string;
@@ -16,12 +29,32 @@ export interface FsStep extends StepBase<PollInfo & FileInfo, IWatchEvent & { fs
     interval: (ms: number) => FsStep;
 }
 
-export function pathStep(fs: IFileSystem, path: string, predicate: FsPredicate): FsStep {
+export type PathStepOptions = RetryOptions & { description?: string };
+
+export function pathStep(
+    fs: IFileSystem,
+    path: string,
+    predicate: FsPredicate,
+    pathStepOptions: PathStepOptions
+): PromiseLikeAssertion {
     let resolved = false;
-    const p = poll(
-        async () => ({ fs, path, stats: await fs.promises.stat(path).catch(() => null) }),
-        (data) => resolved || predicate(data)
-    ) as unknown as FsStep;
+    const { description = '', ...retryOptions } = pathStepOptions;
+
+    const p = expect(async () => ({ fs, path, stats: await fs.promises.stat(path).catch(() => null) }), description)
+        .retry(retryOptions)
+        .to.satisfy((result: IWatchEvent & { fs: IFileSystem }) => {
+            try {
+                if (!resolved) {
+                    predicate(result);
+
+                    return true;
+                }
+
+                return false;
+            } catch {
+                return false;
+            }
+        });
 
     const listener = (event: IWatchEvent) => {
         try {
@@ -58,6 +91,11 @@ export function pathStep(fs: IFileSystem, path: string, predicate: FsPredicate):
  * await waitForPath('some-file', Path.hasContent('success!'))
  * ```
  */
-export function waitForPath(path: string, predicate: FsPredicate, fs: IFileSystem = _fs) {
-    return pathStep(fs, path, predicate);
+export function waitForPath(
+    path: string,
+    predicate: FsPredicate,
+    pathStepOptions: PathStepOptions = {},
+    fs: IFileSystem = _fs,
+) {
+    return pathStep(fs, path, predicate, pathStepOptions);
 }
