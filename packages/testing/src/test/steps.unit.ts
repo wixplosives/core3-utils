@@ -4,7 +4,6 @@ import {
     allWithTimeout,
     defaults,
     mochaCtx,
-    poll,
     sleep,
     step,
     timeDilation,
@@ -25,12 +24,6 @@ describe('steps', () => {
         defaults().step.timeout = TIMEOUT;
         await Promise.all([
             expect(withTimeout(new Promise(() => 0))).to.eventually.rejectedWith('Timed out'),
-            expect(
-                poll(
-                    () => 0,
-                    () => false
-                )
-            ).to.eventually.rejectedWith('Timed out'),
             expect(waitForSpyCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
             expect(waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out'),
         ]);

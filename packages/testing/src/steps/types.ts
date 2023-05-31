@@ -52,28 +52,6 @@ export interface PromiseWithTimeout<T> extends StepBase<Info & { timeout: number
 }
 
 /**
- * Polling API
- */
-export interface PollStep<T> extends StepBase<PollInfo, T> {
-    timeout: Timeout<PollStep<T>>;
-    description: Description<PollStep<T>>;
-    interval: (ms: number) => PollStep<T>;
-    allowErrors: (action?: boolean, predicate?: boolean) => PollStep<T>;
-}
-
-/**
- * Info added to polling exceptions
- */
-export interface PollInfo extends Info {
-    polledValues: ({ action: any } | { predicate: any })[];
-    interval: number;
-    timeout: number;
-    allowErrors: {
-        action: boolean;
-        predicate: boolean;
-    };
-}
-/**
  * A predicate function
  *
  * Any return value other than **false** or throwing is considered as satisfying the predicate
