@@ -52,7 +52,6 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 | Function                                                                                                     | Description                                                                                                                |
 | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
 | [createTestDir(prefix, disposalGroup)](https://wixplosives.github.io/core3-utils/testing-node.createtestdir) | Creates a test temporary directory The directory will be deleted after the test, thus not suitable for suites ("describe") |
-| [waitForPath(path, predicate, fs)](https://wixplosives.github.io/core3-utils/testing-node.waitforpath)       | <p>waits for a path to satisfy the predicate</p><p> as helpful predicator creators.</p>                                    |
 
 ## Interfaces
 
