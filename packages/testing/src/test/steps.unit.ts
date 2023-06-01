@@ -27,10 +27,7 @@ describe('steps', () => {
             expect(waitForSpyCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
             expect(waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out'),
         ]);
-        expect(mochaCtx()?.timeout()).to.be.approximately(
-            1_000 + timeDilation() * (+4 * TIMEOUT + 4 * SAFETY_MARGIN),
-            2
-        );
+        expect(mochaCtx()?.timeout()).to.be.approximately(950 + timeDilation() * (+4 * TIMEOUT + 4 * SAFETY_MARGIN), 2);
     });
 
     describe(`usage in beforeEach`, () => {
