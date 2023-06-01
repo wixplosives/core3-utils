@@ -32,6 +32,5 @@
  *
  * - {@link locatorTimeout} creates a locator timeout and adjust the current test
  */
-export { waitForPath, FsPredicate, FsStep } from './path-step';
-export * from './predicates';
+
 export * from './temp-test-dir';
