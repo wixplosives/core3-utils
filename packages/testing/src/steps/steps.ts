@@ -2,9 +2,8 @@ import { isString } from '@wixc3/common';
 import { deferred } from 'promise-assist';
 import { disposeAfter } from '../dispose';
 import { adjustTestTime, mochaCtx } from '../mocha-ctx';
-import { createPollStep } from './poll';
 import { createTimeoutStep } from './with-timeout';
-import type { PollStep, Predicate, _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep } from './types';
+import type { _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep } from './types';
 import { createPromiseStep } from './no-timeout';
 import { setFirstHook, _beforeEach } from '../mocha-helpers';
 type CaptureStackFn = (s: { stack: string }) => void;
@@ -109,48 +108,6 @@ export function step<T>(action: Promise<T>): PromiseStep<T> {
  */
 export function allWithTimeout<T extends Readonly<any[]>>(...actions: T): PromiseWithTimeout<_PromiseAll<T>> {
     return withTimeout(Promise.all(actions));
-}
-
-/**
- * Checks the return value of am action until it satisfies the predicate
- *
- * Error handling can be changed using allowErrors. the default behavior is:
- *
- * - When the action throws the step fails
- *
- * - When the predicate throws the polling continues
- *
- *  {@link @wixc3/testing#Expected} as helpful predicator creators.
- *
- * @example
- * ```ts
- * await poll(()=>getValue(), {a:0}).description('value matches {a:0}').timeout(100).interval(10)
- * ```
- * @example
- * ```ts
- * await poll(()=>getValue(), v => expect(v).to.be.approximately(10, 1)).description('value is 10+-1')
- * ```
- * @example
- * ```ts
- * await poll(()=>mightThrow(), {a:0}).description('value matches {a:0}').allowErrors()
- * ```
- * @param predicate predicated value (compared with expect.eql)
- * *or* a predicate function that will be considered satisfied when returning **values other than false**
- */
-export function poll<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): PollStep<T> {
-    addTimeoutSafetyMargin();
-    const {
-        poll: { interval, allowActionError, allowPredicateError },
-        step: { timeout },
-    } = defaults();
-
-    const step = createPollStep(action, predicate)
-        .timeout(timeout)
-        .description(`step ${increaseStepsCount()}`)
-        .interval(interval)
-        .allowErrors(allowActionError, allowPredicateError);
-    step.stack = getStack();
-    return step;
 }
 
 /**

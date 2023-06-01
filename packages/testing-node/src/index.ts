@@ -9,8 +9,6 @@
  * Each step timeout auto increases the test timeout, assuring the step will time out before the test
  *
  * [[[h 4 Available steps:]]]
- * - {@link poll} until a predicate is satisfied
- *
  * - {@link withTimeout} adds timeout and description to a promise]
  *
  * - {@link allWithTimeout} time limited Promise.all
