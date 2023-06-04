@@ -17,6 +17,7 @@
     "@file-services/types": "^7.3.0",
     "@types/chai": "^4.3.5",
     "@types/chai-as-promised": "^7.1.5",
+    "@types/react": "^17.0.39",
     "@types/glob": "^8.1.0",
     "@types/make-fetch-happen": "^10.0.1",
     "@types/mocha": "^10.0.1",
