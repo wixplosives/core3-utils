@@ -240,10 +240,10 @@
     write-pkg "4.0.0"
     yargs "16.2.0"
 
-"@microsoft/api-documenter@^7.22.12":
-  version "7.22.12"
-  resolved "https://registry.yarnpkg.com/@microsoft/api-documenter/-/api-documenter-7.22.12.tgz#5ba573dcf123cdd381ff65d625686c9c5c128677"
-  integrity sha512-T6DWh5lWJmU1JL47Opc/IvMEqb98FzbabpUhvgSmuqIm3k+znszJqoGkMnAwm/XGwktLMLwoocGZJIa3J233LQ==
+"@microsoft/api-documenter@^7.22.13":
+  version "7.22.13"
+  resolved "https://registry.yarnpkg.com/@microsoft/api-documenter/-/api-documenter-7.22.13.tgz#17659df453852d5273710108c50364b7903d473f"
+  integrity sha512-UIfXIrll75iHYJ1gLhzbZl2Z7T/JigWfvutbJY36ytnxsZg6SJPtNdG9B7ErznExK/9TQX0S6iHIUs3DLzqcAw==
   dependencies:
     "@microsoft/api-extractor-model" "7.27.2"
     "@microsoft/tsdoc" "0.14.2"
