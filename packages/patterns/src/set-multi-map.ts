@@ -97,5 +97,5 @@ export class SetMultiMap<K, V> implements Iterable<[K, V]> {
 }
 
 export function isSetMultiMap<K, V>(x: any): x is SetMultiMap<K, V> {
-    return x instanceof SetMultiMap<K, V>;
+    return x instanceof SetMultiMap;
 }

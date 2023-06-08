@@ -128,7 +128,7 @@ export function waitForSpyCall<S extends object>(scope: S, method: keyof S | S[k
         methodName = method;
     } else {
         if (typeof method === 'function') {
-            methodName = method.name;
+            methodName = (method as () => unknown).name;
         }
     }
     if (methodName in scope) {
