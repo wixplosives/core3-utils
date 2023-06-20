@@ -1,6 +1,8 @@
-import { expect } from 'chai';
+import { expect, use } from 'chai';
 import { sleep } from 'promise-assist';
 import { createDisposables } from '../disposables';
+import asPromised from 'chai-as-promised';
+use(asPromised);
 
 describe('disposables', () => {
     describe('single disposal group', () => {
@@ -26,6 +28,16 @@ describe('disposables', () => {
             });
             await disposables.dispose();
             expect(disposed).to.deep.equal([3, 2, 1]);
+        });
+        it('times out when the disposal takes too long', async () => {
+            const disposables = createDisposables();
+            disposables.add(
+                async () => {
+                    await sleep(100);
+                },
+                { name: 'slow', timeout: 1 }
+            );
+            await expect(disposables.dispose()).to.eventually.be.rejectedWith('Disposal timed out: "slow"');
         });
     });
 
