@@ -88,6 +88,17 @@ describe('safe print', () => {
             expect(actual).to.equal(JSON.stringify(obj, null, 2));
         });
 
+        it('should support functions', () => {
+            const obj = {
+                b: function () {},
+            };
+            const expectedObj = {
+                b: 'function () { }',
+            };
+            const actual = safePrint(obj);
+            expect(actual).to.equal(JSON.stringify(expectedObj, null, 2));
+        });
+
         it('should support custom printers', () => {
             const funcReplacement = (lookupPath: LookupPath) => {
                 return 'Function found at ' + lookupPath.toString();
