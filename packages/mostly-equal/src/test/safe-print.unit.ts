@@ -95,7 +95,7 @@ describe('safe print', () => {
                 },
             };
             const expectedObj = {
-                b: 'function () { }',
+                b: obj.b.toString(),
             };
             const actual = safePrint(obj);
             expect(actual).to.equal(JSON.stringify(expectedObj, null, 2));
