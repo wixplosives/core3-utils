@@ -43,6 +43,10 @@ export class Disposables {
         }
         this.disposables.delete(name);
     }
+
+    list() {
+        return Array.from(this.disposables.values()).map((d) => ({ name: d.name, timeout: d.timeout }));
+    }
 }
 
 export type DisposeFunction = () => unknown;
