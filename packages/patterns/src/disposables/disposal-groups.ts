@@ -1,5 +1,5 @@
 import { DisposalGroup, getValidatedConstantsGroups, GroupConstraints, normalizeConstraints } from './constraints';
-import { createSimpleDisposable, Disposable } from '.';
+import { Disposable, Disposables } from '.';
 import { defaults } from '@wixc3/common';
 
 export const DEFAULT_GROUP = 'default';
@@ -7,7 +7,7 @@ export const DEFAULT_TIMEOUT = 10000;
 
 const createGroup = (name: string): DisposalGroup => ({
     name,
-    disposables: createSimpleDisposable(),
+    disposables: new Disposables(),
 });
 
 export type DisposableOptions = {
@@ -88,6 +88,18 @@ export function createDisposables() {
             }
         },
 
+        /**
+         * adds a disposable item to a disposal group
+         * @example
+         * ```ts
+         * const disposables = createDisposables();
+         * disposables.add(() => console.log('disposed!'), {
+         *    group: 'myGroup',
+         *    timeout: 1000,
+         *    name: 'used in timeout error message'
+         * });
+         * ```
+         */
         add: (disposable: Disposable, options?: DisposableOptions) => {
             const { group: groupName, name, timeout } = withDefaults(options);
             const group = groups.find((g) => g.name === groupName);
@@ -98,12 +110,15 @@ export function createDisposables() {
         },
 
         /**
-         * removes a disposable from all disposal group
+         * removes a disposable from ALL disposal group
          */
         remove: (disposable: Disposable) => {
             groups.forEach((g) => g.disposables.remove(disposable));
         },
 
+        /**
+         * disposes of the groups ordered by constraints
+         */
         dispose: async () => {
             for (const { disposables } of groups) {
                 await disposables.dispose();

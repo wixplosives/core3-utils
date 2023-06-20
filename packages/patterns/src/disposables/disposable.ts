@@ -2,15 +2,13 @@ import { find } from '@wixc3/common';
 import { timeout } from 'promise-assist';
 
 /**
- * Disposables allow adding of disposal async functions,
- * when dispose is called, these functions will be run sequentially
+ * Manages a list of NamedDisposable, allowing group disposal
  */
-export function createSimpleDisposable() {
-    return new Disposables();
-}
-
 export class Disposables {
     private disposables = new Map<string, NamedDisposable>();
+    /**
+     * disposes of the added disposables, in reverse order
+     */
     async dispose() {
         const _disposables = Array.from(this.disposables.values()).reverse();
         this.disposables.clear();
