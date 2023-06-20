@@ -12,7 +12,7 @@ const createGroup = (name: string): DisposalGroup => ({
 
 export type DisposableOptions = {
     /**
-     * @default DEFAULT_TIMEOUT
+     * @defaultValue DEFAULT_TIMEOUT
      */
     timeout?: number;
     /**
@@ -21,7 +21,7 @@ export type DisposableOptions = {
     name?: string;
     /**
      * disposal group name
-     * @default DEFAULT_GROUP
+     * @defaultValue DEFAULT_GROUP
      */
     group?: string;
 };
@@ -75,7 +75,7 @@ export function createDisposables() {
     return {
         /**
          * register a new constrained disposal group
-         * @param constraints - constraints for the group must contain {before: groupName} or {after: groupName}
+         * @param constraints - constraints for the group must contain \{before: groupName\} or \{after: groupName\}
          */
         registerGroup: (name: string, constraints: GroupConstraints[] | GroupConstraints) => {
             const _constraints: GroupConstraints[] = normalizeConstraints(constraints, name, groups);

@@ -424,6 +424,10 @@
       "tsdoc-param-tag-missing-hyphen": {
         "logLevel": "none",
         "addToApiReportFile": true
+      },
+      "ae-incompatible-release-tags": {
+        "logLevel": "none",
+        "addToApiReportFile": true
       }
     }
   }

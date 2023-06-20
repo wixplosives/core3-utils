@@ -13,7 +13,7 @@ export function mochaCtx() {
 
 /**
  * Add ms to current test timeout
- * @param allowTimeDilation when true (default) ms is multiplied by {@link timeDilation | timeDilation() }
+ * @param allowTimeDilation when true (default) ms is multiplied by {@link timeDilation }
  */
 export function adjustTestTime(ms: number, allowTimeDilation = true) {
     if (allowTimeDilation) {
