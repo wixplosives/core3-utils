@@ -104,5 +104,8 @@ export const safePrint = (
     if (typeof target === 'string') {
         return JSON.stringify(target, null, 2);
     }
-    return String(target);
+    if (typeof target === 'function') {
+        return JSON.stringify(target.toString());
+    }
+    return JSON.stringify(String(target));
 };
