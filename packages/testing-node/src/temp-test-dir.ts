@@ -16,7 +16,6 @@ try {
  */
 export function createTestDir(prefix?: string | undefined, disposalGroup = DISPOSE_OF_TEMP_DIRS) {
     const dir = createTempDirectorySync(prefix);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    disposeAfter(dir.remove, disposalGroup);
+    disposeAfter(() => dir.remove(), { group: disposalGroup });
     return fs.realpathSync.native(dir.path);
 }

@@ -1,12 +1,38 @@
 import { DisposalGroup, getValidatedConstantsGroups, GroupConstraints, normalizeConstraints } from './constraints';
 import { createSimpleDisposable, Disposable } from '.';
+import { defaults } from '@wixc3/common';
 
 export const DEFAULT_GROUP = 'default';
+export const DEFAULT_TIMEOUT = 10000;
 
 const createGroup = (name: string): DisposalGroup => ({
     name,
     disposables: createSimpleDisposable(),
 });
+
+export type DisposableOptions = {
+    /**
+     * @default DEFAULT_TIMEOUT
+     */
+    timeout?: number;
+    /**
+     * disposable name, used in error when timed out
+     */
+    name?: string;
+    /**
+     * disposal group name
+     * @default DEFAULT_GROUP
+     */
+    group?: string;
+};
+
+let count = 0;
+const withDefaults = (d?: DisposableOptions): Required<DisposableOptions> =>
+    defaults(d || {}, {
+        timeout: DEFAULT_TIMEOUT,
+        group: DEFAULT_GROUP,
+        name: `unnamed-${count++}`,
+    });
 
 /**
  * Disposables allow adding of disposal async functions,
@@ -62,12 +88,13 @@ export function createDisposables() {
             }
         },
 
-        add: (disposable: Disposable, name = DEFAULT_GROUP) => {
-            const group = groups.find((g) => g.name === name);
+        add: (disposable: Disposable, options?: DisposableOptions) => {
+            const { group: groupName, name, timeout } = withDefaults(options);
+            const group = groups.find((g) => g.name === groupName);
             if (!group) {
-                throw new Error(`Invalid group: "${name}" doesn't exists`);
+                throw new Error(`Invalid group: "${groupName}" doesn't exists`);
             }
-            group.disposables.add(disposable);
+            group.disposables.add(disposable, timeout, name);
         },
 
         /**

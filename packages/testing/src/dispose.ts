@@ -1,4 +1,4 @@
-import { createDisposables, DEFAULT_GROUP, GroupConstraints } from '@wixc3/patterns';
+import { createDisposables, DEFAULT_GROUP, DisposableOptions, GroupConstraints } from '@wixc3/patterns';
 import type { Disposable } from '@wixc3/patterns/src/disposables/disposable';
 import { _afterEach } from './mocha-helpers';
 
@@ -18,8 +18,8 @@ export const DEFAULT_DISPOSAL_GROUP = DEFAULT_GROUP;
  *
  * @param group disposal group name. disposal groups let you specify disposal constrains. see: {@link createDisposalGroup}
  */
-export function disposeAfter(disposable: Disposable, group = DEFAULT_GROUP) {
-    disposables.add(disposable, group);
+export function disposeAfter(disposable: Disposable, options?: DisposableOptions) {
+    disposables.add(disposable, options);
 }
 
 /**
