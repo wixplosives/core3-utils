@@ -1,29 +1,18 @@
 import { isGetter } from './safe-print';
 import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print';
-import type { ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher, LookupPath, Replacer } from './types';
-
-const expectValueSymb = Symbol('expect');
-const expectValuesSymb = Symbol('expect-values');
-export interface ExpectValue<T> {
-    expectMethod: ExpectSingleMatcher<T>;
-    _brand: typeof expectValueSymb;
-    getMatchInfo: () => ExpandedValues<T>;
-    clear: () => void;
-}
-export interface ExpectValues<T = any> {
-    expectMethod: ExpectMultiMatcher<T>;
-    allowUndefined: boolean;
-    _brand: typeof expectValuesSymb;
-    getMatchInfo: () => ExpandedValues<T>;
-}
-function isExpectVal(val: any): val is ExpectValue<any> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return !!val && val._brand === expectValueSymb;
-}
-
-function isExpectValues(val: any): val is ExpectValues {
-    return !!val && (val as { _brand: unknown })._brand === expectValuesSymb;
-}
+import {
+    type ExpectSingleMatcher,
+    type ExpandedValues,
+    type ExpectMultiMatcher,
+    type LookupPath,
+    type Replacer,
+    isExpectValues,
+    isExpectVal,
+    ExpectValues,
+    ExpectValue,
+    expectValueSymb,
+    expectValuesSymb,
+} from './types';
 
 /**
  * Used for adding field matchers to mostlyEqual
@@ -41,7 +30,7 @@ function isExpectValues(val: any): val is ExpectValues {
  * for error printing when another matcher failed
  * @param expectMethod
  */
-export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): any {
+export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): ExpectValue {
     let values: ExpandedValues<T> = [];
 
     const wrapMethod: ExpectSingleMatcher<T> = (value, fieldDefinedInParent, path) => {
@@ -65,7 +54,7 @@ export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): any {
  * This way a matcher can compare different values
  * {@link defineUnique}
  */
-export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): any {
+export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): ExpectValues {
     let values: ExpandedValues<T> = [];
     const wrapMethod: ExpectMultiMatcher<T> = (vals, valInfos) => {
         values = valInfos;
