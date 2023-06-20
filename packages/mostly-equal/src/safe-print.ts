@@ -27,9 +27,17 @@ export const isGetter = (target: Record<string, unknown>, key: string) => {
     const desc = Object.getOwnPropertyDescriptor(target, key);
     return !!desc && !!desc.get;
 };
+
+// Replacer can be used to replace the value before printing
+export interface Replacer {
+    isApplicable: (value: unknown, lookupPath: LookupPath) => boolean;
+    replace: (value: unknown, lookupPath: LookupPath) => unknown;
+}
+
 export const safePrint = (
     target: unknown,
     maxDepth = 10,
+    replacers: Replacer[] = [],
     depth = 0,
     passedMap = new Map<unknown, LookupPath>(),
     passedSet = new Set<unknown>(),
@@ -37,6 +45,10 @@ export const safePrint = (
 ): string => {
     if (passedSet.has(target)) {
         return JSON.stringify(`circular data removed, path: ${printPath(path)}`);
+    }
+    const replacer = replacers.find((r) => r.isApplicable(target, path));
+    if (replacer) {
+        return JSON.stringify(replacer.replace(target, path));
     }
     if (Array.isArray(target)) {
         if (depth >= maxDepth) {
@@ -48,7 +60,7 @@ export const safePrint = (
 
         const childSet = registerChildSet(target, path, passedMap, passedSet);
         const arrContent = target.map((item, idx) => {
-            return safePrint(item, maxDepth, depth + 1, passedMap, childSet, [...path, idx]);
+            return safePrint(item, maxDepth, replacers, depth + 1, passedMap, childSet, [...path, idx]);
         });
         return `[\n${spaces(depth + 1)}${arrContent.join(`,\n${spaces(depth + 1)}`)}\n${spaces(depth)}]`;
     }
@@ -71,6 +83,7 @@ export const safePrint = (
                 return `\n${spaces(depth + 1)}"${key}": ${safePrint(
                     target[key],
                     maxDepth,
+                    replacers,
                     depth + 1,
                     passedMap,
                     childSet,

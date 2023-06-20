@@ -1,4 +1,4 @@
-import { isGetter } from './safe-print';
+import { Replacer, isGetter } from './safe-print';
 import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print';
 import type { LookupPath, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
 
@@ -173,6 +173,7 @@ const tryExpectVal = (
     expected: ExpectValue<any>,
     actual: any,
     maxDepth: number,
+    replacers: Replacer[],
     depth: number,
     path: LookupPath,
     passedMap: Map<any, LookupPath>,
@@ -183,25 +184,26 @@ const tryExpectVal = (
     try {
         matcherRes = expected.expectMethod(actual, existsInParent, path);
     } catch (err) {
-        return [safePrint(actual, maxDepth, depth, passedMap, passedSet, path), anyToError(err)];
+        return [safePrint(actual, maxDepth, replacers, depth, passedMap, passedSet, path), anyToError(err)];
     }
     if (matcherRes !== undefined && matcherRes !== null) {
         return [matcherRes.toString()];
     }
-    return [safePrint(actual, maxDepth, depth, passedMap, passedSet, path)];
+    return [safePrint(actual, maxDepth, replacers, depth, passedMap, passedSet, path)];
 };
 
 export const errorString: (
     expected: unknown,
     actual: unknown,
     maxDepth: number,
+    replacers: Replacer[],
     depth: number,
     path: LookupPath,
     passedMap: Map<unknown, LookupPath>,
     passedSet: Set<unknown>
-) => ErrorOrTextOrExpect = (expected, actual, maxDepth, depth, path, passedMap, passedSet) => {
+) => ErrorOrTextOrExpect = (expected, actual, maxDepth, replacers, depth, path, passedMap, passedSet) => {
     if (isExpectVal(expected)) {
-        return tryExpectVal(expected, actual, maxDepth, depth, path, passedMap, passedSet, true);
+        return tryExpectVal(expected, actual, maxDepth, replacers, depth, path, passedMap, passedSet, true);
     }
 
     if (isExpectValues(expected)) {
@@ -216,14 +218,14 @@ export const errorString: (
     }
 
     if (expected === actual) {
-        return [safePrint(actual, maxDepth, depth, passedMap, passedSet, path)];
+        return [safePrint(actual, maxDepth, replacers, depth, passedMap, passedSet, path)];
     }
     if (Array.isArray(expected)) {
         if (Array.isArray(actual)) {
             if (actual.length !== expected.length) {
                 return [
                     anyToError(`expected length ${expected.length} but got ${actual.length}`),
-                    safePrint(actual, maxDepth, depth, passedMap, passedSet, path),
+                    safePrint(actual, maxDepth, replacers, depth, passedMap, passedSet, path),
                 ];
             }
 
@@ -231,7 +233,16 @@ export const errorString: (
             const childSet = registerChildSet(actual, path, passedMap, passedSet);
             for (let i = 0; i < actual.length; i++) {
                 res.push(
-                    ...errorString(expected[i], actual[i], maxDepth, depth + 1, [...path, i], passedMap, childSet),
+                    ...errorString(
+                        expected[i],
+                        actual[i],
+                        maxDepth,
+                        replacers,
+                        depth + 1,
+                        [...path, i],
+                        passedMap,
+                        childSet
+                    ),
                     ','
                 );
             }
@@ -240,16 +251,17 @@ export const errorString: (
         } else {
             return [
                 anyToError(
-                    `expected ${safePrint(expected, maxDepth, 0, passedMap, passedSet, path)} but got ${safePrint(
-                        actual,
+                    `expected ${safePrint(
+                        expected,
                         maxDepth,
+                        replacers,
                         0,
                         passedMap,
                         passedSet,
                         path
-                    )}`
+                    )} but got ${safePrint(actual, maxDepth, replacers, 0, passedMap, passedSet, path)}`
                 ),
-                safePrint(actual, maxDepth, depth),
+                safePrint(actual, maxDepth, replacers, depth),
             ];
         }
     }
@@ -285,6 +297,7 @@ export const errorString: (
                         expectedField,
                         undefined,
                         maxDepth,
+                        replacers,
                         depth + 1,
                         path,
                         passedMap,
@@ -304,6 +317,7 @@ export const errorString: (
                                 expected[name],
                                 actual[name],
                                 maxDepth,
+                                replacers,
                                 depth + 1,
                                 [...path, name],
                                 passedMap,
@@ -319,7 +333,14 @@ export const errorString: (
     }
 
     return [
-        safePrint(actual, maxDepth, depth),
-        anyToError(`expected ${safePrint(expected, maxDepth, 0)} but got ${safePrint(actual, maxDepth, 0)}`),
+        safePrint(actual, maxDepth, replacers, depth),
+        anyToError(
+            `expected ${safePrint(expected, maxDepth, replacers, 0)} but got ${safePrint(
+                actual,
+                maxDepth,
+                replacers,
+                0
+            )}`
+        ),
     ];
 };
