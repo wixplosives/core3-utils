@@ -70,4 +70,14 @@ export async function initAndDisposeAfter<T extends (...args: any[]) => any>(
     return await Promise.resolve(res);
 }
 
-_afterEach('disposing', disposables.dispose);
+_afterEach('disposing', async function () {
+    const list = disposables.list();
+    this.timeout(list.totalTimeout);
+    try {
+        await disposables.dispose();
+    } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log(list);
+        throw e;
+    }
+});

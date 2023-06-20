@@ -71,5 +71,33 @@ describe('disposables', () => {
                 );
             });
         });
+        describe('list', () => {
+            it('returns the list of groups', () => {
+                const groups = createDisposables();
+                groups.registerGroup('first', { before: 'default' });
+                groups.add(() => void 0, {
+                    name: '1',
+                    group: 'first',
+                    timeout: 1,
+                });
+                groups.add(() => void 0, {
+                    name: '2',
+                    group: 'first',
+                    timeout: 10,
+                });
+                groups.add(() => void 0, {
+                    name: '3',
+                    timeout: 100,
+                });
+
+                const list = groups.list();
+                expect(list.totalTimeout).to.eql(111);
+                expect(list.groups).to.have.length(2);
+                expect(list.groups[0]?.totalTimeout).to.eql(11);
+                expect(list.groups[0]?.disposables).to.have.length(2);
+                expect(list.groups[1]?.totalTimeout).to.eql(100);
+                expect(list.groups[1]?.disposables).to.have.length(1);
+            });
+        });
     });
 });

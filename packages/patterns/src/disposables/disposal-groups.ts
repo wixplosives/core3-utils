@@ -72,14 +72,16 @@ const withDefaults = (d?: DisposableOptions): Required<DisposableOptions> =>
  */
 export function createDisposables() {
     const groups: DisposalGroup[] = [createGroup(DEFAULT_GROUP)];
+    const constrains: GroupConstraints[] = [];
     return {
         /**
          * register a new constrained disposal group
          * @param constraints - constraints for the group must contain {before: groupName} or {after: groupName}
          */
-        registerGroup: (name: string, constraints: GroupConstraints[] | GroupConstraints) => {
-            const _constraints: GroupConstraints[] = normalizeConstraints(constraints, name, groups);
-            const { lastAfter, firstBefore } = getValidatedConstantsGroups(_constraints, groups);
+        registerGroup: (name: string, _constraints: GroupConstraints[] | GroupConstraints) => {
+            const nConstraints: GroupConstraints[] = normalizeConstraints(_constraints, name, groups);
+            const { lastAfter, firstBefore } = getValidatedConstantsGroups(nConstraints, groups);
+            constrains.push(...nConstraints);
 
             if (lastAfter > 0) {
                 groups.splice(lastAfter + 1, 0, createGroup(name));
@@ -108,6 +110,23 @@ export function createDisposables() {
             for (const { disposables } of groups) {
                 await disposables.dispose();
             }
+        },
+
+        list: () => {
+            const g = groups.map((g) => {
+                const { name } = g;
+                const disposables = g.disposables.list();
+                return {
+                    name,
+                    disposables,
+                    totalTimeout: disposables.reduce((acc, d) => acc + d.timeout, 0),
+                };
+            });
+            return {
+                constrains,
+                groups: g,
+                totalTimeout: g.reduce((acc, g) => acc + g.totalTimeout, 0),
+            };
         },
     };
 }
