@@ -1,5 +1,5 @@
-import type * as ts from 'typescript';
 import type { Predicate } from '@wixc3/common';
+import * as ts from 'typescript';
 import { compileCode } from './compile';
 import { findNode, findNodeAfterComment } from './find';
 
@@ -52,6 +52,17 @@ export function isSame(
     if (ignore(a) || ignore(b)) {
         return true;
     }
+    if (a && !a?.parent && !ts.isSourceFile(a)) {
+        throw new Error(
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+        );
+    }
+    if (b && !b?.parent && !ts.isSourceFile(b)) {
+        throw new Error(
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+        );
+    }
+
     if (a && b && a.kind === b.kind) {
         const aChildren = a.getChildren();
         const bChildren = b.getChildren();

@@ -2,9 +2,8 @@ import { isString } from '@wixc3/common';
 import { deferred } from 'promise-assist';
 import { disposeAfter } from '../dispose';
 import { adjustTestTime, mochaCtx } from '../mocha-ctx';
-import { createPollStep } from './poll';
 import { createTimeoutStep } from './with-timeout';
-import type { PollStep, Predicate, _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep } from './types';
+import type { _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep } from './types';
 import { createPromiseStep } from './no-timeout';
 import { setFirstHook, _beforeEach } from '../mocha-helpers';
 type CaptureStackFn = (s: { stack: string }) => void;
@@ -17,14 +16,17 @@ let stepsCountByTest = new WeakMap<Mocha.Test, number>();
 
 let stepsDefaults: StepsDefaults;
 const increaseStepsCount = () => {
-    const count = stepsCountByTest.get(mochaCtx()?.test as Mocha.Test) || 1;
-    stepsCountByTest.set(mochaCtx()?.test as Mocha.Test, count + 1);
+    const test = mochaCtx()?.test;
+    if (test === undefined) return 1;
+
+    const count = stepsCountByTest.get(test as Mocha.Test) ?? 1;
+    stepsCountByTest.set(test as Mocha.Test, count + 1);
     return count;
 };
 
 const getDefaults = (): StepsDefaults => ({
     step: {
-        timeout: 1000,
+        timeout: 5_000,
         safetyMargin: 50,
     },
     poll: {
@@ -61,6 +63,7 @@ const addTimeoutSafetyMargin = () => mochaCtx() && adjustTestTime(defaults().ste
  * ```ts
  * await withTimeout(sleep(1000)).description('will time out').timeout(10)
  * ```
+ * @default timeout: 5000
  * @param action a promise that should be settled before the timeout
  */
 export function withTimeout<T>(action: Promise<T>): PromiseWithTimeout<T> {
@@ -108,48 +111,6 @@ export function allWithTimeout<T extends Readonly<any[]>>(...actions: T): Promis
 }
 
 /**
- * Checks the return value of am action until it satisfies the predicate
- *
- * Error handling can be changed using allowErrors. the default behavior is:
- *
- * - When the action throws the step fails
- *
- * - When the predicate throws the polling continues
- *
- *  {@link @wixc3/testing#Expected} as helpful predicator creators.
- *
- * @example
- * ```ts
- * await poll(()=>getValue(), {a:0}).description('value matches {a:0}').timeout(100).interval(10)
- * ```
- * @example
- * ```ts
- * await poll(()=>getValue(), v => expect(v).to.be.approximately(10, 1)).description('value is 10+-1')
- * ```
- * @example
- * ```ts
- * await poll(()=>mightThrow(), {a:0}).description('value matches {a:0}').allowErrors()
- * ```
- * @param predicate predicated value (compared with expect.eql)
- * *or* a predicate function that will be considered satisfied when returning **values other than false**
- */
-export function poll<T>(action: () => T, predicate: Predicate<T> | Awaited<T>): PollStep<T> {
-    addTimeoutSafetyMargin();
-    const {
-        poll: { interval, allowActionError, allowPredicateError },
-        step: { timeout },
-    } = defaults();
-
-    const step = createPollStep(action, predicate)
-        .timeout(timeout)
-        .description(`step ${increaseStepsCount()}`)
-        .interval(interval)
-        .allowErrors(allowActionError, allowPredicateError);
-    step.stack = getStack();
-    return step;
-}
-
-/**
  * Spies on an object method, waiting until it's called.
  * The spy is removed once called
  *
@@ -167,7 +128,7 @@ export function waitForSpyCall<S extends object>(scope: S, method: keyof S | S[k
         methodName = method;
     } else {
         if (typeof method === 'function') {
-            methodName = method.name;
+            methodName = (method as () => unknown).name;
         }
     }
     if (methodName in scope) {

@@ -25,10 +25,10 @@ describe('dispose', () => {
         it('setup dispose after', () => {
             disposeAfter(() => events.push('first in default group'));
             disposeAfter(() => events.push('last in default group'));
-            disposeAfter(() => events.push('first in before'), 'before');
-            disposeAfter(() => events.push('last in before'), 'before');
-            disposeAfter(() => events.push('first in after'), 'after');
-            disposeAfter(() => events.push('last in after'), 'after');
+            disposeAfter(() => events.push('first in before'), { group: 'before' });
+            disposeAfter(() => events.push('last in before'), { group: 'before' });
+            disposeAfter(() => events.push('first in after'), { group: 'after' });
+            disposeAfter(() => events.push('last in after'), { group: 'after' });
         });
 
         it('runs the dispose functions of a group in reverse order', () => {

@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/browser",
-  "version": "7.0.0",
+  "version": "9.0.0",
   "description": "Browser only utils",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@file-services/path": "^7.2.0",
-    "@file-services/types": "^7.2.0"
+    "@file-services/path": "^7.3.0",
+    "@file-services/types": "^7.3.0"
   }
 }

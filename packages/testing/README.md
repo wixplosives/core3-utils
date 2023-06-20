@@ -17,9 +17,7 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 #### Available steps:
 
-- [poll()](https://wixplosives.github.io/core3-utils/testing.poll) until a predicate is satisfied
-
-- [withTimeout()](https://wixplosives.github.io/core3-utils/testing.withtimeout) adds timeout and description to a promise\]
+- [withTimeout()](https://wixplosives.github.io/core3-utils/testing.withtimeout) adds timeout and description to a promise
 
 - [allWithTimeout()](https://wixplosives.github.io/core3-utils/testing.allwithtimeout) time limited Promise.all
 
@@ -41,11 +39,6 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 - [locatorTimeout()](https://wixplosives.github.io/core3-utils/testing.locatortimeout) creates a locator timeout and adjust the current test
 
-## Classes
-
-| Class                                                                  | Description                                                                                 |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| [Expected](https://wixplosives.github.io/core3-utils/testing.expected) | Handy predicate creators for [poll](https://wixplosives.github.io/core3-utils/testing.poll) |
 
 ## Functions
 
@@ -59,7 +52,6 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 | [initAndDisposeAfter(target, args)](https://wixplosives.github.io/core3-utils/testing.initanddisposeafter)      | Runs target.init and disposes of it after the test is done \*                                                                                                                                                                                                                                                                                                                   |
 | [locatorTimeout(ms)](https://wixplosives.github.io/core3-utils/testing.locatortimeout)                          | Creates a playwright locator options with timeout and adjust the current test timeout accordingly                                                                                                                                                                                                                                                                               |
 | [mochaCtx()](https://wixplosives.github.io/core3-utils/testing.mochactx)                                        | Active mocha context                                                                                                                                                                                                                                                                                                                                                            |
-| [poll(action, predicate)](https://wixplosives.github.io/core3-utils/testing.poll)                               | <p>Checks the return value of am action until it satisfies the predicate</p><p>Error handling can be changed using allowErrors. the default behavior is:</p><p>- When the action throws the step fails</p><p>- When the predicate throws the polling continues</p><p>[Expected](https://wixplosives.github.io/core3-utils/testing.expected) as helpful predicator creators.</p> |
 | [randomizeTestsOrder(shouldRandomize)](https://wixplosives.github.io/core3-utils/testing.randomizetestsorder)   | <p>Randomizes tests order</p><p>To avoid confusion, it can only be set once, before the testing begins (i.e. not in a running test)</p>                                                                                                                                                                                                                                         |
 | [sleep(ms)](https://wixplosives.github.io/core3-utils/testing.sleep)                                            | Resolves after ms milliseconds                                                                                                                                                                                                                                                                                                                                                  |
 | [step(action)](https://wixplosives.github.io/core3-utils/testing.step)                                          | <p>Adds a step description to a promise if it's rejected</p><p>\* - Note: useable only within a mocha test/hook. The total test timeout will be adjusted to make sure the test will not time out waiting for this step</p>                                                                                                                                                      |
@@ -75,9 +67,6 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 | Interface                                                                                  | Description                       |
 | ------------------------------------------------------------------------------------------ | --------------------------------- |
 | [Info](https://wixplosives.github.io/core3-utils/testing.info)                             | Step info base, added step errors |
-| [PollDefaults](https://wixplosives.github.io/core3-utils/testing.polldefaults)             | Defaults for poll steps           |
-| [PollInfo](https://wixplosives.github.io/core3-utils/testing.pollinfo)                     | Info added to polling exceptions  |
-| [PollStep](https://wixplosives.github.io/core3-utils/testing.pollstep)                     | Polling API                       |
 | [PromiseStep](https://wixplosives.github.io/core3-utils/testing.promisestep)               |                                   |
 | [PromiseWithTimeout](https://wixplosives.github.io/core3-utils/testing.promisewithtimeout) | WithTimeout API                   |
 | [StepBase](https://wixplosives.github.io/core3-utils/testing.stepbase)                     | Common step props                 |
@@ -98,3 +87,51 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 | [Predicate](https://wixplosives.github.io/core3-utils/testing.predicate)     | <p>A predicate function</p><p>Any return value other than \*\*false\*\* or throwing is considered as satisfying the predicate</p> |
 | [Stub](https://wixplosives.github.io/core3-utils/testing.stub)               | A generated stub                                                                                                                  |
 | [Timeout](https://wixplosives.github.io/core3-utils/testing.timeout)         | Sets step timeout                                                                                                                 |
+
+## Chai Retry Plugin
+
+Plugin that allows to re-run function passed to `expect` until the result will pass the chained assertion or timeout exceeded or retries limit reached.
+
+### Usage
+
+```ts
+import Chai from 'chai';
+import { chaiRetryPlugin } from '@wixc3/testing';
+
+Chai.use(chaiRetryPlugin);
+```
+
+### Example
+
+Just retrying function until it passes
+
+```ts
+let count = 0;
+await expect(() => {
+  if (count < 10) throw new Error('Failed. Try again');
+  count++;
+}).retry({ retries: 15, timeout: 2000, delay: 10 });
+```
+
+Retrying function and asserting result
+
+```ts
+let count = 0;
+await expect(() => count++)
+  .retry()
+  .to.equal(4);
+```
+
+### Functions
+
+| Function                         | Description                                                                             |
+| -------------------------------- | --------------------------------------------------------------------------------------- |
+| `.retry(options?: RetryOptions)` | Retrying function passed to `expect` according to passed options and chained assertions |
+
+### Retry Options
+
+| Option    | Description                                                                      | Default    |
+| --------- | -------------------------------------------------------------------------------- | ---------- |
+| `timeout` | The maximum duration in milliseconds to wait before failing the retry operation. | `5000`     |
+| `retries` | The number of times to retry the function before failing.                        | `Infinity` |
+| `delay`   | The delay in milliseconds between retries.                                       | `0`        |

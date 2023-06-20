@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/isomorphic-fetch",
-  "version": "7.0.0",
+  "version": "9.0.0",
   "description": "isomorphic fetch, for browsers and Node.js",
   "main": "./dist/node.js",
   "browser": "./dist/cjs/browser.js",
@@ -14,7 +14,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "make-fetch-happen": "^11.0.2"
+    "make-fetch-happen": "^11.1.1"
   },
   "files": [
     "dist",

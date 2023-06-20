@@ -1,13 +1,14 @@
-import { Path, waitForPath } from '..';
+import fs from '@file-services/node';
+import { expect } from 'chai';
 import { createTestDir } from '../temp-test-dir';
 
 describe('createTestDir', () => {
-    let dir: string;
-    it('creates a temporary directory', async () => {
-        dir = createTestDir('test');
-        await waitForPath(dir, Path.isDir());
+    let dirPath: string;
+    it('creates a temporary directory', () => {
+        dirPath = createTestDir('test');
+        expect(fs.statSync(dirPath, { throwIfNoEntry: true }).isDirectory()).to.equal(true);
     });
-    it('deletes the temporary directory', async () => {
-        await waitForPath(dir, Path.notExists());
+    it('deletes the temporary directory', () => {
+        expect(fs.existsSync(dirPath)).to.equal(false);
     });
 });
