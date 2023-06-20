@@ -1,6 +1,6 @@
-import { Replacer, isGetter } from './safe-print';
+import { isGetter } from './safe-print';
 import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print';
-import type { LookupPath, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
+import type { ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher, LookupPath, Replacer } from './types';
 
 const expectValueSymb = Symbol('expect');
 const expectValuesSymb = Symbol('expect-values');
@@ -115,7 +115,7 @@ function anyToError(val: any): Error {
     const message = typeof val === 'string' ? val : 'non error thrown';
     return new Error(message);
 }
-export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
+export const checkExpectValues = (input: ErrorOrTextOrExpect, replacers: Replacer[]): ErrorOrText => {
     const values: Map<ExpectValues, Array<ExpectValuesInfo>> = new Map();
     for (const item of input) {
         if (isExpectValuesInfo(item)) {
@@ -160,9 +160,9 @@ export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
     return input.flatMap((item) => {
         if (isExpectValuesInfo(item)) {
             if (valueErrors.has(item.uniqueSymb) && valueErrors.get(item.uniqueSymb)?.has(item)) {
-                return [safePrint(item.value, 0), valueErrors.get(item.uniqueSymb)!.get(item)!];
+                return [safePrint(item.value, 0, replacers), valueErrors.get(item.uniqueSymb)!.get(item)!];
             } else {
-                return [safePrint(item.value, 0)];
+                return [safePrint(item.value, 0, replacers)];
             }
         }
         return item;
@@ -280,7 +280,7 @@ export const errorString: (
                     ','
                 );
             for (const name of allNames) {
-                const stringProp = [safePrint(actual[name], depth + 1)];
+                const stringProp = [safePrint(actual[name], depth + 1, replacers)];
                 const expectedField = expected[name];
 
                 if (isExpectValues(expectedField) && expectedField.allowUndefined && name in actual === false) {

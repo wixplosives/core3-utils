@@ -1,4 +1,4 @@
-import type { LookupPath, UnknownObjectRecord } from './types';
+import type { UnknownObjectRecord, LookupPath, Replacer } from './types';
 
 export const spaces = (indent: number) => ' '.repeat(indent * 2);
 
@@ -29,10 +29,6 @@ export const isGetter = (target: Record<string, unknown>, key: string) => {
 };
 
 // Replacer can be used to replace the value before printing
-export interface Replacer {
-    isApplicable: (value: unknown, lookupPath: LookupPath) => boolean;
-    replace: (value: unknown, lookupPath: LookupPath) => unknown;
-}
 
 export const safePrint = (
     target: unknown,

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect } from 'chai';
-import { safePrint, Replacer } from '../safe-print';
-import { LookupPath } from '../types';
+import { safePrint } from '../safe-print';
+import { LookupPath, Replacer } from '../types';
 
 describe('safe print', () => {
     describe('simple printing', () => {
@@ -90,7 +90,9 @@ describe('safe print', () => {
 
         it('should support functions', () => {
             const obj = {
-                b: function () {},
+                b: function () {
+                    //
+                },
             };
             const expectedObj = {
                 b: 'function () { }',
@@ -112,7 +114,9 @@ describe('safe print', () => {
                 },
             };
             const obj = {
-                b: function () {},
+                b: function () {
+                    //
+                },
             };
             const expectedObj = {
                 b: funcReplacement(['b']),
