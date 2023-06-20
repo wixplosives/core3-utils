@@ -1,8 +1,12 @@
 import Chai, { expect } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import { sleep } from 'promise-assist';
+
 import { chaiRetryPlugin } from '../chai-retry-plugin/chai-retry-plugin';
 
 Chai.use(chaiRetryPlugin);
+// `chai-as-promised` should be used in order to test collision between plugins
+Chai.use(chaiAsPromised);
 
 describe('chai-retry-plugin', () => {
     it('should retry a function that eventually succeeds', async () => {
@@ -68,7 +72,7 @@ describe('chai-retry-plugin', () => {
                 return 'Success';
             });
 
-            await expect(resultFunction).to.retry({ delay: 200 }).to.equal('Success');
+            await expect(resultFunction).retry({ delay: 200 }).to.equal('Success');
         });
     });
 

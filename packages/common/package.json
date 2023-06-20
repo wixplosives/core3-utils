@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/common",
-  "version": "8.1.0",
+  "version": "8.2.1",
   "description": "Common utils, usable in all environments",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -18,8 +18,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@file-services/path": "^7.2.5",
-    "@file-services/types": "^7.2.5",
+    "@file-services/path": "^7.3.0",
+    "@file-services/types": "^7.3.0",
     "promise-assist": "^2.0.1"
   }
 }

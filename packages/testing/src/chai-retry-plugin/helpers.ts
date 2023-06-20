@@ -59,7 +59,9 @@ export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryA
             }
         }
 
-        throw new Error(`Limit of ${retries} retries exceeded! ${assertionError}`);
+        if (!isTimeoutExceeded) {
+            throw new Error(`Limit of ${retries} retries exceeded! ${assertionError}`);
+        }
     };
 
     const getTimeoutError = () =>

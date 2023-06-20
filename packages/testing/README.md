@@ -17,8 +17,6 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 #### Available steps:
 
-- [poll()](https://wixplosives.github.io/core3-utils/testing.poll) until a predicate is satisfied
-
 - [withTimeout()](https://wixplosives.github.io/core3-utils/testing.withtimeout) adds timeout and description to a promise
 
 - [allWithTimeout()](https://wixplosives.github.io/core3-utils/testing.allwithtimeout) time limited Promise.all
@@ -41,11 +39,6 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 - [locatorTimeout()](https://wixplosives.github.io/core3-utils/testing.locatortimeout) creates a locator timeout and adjust the current test
 
-## Classes
-
-| Class                                                                  | Description                                                                                 |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| [Expected](https://wixplosives.github.io/core3-utils/testing.expected) | Handy predicate creators for [poll](https://wixplosives.github.io/core3-utils/testing.poll) |
 
 ## Functions
 
@@ -59,7 +52,6 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 | [initAndDisposeAfter(target, args)](https://wixplosives.github.io/core3-utils/testing.initanddisposeafter)      | Runs target.init and disposes of it after the test is done \*                                                                                                                                                                                                                                                                                                                   |
 | [locatorTimeout(ms)](https://wixplosives.github.io/core3-utils/testing.locatortimeout)                          | Creates a playwright locator options with timeout and adjust the current test timeout accordingly                                                                                                                                                                                                                                                                               |
 | [mochaCtx()](https://wixplosives.github.io/core3-utils/testing.mochactx)                                        | Active mocha context                                                                                                                                                                                                                                                                                                                                                            |
-| [poll(action, predicate)](https://wixplosives.github.io/core3-utils/testing.poll)                               | <p>Checks the return value of am action until it satisfies the predicate</p><p>Error handling can be changed using allowErrors. the default behavior is:</p><p>- When the action throws the step fails</p><p>- When the predicate throws the polling continues</p><p>[Expected](https://wixplosives.github.io/core3-utils/testing.expected) as helpful predicator creators.</p> |
 | [randomizeTestsOrder(shouldRandomize)](https://wixplosives.github.io/core3-utils/testing.randomizetestsorder)   | <p>Randomizes tests order</p><p>To avoid confusion, it can only be set once, before the testing begins (i.e. not in a running test)</p>                                                                                                                                                                                                                                         |
 | [sleep(ms)](https://wixplosives.github.io/core3-utils/testing.sleep)                                            | Resolves after ms milliseconds                                                                                                                                                                                                                                                                                                                                                  |
 | [step(action)](https://wixplosives.github.io/core3-utils/testing.step)                                          | <p>Adds a step description to a promise if it's rejected</p><p>\* - Note: useable only within a mocha test/hook. The total test timeout will be adjusted to make sure the test will not time out waiting for this step</p>                                                                                                                                                      |
@@ -75,9 +67,6 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 | Interface                                                                                  | Description                       |
 | ------------------------------------------------------------------------------------------ | --------------------------------- |
 | [Info](https://wixplosives.github.io/core3-utils/testing.info)                             | Step info base, added step errors |
-| [PollDefaults](https://wixplosives.github.io/core3-utils/testing.polldefaults)             | Defaults for poll steps           |
-| [PollInfo](https://wixplosives.github.io/core3-utils/testing.pollinfo)                     | Info added to polling exceptions  |
-| [PollStep](https://wixplosives.github.io/core3-utils/testing.pollstep)                     | Polling API                       |
 | [PromiseStep](https://wixplosives.github.io/core3-utils/testing.promisestep)               |                                   |
 | [PromiseWithTimeout](https://wixplosives.github.io/core3-utils/testing.promisewithtimeout) | WithTimeout API                   |
 | [StepBase](https://wixplosives.github.io/core3-utils/testing.stepbase)                     | Common step props                 |

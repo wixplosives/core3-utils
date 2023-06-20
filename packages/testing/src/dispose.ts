@@ -1,5 +1,10 @@
-import { createDisposables, DEFAULT_GROUP, DisposableOptions, GroupConstraints } from '@wixc3/patterns';
-import type { Disposable } from '@wixc3/patterns/src/disposables/disposable';
+import {
+    createDisposables,
+    DEFAULT_GROUP,
+    DisposableOptions,
+    type Disposable,
+    type GroupConstraints,
+} from '@wixc3/patterns';
 import { _afterEach } from './mocha-helpers';
 
 const disposables = createDisposables();
