@@ -90,7 +90,14 @@ export function createDisposables() {
             }
         },
 
-        add: (disposable: Disposable, options?: DisposableOptions) => {
+        /**
+         * @param disposable a function or object with a dispose method
+         * @param options if string, will be used as group name
+         */
+        add: (disposable: Disposable, options?: DisposableOptions | string) => {
+            if (typeof options === 'string') {
+                options = { group: options };
+            }
             const { group: groupName, name, timeout } = withDefaults(options);
             const group = groups.find((g) => g.name === groupName);
             if (!group) {
