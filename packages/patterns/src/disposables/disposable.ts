@@ -1,4 +1,4 @@
-import { find } from '@wixc3/common';
+import { filter } from '@wixc3/common';
 import { timeout } from 'promise-assist';
 
 /**
@@ -10,7 +10,7 @@ export function createSimpleDisposable() {
 }
 
 export class Disposables {
-    private disposables = new Map<string, NamedDisposable>();
+    private disposables = new Set<NamedDisposable>();
     async dispose() {
         const _disposables = Array.from(this.disposables.values()).reverse();
         this.disposables.clear();
@@ -24,24 +24,16 @@ export class Disposables {
     }
 
     add(disposable: Disposable, timeout: number, name: string) {
-        if (this.disposables.has(name)) {
-            throw new Error(`Disposable with name "${name}" already exists`);
-        }
-        this.disposables.set(name, { dispose: disposable, timeout, name });
+        this.disposables.add({ dispose: disposable, timeout, name });
     }
 
     remove(disposable: Disposable): void;
-    remove(name: string): void;
-    remove(target: string | Disposable): void {
-        const name =
-            typeof target === 'string' ? target : find(this.disposables, ([_, d]) => d.dispose === target)?.[0];
-        if (!name) {
+    remove(target: Disposable): void {
+        const oldSize = this.disposables.size;
+        this.disposables = new Set(filter(this.disposables, (d) => d.dispose !== target));
+        if (oldSize === this.disposables.size) {
             throw new Error(`Disposable not found`);
         }
-        if (!this.disposables.has(name)) {
-            throw new Error(`Disposable with name "${name}" not found`);
-        }
-        this.disposables.delete(name);
     }
 
     list() {
