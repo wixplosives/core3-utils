@@ -71,6 +71,14 @@ describe('disposables', () => {
                 );
             });
         });
+        describe('add', () => {
+            describe('with a string as options', () => {
+                const groups = createDisposables();
+                groups.registerGroup('first', { before: 'default' });
+                groups.add(() => void 0, 'first');
+                expect(groups.list().groups[0]?.disposables).to.have.length(1);
+            });
+        });
         describe('list', () => {
             it('returns the list of groups', () => {
                 const groups = createDisposables();
