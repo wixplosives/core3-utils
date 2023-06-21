@@ -6,13 +6,31 @@ import {
     type ExpectMultiMatcher,
     type LookupPath,
     type Replacer,
-    isExpectValues,
-    isExpectVal,
-    ExpectValues,
-    ExpectValue,
-    expectValueSymb,
-    expectValuesSymb,
+    MarkerSymbol,
 } from './types';
+
+export const expectValueSymb = Symbol('expect');
+export const expectValuesSymb = Symbol('expect-values');
+export interface ExpectValue<T = any> {
+    expectMethod: ExpectSingleMatcher<T>;
+    _brand: typeof expectValueSymb;
+    getMatchInfo: () => ExpandedValues<T>;
+    clear: () => void;
+}
+export interface ExpectValues<T = any> {
+    expectMethod: ExpectMultiMatcher<T>;
+    allowUndefined: boolean;
+    _brand: typeof expectValuesSymb;
+    getMatchInfo: () => ExpandedValues<T>;
+}
+export function isExpectVal(val: any): val is ExpectValue {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return !!val && val._brand === expectValueSymb;
+}
+
+export function isExpectValues(val: any): val is ExpectValues {
+    return !!val && (val as { _brand: unknown })._brand === expectValuesSymb;
+}
 
 /**
  * Used for adding field matchers to mostlyEqual
@@ -30,7 +48,7 @@ import {
  * for error printing when another matcher failed
  * @param expectMethod
  */
-export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): ExpectValue {
+export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): MarkerSymbol {
     let values: ExpandedValues<T> = [];
 
     const wrapMethod: ExpectSingleMatcher<T> = (value, fieldDefinedInParent, path) => {
@@ -46,7 +64,7 @@ export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): ExpectValu
         _brand: expectValueSymb,
         getMatchInfo: () => values,
         clear: () => (values = []),
-    };
+    } as unknown as MarkerSymbol;
 }
 
 /**
@@ -54,7 +72,7 @@ export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): ExpectValu
  * This way a matcher can compare different values
  * {@link defineUnique}
  */
-export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): ExpectValues {
+export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): MarkerSymbol {
     let values: ExpandedValues<T> = [];
     const wrapMethod: ExpectMultiMatcher<T> = (vals, valInfos) => {
         values = valInfos;
@@ -65,7 +83,7 @@ export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefi
         allowUndefined,
         _brand: expectValuesSymb,
         getMatchInfo: () => values,
-    };
+    } as unknown as MarkerSymbol;
 }
 
 export const getMatchedValues = <T>(expectValues: any) => {
