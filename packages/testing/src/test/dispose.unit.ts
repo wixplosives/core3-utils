@@ -15,6 +15,7 @@ describe('dispose', () => {
             expect(events).to.eql(['last in default group', 'second in default group', 'first in default group']);
         });
     });
+
     describe('disposeAfter with groups', () => {
         const events = [] as string[];
         before(() => {
@@ -55,7 +56,7 @@ describe('initAndDisposeAfter', () => {
             },
             dispose: () => events.push('dispose'),
         };
-        expect(await initAndDisposeAfter(initiable, 'arg')).to.eql('initialized');
+        expect(await initAndDisposeAfter(initiable, {}, 'arg')).to.eql('initialized');
     });
 
     it('disposed of the target', () => {
