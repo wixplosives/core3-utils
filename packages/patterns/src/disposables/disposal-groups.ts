@@ -3,7 +3,7 @@ import { createSimpleDisposable, Disposable } from '.';
 import { defaults } from '@wixc3/common';
 
 export const DEFAULT_GROUP = 'default';
-export const DEFAULT_TIMEOUT = 10000;
+export const DEFAULT_TIMEOUT = 1000;
 
 const createGroup = (name: string): DisposalGroup => ({
     name,
