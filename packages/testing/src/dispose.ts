@@ -17,7 +17,7 @@ export const DEFAULT_DISPOSAL_GROUP = DEFAULT_GROUP;
  * it('test', () => {
  *      const listener = () =>{}
  *      someService.on('event', listener)
- *      disposeAfter(() => someService.off('event', listener))
+ *      disposeAfter(() => someService.off('event', listener), {name: 'remove listener', timeout:100})
  * })
  * ```
  *
@@ -62,9 +62,10 @@ export function createDisposalGroup(name: string, constraints: GroupConstraints[
  */
 export async function initAndDisposeAfter<T extends (...args: any[]) => any>(
     target: { init: T } & Disposable,
+    options?: DisposableOptions,
     ...args: Parameters<T>
 ): Promise<Awaited<ReturnType<T>>> {
-    disposeAfter(target);
+    disposeAfter(target, options);
     const res = target.init(...args) as ReturnType<T>;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await Promise.resolve(res);
