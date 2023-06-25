@@ -1,25 +1,36 @@
-import JSDOM from 'jsdom-global';
 import { expect } from 'chai';
 import { safePrint } from '../safe-print';
-import { HTMLReplacer } from '../html-replacer';
+import { HTMLReplacer, PseudoElement } from '../html-replacer';
+
+class FakeElement implements PseudoElement {
+    constructor(readonly tagName = 'div') {
+        //
+    }
+
+    attributes = [] as unknown as Element['attributes'];
+    children = [] as unknown as Element['children'];
+
+    setAttribute(name: string, value: string) {
+        (this.attributes as unknown as { name: string; value: string }[]).push({ name, value });
+    }
+}
 
 describe('html replacer', () => {
-    JSDOM();
     it('should support native elements', () => {
         const obj = {
-            el: document.createElement('div'),
+            el: new FakeElement('div'),
         };
         const expectedObj = {
             el: '<div/>',
         };
 
-        const actual = safePrint(obj, 10, [HTMLReplacer]);
+        const actual = safePrint(obj, 10, [HTMLReplacer(FakeElement)]);
         expect(actual).to.equal(JSON.stringify(expectedObj, null, 2));
     });
 
     it('should support attributes', () => {
         const obj = {
-            el: document.createElement('input'),
+            el: new FakeElement('input'),
         };
         obj.el.setAttribute('id', 'a');
         obj.el.setAttribute('name', 'b');
@@ -27,20 +38,20 @@ describe('html replacer', () => {
             el: '<input id="a" name="b" />',
         };
 
-        const actual = safePrint(obj, 10, [HTMLReplacer]);
+        const actual = safePrint(obj, 10, [HTMLReplacer(FakeElement)]);
         expect(actual).to.equal(JSON.stringify(expectedObj, null, 2));
     });
 
     it('should show number of children', () => {
         const obj = {
-            el: document.createElement('p'),
+            el: new FakeElement('p'),
         };
-        obj.el.append(document.createElement('span'), document.createElement('span'));
+        obj.el.children = [new FakeElement('span'), new FakeElement('span')] as unknown as Element['children'];
         const expectedObj = {
             el: '<p>2 children</p>',
         };
 
-        const actual = safePrint(obj, 10, [HTMLReplacer]);
+        const actual = safePrint(obj, 10, [HTMLReplacer(FakeElement)]);
         expect(actual).to.equal(JSON.stringify(expectedObj, null, 2));
     });
 });
