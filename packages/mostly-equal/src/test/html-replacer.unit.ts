@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import JSDOM from 'jsdom-global';
 import { expect } from 'chai';
 import { safePrint } from '../safe-print';
 import { HTMLReplacer } from '../html-replacer';
 
 describe('html replacer', () => {
+    JSDOM();
     it('should support native elements', () => {
         const obj = {
             el: document.createElement('div'),
