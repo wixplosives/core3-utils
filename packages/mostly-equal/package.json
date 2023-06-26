@@ -18,5 +18,8 @@
   "repository": "https://github.com/wixplosives/core3-utils/tree/master/packages/mostly-equal",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@wixc3/common": "^10.0.0"
   }
 }
