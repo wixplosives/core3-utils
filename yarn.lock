@@ -55,14 +55,14 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.43.0.tgz#559ca3d9ddbd6bf907ad524320a0d14b85586af0"
   integrity sha512-s2UHCoiXfxMvmfzqoN+vrQ84ahUSYde9qNO1MdxmoEhyHWsfmwOpFlwYV+ePJEVc7gFnATGUi376WowX1N7tFg==
 
-"@file-services/memory@^7.3.0":
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/@file-services/memory/-/memory-7.3.0.tgz#315175bf57d3d066ff737c78122803732bf209e8"
-  integrity sha512-ENuYyeVdaBZ56BZGoO/gEcrSJJ86bHG63+UnbIdi6VX6u2rz/XmgVdGKLcCRPnmUeswsuGwDS3d29DFJTHCKZA==
+"@file-services/memory@^7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@file-services/memory/-/memory-7.4.0.tgz#7d58783ac72b5afab88b02ef23b89a5ffc31b66c"
+  integrity sha512-j+e0WTodbNZdGH7+9CG+iYdxMZhUoFhXi52ucpxUDH1CetTlS4kte9K1/MaBZWFaNCXpy57Mk91mZkfMrWk+HQ==
   dependencies:
-    "@file-services/path" "^7.3.0"
-    "@file-services/types" "^7.3.0"
-    "@file-services/utils" "^7.3.0"
+    "@file-services/path" "^7.4.0"
+    "@file-services/types" "^7.4.0"
+    "@file-services/utils" "^7.4.0"
 
 "@file-services/node@^7.3.0":
   version "7.3.0"
@@ -72,24 +72,24 @@
     "@file-services/types" "^7.3.0"
     "@file-services/utils" "^7.3.0"
 
-"@file-services/path@^7.3.0":
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/@file-services/path/-/path-7.3.0.tgz#1ca6d0d0e4ad5e6be7a0b9e99b8f499d413b6da4"
-  integrity sha512-7ZqVaRJJyUD9S/F36SOvTZf1sMr8+eyX0Lr5iU88mpNsJ2qTjR5gWHFBwxaMqfzMz+so6DJmQNjLzdSmfXUbrw==
+"@file-services/path@^7.3.0", "@file-services/path@^7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@file-services/path/-/path-7.4.0.tgz#c60e8605072414110617743832e05ae0b49880f4"
+  integrity sha512-p4GMRlaTMLS3QXGCkIvCnR/Mq1K8k7PV1KbXzDN/c0SksRiHbuC3AYUNKx/y6AayJfsJ2zsFqbRYgQ6gU1BRIg==
   dependencies:
-    "@file-services/types" "^7.3.0"
+    "@file-services/types" "^7.4.0"
 
-"@file-services/types@^7.3.0":
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/@file-services/types/-/types-7.3.0.tgz#ccfe1b2877bc6d13a3bfe1c26d37eecb693c12e9"
-  integrity sha512-XbOMmRSA2VkFofJBC8EMWrkNnpnOIOuSMvvTYGgg3tBQwr5Bihtrgy7/c5u+Gteq1R/yWapHXBSQ3u0moKZyWQ==
+"@file-services/types@^7.3.0", "@file-services/types@^7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@file-services/types/-/types-7.4.0.tgz#ec99b51f8cf39c839058fd5d045aaf5dd87b6ed9"
+  integrity sha512-KZue4o5MRAdpgjTjZU8uC4MRPBHCcxzfcT0cBVwqgEi/8OwCkjBuBm3sdJLVd/AdpZGoh/N4IrSXAgzpxrbjvQ==
 
-"@file-services/utils@^7.3.0":
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/@file-services/utils/-/utils-7.3.0.tgz#6ef04972245d83dc562213000ea810800777df0d"
-  integrity sha512-TwPXinfYKy5L8xbQN7NBpgxCTqCXXc7IykWxWAR68fKWOA4FEzN3O2LqME+27JXMmQPoG6AnYnLXPaMj9K+Dgg==
+"@file-services/utils@^7.3.0", "@file-services/utils@^7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@file-services/utils/-/utils-7.4.0.tgz#3662cb76cdfcc2cfa970a269d429cb59500ea46b"
+  integrity sha512-XzM0vOIJDlLtpzGLytAig2SmYAS69zn6NrC1dlzvuQELhrMuB2JPY9zHesV/VreczxENCtRU88LKo5x0MTZ2ZA==
   dependencies:
-    "@file-services/types" "^7.3.0"
+    "@file-services/types" "^7.4.0"
 
 "@humanwhocodes/config-array@^0.11.10":
   version "0.11.10"
