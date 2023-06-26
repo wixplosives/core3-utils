@@ -19,7 +19,7 @@ export const setGlobalOptions = (maxDepth: number, formatters?: Formatter[]) => 
     globalOptions.formatters = formatters;
 };
 
-export const setOptionsForSuite = (
+export const setSuiteOptions = (
     before: (msg: string, cb: () => void) => void,
     after: (msg: string, cb: () => void) => void,
     options: MostlyEqualOptions
