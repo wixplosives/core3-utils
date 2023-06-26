@@ -5,7 +5,7 @@ import {
     type ExpandedValues,
     type ExpectMultiMatcher,
     type LookupPath,
-    type Formater,
+    type Formatter,
     MarkerSymbol,
 } from './types';
 
@@ -122,7 +122,7 @@ function anyToError(val: any): Error {
     const message = typeof val === 'string' ? val : 'non error thrown';
     return new Error(message);
 }
-export const checkExpectValues = (input: ErrorOrTextOrExpect, formatters: Formater[]): ErrorOrText => {
+export const checkExpectValues = (input: ErrorOrTextOrExpect, formatters: Formatter[]): ErrorOrText => {
     const values: Map<ExpectValues, Array<ExpectValuesInfo>> = new Map();
     for (const item of input) {
         if (isExpectValuesInfo(item)) {
@@ -180,7 +180,7 @@ const tryExpectVal = (
     expected: ExpectValue<any>,
     actual: any,
     maxDepth: number,
-    formatters: Formater[],
+    formatters: Formatter[],
     depth: number,
     path: LookupPath,
     passedMap: Map<any, LookupPath>,
@@ -203,7 +203,7 @@ export const errorString: (
     expected: unknown,
     actual: unknown,
     maxDepth: number,
-    formatters: Formater[],
+    formatters: Formatter[],
     depth: number,
     path: LookupPath,
     passedMap: Map<unknown, LookupPath>,

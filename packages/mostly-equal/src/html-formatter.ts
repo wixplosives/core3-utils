@@ -1,4 +1,4 @@
-import { Formater } from './types';
+import { Formatter } from './types';
 import { map } from '@wixc3/common';
 
 export interface PseudoElement {
@@ -11,7 +11,7 @@ export type PseudoElementConstructor = {
     new (): PseudoElement | Element;
 };
 
-export const HTMLFormater = (Element: PseudoElementConstructor = globalThis.Element): Formater => ({
+export const HTMLFormatter = (Element: PseudoElementConstructor = globalThis.Element): Formatter => ({
     isApplicable(value) {
         return value instanceof Element;
     },

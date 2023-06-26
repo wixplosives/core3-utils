@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { safePrint } from '../safe-print';
-import { HTMLFormater, PseudoElement } from '../html-formatter';
+import { HTMLFormatter, PseudoElement } from '../html-formatter';
 
 class FakeElement implements PseudoElement {
     constructor(readonly tagName = 'div') {
@@ -15,7 +15,7 @@ class FakeElement implements PseudoElement {
     }
 }
 
-describe('html formater', () => {
+describe('html formatter', () => {
     it('should support native elements', () => {
         const obj = {
             el: new FakeElement('div'),
@@ -24,7 +24,7 @@ describe('html formater', () => {
             el: '<div/>',
         };
 
-        const actual = safePrint(obj, 10, [HTMLFormater(FakeElement)]);
+        const actual = safePrint(obj, 10, [HTMLFormatter(FakeElement)]);
         expect(actual).to.equal(JSON.stringify(expectedObj, null, 2));
     });
 
@@ -38,7 +38,7 @@ describe('html formater', () => {
             el: '<input id="a" name="b" />',
         };
 
-        const actual = safePrint(obj, 10, [HTMLFormater(FakeElement)]);
+        const actual = safePrint(obj, 10, [HTMLFormatter(FakeElement)]);
         expect(actual).to.equal(JSON.stringify(expectedObj, null, 2));
     });
 
@@ -51,7 +51,7 @@ describe('html formater', () => {
             el: '<p>2 children</p>',
         };
 
-        const actual = safePrint(obj, 10, [HTMLFormater(FakeElement)]);
+        const actual = safePrint(obj, 10, [HTMLFormatter(FakeElement)]);
         expect(actual).to.equal(JSON.stringify(expectedObj, null, 2));
     });
 });

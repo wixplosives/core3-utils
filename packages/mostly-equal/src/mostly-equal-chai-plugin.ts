@@ -1,12 +1,12 @@
 /// <reference types="chai" />
 
-import { Formater } from './types';
+import { Formatter } from './types';
 import { checkExpectValues, errorString } from './mostly-equal';
 import { safePrint } from './safe-print';
 
 export interface MostlyEqualOptions {
     maxDepth?: number;
-    formatters?: Formater[];
+    formatters?: Formatter[];
 }
 
 const globalOptions: MostlyEqualOptions = {
@@ -14,7 +14,7 @@ const globalOptions: MostlyEqualOptions = {
     formatters: [],
 };
 
-export const setGlobalOptions = (maxDepth: number, formatters?: Formater[]) => {
+export const setGlobalOptions = (maxDepth: number, formatters?: Formatter[]) => {
     globalOptions.maxDepth = maxDepth;
     globalOptions.formatters = formatters;
 };

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-export interface Formater {
+export interface Formatter {
     isApplicable: (value: unknown, lookupPath: LookupPath) => boolean;
     format: (value: unknown, lookupPath: LookupPath) => unknown;
 }

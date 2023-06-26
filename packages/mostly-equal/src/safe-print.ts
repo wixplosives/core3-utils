@@ -1,4 +1,4 @@
-import type { UnknownObjectRecord, LookupPath, Formater } from './types';
+import type { UnknownObjectRecord, LookupPath, Formatter } from './types';
 
 export const spaces = (indent: number) => ' '.repeat(indent * 2);
 
@@ -33,7 +33,7 @@ export const isGetter = (target: Record<string, unknown>, key: string) => {
 export const safePrint = (
     target: unknown,
     maxDepth = 10,
-    formatters: Formater[] = [],
+    formatters: Formatter[] = [],
     depth = 0,
     passedMap = new Map<unknown, LookupPath>(),
     passedSet = new Set<unknown>(),
@@ -42,9 +42,9 @@ export const safePrint = (
     if (passedSet.has(target)) {
         return JSON.stringify(`circular data removed, path: ${printPath(path)}`);
     }
-    const formater = formatters.find((r) => r.isApplicable(target, path));
-    if (formater) {
-        return JSON.stringify(formater.format(target, path));
+    const formatter = formatters.find((r) => r.isApplicable(target, path));
+    if (formatter) {
+        return JSON.stringify(formatter.format(target, path));
     }
     if (Array.isArray(target)) {
         if (depth >= maxDepth) {
