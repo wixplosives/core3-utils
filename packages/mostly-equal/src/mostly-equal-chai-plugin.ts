@@ -6,17 +6,17 @@ import { safePrint } from './safe-print';
 
 export interface MostlyEqualOptions {
     maxDepth?: number;
-    formaters?: Formater[];
+    formatters?: Formater[];
 }
 
 const globalOptions: MostlyEqualOptions = {
     maxDepth: 10,
-    formaters: [],
+    formatters: [],
 };
 
-export const setGlobalOptions = (maxDepth: number, formaters?: Formater[]) => {
+export const setGlobalOptions = (maxDepth: number, formatters?: Formater[]) => {
     globalOptions.maxDepth = maxDepth;
-    globalOptions.formaters = formaters;
+    globalOptions.formatters = formatters;
 };
 
 export const setOptionsForSuite = (
@@ -26,10 +26,10 @@ export const setOptionsForSuite = (
 ) => {
     before('setting mostly equal global options', () => {
         const depthBefore = globalOptions.maxDepth;
-        const formatersBefore = globalOptions.formaters;
-        setGlobalOptions(options.maxDepth || depthBefore || 10, options.formaters);
+        const formattersBefore = globalOptions.formatters;
+        setGlobalOptions(options.maxDepth || depthBefore || 10, options.formatters);
         after('clearing mostly equal global options', () => {
-            setGlobalOptions(depthBefore || 10, formatersBefore);
+            setGlobalOptions(depthBefore || 10, formattersBefore);
         });
     });
 };
@@ -37,10 +37,10 @@ export const setOptionsForSuite = (
 export const mostlyEqlChaiPlugin: Chai.ChaiPlugin = (c) => {
     c.Assertion.addMethod('mostlyEqual', function (this, expected, options) {
         const maxDepth = (options as MostlyEqualOptions)?.maxDepth || globalOptions.maxDepth || 10;
-        const formaters = (options as MostlyEqualOptions)?.formaters || globalOptions.formaters || [];
+        const formatters = (options as MostlyEqualOptions)?.formatters || globalOptions.formatters || [];
         const res = checkExpectValues(
-            errorString(expected, this._obj, maxDepth, formaters, 0, [], new Map(), new Set()),
-            formaters
+            errorString(expected, this._obj, maxDepth, formatters, 0, [], new Map(), new Set()),
+            formatters
         );
         let error = false;
         const message = res.map((item) => {

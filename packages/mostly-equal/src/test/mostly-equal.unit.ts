@@ -293,7 +293,7 @@ describe('mostly equal', () => {
 
     describe('global options', () => {
         setOptionsForSuite(beforeEach, afterEach, {
-            formaters: [
+            formatters: [
                 {
                     isApplicable(value) {
                         return typeof value === 'string';

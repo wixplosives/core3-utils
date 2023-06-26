@@ -28,12 +28,12 @@ export const isGetter = (target: Record<string, unknown>, key: string) => {
     return !!desc && !!desc.get;
 };
 
-// Formaters can be used to replace the value before printing
+// Formatters can be used to replace the value before printing
 
 export const safePrint = (
     target: unknown,
     maxDepth = 10,
-    formaters: Formater[] = [],
+    formatters: Formater[] = [],
     depth = 0,
     passedMap = new Map<unknown, LookupPath>(),
     passedSet = new Set<unknown>(),
@@ -42,7 +42,7 @@ export const safePrint = (
     if (passedSet.has(target)) {
         return JSON.stringify(`circular data removed, path: ${printPath(path)}`);
     }
-    const formater = formaters.find((r) => r.isApplicable(target, path));
+    const formater = formatters.find((r) => r.isApplicable(target, path));
     if (formater) {
         return JSON.stringify(formater.format(target, path));
     }
@@ -56,7 +56,7 @@ export const safePrint = (
 
         const childSet = registerChildSet(target, path, passedMap, passedSet);
         const arrContent = target.map((item, idx) => {
-            return safePrint(item, maxDepth, formaters, depth + 1, passedMap, childSet, [...path, idx]);
+            return safePrint(item, maxDepth, formatters, depth + 1, passedMap, childSet, [...path, idx]);
         });
         return `[\n${spaces(depth + 1)}${arrContent.join(`,\n${spaces(depth + 1)}`)}\n${spaces(depth)}]`;
     }
@@ -79,7 +79,7 @@ export const safePrint = (
                 return `\n${spaces(depth + 1)}"${key}": ${safePrint(
                     target[key],
                     maxDepth,
-                    formaters,
+                    formatters,
                     depth + 1,
                     passedMap,
                     childSet,

@@ -122,7 +122,7 @@ function anyToError(val: any): Error {
     const message = typeof val === 'string' ? val : 'non error thrown';
     return new Error(message);
 }
-export const checkExpectValues = (input: ErrorOrTextOrExpect, formaters: Formater[]): ErrorOrText => {
+export const checkExpectValues = (input: ErrorOrTextOrExpect, formatters: Formater[]): ErrorOrText => {
     const values: Map<ExpectValues, Array<ExpectValuesInfo>> = new Map();
     for (const item of input) {
         if (isExpectValuesInfo(item)) {
@@ -167,9 +167,9 @@ export const checkExpectValues = (input: ErrorOrTextOrExpect, formaters: Formate
     return input.flatMap((item) => {
         if (isExpectValuesInfo(item)) {
             if (valueErrors.has(item.uniqueSymb) && valueErrors.get(item.uniqueSymb)?.has(item)) {
-                return [safePrint(item.value, 0, formaters), valueErrors.get(item.uniqueSymb)!.get(item)!];
+                return [safePrint(item.value, 0, formatters), valueErrors.get(item.uniqueSymb)!.get(item)!];
             } else {
-                return [safePrint(item.value, 0, formaters)];
+                return [safePrint(item.value, 0, formatters)];
             }
         }
         return item;
@@ -180,7 +180,7 @@ const tryExpectVal = (
     expected: ExpectValue<any>,
     actual: any,
     maxDepth: number,
-    formaters: Formater[],
+    formatters: Formater[],
     depth: number,
     path: LookupPath,
     passedMap: Map<any, LookupPath>,
@@ -191,26 +191,26 @@ const tryExpectVal = (
     try {
         matcherRes = expected.expectMethod(actual, existsInParent, path);
     } catch (err) {
-        return [safePrint(actual, maxDepth, formaters, depth, passedMap, passedSet, path), anyToError(err)];
+        return [safePrint(actual, maxDepth, formatters, depth, passedMap, passedSet, path), anyToError(err)];
     }
     if (matcherRes !== undefined && matcherRes !== null) {
         return [matcherRes.toString()];
     }
-    return [safePrint(actual, maxDepth, formaters, depth, passedMap, passedSet, path)];
+    return [safePrint(actual, maxDepth, formatters, depth, passedMap, passedSet, path)];
 };
 
 export const errorString: (
     expected: unknown,
     actual: unknown,
     maxDepth: number,
-    formaters: Formater[],
+    formatters: Formater[],
     depth: number,
     path: LookupPath,
     passedMap: Map<unknown, LookupPath>,
     passedSet: Set<unknown>
-) => ErrorOrTextOrExpect = (expected, actual, maxDepth, formaters, depth, path, passedMap, passedSet) => {
+) => ErrorOrTextOrExpect = (expected, actual, maxDepth, formatters, depth, path, passedMap, passedSet) => {
     if (isExpectVal(expected)) {
-        return tryExpectVal(expected, actual, maxDepth, formaters, depth, path, passedMap, passedSet, true);
+        return tryExpectVal(expected, actual, maxDepth, formatters, depth, path, passedMap, passedSet, true);
     }
 
     if (isExpectValues(expected)) {
@@ -225,14 +225,14 @@ export const errorString: (
     }
 
     if (expected === actual) {
-        return [safePrint(actual, maxDepth, formaters, depth, passedMap, passedSet, path)];
+        return [safePrint(actual, maxDepth, formatters, depth, passedMap, passedSet, path)];
     }
     if (Array.isArray(expected)) {
         if (Array.isArray(actual)) {
             if (actual.length !== expected.length) {
                 return [
                     anyToError(`expected length ${expected.length} but got ${actual.length}`),
-                    safePrint(actual, maxDepth, formaters, depth, passedMap, passedSet, path),
+                    safePrint(actual, maxDepth, formatters, depth, passedMap, passedSet, path),
                 ];
             }
 
@@ -244,7 +244,7 @@ export const errorString: (
                         expected[i],
                         actual[i],
                         maxDepth,
-                        formaters,
+                        formatters,
                         depth + 1,
                         [...path, i],
                         passedMap,
@@ -261,14 +261,14 @@ export const errorString: (
                     `expected ${safePrint(
                         expected,
                         maxDepth,
-                        formaters,
+                        formatters,
                         0,
                         passedMap,
                         passedSet,
                         path
-                    )} but got ${safePrint(actual, maxDepth, formaters, 0, passedMap, passedSet, path)}`
+                    )} but got ${safePrint(actual, maxDepth, formatters, 0, passedMap, passedSet, path)}`
                 ),
-                safePrint(actual, maxDepth, formaters, depth),
+                safePrint(actual, maxDepth, formatters, depth),
             ];
         }
     }
@@ -287,7 +287,7 @@ export const errorString: (
                     ','
                 );
             for (const name of allNames) {
-                const stringProp = [safePrint(actual[name], depth + 1, formaters)];
+                const stringProp = [safePrint(actual[name], depth + 1, formatters)];
                 const expectedField = expected[name];
 
                 if (isExpectValues(expectedField) && expectedField.allowUndefined && name in actual === false) {
@@ -304,7 +304,7 @@ export const errorString: (
                         expectedField,
                         undefined,
                         maxDepth,
-                        formaters,
+                        formatters,
                         depth + 1,
                         path,
                         passedMap,
@@ -324,7 +324,7 @@ export const errorString: (
                                 expected[name],
                                 actual[name],
                                 maxDepth,
-                                formaters,
+                                formatters,
                                 depth + 1,
                                 [...path, name],
                                 passedMap,
@@ -340,12 +340,12 @@ export const errorString: (
     }
 
     return [
-        safePrint(actual, maxDepth, formaters, depth),
+        safePrint(actual, maxDepth, formatters, depth),
         anyToError(
-            `expected ${safePrint(expected, maxDepth, formaters, 0)} but got ${safePrint(
+            `expected ${safePrint(expected, maxDepth, formatters, 0)} but got ${safePrint(
                 actual,
                 maxDepth,
-                formaters,
+                formatters,
                 0
             )}`
         ),
