@@ -1,35 +1,35 @@
 /// <reference types="chai" />
 
-import { Replacer } from './types';
+import { Formater } from './types';
 import { checkExpectValues, errorString } from './mostly-equal';
 import { safePrint } from './safe-print';
 
 export interface MostlyEqualOptions {
     maxDepth?: number;
-    replacers?: Replacer[];
+    formaters?: Formater[];
 }
 
 const globalOptions: MostlyEqualOptions = {
     maxDepth: 10,
-    replacers: [],
+    formaters: [],
 };
 
-export const setGlobalOptions = (maxDepth: number, replacers?: Replacer[]) => {
+export const setGlobalOptions = (maxDepth: number, formaters?: Formater[]) => {
     globalOptions.maxDepth = maxDepth;
-    globalOptions.replacers = replacers;
+    globalOptions.formaters = formaters;
 };
 
-export const tempSetGlobalOptions = (
+export const setOptionsForSuite = (
     before: (msg: string, cb: () => void) => void,
     after: (msg: string, cb: () => void) => void,
     options: MostlyEqualOptions
 ) => {
     before('setting mostly equal global options', () => {
         const depthBefore = globalOptions.maxDepth;
-        const replacersBefore = globalOptions.replacers;
-        setGlobalOptions(options.maxDepth || depthBefore || 10, options.replacers);
+        const formatersBefore = globalOptions.formaters;
+        setGlobalOptions(options.maxDepth || depthBefore || 10, options.formaters);
         after('clearing mostly equal global options', () => {
-            setGlobalOptions(depthBefore || 10, replacersBefore);
+            setGlobalOptions(depthBefore || 10, formatersBefore);
         });
     });
 };
@@ -37,10 +37,10 @@ export const tempSetGlobalOptions = (
 export const mostlyEqlChaiPlugin: Chai.ChaiPlugin = (c) => {
     c.Assertion.addMethod('mostlyEqual', function (this, expected, options) {
         const maxDepth = (options as MostlyEqualOptions)?.maxDepth || globalOptions.maxDepth || 10;
-        const replacers = (options as MostlyEqualOptions)?.replacers || globalOptions.replacers || [];
+        const formaters = (options as MostlyEqualOptions)?.formaters || globalOptions.formaters || [];
         const res = checkExpectValues(
-            errorString(expected, this._obj, maxDepth, replacers, 0, [], new Map(), new Set()),
-            replacers
+            errorString(expected, this._obj, maxDepth, formaters, 0, [], new Map(), new Set()),
+            formaters
         );
         let error = false;
         const message = res.map((item) => {

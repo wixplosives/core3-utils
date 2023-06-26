@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-export interface Replacer {
+export interface Formater {
     isApplicable: (value: unknown, lookupPath: LookupPath) => boolean;
-    replace: (value: unknown, lookupPath: LookupPath) => unknown;
+    format: (value: unknown, lookupPath: LookupPath) => unknown;
 }
 export type LookupPath = Array<string | number>;
 

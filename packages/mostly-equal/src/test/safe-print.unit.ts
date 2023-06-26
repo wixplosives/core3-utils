@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect } from 'chai';
 import { safePrint } from '../safe-print';
-import { LookupPath, Replacer } from '../types';
+import { LookupPath, Formater } from '../types';
 
 describe('safe print', () => {
     describe('simple printing', () => {
@@ -105,11 +105,11 @@ describe('safe print', () => {
             const funcReplacement = (lookupPath: LookupPath) => {
                 return 'Function found at ' + lookupPath.toString();
             };
-            const functionPrinter: Replacer = {
+            const functionPrinter: Formater = {
                 isApplicable(value) {
                     return typeof value === 'function';
                 },
-                replace(value, lookupPath) {
+                format(value, lookupPath) {
                     return funcReplacement(lookupPath);
                 },
             };

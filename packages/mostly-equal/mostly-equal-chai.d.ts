@@ -1,5 +1,5 @@
 declare namespace Chai {
-    interface Replacer {
+    interface Formatter {
         isApplicable: (value: unknown, lookupPath: LookupPath) => boolean;
         replace: (value: unknown, lookupPath: LookupPath) => unknown;
     }
@@ -7,7 +7,7 @@ declare namespace Chai {
 
     interface MostlyEqualOptions {
         maxDepth?: number;
-        replacers?: Replacer[];
+        formatters?: Formatter[];
     }
     export interface Assertion {
         mostlyEqual(expected: unknown, options?: MostlyEqualOptions): void;

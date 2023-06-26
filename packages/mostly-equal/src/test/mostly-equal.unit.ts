@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import chai, { expect } from 'chai';
-import { expectValue, expectValues, mostlyEqlChaiPlugin, tempSetGlobalOptions } from '../index';
+import { expectValue, expectValues, mostlyEqlChaiPlugin, setOptionsForSuite } from '../index';
 import { clearMatchedValues, getMatchedValues } from '../mostly-equal';
 import type { ExpandedValues } from '../types';
 
@@ -292,13 +292,13 @@ describe('mostly equal', () => {
     });
 
     describe('global options', () => {
-        tempSetGlobalOptions(beforeEach, afterEach, {
-            replacers: [
+        setOptionsForSuite(beforeEach, afterEach, {
+            formaters: [
                 {
                     isApplicable(value) {
                         return typeof value === 'string';
                     },
-                    replace(value) {
+                    format(value) {
                         return (value as string).split('').reverse().join('');
                     },
                 },
@@ -306,21 +306,7 @@ describe('mostly equal', () => {
         });
         it('should allow setting global options', () => {
             expect(() => {
-                expect({ a: 'a', c: 'abc' }).to.mostlyEqual(
-                    {},
-                    {
-                        replacers: [
-                            {
-                                isApplicable(value) {
-                                    return typeof value === 'string';
-                                },
-                                replace(value) {
-                                    return (value as string).split('').reverse().join('');
-                                },
-                            },
-                        ],
-                    }
-                );
+                expect({ a: 'a', c: 'abc' }).to.mostlyEqual({});
             }).to.throw('cba');
         });
     });

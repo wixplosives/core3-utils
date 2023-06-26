@@ -20,5 +20,5 @@ export * from './mostly-equal';
 export * from './mostly-equal-chai-plugin';
 export * from './mostly-equal-matchers';
 export * from './safe-print';
-export * from './html-replacer';
+export * from './html-formater';
 export * from './types';

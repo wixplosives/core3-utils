@@ -1,4 +1,4 @@
-import type { UnknownObjectRecord, LookupPath, Replacer } from './types';
+import type { UnknownObjectRecord, LookupPath, Formater } from './types';
 
 export const spaces = (indent: number) => ' '.repeat(indent * 2);
 
@@ -28,12 +28,12 @@ export const isGetter = (target: Record<string, unknown>, key: string) => {
     return !!desc && !!desc.get;
 };
 
-// Replacer can be used to replace the value before printing
+// Formaters can be used to replace the value before printing
 
 export const safePrint = (
     target: unknown,
     maxDepth = 10,
-    replacers: Replacer[] = [],
+    formaters: Formater[] = [],
     depth = 0,
     passedMap = new Map<unknown, LookupPath>(),
     passedSet = new Set<unknown>(),
@@ -42,9 +42,9 @@ export const safePrint = (
     if (passedSet.has(target)) {
         return JSON.stringify(`circular data removed, path: ${printPath(path)}`);
     }
-    const replacer = replacers.find((r) => r.isApplicable(target, path));
-    if (replacer) {
-        return JSON.stringify(replacer.replace(target, path));
+    const formater = formaters.find((r) => r.isApplicable(target, path));
+    if (formater) {
+        return JSON.stringify(formater.format(target, path));
     }
     if (Array.isArray(target)) {
         if (depth >= maxDepth) {
@@ -56,7 +56,7 @@ export const safePrint = (
 
         const childSet = registerChildSet(target, path, passedMap, passedSet);
         const arrContent = target.map((item, idx) => {
-            return safePrint(item, maxDepth, replacers, depth + 1, passedMap, childSet, [...path, idx]);
+            return safePrint(item, maxDepth, formaters, depth + 1, passedMap, childSet, [...path, idx]);
         });
         return `[\n${spaces(depth + 1)}${arrContent.join(`,\n${spaces(depth + 1)}`)}\n${spaces(depth)}]`;
     }
@@ -79,7 +79,7 @@ export const safePrint = (
                 return `\n${spaces(depth + 1)}"${key}": ${safePrint(
                     target[key],
                     maxDepth,
-                    replacers,
+                    formaters,
                     depth + 1,
                     passedMap,
                     childSet,

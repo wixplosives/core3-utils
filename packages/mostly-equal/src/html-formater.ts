@@ -1,4 +1,4 @@
-import { Replacer } from './types';
+import { Formater } from './types';
 import { map } from '@wixc3/common';
 
 export interface PseudoElement {
@@ -11,11 +11,11 @@ export type PseudoElementConstructor = {
     new (): PseudoElement | Element;
 };
 
-export const HTMLReplacer = (Element: PseudoElementConstructor = globalThis.Element): Replacer => ({
+export const HTMLFormater = (Element: PseudoElementConstructor = globalThis.Element): Formater => ({
     isApplicable(value) {
         return value instanceof Element;
     },
-    replace(value) {
+    format(value) {
         const el = value as PseudoElement;
         const attrs = [...map(el.attributes, (attr) => `${attr?.name}="${attr?.value}"`)].join(' ');
         const attrString = attrs ? ' ' + attrs + ' ' : '';
