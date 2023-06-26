@@ -64,13 +64,13 @@
     "@file-services/types" "^7.3.0"
     "@file-services/utils" "^7.3.0"
 
-"@file-services/node@^7.3.0":
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/@file-services/node/-/node-7.3.0.tgz#717cea161302edc889723551b7dfbabb67ed68c2"
-  integrity sha512-mF6srRnqO/kqFEn/hmw26af4WHdygBPEa6WvTMM7eUCKhZdKWaFSXb+DJVh8c8K0A4mfNh6zUZEG+c93Onhfxw==
+"@file-services/node@^7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@file-services/node/-/node-7.4.0.tgz#549f96dbb7d4bc998a09212e5bc5cfd9a40b664a"
+  integrity sha512-eajJJV4sg8HTD5/8tz3u599vqcJp1w9nTEsrRnT/xKG38dToG481SacOBrJpMlcoNSygh0pHfj+gxkcQzyXRTQ==
   dependencies:
-    "@file-services/types" "^7.3.0"
-    "@file-services/utils" "^7.3.0"
+    "@file-services/types" "^7.4.0"
+    "@file-services/utils" "^7.4.0"
 
 "@file-services/path@^7.3.0":
   version "7.3.0"
@@ -79,17 +79,17 @@
   dependencies:
     "@file-services/types" "^7.3.0"
 
-"@file-services/types@^7.3.0":
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/@file-services/types/-/types-7.3.0.tgz#ccfe1b2877bc6d13a3bfe1c26d37eecb693c12e9"
-  integrity sha512-XbOMmRSA2VkFofJBC8EMWrkNnpnOIOuSMvvTYGgg3tBQwr5Bihtrgy7/c5u+Gteq1R/yWapHXBSQ3u0moKZyWQ==
+"@file-services/types@^7.3.0", "@file-services/types@^7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@file-services/types/-/types-7.4.0.tgz#ec99b51f8cf39c839058fd5d045aaf5dd87b6ed9"
+  integrity sha512-KZue4o5MRAdpgjTjZU8uC4MRPBHCcxzfcT0cBVwqgEi/8OwCkjBuBm3sdJLVd/AdpZGoh/N4IrSXAgzpxrbjvQ==
 
-"@file-services/utils@^7.3.0":
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/@file-services/utils/-/utils-7.3.0.tgz#6ef04972245d83dc562213000ea810800777df0d"
-  integrity sha512-TwPXinfYKy5L8xbQN7NBpgxCTqCXXc7IykWxWAR68fKWOA4FEzN3O2LqME+27JXMmQPoG6AnYnLXPaMj9K+Dgg==
+"@file-services/utils@^7.3.0", "@file-services/utils@^7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@file-services/utils/-/utils-7.4.0.tgz#3662cb76cdfcc2cfa970a269d429cb59500ea46b"
+  integrity sha512-XzM0vOIJDlLtpzGLytAig2SmYAS69zn6NrC1dlzvuQELhrMuB2JPY9zHesV/VreczxENCtRU88LKo5x0MTZ2ZA==
   dependencies:
-    "@file-services/types" "^7.3.0"
+    "@file-services/types" "^7.4.0"
 
 "@humanwhocodes/config-array@^0.11.10":
   version "0.11.10"
