@@ -1,7 +1,7 @@
 declare namespace Chai {
     interface Formatter {
         isApplicable: (value: unknown, lookupPath: LookupPath) => boolean;
-        replace: (value: unknown, lookupPath: LookupPath) => unknown;
+        format: (value: unknown, lookupPath: LookupPath) => unknown;
     }
     type LookupPath = Array<string | number>;
 

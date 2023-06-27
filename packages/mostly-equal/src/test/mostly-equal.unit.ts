@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import chai, { expect } from 'chai';
-import { expectValue, expectValues, mostlyEqlChaiPlugin, setSuiteOptions } from '../index';
+import { expectValue, expectValues, mostlyEqlChaiPlugin, setOptionsForSuite } from '../index';
 import { clearMatchedValues, getMatchedValues } from '../mostly-equal';
-import type { ExpandedValues } from '../types';
+import type { ExpandedValues, Formatter } from '../types';
 
 chai.use(mostlyEqlChaiPlugin);
 
@@ -291,23 +291,41 @@ describe('mostly equal', () => {
         });
     });
 
-    describe('suite options', () => {
-        setSuiteOptions(beforeEach, afterEach, {
-            formatters: [
-                {
-                    isApplicable(value) {
-                        return typeof value === 'string';
-                    },
-                    format(value) {
-                        return (value as string).split('').reverse().join('');
-                    },
-                },
-            ],
+    describe('setting options', () => {
+        const reversedFormatter: Formatter = {
+            isApplicable(value: unknown) {
+                return typeof value === 'string';
+            },
+            format(value: unknown) {
+                return (value as string).split('').reverse().join('');
+            },
+        };
+        describe('setting options for one spec', () => {
+            it('should allow setting options for one spec', () => {
+                expect(() => {
+                    expect({ a: 'a', c: 'abc' }).to.mostlyEqual(
+                        {},
+                        {
+                            formatters: [reversedFormatter],
+                        }
+                    );
+                }).to.throw('cba');
+            });
         });
-        it('should allow setting global options', () => {
+        describe('setting options for suite', () => {
+            setOptionsForSuite(beforeEach, afterEach, {
+                formatters: [reversedFormatter],
+            });
+            it('should allow setting options for suite', () => {
+                expect(() => {
+                    expect({ a: 'a', c: 'abc' }).to.mostlyEqual({});
+                }).to.throw('cba');
+            });
+        });
+        it('options should clear after suite', () => {
             expect(() => {
                 expect({ a: 'a', c: 'abc' }).to.mostlyEqual({});
-            }).to.throw('cba');
+            }).to.throw('abc');
         });
     });
 });
