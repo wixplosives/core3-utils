@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/docs",
-  "version": "10.0.0",
+  "version": "11.0.0",
   "description": "API ",
   "main": "dist/cjs/index.js",
   "module": "esm/index.js",
@@ -25,9 +25,9 @@
     "@microsoft/api-documenter": "^7.22.21",
     "@microsoft/api-extractor": "^7.36.0",
     "@microsoft/api-extractor-model": "^7.27.3",
-    "@wixc3/common": "^10.0.0",
-    "@wixc3/fs-utils": "^10.0.0",
-    "@wixc3/typescript": "^10.0.0",
+    "@wixc3/common": "^11.0.0",
+    "@wixc3/fs-utils": "^11.0.0",
+    "@wixc3/typescript": "^11.0.0",
     "glob": "^10.3.0",
     "yargs": "^17.7.2"
   }
