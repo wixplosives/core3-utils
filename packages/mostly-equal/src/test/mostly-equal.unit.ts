@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import chai, { expect } from 'chai';
-import { expectValue, expectValues, mostlyEqlChaiPlugin, setOptionsForSuite } from '../index';
+import { expectValue, expectValues, mostlyEqlChaiPlugin, setSuiteOptions } from '../index';
 import { clearMatchedValues, getMatchedValues } from '../mostly-equal';
 import type { ExpandedValues, Formatter } from '../types';
 
@@ -313,7 +313,7 @@ describe('mostly equal', () => {
             });
         });
         describe('setting options for suite', () => {
-            setOptionsForSuite(beforeEach, afterEach, {
+            setSuiteOptions(beforeEach, afterEach, {
                 formatters: [reversedFormatter],
             });
             it('should allow setting options for suite', () => {
