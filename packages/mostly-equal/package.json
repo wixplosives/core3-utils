@@ -4,7 +4,7 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "scripts": {
-    "test": "mocha \"dist/test/**/*.unit.js\""
+    "test": "mocha \"dist/cjs/test/**/*.unit.js\""
   },
   "files": [
     "dist",
@@ -18,5 +18,8 @@
   "repository": "https://github.com/wixplosives/core3-utils/tree/master/packages/mostly-equal",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@wixc3/common": "^10.0.0"
   }
 }

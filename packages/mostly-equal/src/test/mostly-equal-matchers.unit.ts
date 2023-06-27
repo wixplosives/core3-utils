@@ -1,18 +1,34 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import chai, { expect } from 'chai';
-import { notImportant, equal, defined, defineUnique, defineSame, thumbsUp, mostlyEqlChaiPlugin } from '../index';
+import {
+    notImportant,
+    equal,
+    defined,
+    defineUnique,
+    defineSame,
+    thumbsUp,
+    mostlyEqlChaiPlugin,
+    DeepExpect,
+} from '../index';
 chai.use(mostlyEqlChaiPlugin);
 
 describe('mostly equal matchers', () => {
     describe('notImportant', () => {
         it('should not throw for fields marked with not important', () => {
+            interface Actual {
+                a: number;
+                b?: number;
+            }
+            const actual: Actual = {
+                a: 1,
+            };
+            const expected: DeepExpect<Actual> = {
+                a: notImportant,
+                b: notImportant,
+            };
+
             expect(() => {
-                expect({
-                    a: 1,
-                }).to.mostlyEqual({
-                    a: notImportant,
-                    b: notImportant,
-                });
+                expect(actual).to.mostlyEqual(expected);
             }).to.not.throw();
         });
     });

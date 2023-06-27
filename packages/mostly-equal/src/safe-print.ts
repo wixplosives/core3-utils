@@ -1,4 +1,4 @@
-import type { LookupPath, UnknownObjectRecord } from './types';
+import type { UnknownObjectRecord, LookupPath, Formatter } from './types';
 
 export const spaces = (indent: number) => ' '.repeat(indent * 2);
 
@@ -27,9 +27,13 @@ export const isGetter = (target: Record<string, unknown>, key: string) => {
     const desc = Object.getOwnPropertyDescriptor(target, key);
     return !!desc && !!desc.get;
 };
+
+// Formatters can be used to replace the value before printing
+
 export const safePrint = (
     target: unknown,
     maxDepth = 10,
+    formatters: Formatter[] = [],
     depth = 0,
     passedMap = new Map<unknown, LookupPath>(),
     passedSet = new Set<unknown>(),
@@ -37,6 +41,10 @@ export const safePrint = (
 ): string => {
     if (passedSet.has(target)) {
         return JSON.stringify(`circular data removed, path: ${printPath(path)}`);
+    }
+    const formatter = formatters.find((r) => r.isApplicable(target, path));
+    if (formatter) {
+        return JSON.stringify(formatter.format(target, path));
     }
     if (Array.isArray(target)) {
         if (depth >= maxDepth) {
@@ -48,7 +56,7 @@ export const safePrint = (
 
         const childSet = registerChildSet(target, path, passedMap, passedSet);
         const arrContent = target.map((item, idx) => {
-            return safePrint(item, maxDepth, depth + 1, passedMap, childSet, [...path, idx]);
+            return safePrint(item, maxDepth, formatters, depth + 1, passedMap, childSet, [...path, idx]);
         });
         return `[\n${spaces(depth + 1)}${arrContent.join(`,\n${spaces(depth + 1)}`)}\n${spaces(depth)}]`;
     }
@@ -71,6 +79,7 @@ export const safePrint = (
                 return `\n${spaces(depth + 1)}"${key}": ${safePrint(
                     target[key],
                     maxDepth,
+                    formatters,
                     depth + 1,
                     passedMap,
                     childSet,
@@ -91,5 +100,8 @@ export const safePrint = (
     if (typeof target === 'string') {
         return JSON.stringify(target, null, 2);
     }
-    return String(target);
+    if (typeof target === 'function') {
+        return JSON.stringify(target.toString());
+    }
+    return JSON.stringify(String(target));
 };

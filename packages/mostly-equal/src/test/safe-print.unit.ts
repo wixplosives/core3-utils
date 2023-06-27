@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect } from 'chai';
 import { safePrint } from '../safe-print';
+import { LookupPath, Formatter } from '../types';
 
 describe('safe print', () => {
     describe('simple printing', () => {
@@ -85,6 +86,43 @@ describe('safe print', () => {
 
             const actual = safePrint(obj);
             expect(actual).to.equal(JSON.stringify(obj, null, 2));
+        });
+
+        it('should support functions', () => {
+            const obj = {
+                b: function () {
+                    //
+                },
+            };
+            const expectedObj = {
+                b: obj.b.toString(),
+            };
+            const actual = safePrint(obj);
+            expect(actual).to.equal(JSON.stringify(expectedObj, null, 2));
+        });
+
+        it('should support custom printers', () => {
+            const funcReplacement = (lookupPath: LookupPath) => {
+                return 'Function found at ' + lookupPath.toString();
+            };
+            const functionPrinter: Formatter = {
+                isApplicable(value) {
+                    return typeof value === 'function';
+                },
+                format(value, lookupPath) {
+                    return funcReplacement(lookupPath);
+                },
+            };
+            const obj = {
+                b: function () {
+                    //
+                },
+            };
+            const expectedObj = {
+                b: funcReplacement(['b']),
+            };
+            const actual = safePrint(obj, 10, [functionPrinter]);
+            expect(actual).to.equal(JSON.stringify(expectedObj, null, 2));
         });
     });
 });

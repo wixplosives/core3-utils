@@ -1,10 +1,17 @@
 import { isGetter } from './safe-print';
 import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print';
-import type { LookupPath, ExpectSingleMatcher, ExpandedValues, ExpectMultiMatcher } from './types';
+import {
+    type ExpectSingleMatcher,
+    type ExpandedValues,
+    type ExpectMultiMatcher,
+    type LookupPath,
+    type Formatter,
+    MarkerSymbol,
+} from './types';
 
-const expectValueSymb = Symbol('expect');
-const expectValuesSymb = Symbol('expect-values');
-export interface ExpectValue<T> {
+export const expectValueSymb = Symbol('expect');
+export const expectValuesSymb = Symbol('expect-values');
+export interface ExpectValue<T = any> {
     expectMethod: ExpectSingleMatcher<T>;
     _brand: typeof expectValueSymb;
     getMatchInfo: () => ExpandedValues<T>;
@@ -16,12 +23,12 @@ export interface ExpectValues<T = any> {
     _brand: typeof expectValuesSymb;
     getMatchInfo: () => ExpandedValues<T>;
 }
-function isExpectVal(val: any): val is ExpectValue<any> {
+export function isExpectVal(val: any): val is ExpectValue {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return !!val && val._brand === expectValueSymb;
 }
 
-function isExpectValues(val: any): val is ExpectValues {
+export function isExpectValues(val: any): val is ExpectValues {
     return !!val && (val as { _brand: unknown })._brand === expectValuesSymb;
 }
 
@@ -41,7 +48,7 @@ function isExpectValues(val: any): val is ExpectValues {
  * for error printing when another matcher failed
  * @param expectMethod
  */
-export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): any {
+export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): MarkerSymbol {
     let values: ExpandedValues<T> = [];
 
     const wrapMethod: ExpectSingleMatcher<T> = (value, fieldDefinedInParent, path) => {
@@ -57,7 +64,7 @@ export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): any {
         _brand: expectValueSymb,
         getMatchInfo: () => values,
         clear: () => (values = []),
-    };
+    } as unknown as MarkerSymbol;
 }
 
 /**
@@ -65,7 +72,7 @@ export function expectValue<T>(expectMethod: ExpectSingleMatcher<T>): any {
  * This way a matcher can compare different values
  * {@link defineUnique}
  */
-export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): any {
+export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefined = false): MarkerSymbol {
     let values: ExpandedValues<T> = [];
     const wrapMethod: ExpectMultiMatcher<T> = (vals, valInfos) => {
         values = valInfos;
@@ -76,7 +83,7 @@ export function expectValues<T>(expectMethod: ExpectMultiMatcher<T>, allowUndefi
         allowUndefined,
         _brand: expectValuesSymb,
         getMatchInfo: () => values,
-    };
+    } as unknown as MarkerSymbol;
 }
 
 export const getMatchedValues = <T>(expectValues: any) => {
@@ -115,7 +122,7 @@ function anyToError(val: any): Error {
     const message = typeof val === 'string' ? val : 'non error thrown';
     return new Error(message);
 }
-export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
+export const checkExpectValues = (input: ErrorOrTextOrExpect, formatters: Formatter[]): ErrorOrText => {
     const values: Map<ExpectValues, Array<ExpectValuesInfo>> = new Map();
     for (const item of input) {
         if (isExpectValuesInfo(item)) {
@@ -160,9 +167,9 @@ export const checkExpectValues = (input: ErrorOrTextOrExpect): ErrorOrText => {
     return input.flatMap((item) => {
         if (isExpectValuesInfo(item)) {
             if (valueErrors.has(item.uniqueSymb) && valueErrors.get(item.uniqueSymb)?.has(item)) {
-                return [safePrint(item.value, 0), valueErrors.get(item.uniqueSymb)!.get(item)!];
+                return [safePrint(item.value, 0, formatters), valueErrors.get(item.uniqueSymb)!.get(item)!];
             } else {
-                return [safePrint(item.value, 0)];
+                return [safePrint(item.value, 0, formatters)];
             }
         }
         return item;
@@ -173,6 +180,7 @@ const tryExpectVal = (
     expected: ExpectValue<any>,
     actual: any,
     maxDepth: number,
+    formatters: Formatter[],
     depth: number,
     path: LookupPath,
     passedMap: Map<any, LookupPath>,
@@ -183,25 +191,26 @@ const tryExpectVal = (
     try {
         matcherRes = expected.expectMethod(actual, existsInParent, path);
     } catch (err) {
-        return [safePrint(actual, maxDepth, depth, passedMap, passedSet, path), anyToError(err)];
+        return [safePrint(actual, maxDepth, formatters, depth, passedMap, passedSet, path), anyToError(err)];
     }
     if (matcherRes !== undefined && matcherRes !== null) {
         return [matcherRes.toString()];
     }
-    return [safePrint(actual, maxDepth, depth, passedMap, passedSet, path)];
+    return [safePrint(actual, maxDepth, formatters, depth, passedMap, passedSet, path)];
 };
 
 export const errorString: (
     expected: unknown,
     actual: unknown,
     maxDepth: number,
+    formatters: Formatter[],
     depth: number,
     path: LookupPath,
     passedMap: Map<unknown, LookupPath>,
     passedSet: Set<unknown>
-) => ErrorOrTextOrExpect = (expected, actual, maxDepth, depth, path, passedMap, passedSet) => {
+) => ErrorOrTextOrExpect = (expected, actual, maxDepth, formatters, depth, path, passedMap, passedSet) => {
     if (isExpectVal(expected)) {
-        return tryExpectVal(expected, actual, maxDepth, depth, path, passedMap, passedSet, true);
+        return tryExpectVal(expected, actual, maxDepth, formatters, depth, path, passedMap, passedSet, true);
     }
 
     if (isExpectValues(expected)) {
@@ -216,14 +225,14 @@ export const errorString: (
     }
 
     if (expected === actual) {
-        return [safePrint(actual, maxDepth, depth, passedMap, passedSet, path)];
+        return [safePrint(actual, maxDepth, formatters, depth, passedMap, passedSet, path)];
     }
     if (Array.isArray(expected)) {
         if (Array.isArray(actual)) {
             if (actual.length !== expected.length) {
                 return [
                     anyToError(`expected length ${expected.length} but got ${actual.length}`),
-                    safePrint(actual, maxDepth, depth, passedMap, passedSet, path),
+                    safePrint(actual, maxDepth, formatters, depth, passedMap, passedSet, path),
                 ];
             }
 
@@ -231,7 +240,16 @@ export const errorString: (
             const childSet = registerChildSet(actual, path, passedMap, passedSet);
             for (let i = 0; i < actual.length; i++) {
                 res.push(
-                    ...errorString(expected[i], actual[i], maxDepth, depth + 1, [...path, i], passedMap, childSet),
+                    ...errorString(
+                        expected[i],
+                        actual[i],
+                        maxDepth,
+                        formatters,
+                        depth + 1,
+                        [...path, i],
+                        passedMap,
+                        childSet
+                    ),
                     ','
                 );
             }
@@ -240,16 +258,17 @@ export const errorString: (
         } else {
             return [
                 anyToError(
-                    `expected ${safePrint(expected, maxDepth, 0, passedMap, passedSet, path)} but got ${safePrint(
-                        actual,
+                    `expected ${safePrint(
+                        expected,
                         maxDepth,
+                        formatters,
                         0,
                         passedMap,
                         passedSet,
                         path
-                    )}`
+                    )} but got ${safePrint(actual, maxDepth, formatters, 0, passedMap, passedSet, path)}`
                 ),
-                safePrint(actual, maxDepth, depth),
+                safePrint(actual, maxDepth, formatters, depth),
             ];
         }
     }
@@ -268,7 +287,7 @@ export const errorString: (
                     ','
                 );
             for (const name of allNames) {
-                const stringProp = [safePrint(actual[name], depth + 1)];
+                const stringProp = [safePrint(actual[name], depth + 1, formatters)];
                 const expectedField = expected[name];
 
                 if (isExpectValues(expectedField) && expectedField.allowUndefined && name in actual === false) {
@@ -285,6 +304,7 @@ export const errorString: (
                         expectedField,
                         undefined,
                         maxDepth,
+                        formatters,
                         depth + 1,
                         path,
                         passedMap,
@@ -304,6 +324,7 @@ export const errorString: (
                                 expected[name],
                                 actual[name],
                                 maxDepth,
+                                formatters,
                                 depth + 1,
                                 [...path, name],
                                 passedMap,
@@ -319,7 +340,14 @@ export const errorString: (
     }
 
     return [
-        safePrint(actual, maxDepth, depth),
-        anyToError(`expected ${safePrint(expected, maxDepth, 0)} but got ${safePrint(actual, maxDepth, 0)}`),
+        safePrint(actual, maxDepth, formatters, depth),
+        anyToError(
+            `expected ${safePrint(expected, maxDepth, formatters, 0)} but got ${safePrint(
+                actual,
+                maxDepth,
+                formatters,
+                0
+            )}`
+        ),
     ];
 };
