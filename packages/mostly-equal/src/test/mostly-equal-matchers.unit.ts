@@ -8,7 +8,7 @@ import {
     defineSame,
     thumbsUp,
     mostlyEqlChaiPlugin,
-    DeepExpect,
+    AllowMarkers,
 } from '../index';
 chai.use(mostlyEqlChaiPlugin);
 
@@ -22,7 +22,7 @@ describe('mostly equal matchers', () => {
             const actual: Actual = {
                 a: 1,
             };
-            const expected: DeepExpect<Actual> = {
+            const expected: AllowMarkers<Actual> = {
                 a: notImportant,
                 b: notImportant,
             };

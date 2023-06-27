@@ -20,6 +20,15 @@ export type MarkerSymbol = {
     __mostlyEqlMarker: typeof secretMarkerSymbol;
 };
 
-export type DeepExpect<T> = {
-    [key in keyof T]: MarkerSymbol | DeepExpect<T[key]>;
-};
+export type AllowMarkers<T, NOTFIELDS = '__unknown__'> =
+    | T
+    | MarkerSymbol
+    | {
+          [key in keyof T]: key extends NOTFIELDS ? T[key] : MarkerSymbol | AllowMarkers<T[key]>;
+      };
+
+export type AllowMarkersObj<T> =
+    | T
+    | {
+          [key in keyof T]: MarkerSymbol | AllowMarkers<T[key]>;
+      };
