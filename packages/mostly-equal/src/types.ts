@@ -32,3 +32,10 @@ export type AllowMarkersObj<T> =
     | {
           [key in keyof T]: MarkerSymbol | AllowMarkers<T[key]>;
       };
+
+export function allowMarkersInFactory<F extends (...args: any[]) => any>(
+    f: F
+): F extends (...args: infer A) => infer R ? (...args: AllowMarkersObj<A>) => AllowMarkers<R> : never {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return f as any;
+}
