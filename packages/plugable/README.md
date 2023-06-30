@@ -202,6 +202,12 @@ This example demonstrates how you can define your own custom logic for determini
 By managing overrides in inherited plugable objects, the Plugable System provides fine-grained control over event propagation and value inheritance. You can selectively override values in child objects, ensuring that events are emitted only to the appropriate listeners
 
 
+## Strong Typing: Ensuring Type Safety and Flexible Key-Based Management
+
+1. Key-Based Type Safety: This package leverages TypeScript's strong typing capabilities by associating values with unique keys. This ensures type safety when accessing and manipulating values within a plugable object. The use of keys enables compile-time type checking, preventing type errors and providing a reliable way to work with plugable values.
+
+2. No Central Type: This system does not enforce a central type for the plugable object itself. This flexibility allows developers to create plugable objects with varying structures and sets of keys, tailored to their specific application requirements. Each plugable object can have its own unique set of keys, representing the specific values it manages. This approach promotes flexibility and modularity in the design of plugable systems, as different parts of the application can define their own sets of keys without being restricted to a predefined centralized structure.
+
 ## React Adapter: Managing Plugable State in React Components
 
 The `@wixc3/plugable` package provides a React adapter that allows you to integrate plugable state management into your React components seamlessly. This section will explain the usage of the React adapter and its associated hooks: `PlugableContext`, `usePlugable`, and `usePlugableValue`. These hooks enable easy access to plugable state and provide automatic re-rendering of components when the state changes.
