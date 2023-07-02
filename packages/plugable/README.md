@@ -129,7 +129,7 @@ console.log(res); // Output: ['hello']
 
 In the above example, we create a parent plugable object and a child plugable object that inherits from the parent. We then register a listener on the child for a specific key and set a value for that key in the parent. As a result, the event is emitted in the child, and the value is added to the `res` array.
 
-### Managing Overrides in Inherited Plugable Objects
+### Managing Overrides
 
 In the Plugable System, when a key is set or updated in a parent plugable object, the event is emitted to child plugable objects unless there is an override for that key in a child object. An override occurs when a child plugable object sets a different value for a key that already exists in its parent.
 
