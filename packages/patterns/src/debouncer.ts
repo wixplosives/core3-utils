@@ -23,7 +23,7 @@ import { deferred } from 'promise-assist';
  * // => 'third'
  * ```
  */
-export class Debouncer<T extends (...args: unknown[]) => unknown> {
+export class Debouncer<T extends (...args: any[]) => any> {
     private timeout: number | undefined;
     private maxTimeout: number | undefined;
     private args = [] as any as Parameters<T>;
