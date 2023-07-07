@@ -71,12 +71,56 @@ describe('disposables', () => {
                 );
             });
         });
-        describe('add', () => {
-            describe('with a string as options', () => {
+        describe('add and remove', () => {
+            it('add (with a string as options)', () => {
                 const groups = createDisposables();
                 groups.registerGroup('first', { before: 'default' });
                 groups.add(() => void 0, 'first');
                 expect(groups.list().groups[0]?.disposables).to.have.length(1);
+            });
+            it('add (with options obj)', () => {
+                const groups = createDisposables();
+                groups.registerGroup('first', { before: 'default' });
+                groups.add(() => void 0, {
+                    group: 'first',
+                    name: 'lucky',
+                    timeout: 1,
+                });
+                expect(groups.list().groups[0]?.disposables).to.eql([
+                    {
+                        name: 'lucky',
+                        timeout: 1,
+                    },
+                ]);
+            });
+            it('add returns a remove func', () => {
+                const disposables = createDisposables();
+                const remove = disposables.add(() => void 0);
+
+                expect(disposables.list().groups[0]?.disposables).to.have.length(1);
+                remove();
+
+                expect(disposables.list().groups[0]?.disposables).to.have.length(0);
+            });
+            it('added disposables can be removed by reference', () => {
+                const disposables = createDisposables();
+                const disposable = () => void 0;
+                disposables.add(disposable);
+
+                expect(disposables.list().groups[0]?.disposables).to.have.length(1);
+                disposables.remove(disposable);
+
+                expect(disposables.list().groups[0]?.disposables).to.have.length(0);
+            });
+            it('removing missing disposables have no effect', () => {
+                const disposables = createDisposables();
+                const disposable = () => void 0;
+                disposables.add(disposable);
+
+                expect(disposables.list().groups[0]?.disposables).to.have.length(1);
+                disposables.remove(() => void 0);
+
+                expect(disposables.list().groups[0]?.disposables).to.have.length(1);
             });
         });
         describe('list', () => {
