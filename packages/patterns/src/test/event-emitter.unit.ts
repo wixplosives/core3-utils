@@ -17,13 +17,24 @@ describe('EventEmitter', () => {
         expect(aHandler).to.have.been.calledOnceWith({ data: 0 });
     });
     describe('off', () => {
-        it('handler is not called', () => {
+        it('after off handler is not called', () => {
             const handler1 = spy();
             const handler2 = spy();
             emitter.on('a', handler1);
             emitter.off('a', handler1);
             emitter.once('a', handler2);
             emitter.off('a', handler2);
+            emitter.emit('a', { data: 0 });
+            expect(handler1).to.have.callCount(0);
+            expect(handler1).to.have.callCount(0);
+        });
+        it('returned fn from on is same as off', () => {
+            const handler1 = spy();
+            const handler2 = spy();
+            const off1 = emitter.on('a', handler1);
+            off1();
+            const off2 = emitter.once('a', handler2);
+            off2();
             emitter.emit('a', { data: 0 });
             expect(handler1).to.have.callCount(0);
             expect(handler1).to.have.callCount(0);
