@@ -1,4 +1,3 @@
-import { filter } from '@wixc3/common';
 import { timeout } from 'promise-assist';
 
 /**
@@ -10,30 +9,29 @@ export function createSimpleDisposable() {
 }
 
 export class Disposables {
-    private disposables = new Set<NamedDisposable>();
+    private disposables = new Map<Disposable, NamedDisposable>();
     async dispose() {
-        const _disposables = Array.from(this.disposables.values()).reverse();
+        const _disposables = Array.from(this.disposables).reverse();
         this.disposables.clear();
-        for (const disposable of _disposables) {
+        for (const [disposable, details] of _disposables) {
             await timeout(
                 disposeOf(disposable),
-                disposable.timeout,
-                `Disposal timed out: "${disposable.name}" after ${disposable.timeout}ms`
+                details.timeout,
+                `Disposal timed out: "${details.name}" after ${details.timeout}ms`
             );
         }
     }
 
     add(disposable: Disposable, timeout: number, name: string) {
-        this.disposables.add({ dispose: disposable, timeout, name });
+        if (this.disposables.has(disposable)) {
+            throw new Error(`Disposable already added`);
+        }
+        this.disposables.set(disposable, { timeout, name });
+        return () => this.disposables.delete(disposable);
     }
 
-    remove(disposable: Disposable): void;
     remove(target: Disposable): void {
-        const oldSize = this.disposables.size;
-        this.disposables = new Set(filter(this.disposables, (d) => d.dispose !== target));
-        if (oldSize === this.disposables.size) {
-            throw new Error(`Disposable not found`);
-        }
+        this.disposables.delete(target);
     }
 
     list() {
@@ -47,10 +45,9 @@ export type Disposable = { dispose: DisposeFunction } | DisposeFunction;
 export type NamedDisposable = {
     timeout: number;
     name: string;
-    dispose: Disposable;
 };
 
-async function disposeOf({ dispose }: NamedDisposable) {
+async function disposeOf(dispose: Disposable) {
     if (typeof dispose === 'function') {
         await dispose();
     } else {

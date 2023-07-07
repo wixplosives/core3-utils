@@ -93,6 +93,7 @@ export function createDisposables() {
         /**
          * @param disposable a function or object with a dispose method
          * @param options if string, will be used as group name
+         * @returns a function to remove the disposable
          */
         add: (disposable: Disposable, options?: DisposableOptions | string) => {
             if (typeof options === 'string') {
@@ -104,21 +105,38 @@ export function createDisposables() {
                 throw new Error(`Invalid group: "${groupName}" doesn't exists`);
             }
             group.disposables.add(disposable, timeout, name);
+            return () => group.disposables.remove(disposable);
         },
 
         /**
          * removes a disposable from all disposal group
          */
         remove: (disposable: Disposable) => {
-            groups.forEach((g) => g.disposables.remove(disposable));
+            groups.forEach((g) => {
+                try {
+                    g.disposables.remove(disposable);
+                } catch (e) {
+                    if ((e as Error)?.message !== 'Disposable not found') {
+                        throw e;
+                    }
+                }
+            });
         },
 
+        /**
+         * Disposes all disposables in all groups one at the time,
+         * order based on constraints
+         */
         dispose: async () => {
             for (const { disposables } of groups) {
                 await disposables.dispose();
             }
         },
 
+        /**
+         *
+         * @returns a serialized list of groups and their disposables and constraints
+         */
         list: () => {
             const g = groups.map((g) => {
                 const { name } = g;
