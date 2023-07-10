@@ -1,5 +1,5 @@
-import { DisposalGroup, getValidatedConstantsGroups, GroupConstraints, normalizeConstraints } from './constraints';
-import { createSimpleDisposable, Disposable } from '.';
+import { DisposalGroup, getGroupConstrainedIndex, GroupConstraints, normalizeConstraints } from './constraints';
+import { DisposableItem, DisposablesGroup } from './disposables-group';
 import { defaults } from '@wixc3/common';
 
 export const DEFAULT_GROUP = 'default';
@@ -7,7 +7,7 @@ export const DEFAULT_TIMEOUT = 1000;
 
 const createGroup = (name: string): DisposalGroup => ({
     name,
-    disposables: createSimpleDisposable(),
+    disposables: new DisposablesGroup(),
 });
 
 export type DisposableOptions = {
@@ -79,8 +79,8 @@ export function createDisposables() {
          * @param constraints - constraints for the group must contain {before: groupName} or {after: groupName}
          */
         registerGroup: (name: string, _constraints: GroupConstraints[] | GroupConstraints) => {
-            const nConstraints: GroupConstraints[] = normalizeConstraints(_constraints, name, groups);
-            const { lastAfter, firstBefore } = getValidatedConstantsGroups(nConstraints, groups);
+            const nConstraints = normalizeConstraints(_constraints, name, groups);
+            const { lastAfter, firstBefore } = getGroupConstrainedIndex(nConstraints, groups);
             constrains.push(...nConstraints);
 
             if (lastAfter > 0) {
@@ -93,8 +93,9 @@ export function createDisposables() {
         /**
          * @param disposable a function or object with a dispose method
          * @param options if string, will be used as group name
+         * @returns a function to remove the disposable
          */
-        add: (disposable: Disposable, options?: DisposableOptions | string) => {
+        add: (disposable: DisposableItem, options?: DisposableOptions | string) => {
             if (typeof options === 'string') {
                 options = { group: options };
             }
@@ -104,21 +105,38 @@ export function createDisposables() {
                 throw new Error(`Invalid group: "${groupName}" doesn't exists`);
             }
             group.disposables.add(disposable, timeout, name);
+            return () => group.disposables.remove(disposable);
         },
 
         /**
          * removes a disposable from all disposal group
          */
-        remove: (disposable: Disposable) => {
-            groups.forEach((g) => g.disposables.remove(disposable));
+        remove: (disposable: DisposableItem) => {
+            groups.forEach((g) => {
+                try {
+                    g.disposables.remove(disposable);
+                } catch (e) {
+                    if ((e as Error)?.message !== 'Disposable not found') {
+                        throw e;
+                    }
+                }
+            });
         },
 
+        /**
+         * Disposes all disposables in all groups one at the time,
+         * order based on constraints
+         */
         dispose: async () => {
             for (const { disposables } of groups) {
                 await disposables.dispose();
             }
         },
 
+        /**
+         *
+         * @returns a serialized list of groups and their disposables and constraints
+         */
         list: () => {
             const g = groups.map((g) => {
                 const { name } = g;

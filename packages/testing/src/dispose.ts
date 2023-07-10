@@ -2,7 +2,7 @@ import {
     createDisposables,
     DEFAULT_GROUP,
     DisposableOptions,
-    type Disposable,
+    type DisposableItem,
     type GroupConstraints,
 } from '@wixc3/patterns';
 import { _afterEach } from './mocha-helpers';
@@ -23,7 +23,7 @@ export const DEFAULT_DISPOSAL_GROUP = DEFAULT_GROUP;
  *
  * @param group disposal group name. disposal groups let you specify disposal constrains. see: {@link createDisposalGroup}
  */
-export function disposeAfter(disposable: Disposable, options?: DisposableOptions) {
+export function disposeAfter(disposable: DisposableItem, options?: DisposableOptions) {
     disposables.add(disposable, options);
 }
 
@@ -61,7 +61,7 @@ export function createDisposalGroup(name: string, constraints: GroupConstraints[
  * @returns init result
  */
 export async function initAndDisposeAfter<T extends (...args: any[]) => any>(
-    target: { init: T } & Disposable,
+    target: { init: T } & DisposableItem,
     options?: DisposableOptions,
     ...args: Parameters<T>
 ): Promise<Awaited<ReturnType<T>>> {

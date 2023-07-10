@@ -15,10 +15,12 @@ export class EventEmitter<Events extends object, EventId extends keyof Events = 
 
     /**
      * Subscribe a handler for event
+     * @returns unsubscribe fn
      */
     subscribe = <Event extends EventId>(event: Event, handler: (data: Events[Event]) => void) => {
         const bucket = this.events.get(event);
         bucket ? bucket.add(handler) : this.events.set(event, new Signal([handler]));
+        return () => this.unsubscribe(event, handler);
     };
 
     /**
@@ -28,11 +30,13 @@ export class EventEmitter<Events extends object, EventId extends keyof Events = 
 
     /**
      * Adds a handler that will be called at most once
+     * @returns unsubscribe fn
      */
     once = <Event extends EventId>(event: Event, handler: (data: Events[Event]) => void) => {
         this.off(event, handler);
         const bucket = this.emitOnce.get(event);
         bucket ? bucket.add(handler) : this.emitOnce.set(event, new Signal([handler]));
+        return () => this.unsubscribe(event, handler);
     };
 
     /**

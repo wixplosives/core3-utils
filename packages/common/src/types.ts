@@ -9,6 +9,13 @@ export type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
 export type Nullable<T> = T | null | undefined;
 
 /**
+ * union of all fields of T
+ * @example
+ * ValueOf<Record<string, number>> === number
+ */
+export type ValueOf<T> = T[keyof T];
+
+/**
  * Validates s is an instance of Map
  * @returns true if s is a Map
  */

@@ -12,7 +12,6 @@ export * from './same';
 export * from './errors';
 export * from './sets';
 export * from './enum-values';
-export * from './index';
 export * from './platform';
 export * from './functions';
 export * from './types';

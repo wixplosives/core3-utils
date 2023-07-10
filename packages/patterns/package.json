@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/patterns",
-  "version": "10.0.0",
+  "version": "11.3.0",
   "description": "A utility for saving objects to be disposed",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@wixc3/common": "^10.0.0",
+    "@wixc3/common": "^11.1.1",
     "promise-assist": "^2.0.1"
   }
 }
