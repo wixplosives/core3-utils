@@ -131,11 +131,11 @@ export class Disposables {
      * Disposes all disposables in all groups one at the time,
      * order based on constraints
      */
-    async dispose() {
+    dispose = async () => {
         for (const { disposables } of this.groups) {
             await disposables.dispose();
         }
-    }
+    };
 
     /**
      *
