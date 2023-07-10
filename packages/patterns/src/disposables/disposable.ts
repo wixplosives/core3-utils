@@ -73,9 +73,10 @@ export class Disposable {
      * @param usedWhileDisposing when true, only throws if disposal is finished
      * @param asyncGuard when true, returns a done function. <i>this</i> will not be disposed done is called
      */
-    disposalGuard(): void;
-    disposalGuard(usedWhileDisposing: boolean, asyncGuard: true): () => void;
-    disposalGuard(usedWhileDisposing = false, asyncGuard = false) {
+    disposalGuard(): () => void;
+    disposalGuard(asyncGuard: true, usedWhileDisposing?: boolean): () => void;
+    disposalGuard(asyncGuard: false, usedWhileDisposing?: boolean): void;
+    disposalGuard(asyncGuard = true, usedWhileDisposing = false) {
         if (this.isDisposed && !(this._isDisposing && usedWhileDisposing)) {
             throw new Error('Instance was disposed');
         }
@@ -97,8 +98,8 @@ export class Disposable {
      * checks disposal before execution and clears the timeout when the instance is disposed
      */
     setTimeout(fn: () => void, timeout: number): ReturnType<typeof setTimeout> {
-        this.disposalGuard();
-        const handle = setTimeout(() => {
+        this.disposalGuard(false);
+        const handle = globalThis.setTimeout(() => {
             this.timeouts.delete(handle);
             if (!this.isDisposed) {
                 fn();
@@ -113,8 +114,8 @@ export class Disposable {
      * checks disposal before execution and clears the interval when the instance is disposed
      */
     setInterval(fn: () => void, interval: number): ReturnType<typeof setInterval> {
-        this.disposalGuard();
-        const handle = setInterval(() => {
+        this.disposalGuard(false);
+        const handle = globalThis.setInterval(() => {
             if (!this.isDisposed) {
                 fn();
             }

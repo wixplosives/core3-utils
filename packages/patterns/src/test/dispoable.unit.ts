@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { Disposable } from '../disposables/disposable';
 import { deferred, sleep } from 'promise-assist';
 
-describe('Disposable abstract class', () => {
+describe('Disposable class', () => {
     describe('dispose', () => {
         it('sets isDisposed to true', async () => {
             const disposable = new Disposable();
@@ -21,45 +21,51 @@ describe('Disposable abstract class', () => {
         });
     });
     describe('disposalGuard', () => {
-        class TestDisposable extends Disposable {
-            public _disposables = this.disposables;
-            guarded(usedWhileDisposing = false, asyncGuard = false) {
-                return this.disposalGuard(usedWhileDisposing, asyncGuard as unknown as true);
-            }
-        }
-
         it('throws if isDisposed is true', () => {
-            const disposable = new TestDisposable();
-            disposable._disposables.add(() => sleep(20));
+            const disposable = new Disposable();
+            disposable.disposables.add(() => sleep(20));
             void disposable.dispose();
-            expect(() => disposable.guarded()).to.throw('Instance was disposed');
+            expect(() => disposable.disposalGuard()).to.throw('Instance was disposed');
         });
         it('does not throws if usedWhileDisposing is true and disposal did not finish', async () => {
-            const disposable = new TestDisposable();
-            disposable._disposables.add(() => sleep(20));
+            const disposable = new Disposable();
+            disposable.disposables.add(() => sleep(20));
             const disposing = disposable.dispose();
-            expect(() => disposable.guarded(true)).not.to.throw();
+            expect(() => disposable.disposalGuard(false, true)).not.to.throw();
             await disposing;
-            expect(() => disposable.guarded(true)).to.throw('Instance was disposed');
+            expect(() => disposable.disposalGuard(false, true)).to.throw('Instance was disposed');
         });
-        describe('async disposalGuard', () => {
-            it('halts disposal until the guard is done', async () => {
-                const disposable = new TestDisposable();
+        describe('sync/async', () => {
+            it('sync does not delay disposal', async () => {
+                const disposable = new Disposable();
                 let disposeCalled = false;
-                disposable._disposables.add(() => {
+                disposable.disposables.add(() => {
+                    disposeCalled = true;
+                });
+                disposable.disposalGuard(false);
+                const disposing = disposable.dispose();
+                await sleep(1);
+                expect(disposeCalled).to.be.true;
+
+                await disposing;
+            });
+            it('async (default) delays disposal until the guard is done', async () => {
+                const disposable = new Disposable();
+                let disposeCalled = false;
+                disposable.disposables.add(() => {
                     disposeCalled = true;
                 });
 
-                const done = disposable.guarded(false, true);
+                const done = disposable.disposalGuard();
                 const disposing = disposable.dispose();
                 await sleep(1);
 
-                expect(disposable.isDisposed).to.be.true;
-                expect(disposeCalled).to.be.false;
+                expect(disposable.isDisposed, 'isDisposed').to.be.true;
+                expect(disposeCalled, 'disposeCalled').to.be.false;
 
                 done();
                 await disposing;
-                expect(disposeCalled).to.be.true;
+                expect(disposeCalled, 'disposeCalled after done()').to.be.true;
             });
         });
     });
@@ -86,7 +92,7 @@ describe('Disposable abstract class', () => {
             expect(timeoutTriggered).to.be.false;
         });
     });
-    describe('setDisposableInterval', () => {
+    describe('setInterval', () => {
         it('identical to setInterval, but cleared after disposal', async () => {
             const disposable = new Disposable();
             let triggerCount = 0;
@@ -95,7 +101,6 @@ describe('Disposable abstract class', () => {
             }, 1);
             await sleep(20);
             expect(triggerCount).to.be.greaterThan(0);
-
             await disposable.dispose();
             triggerCount = 0;
             await sleep(20);
