@@ -1,5 +1,5 @@
 import { defaults, noop } from '@wixc3/common';
-import { createDisposables } from '.';
+import { Disposables } from '.';
 import { deferred } from 'promise-assist';
 
 const DELAY_DISPOSAL = 'DELAY_DISPOSAL';
@@ -33,7 +33,7 @@ const DISPOSAL_GUARD_DEFAULTS = {
 export class Disposable {
     private _isDisposed = false;
     private _isDisposing = false;
-    public readonly disposables = createDisposables();
+    public readonly disposables = new Disposables();
     private timeouts = new Set<ReturnType<typeof setTimeout>>();
     private intervals = new Set<ReturnType<typeof setInterval>>();
     constructor() {
