@@ -73,9 +73,26 @@ export class Disposable {
     }
 
     /**
-     * throws if disposal started/finished
-     * @param usedWhileDisposing when true, only throws if disposal is finished
-     * @param asyncGuard when true, returns a done function. <i>this</i> will not be disposed done is called
+     * - throws if disposal started/finished
+     * - in async mode, delays disposal until the returned fn called
+     * @example async mode
+     * ```ts
+     *  // this will throw if disposed
+     * const done = this.disposalGuard({timeout: 1000, name:'something'});
+     * try {
+     *    // do something
+     * } finally {
+     *    // disposal can begin (if dispose was called)
+     *    done();
+     * }
+     * @example sync mode
+     * ```ts
+     *  // will throw if disposed
+     * this.disposalGuard({async:false});
+     * @example usedWhileDisposing
+     * ```ts
+     *  // will not throw if disposal didn't finished yet, even if dispose was called
+     * this.disposalGuard({usedWhileDisposing:true, async:false});
      */
     disposalGuard(
         options: {
