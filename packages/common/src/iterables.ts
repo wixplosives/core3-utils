@@ -290,21 +290,7 @@ export function reduce<T, A>(iterable: Nullable<Iterable<T>>, reducer: (acc: A, 
  * @see Array.join
  */
 export function join<T extends string>(iterable: Nullable<Iterable<T>>, separator: string): string {
-    if (!iterable) {
-        return '';
-    }
-    let result = first(iterable) || '';
-    let prev: string | null = null;
-    for (const v of skip(iterable, 1)) {
-        if (prev) {
-            result = result + separator + prev;
-        }
-        prev = v;
-    }
-    if (prev) {
-        result = result + separator + prev;
-    }
-    return result;
+    return reduce(iterable, (acc, item) => (acc === null ? item : acc + separator + item), null as string | null) || '';
 }
 
 /**

@@ -129,6 +129,7 @@ describe('iterables', () => {
         expect(join([], ',')).to.eql('');
         expect(join(null, ',')).to.eql('');
         expect(join(['0'], ',')).to.eql('0');
+        expect(join(unique(['0', '0', '1']), ',')).to.eql('0,1');
     });
     it('skip', () => {
         expect([...skip([0, 1, 2, 3], 1)]).to.eql([1, 2, 3]);
