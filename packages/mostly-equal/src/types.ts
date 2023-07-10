@@ -20,6 +20,22 @@ export type MarkerSymbol = {
     __mostlyEqlMarker: typeof secretMarkerSymbol;
 };
 
-export type DeepExpect<T> = {
-    [key in keyof T]: MarkerSymbol | DeepExpect<T[key]>;
-};
+export type AllowMarkers<T, NOTFIELDS = '__unknown__'> =
+    | T
+    | MarkerSymbol
+    | {
+          [key in keyof T]: key extends NOTFIELDS ? T[key] : MarkerSymbol | AllowMarkers<T[key]>;
+      };
+
+export type AllowMarkersObj<T> =
+    | T
+    | {
+          [key in keyof T]: MarkerSymbol | AllowMarkers<T[key]>;
+      };
+
+export function allowMarkersInFactory<F extends (...args: any[]) => any>(
+    f: F
+): F extends (...args: infer A) => infer R ? (...args: AllowMarkersObj<A>) => AllowMarkers<R> : never {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return f as any;
+}
