@@ -1,9 +1,13 @@
-import { noop } from '@wixc3/common';
+import { defaults, noop } from '@wixc3/common';
 import { createDisposables } from '.';
 import { deferred } from 'promise-assist';
 
 const DELAY_DISPOSAL = 'DELAY_DISPOSAL';
-
+const DISPOSAL_GUARD_DEFAULTS = {
+    name: 'disposalGuard',
+    timeout: 5_000,
+    usedWhileDisposing: false,
+};
 /**
  * A base class for disposable objects
  * @example
@@ -73,19 +77,28 @@ export class Disposable {
      * @param usedWhileDisposing when true, only throws if disposal is finished
      * @param asyncGuard when true, returns a done function. <i>this</i> will not be disposed done is called
      */
+    disposalGuard(
+        options: {
+            async: never;
+        } & Partial<typeof DISPOSAL_GUARD_DEFAULTS>
+    ): () => void;
     disposalGuard(): () => void;
-    disposalGuard(asyncGuard: true, usedWhileDisposing?: boolean): () => void;
-    disposalGuard(asyncGuard: false, usedWhileDisposing?: boolean): void;
-    disposalGuard(asyncGuard = true, usedWhileDisposing = false) {
+    disposalGuard(options: { async: false; usedWhileDisposing?: boolean }): void;
+    disposalGuard(options?: { async?: boolean } & Partial<typeof DISPOSAL_GUARD_DEFAULTS>) {
+        const { async, usedWhileDisposing, name, timeout } = defaults(options || {}, {
+            ...DISPOSAL_GUARD_DEFAULTS,
+            async: true,
+        });
+
         if (this.isDisposed && !(this._isDisposing && usedWhileDisposing)) {
             throw new Error('Instance was disposed');
         }
-        if (asyncGuard) {
+        if (async) {
             const { promise: canDispose, resolve: done } = deferred();
             const remove = this.disposables.add(() => canDispose, {
                 group: DELAY_DISPOSAL,
-                name: 'disposalGuard',
-                timeout: 5_000,
+                name,
+                timeout,
             });
             canDispose.then(remove).catch(noop);
             return done;
@@ -98,7 +111,7 @@ export class Disposable {
      * checks disposal before execution and clears the timeout when the instance is disposed
      */
     setTimeout(fn: () => void, timeout: number): ReturnType<typeof setTimeout> {
-        this.disposalGuard(false);
+        this.disposalGuard({ async: false });
         const handle = globalThis.setTimeout(() => {
             this.timeouts.delete(handle);
             if (!this.isDisposed) {
@@ -114,7 +127,7 @@ export class Disposable {
      * checks disposal before execution and clears the interval when the instance is disposed
      */
     setInterval(fn: () => void, interval: number): ReturnType<typeof setInterval> {
-        this.disposalGuard(false);
+        this.disposalGuard({ async: false });
         const handle = globalThis.setInterval(() => {
             if (!this.isDisposed) {
                 fn();

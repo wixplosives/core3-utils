@@ -31,9 +31,11 @@ describe('Disposable class', () => {
             const disposable = new Disposable();
             disposable.disposables.add(() => sleep(20));
             const disposing = disposable.dispose();
-            expect(() => disposable.disposalGuard(false, true)).not.to.throw();
+            expect(() => disposable.disposalGuard({ async: false, usedWhileDisposing: true })).not.to.throw();
             await disposing;
-            expect(() => disposable.disposalGuard(false, true)).to.throw('Instance was disposed');
+            expect(() => disposable.disposalGuard({ async: false, usedWhileDisposing: true })).to.throw(
+                'Instance was disposed'
+            );
         });
         describe('sync/async', () => {
             it('sync does not delay disposal', async () => {
@@ -42,7 +44,7 @@ describe('Disposable class', () => {
                 disposable.disposables.add(() => {
                     disposeCalled = true;
                 });
-                disposable.disposalGuard(false);
+                disposable.disposalGuard({ async: false });
                 const disposing = disposable.dispose();
                 await sleep(1);
                 expect(disposeCalled).to.be.true;
