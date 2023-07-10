@@ -1,5 +1,5 @@
-import { DisposalGroup, getValidatedConstantsGroups, GroupConstraints, normalizeConstraints } from './constraints';
-import { createSimpleDisposable, Disposable } from '.';
+import { DisposalGroup, getGroupConstrainedIndex, GroupConstraints, normalizeConstraints } from './constraints';
+import { DisposableItem, DisposablesGroup } from './disposables-group';
 import { defaults } from '@wixc3/common';
 
 export const DEFAULT_GROUP = 'default';
@@ -7,7 +7,7 @@ export const DEFAULT_TIMEOUT = 1000;
 
 const createGroup = (name: string): DisposalGroup => ({
     name,
-    disposables: createSimpleDisposable(),
+    disposables: new DisposablesGroup(),
 });
 
 export type DisposableOptions = {
@@ -79,8 +79,8 @@ export function createDisposables() {
          * @param constraints - constraints for the group must contain {before: groupName} or {after: groupName}
          */
         registerGroup: (name: string, _constraints: GroupConstraints[] | GroupConstraints) => {
-            const nConstraints: GroupConstraints[] = normalizeConstraints(_constraints, name, groups);
-            const { lastAfter, firstBefore } = getValidatedConstantsGroups(nConstraints, groups);
+            const nConstraints = normalizeConstraints(_constraints, name, groups);
+            const { lastAfter, firstBefore } = getGroupConstrainedIndex(nConstraints, groups);
             constrains.push(...nConstraints);
 
             if (lastAfter > 0) {
@@ -95,7 +95,7 @@ export function createDisposables() {
          * @param options if string, will be used as group name
          * @returns a function to remove the disposable
          */
-        add: (disposable: Disposable, options?: DisposableOptions | string) => {
+        add: (disposable: DisposableItem, options?: DisposableOptions | string) => {
             if (typeof options === 'string') {
                 options = { group: options };
             }
@@ -111,7 +111,7 @@ export function createDisposables() {
         /**
          * removes a disposable from all disposal group
          */
-        remove: (disposable: Disposable) => {
+        remove: (disposable: DisposableItem) => {
             groups.forEach((g) => {
                 try {
                     g.disposables.remove(disposable);

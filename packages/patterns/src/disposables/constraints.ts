@@ -1,25 +1,30 @@
-import type { Disposables } from './disposable';
+import type { DisposablesGroup } from './disposables-group';
 
 export type GroupConstraints = { before: string; after?: string } | { after: string; before?: string };
 
 export interface DisposalGroup {
     name: string;
-    disposables: Disposables;
+    disposables: DisposablesGroup;
 }
 
-export const getValidatedConstantsGroups = (_constraints: GroupConstraints[], groups: DisposalGroup[]) => {
+/**
+ * @internal
+ * given groups and a lists of constraints, throws if the constraints contradict each other
+ * @returns the indices of the dominant constrains
+ */
+export const getGroupConstrainedIndex = (newGroupConstrains: GroupConstraints[], existingGroups: DisposalGroup[]) => {
     let lastAfter = -1,
         firstBefore = Number.MAX_SAFE_INTEGER;
-    _constraints.forEach(({ before, after }) => {
+    newGroupConstrains.forEach(({ before, after }) => {
         if (before) {
-            const index = groups.findIndex((g) => g.name === before);
+            const index = existingGroups.findIndex((g) => g.name === before);
             if (index === -1) {
                 throw new Error(`Invalid constraint: "before: ${before}" - group not found`);
             }
             firstBefore = Math.min(firstBefore, index);
         }
         if (after) {
-            const index = groups.findIndex((g) => g.name === after);
+            const index = existingGroups.findIndex((g) => g.name === after);
             if (index === -1) {
                 throw new Error(`Invalid constraint: "after: ${after}" - group not found`);
             }
@@ -29,7 +34,7 @@ export const getValidatedConstantsGroups = (_constraints: GroupConstraints[], gr
     if (firstBefore !== Number.MAX_SAFE_INTEGER && lastAfter !== -1) {
         if (lastAfter >= firstBefore) {
             throw new Error(
-                `Invalid constraints: ${groups[lastAfter]?.name} runs after ${groups[firstBefore]?.name}, which contradicts prior constraints`
+                `Invalid constraints: ${existingGroups[lastAfter]?.name} runs after ${existingGroups[firstBefore]?.name}, which contradicts prior constraints`
             );
         }
     }

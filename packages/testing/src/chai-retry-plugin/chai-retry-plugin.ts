@@ -39,7 +39,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, { flag, inspect }: Chai
                 throw new TypeError(inspect(functionToRetry) + ' is not a function.');
             }
 
-            const defaultRetryOptions: Required<RetryOptions> = { timeout: 5000, retries: Infinity, delay: 0 };
+            const defaultRetryOptions: Required<RetryOptions> = { timeout: 8_000, retries: Infinity, delay: 0 };
             const options: Required<RetryOptions> = { ...defaultRetryOptions, ...retryOptions };
 
             const assertionStack: AssertionStackItem[] = [];
