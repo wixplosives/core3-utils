@@ -109,7 +109,9 @@ export function createImportPath({
     fs,
 }: CreateImportPathArgs): string {
     const importPackageJsonPath = getPackageJsonPath(importedFilePath, fs);
-    const importPackageJsonName = importPackageJsonPath ? getPackageName(importPackageJsonPath, fs) : undefined;
+    const importPackageJsonName = importPackageJsonPath
+        ? getPackageName(fs.dirname(importPackageJsonPath), fs)
+        : undefined;
 
     if (importPackageJsonPath === targetPackageJsonPath || !importPackageJsonPath || !importPackageJsonName) {
         return getRelativeImportPath(targetFilePath, importedFilePath);
