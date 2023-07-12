@@ -167,10 +167,10 @@
     validate-npm-package-name "5.0.0"
     yargs-parser "20.2.4"
 
-"@microsoft/api-documenter@^7.22.24":
-  version "7.22.24"
-  resolved "https://registry.yarnpkg.com/@microsoft/api-documenter/-/api-documenter-7.22.24.tgz#79b8b8b994268c649efeca568717438fd7d05583"
-  integrity sha512-KdO7p/weirR/po0SqwWsbqoPUTqLv0QVvxqopysxF2PVdBpeKx4eOrII1VGw0rL0QY6WVvttIOJwD/JpYv9oWw==
+"@microsoft/api-documenter@^7.22.26":
+  version "7.22.26"
+  resolved "https://registry.yarnpkg.com/@microsoft/api-documenter/-/api-documenter-7.22.26.tgz#39ee6ea4131754b88cf7664b59fadb35455168ba"
+  integrity sha512-Df//s/W9eXpUfOAP5f/KiBXWJM5vvjvXl1DnnEP73NQx5AACLSZWZzExwxJlpyaefcD7iYziFkK4I2oQhnVcFA==
   dependencies:
     "@microsoft/api-extractor-model" "7.27.4"
     "@microsoft/tsdoc" "0.14.2"
