@@ -36,7 +36,7 @@ export enum NamingConvention {
  * @returns true if namingConvention is a supported {@link NamingConvention}
  */
 export function isValidNamingConvention(namingConvention: string): namingConvention is NamingConvention {
-    return Object.values(NamingConvention).some((value) => value === namingConvention);
+    return Object.values(NamingConvention).some((value) => value === (namingConvention as NamingConvention));
 }
 
 /**

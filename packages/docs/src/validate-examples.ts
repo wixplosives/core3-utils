@@ -82,7 +82,7 @@ function findAllExamples(config: UserConfig, pkg: Package, type: string | undefi
                     throw new Error(`Invalid example label: label is not defined in ${file}`);
                 }
                 if (examples.has(label)) {
-                    throw new Error(`Invalid example label: "// {@label ${label}" is not unique in package ${pkg}
+                    throw new Error(`Invalid example label: "// {@label ${label}" is not unique in package ${pkg.name}
     in ${file}`);
                 }
                 if (!example || !example.trim()) {

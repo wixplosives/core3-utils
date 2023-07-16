@@ -12,7 +12,7 @@ export function has<O extends object>(obj: O, key: keyof O): boolean;
  * @see Map.has
  */
 export function has<K>(obj: Map<K, unknown>, key: K): boolean;
-export function has(obj: null | undefined, key: unknown | never): false;
+export function has(obj: null | undefined, key: unknown): false;
 export function has(obj: Nullable<object | Map<unknown, unknown>>, key: any): boolean {
     return (
         !!obj &&
@@ -47,7 +47,7 @@ export function get(obj: Nullable<Map<unknown, unknown> | object>, key: any): an
  */
 export function getValue<T extends object>(map: T, key: keyof T, errorMessage?: string): ObjValue<T>;
 export function getValue<K, V, T extends Map<K, V>>(map: T, key: K, errorMessage?: string): MapValue<T>;
-export function getValue<T extends null | undefined>(map: T, key: unknown | never, errorMessage?: string): never;
+export function getValue<T extends null | undefined>(map: T, key: unknown, errorMessage?: string): never;
 export function getValue<T extends Map<K, V> | object, K, V>(map: Nullable<T>, key: KeyOf<T>, errorMessage?: string) {
     // @ts-expect-error hmm
     if (has(map, key)) {
