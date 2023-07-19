@@ -58,8 +58,7 @@ export function size(iterable: Nullable<Iterable<unknown>>): number {
 export function at<T>(iterable: Nullable<Iterable<T>>, index: number): T | undefined {
     if (iterable) {
         if (index < 0) {
-            const iterAsArray = Array.from(iterable);
-            return iterAsArray[iterAsArray.length + index];
+            return Array.from(iterable).at(index);
         }
         let i = 0;
         for (const v of iterable) {
