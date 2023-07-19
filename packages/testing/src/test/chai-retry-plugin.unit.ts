@@ -21,18 +21,18 @@ describe('chai-retry-plugin', () => {
         expect(getCallCount()).to.equal(3);
     });
 
-    describe('options should work correctly:', () => {
+    describe('options', () => {
         it('timeout after the specified duration', async () => {
             const funcToRetry = async () => {
-                await sleep(250);
+                await sleep(150);
                 return 'Success';
             };
 
             try {
-                await expect(funcToRetry).retry({ timeout: 700 }).to.equal('Failure');
+                await expect(funcToRetry).retry({ timeout: 100 }).to.equal('Failure');
                 throw new Error('This should not be called');
             } catch (error: unknown) {
-                expect((error as Error).message).includes('Timed out after 700ms');
+                expect((error as Error).message).includes('Timed out after 100ms');
             }
         });
 
@@ -253,6 +253,36 @@ describe('chai-retry-plugin', () => {
 
             await expect(resultFunction).retry().to.have.keys(['a', 'b', 'c', 'd']);
             expect(getCallCount()).to.equal(4);
+        });
+    });
+
+    describe('mocha test timeout adjustment', () => {
+        const BASE_TIMEOUT = 200;
+        const RETRY_TIMEOUT = 100;
+
+        it('upon failure', async function () {
+            this.timeout(BASE_TIMEOUT);
+            try {
+                await expect(() => sleep(20))
+                    .retry({ timeout: RETRY_TIMEOUT })
+                    .to.equal(false);
+            } catch {
+                //
+            }
+            expect(this.timeout(), 'test timeout').to.be.approximately(BASE_TIMEOUT + RETRY_TIMEOUT, 50);
+        });
+
+        it('upon success', async function () {
+            this.timeout(BASE_TIMEOUT);
+            const SUCCESS_TIME = 10;
+            try {
+                await expect(() => sleep(SUCCESS_TIME).then(() => true))
+                    .retry({ timeout: RETRY_TIMEOUT })
+                    .to.equal(true);
+            } catch {
+                //
+            }
+            expect(this.timeout(), 'test timeout').to.be.approximately(BASE_TIMEOUT + SUCCESS_TIME, 10);
         });
     });
 });
