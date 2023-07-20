@@ -1,79 +1,87 @@
 import Chai from 'chai';
-import * as promiseHelpers from 'promise-assist';
-import { adjustTestTime, mochaCtx } from '../mocha-ctx';
-
 import { chaiMethodsThatHandleFunction } from './constants';
-import type { RetryAndAssertArguments } from './types';
+import type { AssertionMethod, RetryAndAssertArguments } from './types';
+import { adjustTestTime } from '../mocha-ctx';
+import { deferred, timeout } from 'promise-assist';
 
-// Add ms to the current test timeout
-const addTimeoutSafetyMargin = (ms: number) => mochaCtx() && adjustTestTime(ms);
-
-function sleepWithSafetyMargin(ms: number): Promise<void> {
-    addTimeoutSafetyMargin(ms);
-    return promiseHelpers.sleep(ms);
-}
-
-function timeoutWithSafetyMargin(promise: Promise<void>, ms: number, getTimeoutError: () => string): Promise<void> {
-    addTimeoutSafetyMargin(ms);
-    return promiseHelpers.timeout(promise, ms, getTimeoutError);
-}
-
-export const retryFunctionAndAssertions = async (retryAndAssertArguments: RetryAndAssertArguments): Promise<void> => {
+export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArguments): Promise<void> => {
+    const { options, assertionStack } = retryParams;
     let assertionError: Error | undefined;
-    let isTimeoutExceeded = false;
+    let didTimeout = false;
+    let cancel = () => {
+        /* */
+    };
 
-    const performRetries = async ({
-        functionToRetry,
-        options,
-        assertionStack,
-        description,
-    }: RetryAndAssertArguments) => {
-        const { retries, delay } = options;
-        let retriesCount = 0;
+    const performRetries = async () => {
+        let time = Date.now();
+        let delay: Promise<void>;
 
-        while (retriesCount < retries && !isTimeoutExceeded) {
+        for (let retriesCount = 0; retriesCount < options.retries && !didTimeout; retriesCount++) {
             try {
-                retriesCount++;
                 /**
                  * If assertion chain includes such method as `change`, `decrease` or `increase` that means function passed to
                  * the `expect` will be called by Chai itself
                  */
-                const shouldAssertFunctionValue = assertionStack.some((stackItem) =>
-                    chaiMethodsThatHandleFunction.includes(stackItem.propertyName)
-                );
-                const valueToAssert = shouldAssertFunctionValue ? functionToRetry : await functionToRetry();
-                let assertion = Chai.expect(valueToAssert, description);
+                let assertion = await initialAssertion(retryParams);
 
                 for (const { propertyName, method, args } of assertionStack) {
-                    if (method && args) {
-                        assertion = method.apply(assertion, args);
-                    } else {
-                        assertion = assertion[propertyName] as Chai.Assertion;
-                    }
+                    assertion = updateAssertion(method, args, assertion, propertyName);
                 }
 
                 return;
-            } catch (error: unknown) {
-                assertionError = error as Error;
-                await sleepWithSafetyMargin(delay);
+            } catch (error: any) {
+                if (!didTimeout) {
+                    assertionError = error as Error;
+                    time = adjustTest(time, options.delay);
+                    ({ cancel, delay } = sleep(options.delay));
+                    await delay;
+                }
             }
         }
 
-        if (!isTimeoutExceeded) {
-            throw new Error(`Limit of ${retries} retries exceeded! ${assertionError}`);
-        }
+        throw new Error(`Limit of ${options.retries} retries exceeded! ${assertionError}`);
     };
 
-    const getTimeoutError = () =>
-        `Timed out after ${retryAndAssertArguments.options.timeout}ms. ${assertionError ?? ''}`;
+    const getTimeoutError = () => `Timed out after ${options.timeout}ms. ${assertionError ?? ''}`;
 
-    setTimeout(() => {
-        isTimeoutExceeded = true;
-    }, retryAndAssertArguments.options.timeout);
+    return timeout(performRetries(), options.timeout, getTimeoutError).catch((err) => {
+        cancel();
+        didTimeout = true;
+        throw err;
+    });
+};
 
-    return timeoutWithSafetyMargin(
-        performRetries(retryAndAssertArguments),
-        retryAndAssertArguments.options.timeout,
-        getTimeoutError
+const initialAssertion = async ({ assertionStack, description, functionToRetry: fn }: RetryAndAssertArguments) => {
+    const shouldAssertFunctionValue = assertionStack.some((stackItem) =>
+        chaiMethodsThatHandleFunction.includes(stackItem.propertyName)
     );
+    const valueToAssert = shouldAssertFunctionValue ? fn : await fn();
+    return Chai.expect(valueToAssert, description);
+};
+
+const updateAssertion = (
+    method: AssertionMethod | undefined,
+    args: unknown[] | undefined,
+    assertion: Chai.Assertion,
+    propertyName: keyof Chai.Assertion
+) => (method && args ? method.apply(assertion, args) : (assertion[propertyName] as Chai.Assertion));
+
+const adjustTest = (time: number, delay: number): number => {
+    const now = Date.now();
+    const diff = now - time;
+
+    adjustTestTime(diff + delay);
+    return now + delay;
+};
+
+const sleep = (ms: number) => {
+    const { promise, resolve, reject } = deferred();
+    const timeoutId = setTimeout(resolve, ms);
+    return {
+        cancel: () => {
+            clearTimeout(timeoutId);
+            reject();
+        },
+        delay: promise,
+    };
 };
