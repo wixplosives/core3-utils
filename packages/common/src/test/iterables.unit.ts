@@ -102,8 +102,21 @@ describe('iterables', () => {
         expect(isEmpty([1])).to.eql(false);
     });
     it(`size`, () => {
-        expect(size([])).to.eql(0);
-        expect(size([0, 1])).to.eql(2);
+        expect(size([]), 'size of empty array').to.eql(0);
+        expect(size([0, 1]), 'size of array').to.eql(2);
+        expect(size(undefined), 'size of undefined').to.eql(0);
+        expect(size(null), 'size of null').to.eql(0);
+        expect(size(''), 'size of empty string').to.eql(0);
+        expect(size('hello'), 'size of string string').to.eql(5);
+        expect(
+            size(
+                (function* () {
+                    yield 1;
+                    yield 1;
+                })()
+            ),
+            'generated iterator'
+        ).to.eql(2);
     });
     it(`map`, () => {
         expect([...map([0, 1, 2], (i) => i ** 2)]).to.eql([0, 1, 4]);

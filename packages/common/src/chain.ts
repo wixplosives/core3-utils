@@ -123,6 +123,9 @@ function chainIter<T>(iterable: Iterable<T>): IterableChain<T> {
     return {
         value: iterable,
         iterable,
+        get array() {
+            return [...iterable];
+        },
         ...boundToIter,
         ...boundToElm,
         forEach: (mapping: Mapping<T, unknown>) => {
@@ -168,4 +171,5 @@ export type Chain<T> = {
     skip: (count: number) => IterableChain<T>;
     reduce: <A>(reducer: (acc: A, item: T) => A, initial: A) => ValueChain<A>;
     iterable: Iterable<T>;
+    get array(): T[];
 };
