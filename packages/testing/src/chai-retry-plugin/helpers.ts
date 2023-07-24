@@ -3,6 +3,7 @@ import { chaiMethodsThatHandleFunction } from './constants';
 import type { AssertionMethod, RetryAndAssertArguments } from './types';
 import { adjustTestTime } from '../mocha-ctx';
 import { deferred, timeout } from 'promise-assist';
+import { isDebugMode } from '../debug-tests';
 
 export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArguments): Promise<void> => {
     const { options, assertionStack } = retryParams;
@@ -16,7 +17,7 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
         let time = Date.now();
         let delay: Promise<void>;
 
-        for (let retriesCount = 0; retriesCount < options.retries && !didTimeout; retriesCount++) {
+        for (let retriesCount = 0; (retriesCount < options.retries && !didTimeout) || isDebugMode(); retriesCount++) {
             try {
                 /**
                  * If assertion chain includes such method as `change`, `decrease` or `increase` that means function passed to
@@ -44,11 +45,15 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
 
     const getTimeoutError = () => `Timed out after ${options.timeout}ms. ${assertionError ?? ''}`;
 
-    return timeout(performRetries(), options.timeout, getTimeoutError).catch((err) => {
-        cancel();
-        didTimeout = true;
-        throw err;
-    });
+    if (isDebugMode()) {
+        return performRetries();
+    } else {
+        return timeout(performRetries(), options.timeout, getTimeoutError).catch((err) => {
+            cancel();
+            didTimeout = true;
+            throw err;
+        });
+    }
 };
 
 const initialAssertion = async ({ assertionStack, description, functionToRetry: fn }: RetryAndAssertArguments) => {
