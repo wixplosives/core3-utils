@@ -35,6 +35,5 @@ export * from './safe-fake-timer';
 export * from './dispose';
 export * from './randomize-tests-order';
 export * from './mocha-ctx';
-export * from './time-dilation';
 export * from './chai-retry-plugin';
 export * from './debug-tests';

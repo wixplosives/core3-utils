@@ -1,16 +1,6 @@
 import { expect, use } from 'chai';
 import asPromised from 'chai-as-promised';
-import {
-    allWithTimeout,
-    defaults,
-    mochaCtx,
-    sleep,
-    step,
-    timeDilation,
-    waitForSpyCall,
-    waitForStubCall,
-    withTimeout,
-} from '..';
+import { allWithTimeout, defaults, mochaCtx, sleep, step, waitForSpyCall, waitForStubCall, withTimeout } from '..';
 
 use(asPromised);
 
@@ -27,7 +17,7 @@ describe('steps', () => {
             expect(waitForSpyCall({ m: () => 0 }, 'm')).to.eventually.rejectedWith('Timed out'),
             expect(waitForStubCall(() => 0)).to.eventually.rejectedWith('Timed out'),
         ]);
-        expect(mochaCtx()?.timeout()).to.be.approximately(950 + timeDilation() * (+4 * TIMEOUT + 4 * SAFETY_MARGIN), 2);
+        expect(mochaCtx()?.timeout()).to.be.approximately(950 + (4 * TIMEOUT + 4 * SAFETY_MARGIN), 2);
     });
 
     describe(`usage in beforeEach`, () => {
