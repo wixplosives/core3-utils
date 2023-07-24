@@ -285,6 +285,18 @@ describe('chai-retry-plugin', () => {
             expect(this.timeout(), 'test timeout').to.be.approximately(BASE_TIMEOUT + SUCCESS_TIME, 10);
         });
     });
+
+    describe('debug mode - mocha test time is 0', () => {
+        it('does not time out', async () => {
+            await expect(() => sleep(50).then(() => true), 'should not time out').retry({ timeout: 10 }).to.be.true;
+        }).timeout(0);
+        it('does not stop after the max retries', async () => {
+            let count = 0;
+            await expect(() => count++, 'should not stop retrying')
+                .retry({ retries: 10 })
+                .to.eql(12);
+        }).timeout(0);
+    });
 });
 
 const withCallCount = (func: (callCount: number) => unknown) => {
