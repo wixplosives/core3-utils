@@ -1,6 +1,6 @@
 import { forEach } from '@wixc3/common';
 import { getCtxRoot, getMochaRunnables, _beforeEach, _before } from './mocha-helpers';
-import { timeDilation } from './time-dilation';
+import { isDebugMode } from './debug-tests';
 
 let currentMochaCtx: Mocha.Context | undefined;
 
@@ -15,14 +15,10 @@ export function mochaCtx() {
  * Add ms to current test timeout
  * @param allowTimeDilation when true (default) ms is multiplied by {@link timeDilation | timeDilation() }
  */
-export function adjustTestTime(ms: number, allowTimeDilation = true) {
-    if (allowTimeDilation) {
-        ms *= timeDilation();
-    }
+export function adjustTestTime(ms: number) {
+    if (isDebugMode()) return 0;
     const ctx = mochaCtx();
-    if (ctx?.timeout()) {
-        ctx?.timeout(ctx?.timeout() + ms);
-    }
+    ctx?.timeout(ctx?.timeout() + ms);
     return ms;
 }
 

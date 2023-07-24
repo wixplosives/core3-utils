@@ -1,7 +1,6 @@
 import { wrapPromise } from './common';
 import { TimeoutError } from './errors';
 import { adjustTestTime, mochaCtx } from '../mocha-ctx';
-import { timeDilation } from '../time-dilation';
 import type { Info, PromiseWithTimeout } from './types';
 
 export function createTimeoutStep<T>(
@@ -35,9 +34,8 @@ export function createTimeoutStep<T>(
 }
 
 function adjustTimeout<T>(ms: number, p: PromiseWithTimeout<T>, adjust: boolean) {
-    ms = ms * timeDilation();
     const diff = ms - p.info.timeout;
     p.info.timeout = ms;
-    if (adjust) adjustTestTime(diff, false);
+    if (adjust) adjustTestTime(diff);
     return ms;
 }
