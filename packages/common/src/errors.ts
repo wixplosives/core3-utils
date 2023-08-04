@@ -1,4 +1,4 @@
-import { isPlainObject } from './objects';
+import { isObject } from './objects';
 
 /**
  * Convert any kind of value to an error instance. Unless the value is already
@@ -16,6 +16,18 @@ export function getErrorCode(error: Error & { code?: string }): string | undefin
 }
 
 /**
+ * Creates an error with error code. Helpful when `instanceof` can't be used
+ * because the error was serialized and then deserialized.
+ * @example
+ * ```ts
+ * try {
+ *     throw new ErrorWithCode('message', { code: 'ENOENT' });
+ * } catch (error) {
+ *     if (getErrorCode(toError(error)) === 'ENOENT') {
+ *         // ...
+ *     }
+ * }
+ * ```
  */
 export class ErrorWithCode extends Error {
     public code?: string;
@@ -66,10 +78,12 @@ export function errorToPlainObject<T extends Error>(error: T) {
     };
 }
 
+/**
+ * Checks if the `error` is an object compatible with the Error interface; that is,
+ * it has properties 'name' and 'message' of type string. The object could be an
+ * instance of an Error, or it could be some other kind of object that has these
+ * properties.
+ */
 export function isErrorLikeObject(error: unknown): error is Error {
-    return (
-        isPlainObject(error) &&
-        typeof (error as { name?: string }).name === 'string' &&
-        typeof (error as { message?: string }).message === 'string'
-    );
+    return isObject(error) && typeof error.name === 'string' && typeof error.message === 'string';
 }
