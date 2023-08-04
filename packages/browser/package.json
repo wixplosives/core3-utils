@@ -19,6 +19,6 @@
   },
   "dependencies": {
     "@file-services/path": "^8.0.1",
-    "@file-services/types": "^8.0.1"
+    "@file-services/types": "^8.1.0"
   }
 }

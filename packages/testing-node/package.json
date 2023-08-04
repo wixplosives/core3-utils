@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@file-services/node": "^8.0.1",
-    "@file-services/types": "^8.0.1",
+    "@file-services/types": "^8.1.0",
     "@wixc3/common": "^13.1.0",
     "@wixc3/patterns": "^13.1.0",
     "chai": "^4.3.7",
