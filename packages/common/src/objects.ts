@@ -64,16 +64,12 @@ export function mapKeys<T extends object, R extends string>(
  *
  * Common usage scenario:
  * ```ts
- * declare const value: unknown;
- *
- * // Type error: property 'foo' does not exist on type 'object'.
- * typeof value === 'object' && value !== null && value.foo === 'bar';
- *
- *  // No type error.
  * isObject(value) && value.foo === 'bar';
+ * // Instead of:
+ * typeof value === 'object' && value !== null && 'foo' in value && value.foo === 'bar';
  * ```
  */
-export function isObject(value: unknown): value is Record<string | number | symbol, unknown> {
+export function isObject(value: unknown): value is Readonly<Record<string | number | symbol, unknown>> {
     const type = typeof value;
     return value !== null && (type === 'object' || type === 'function');
 }
