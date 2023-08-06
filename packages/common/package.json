@@ -18,8 +18,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@file-services/path": "^8.0.1",
-    "@file-services/types": "^8.0.1",
+    "@file-services/path": "^8.1.1",
+    "@file-services/types": "^8.1.1",
     "promise-assist": "^2.0.1"
   }
 }
