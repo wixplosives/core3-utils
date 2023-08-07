@@ -1,8 +1,9 @@
 import { createTempDirectorySync } from 'create-temp-directory';
-import { createDisposalGroup, disposeAfter, DEFAULT_DISPOSAL_GROUP } from '@wixc3/testing';
+import { createDisposalGroup, disposeAfter as disposeAfterTest, DEFAULT_DISPOSAL_GROUP } from '@wixc3/testing';
 import fs from '@file-services/node';
 import { DisposableOptions } from '@wixc3/patterns';
 import { defaults } from '@wixc3/common';
+import { retry } from 'promise-assist';
 export const DISPOSE_OF_TEMP_DIRS = 'DISPOSE_OF_TEMP_DIRS';
 try {
     createDisposalGroup(DISPOSE_OF_TEMP_DIRS, { after: DEFAULT_DISPOSAL_GROUP });
@@ -18,7 +19,8 @@ try {
  */
 export function createTestDir(
     prefix?: string | undefined,
-    disposalOptions: DisposableOptions | string = DISPOSE_OF_TEMP_DIRS
+    disposalOptions: DisposableOptions | string = DISPOSE_OF_TEMP_DIRS,
+    disposeAfter = disposeAfterTest
 ) {
     const dir = createTempDirectorySync(prefix);
     const options = defaults<DisposableOptions, DisposableOptions>(
@@ -31,6 +33,6 @@ export function createTestDir(
             : disposalOptions,
         { group: DISPOSE_OF_TEMP_DIRS }
     );
-    disposeAfter(() => dir.remove(), options);
+    disposeAfter(() => retry(() => dir.remove(), { retries: Number.POSITIVE_INFINITY, delay: 100 }), options);
     return fs.realpathSync.native(dir.path);
 }
