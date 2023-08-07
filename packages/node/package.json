@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/node",
-  "version": "13.0.1",
+  "version": "13.1.0",
   "description": "Common utils, usable in all environments",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -18,8 +18,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@file-services/node": "^8.0.1",
-    "@file-services/path": "^8.0.1",
-    "@file-services/types": "^8.0.1"
+    "@file-services/node": "^8.1.1",
+    "@file-services/path": "^8.1.1",
+    "@file-services/types": "^8.1.1"
   }
 }

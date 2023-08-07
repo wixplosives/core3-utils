@@ -59,6 +59,22 @@ export function mapKeys<T extends object, R extends string>(
 }
 
 /**
+ * Checks if value is an object, e.g. a plain object, an array, a function,
+ * a regex, but not a primitive value.
+ *
+ * Common usage scenario:
+ * ```ts
+ * isObject(value) && value.foo === 'bar';
+ * // Instead of:
+ * typeof value === 'object' && value !== null && 'foo' in value && value.foo === 'bar';
+ * ```
+ */
+export function isObject(value: unknown): value is Readonly<Record<string | number | symbol, unknown>> {
+    const type = typeof value;
+    return value !== null && (type === 'object' || type === 'function');
+}
+
+/**
  * Checks that value is a POJO
  */
 export function isPlainObject(value: unknown): value is Record<string | number | symbol, unknown> {
