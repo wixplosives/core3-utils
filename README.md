@@ -17,7 +17,6 @@
 | [@wixc3/docs](https://wixplosives.github.io/core3-utils/docs)                         | Tool + CLI for docs generation from TSDocs                                                           |
 | [@wixc3/docs-macros](https://wixplosives.github.io/core3-utils/docs-macros)           |                                                                                                      |
 | [@wixc3/fs-utils](https://wixplosives.github.io/core3-utils/fs-utils)                 |                                                                                                      |
-| [@wixc3/isomorphic-fetch](https://wixplosives.github.io/core3-utils/isomorphic-fetch) | An isomorphic way to use fetch (i.e works the same in browser and node environments)                 |
 | [@wixc3/mark-text](https://wixplosives.github.io/core3-utils/mark-text)               |                                                                                                      |
 | [@wixc3/mostly-equal](https://wixplosives.github.io/core3-utils/mostly-equal)         | Adds chai matches for partial equality of JSONs                                                      |
 | [@wixc3/node](https://wixplosives.github.io/core3-utils/node)                         |                                                                                                      |
