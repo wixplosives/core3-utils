@@ -5,8 +5,6 @@
     { "path": "./packages/common/src/tsconfig.esm.json" },
     { "path": "./packages/patterns/src" },
     { "path": "./packages/patterns/src/tsconfig.esm.json" },
-    { "path": "./packages/isomorphic-fetch/src" },
-    { "path": "./packages/isomorphic-fetch/src/tsconfig.esm.json" },
     { "path": "./packages/mark-text/src" },
     { "path": "./packages/mark-text/src/tsconfig.esm.json" },
     { "path": "./packages/mostly-equal/src" },
