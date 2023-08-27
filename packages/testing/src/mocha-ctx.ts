@@ -1,6 +1,7 @@
 import { forEach } from '@wixc3/common';
-import { getCtxRoot, getMochaRunnables, _beforeEach, _before } from './mocha-helpers';
+import { getCtxRoot, getMochaRunnables } from './mocha-helpers';
 import { isDebugMode } from './debug-tests';
+import { suiteSetup } from 'mocha';
 
 let currentMochaCtx: Mocha.Context | undefined;
 
@@ -32,13 +33,13 @@ export function locatorTimeout(ms = 10_000) {
 
 function saveMochaCtx(this: Mocha.Context) {
     const root = getCtxRoot(this);
-    forEach(getMochaRunnables(root), (rn) => {
-        const fn = rn.fn as Mocha.AsyncFunc;
-        rn.fn = function (this: Mocha.Context) {
-            currentMochaCtx = rn.ctx || this;
+    forEach(getMochaRunnables(root), (runnable) => {
+        const fn = runnable.fn as Mocha.AsyncFunc;
+        runnable.fn = function (this: Mocha.Context) {
+            currentMochaCtx = runnable.ctx || this;
             return fn.call(this);
         };
     });
 }
 
-_before('wrap mocha runnables to save ctx', saveMochaCtx);
+suiteSetup('wrap mocha runnables to save ctx', saveMochaCtx);

@@ -5,7 +5,8 @@ import { adjustTestTime, mochaCtx } from '../mocha-ctx';
 import { createTimeoutStep } from './with-timeout';
 import type { _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep } from './types';
 import { createPromiseStep } from './no-timeout';
-import { setFirstHook, _beforeEach } from '../mocha-helpers';
+import { setup } from 'mocha';
+
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
  * A generated stub
@@ -195,6 +196,9 @@ export function sleep(ms?: number): PromiseWithTimeout<void> {
  * default values for steps of the current test
  */
 export function defaults(): StepsDefaults {
+    if (!stepsDefaults) {
+        createDefaults();
+    }
     return stepsDefaults;
 }
 
@@ -205,5 +209,5 @@ function createDefaults() {
     });
 }
 
-_beforeEach('create steps defaults', createDefaults);
-setFirstHook(createDefaults);
+createDefaults();
+setup('create steps defaults', createDefaults);
