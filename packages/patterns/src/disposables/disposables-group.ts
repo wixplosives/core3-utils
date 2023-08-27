@@ -26,7 +26,8 @@ export class DisposablesGroup {
             throw new Error(`Disposable already added`);
         }
         const [_0, _1, _2, ...userCode] = new Error().stack?.split(/\n\s+at\s+/) || ['No stacktrace :('];
-        const stack = ['', ...userCode].join('\n    at ');
+        userCode.unshift('');
+        const stack = userCode.join('\n    at ');
 
         this.disposables.set(disposable, { timeout, name, stack });
         return () => this.disposables.delete(disposable);
