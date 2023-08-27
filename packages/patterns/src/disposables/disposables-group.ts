@@ -14,7 +14,10 @@ export class DisposablesGroup {
                 disposeOf(disposable),
                 details.timeout,
                 `Disposal timed out: "${details.name}" after ${details.timeout}ms`
-            );
+            ).catch((e: Error) => {
+                e.stack = `Error: ${e.message}${details.stack}`;
+                throw e;
+            });
         }
     }
 
@@ -22,7 +25,10 @@ export class DisposablesGroup {
         if (this.disposables.has(disposable)) {
             throw new Error(`Disposable already added`);
         }
-        this.disposables.set(disposable, { timeout, name });
+        const [_0, _1, _2, ...userCode] = new Error().stack?.split(/\n\s+at\s+/) || ['No stacktrace :('];
+        const stack = ['', ...userCode].join('\n    at ');
+
+        this.disposables.set(disposable, { timeout, name, stack });
         return () => this.disposables.delete(disposable);
     }
 
@@ -41,6 +47,7 @@ export type DisposableItem = { dispose: DisposeFunction } | DisposeFunction;
 export type NamedDisposable = {
     timeout: number;
     name: string;
+    stack: string;
 };
 
 async function disposeOf(dispose: DisposableItem) {
