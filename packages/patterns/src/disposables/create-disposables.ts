@@ -70,13 +70,15 @@ const withDefaults = (d?: DisposableOptions): Required<DisposableOptions> =>
  * // last
  * ```
  */
-export function createDisposables() {
-    return new Disposables();
+export function createDisposables(allowUnnamedDisposables = true) {
+    return new Disposables(allowUnnamedDisposables);
 }
 
 export class Disposables {
     private readonly groups: DisposalGroup[] = [createGroup(DEFAULT_GROUP)];
     private readonly constrains: GroupConstraints[] = [];
+
+    constructor(readonly allowUnnamedDisposables = true) {}
 
     /**
      * register a new constrained disposal group

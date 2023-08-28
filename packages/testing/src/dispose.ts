@@ -77,8 +77,12 @@ teardown('disposing', async function () {
     try {
         await disposables.dispose();
     } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log(list);
+        if (e instanceof Error) {
+            e.message = `${e.message}
+
+Disposal groups info:
+${JSON.stringify(list, null, 2)}`;
+        }
         throw e;
     }
 });
