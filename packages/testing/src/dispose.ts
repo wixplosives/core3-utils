@@ -5,7 +5,7 @@ import {
     type DisposableItem,
     type GroupConstraints,
 } from '@wixc3/patterns';
-import { teardown } from 'mocha';
+import { _afterEach } from './mocha-helpers';
 
 const disposables = createDisposables();
 export const DEFAULT_DISPOSAL_GROUP = DEFAULT_GROUP;
@@ -71,7 +71,7 @@ export async function initAndDisposeAfter<T extends (...args: any[]) => any>(
     return await Promise.resolve(res);
 }
 
-teardown('disposing', async function () {
+_afterEach('disposing', async function () {
     const list = disposables.list();
     this.timeout(list.totalTimeout);
     try {

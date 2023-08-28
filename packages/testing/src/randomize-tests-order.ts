@@ -1,6 +1,5 @@
 import { shuffle } from '@wixc3/common';
-import { getCtxRoot } from './mocha-helpers';
-import { suiteSetup } from 'mocha';
+import { getCtxRoot, _before } from './mocha-helpers';
 
 let _shouldRandomize = false;
 let wasSet = false;
@@ -24,7 +23,7 @@ const shuffleTests = (s: Mocha.Suite) => {
     s.suites.forEach(shuffleTests);
 };
 
-suiteSetup(function () {
+_before(function () {
     if (_shouldRandomize) {
         const root = getCtxRoot(this);
         if (root) {

@@ -22,7 +22,6 @@
     "@wixc3/patterns": "^13.3.0",
     "chai": "^4.3.8",
     "create-temp-directory": "^2.4.0",
-    "mocha": "^10.2.0",
     "promise-assist": "^2.0.1"
   }
 }
