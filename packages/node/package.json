@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/node",
-  "version": "13.2.0",
+  "version": "13.3.0",
   "description": "Common utils, usable in all environments",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
