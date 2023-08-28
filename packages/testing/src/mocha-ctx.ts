@@ -1,7 +1,6 @@
 import { forEach } from '@wixc3/common';
-import { getCtxRoot, getMochaRunnables } from './mocha-helpers';
+import { getCtxRoot, getMochaRunnables, _beforeEach, _before } from './mocha-helpers';
 import { isDebugMode } from './debug-tests';
-import { suiteSetup } from 'mocha';
 
 let currentMochaCtx: Mocha.Context | undefined;
 
@@ -42,4 +41,4 @@ function saveMochaCtx(this: Mocha.Context) {
     });
 }
 
-suiteSetup('wrap mocha runnables to save ctx', saveMochaCtx);
+_before('wrap mocha runnables to save ctx', saveMochaCtx);
