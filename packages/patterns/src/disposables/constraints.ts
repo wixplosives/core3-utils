@@ -53,5 +53,5 @@ export const normalizeConstraints = (
     if (groups.find((g) => g.name === name)) {
         throw new Error(`Invalid group: "${name}" already exists`);
     }
-    return _constraints.map((c) => ({ name, ...c }));
+    return _constraints;
 };

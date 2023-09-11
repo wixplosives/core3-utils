@@ -77,12 +77,8 @@ _afterEach('disposing', async function () {
     try {
         await disposables.dispose();
     } catch (e) {
-        if (e instanceof Error) {
-            e.message = `${e.message}
-
-Disposal groups info:
-${JSON.stringify(list, null, 2)}`;
-        }
+        // eslint-disable-next-line no-console
+        console.log(list);
         throw e;
     }
 });

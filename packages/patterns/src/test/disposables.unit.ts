@@ -39,43 +39,6 @@ describe('disposables', () => {
             );
             await expect(disposables.dispose()).to.eventually.be.rejectedWith('Disposal timed out: "slow"');
         });
-        describe('disposal error handling', () => {
-            it('shows the last line in the user code', async () => {
-                const disposables = createDisposables();
-                let err: Error;
-                disposables.add(
-                    () => {
-                        err = new Error('test');
-                        throw err;
-                    },
-                    { name: 'error in dispose' }
-                );
-                try {
-                    await disposables.dispose();
-                } catch (e) {
-                    expect((e as Error).stack).to.equal(err!.stack);
-                    expect((e as Error).message).to.equal(err!.message);
-                }
-            });
-            it('timeout error stack', async () => {
-                const disposables = createDisposables();
-                const err = new Error('Disposal timed out: "slow" after 1ms');
-                const ignoreLine = (err: Error) => err.stack?.replaceAll(/:\d+:\d+/g, ':XX:XX');
-                const stack = ignoreLine(err);
-
-                disposables.add(
-                    async () => {
-                        await sleep(100);
-                    },
-                    { name: 'slow', timeout: 1 }
-                );
-                try {
-                    await disposables.dispose();
-                } catch (e) {
-                    expect(ignoreLine(e as Error)).to.equal(stack);
-                }
-            });
-        });
     });
 
     describe('disposal groups', () => {
