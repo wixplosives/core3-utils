@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@file-services/memory": "^8.1.3",
+    "@file-services/memory": "^8.2.0",
     "@wixc3/common": "^13.3.0"
   }
 }
