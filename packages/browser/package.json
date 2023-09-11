@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/browser",
-  "version": "13.3.0",
+  "version": "13.3.2",
   "description": "Browser only utils",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
