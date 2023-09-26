@@ -15,6 +15,9 @@ declare global {
     }
 }
 
+export interface Assertion extends Chai.Assertion {
+    (...args: unknown[]): Chai.Assertion;
+}
 export type AssertionMethod = (...args: unknown[]) => Chai.Assertion;
 
 // Function provided as argument of `expect`
@@ -49,11 +52,12 @@ export type RetryOptions = {
 
 // Helper type to convert a type T into a Promise-like version of itself
 type Promisify<T> = {
-    [Key in keyof T]: T[Key] extends T
-        ? Promisify<T[Key]> & PromiseLike<any>
-        : T[Key] extends (...args: any) => any
-        ? (...args: Parameters<T[Key]>) => Promisify<ReturnType<T[Key]>> & PromiseLike<any>
+    [Key in keyof T]: T[Key] extends (...args: any) => any
+        ? keyof T[Key] extends never
+            ? (...args: Parameters<T[Key]>) => Promisify<ReturnType<T[Key]>> & PromiseLike<any>
+            : Promisify<T[Key]> &
+                  PromiseLike<any> & { (...args: Parameters<T[Key]>): Promisify<ReturnType<T[Key]>> & PromiseLike<any> }
         : Promisify<T[Key]> & PromiseLike<any>;
 };
 
-export type PromiseLikeAssertion = Promisify<Chai.Assertion> & PromiseLike<void>;
+export type PromiseLikeAssertion = Promisify<Assertion> & PromiseLike<void>;
