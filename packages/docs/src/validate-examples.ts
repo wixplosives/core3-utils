@@ -1,5 +1,5 @@
 import { ApiPackage, ApiDeclaredItem, ApiItem } from '@microsoft/api-extractor-model';
-import { globSync } from 'glob';
+import { sync as globSync } from 'glob';
 import { UserConfig, getPackageByName, Package, _packages, _temp, Config } from './common';
 import { readFileSync } from 'fs';
 import { expect } from 'chai';
