@@ -17,10 +17,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@file-services/types": "^8.3.0",
+    "@file-services/types": "^8.3.1",
     "@wixc3/common": "^13.3.2",
     "@wixc3/patterns": "^13.3.2",
-    "chai": "^4.3.8",
+    "chai": "^4.3.9",
     "create-temp-directory": "^2.4.0",
     "promise-assist": "^2.0.1"
   }
