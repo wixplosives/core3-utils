@@ -40,7 +40,26 @@ describe('disposables', () => {
             await expect(disposables.dispose()).to.eventually.be.rejectedWith('Disposal timed out: "slow"');
         });
     });
-
+    describe('initial disposal group', () => {
+        it('disposes in insertion order', async () => {
+            const disposed: number[] = [];
+            const disposables = createDisposables(['A', 'B']);
+            disposables.add(() => disposed.push(2), 'B');
+            disposables.add(() => disposed.push(1), 'A');
+            await disposables.dispose();
+            expect(disposed).to.deep.equal([1, 2]);
+        });
+        it('allow adding additional groups', async () => {
+            const disposed: number[] = [];
+            const disposables = createDisposables(['A', 'C']);
+            disposables.registerGroup('B', { before: 'C' });
+            disposables.add(() => disposed.push(1), 'A');
+            disposables.add(() => disposed.push(2), 'B');
+            disposables.add(() => disposed.push(3), 'C');
+            await disposables.dispose();
+            expect(disposed).to.deep.equal([1, 2, 3]);
+        });
+    });
     describe('disposal groups', () => {
         describe('constraints validation', () => {
             it('throws for missing groups', () => {

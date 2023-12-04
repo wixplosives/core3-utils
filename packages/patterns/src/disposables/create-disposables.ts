@@ -70,14 +70,16 @@ const withDefaults = (d?: DisposableOptions): Required<DisposableOptions> =>
  * // last
  * ```
  */
-export function createDisposables() {
-    return new Disposables();
+export function createDisposables(initialGroups: string[] = []) {
+    return new Disposables(initialGroups);
 }
 
 export class Disposables {
     private readonly groups: DisposalGroup[] = [createGroup(DEFAULT_GROUP)];
     private readonly constrains: GroupConstraints[] = [];
-
+    constructor(initialGroups: string[] = []) {
+        this.groups.push(...initialGroups.map(createGroup));
+    }
     /**
      * register a new constrained disposal group
      * @param constraints - constraints for the group must contain {before: groupName} or {after: groupName}
