@@ -26,12 +26,12 @@ export function createTestDir(
 
     // we don't want to allow empty strings as ids or group names hence the "||"
     const group = (isOptions ? disposalOptions?.group : disposalOptions) || DISPOSE_OF_TEMP_DIRS;
-    const id = (isOptions ? disposalOptions?.name : undefined) || `creating test dir: ${dir.path}`;
+    const name = (isOptions ? disposalOptions?.name : undefined) || `creating test dir: ${dir.path}`;
     // on numbers we can accept 0 as a valid timeout
     const timeout = (isOptions ? disposalOptions?.timeout : undefined) ?? 2_000;
 
     disposeAfter(() => retry(() => dir.remove(), { retries: Number.POSITIVE_INFINITY, delay: 100 }), {
-        name: id,
+        name,
         group,
         timeout,
     });
