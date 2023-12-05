@@ -23,8 +23,12 @@ export const DEFAULT_DISPOSAL_GROUP = DEFAULT_GROUP;
  *
  * @param group disposal group name. disposal groups let you specify disposal constrains. see: {@link createDisposalGroup}
  */
-export function disposeAfter(disposable: DisposableItem, options?: DisposableOptions) {
-    disposables.add(disposable, options);
+export function disposeAfter(disposable: DisposableItem, options: string | Omit<DisposableOptions, 'dispose'>) {
+    if (typeof options === 'string') {
+        disposables.add({ name: options, dispose: disposable });
+    } else {
+        disposables.add({ ...options, dispose: disposable });
+    }
 }
 
 /**
@@ -62,7 +66,7 @@ export function createDisposalGroup(name: string, constraints: GroupConstraints[
  */
 export async function initAndDisposeAfter<T extends (...args: any[]) => any>(
     target: { init: T } & DisposableItem,
-    options?: DisposableOptions,
+    options: string | Omit<DisposableOptions, 'dispose'>,
     ...args: Parameters<T>
 ): Promise<Awaited<ReturnType<T>>> {
     disposeAfter(target, options);

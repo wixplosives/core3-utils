@@ -1,6 +1,5 @@
 import { DisposalGroup, getGroupConstrainedIndex, GroupConstraints, normalizeConstraints } from './constraints';
 import { DisposableItem, DisposablesGroup } from './disposables-group';
-import { defaults } from '@wixc3/common';
 
 export const DEFAULT_GROUP = 'default';
 export const DEFAULT_TIMEOUT = 1000;
@@ -12,27 +11,23 @@ const createGroup = (name: string): DisposalGroup => ({
 
 export type DisposableOptions = {
     /**
+     * disposable name, used in error or when timed out
+     */
+    name: string;
+    /**
+     * the subject to dispose
+     */
+    dispose: DisposableItem;
+    /**
      * @default DEFAULT_TIMEOUT
      */
     timeout?: number;
-    /**
-     * disposable name, used in error when timed out
-     */
-    name?: string;
     /**
      * disposal group name
      * @default DEFAULT_GROUP
      */
     group?: string;
 };
-
-let count = 0;
-const withDefaults = (d?: DisposableOptions): Required<DisposableOptions> =>
-    defaults(d || {}, {
-        timeout: DEFAULT_TIMEOUT,
-        group: DEFAULT_GROUP,
-        name: `unnamed-${count++}`,
-    });
 
 /**
  * Disposables allow adding of disposal async functions,
@@ -101,17 +96,24 @@ export class Disposables {
      * @param options if string, will be used as group name
      * @returns a function to remove the disposable
      */
-    add(disposable: DisposableItem, options?: DisposableOptions | string) {
-        if (typeof options === 'string') {
-            options = { group: options };
+
+    add(...[idOrOptions, disposable]: [id: string, disposable: DisposableItem] | [options: DisposableOptions]) {
+        if (typeof idOrOptions === 'string') {
+            if (!disposable) {
+                throw new Error(
+                    `Invalid disposable: must be a function or object with a dispose method got ${disposable}`
+                );
+            }
+            idOrOptions = { name: idOrOptions, dispose: disposable };
         }
-        const { group: groupName, name, timeout } = withDefaults(options);
+        const { group: groupName = DEFAULT_GROUP, name: id, dispose, timeout = DEFAULT_TIMEOUT } = idOrOptions;
         const group = this.groups.find((g) => g.name === groupName);
         if (!group) {
             throw new Error(`Invalid group: "${groupName}" doesn't exists`);
         }
-        group.disposables.add(disposable, timeout, name);
-        return () => group.disposables.remove(disposable);
+
+        group.disposables.add(dispose, timeout, id);
+        return () => group.disposables.remove(dispose);
     }
 
     /**

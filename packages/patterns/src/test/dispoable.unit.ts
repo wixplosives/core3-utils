@@ -13,7 +13,7 @@ describe('Disposable class', () => {
         it('executes inner disposal functions', async () => {
             const disposable = new Disposable();
             let wasDisposed = false;
-            disposable.disposables.add(() => (wasDisposed = true));
+            disposable.disposables.add('wasDisposed', () => (wasDisposed = true));
 
             expect(wasDisposed).to.be.false;
             await disposable.dispose();
@@ -23,13 +23,13 @@ describe('Disposable class', () => {
     describe('disposalGuard', () => {
         it('throws if isDisposed is true', () => {
             const disposable = new Disposable();
-            disposable.disposables.add(() => sleep(20));
+            disposable.disposables.add('sleep', () => sleep(20));
             void disposable.dispose();
             expect(() => disposable.disposalGuard()).to.throw('Instance was disposed');
         });
         it('does not throws if usedWhileDisposing is true and disposal did not finish', async () => {
             const disposable = new Disposable();
-            disposable.disposables.add(() => sleep(20));
+            disposable.disposables.add('sleep', () => sleep(20));
             const disposing = disposable.dispose();
             expect(() => disposable.disposalGuard({ async: false, usedWhileDisposing: true })).not.to.throw();
             await disposing;
@@ -41,7 +41,7 @@ describe('Disposable class', () => {
             it('sync does not delay disposal', async () => {
                 const disposable = new Disposable();
                 let disposeCalled = false;
-                disposable.disposables.add(() => {
+                disposable.disposables.add('disposeCalled', () => {
                     disposeCalled = true;
                 });
                 disposable.disposalGuard({ async: false });
@@ -54,7 +54,7 @@ describe('Disposable class', () => {
             it('async (default) delays disposal until the guard is done', async () => {
                 const disposable = new Disposable();
                 let disposeCalled = false;
-                disposable.disposables.add(() => {
+                disposable.disposables.add('disposeCalled', () => {
                     disposeCalled = true;
                 });
 
