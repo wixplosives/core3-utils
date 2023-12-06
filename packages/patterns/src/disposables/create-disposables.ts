@@ -161,7 +161,4 @@ export class Disposables {
             totalTimeout: groups.reduce((acc, g) => acc + g.totalTimeout, 0),
         };
     }
-    get size() {
-        return this.groups.reduce((acc, g) => acc + g.disposables.size, 0);
-    }
 }

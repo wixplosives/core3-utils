@@ -37,9 +37,6 @@ export class DisposablesGroup {
     list() {
         return Array.from(this.disposables.values()).map((d) => ({ name: d.name, timeout: d.timeout }));
     }
-    get size() {
-        return this.disposables.size;
-    }
 }
 
 export type DisposeFunction = () => unknown;
