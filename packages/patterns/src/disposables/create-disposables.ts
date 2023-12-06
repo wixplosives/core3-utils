@@ -72,7 +72,7 @@ export function createDisposables(name: string, initialGroups: string[] = []) {
 export class Disposables {
     private readonly groups: DisposalGroup[] = [createGroup(DEFAULT_GROUP)];
     private readonly constrains: GroupConstraints[] = [];
-    constructor(name: string, initialGroups: string[] = []) {
+    constructor(private name: string, initialGroups: string[] = []) {
         this.groups.push(...initialGroups.map(createGroup));
     }
     /**
@@ -106,13 +106,13 @@ export class Disposables {
             }
             nameOrOptions = { name: nameOrOptions, dispose: disposable };
         }
-        const { group: groupName = DEFAULT_GROUP, name: id, dispose, timeout = DEFAULT_TIMEOUT } = nameOrOptions;
+        const { group: groupName = DEFAULT_GROUP, name, dispose, timeout = DEFAULT_TIMEOUT } = nameOrOptions;
         const group = this.groups.find((g) => g.name === groupName);
         if (!group) {
             throw new Error(`Invalid group: "${groupName}" doesn't exists`);
         }
 
-        group.disposables.add(dispose, timeout, id);
+        group.disposables.add(dispose, timeout, `[${this.name}]: ${name}`);
         return () => group.disposables.remove(dispose);
     }
 
