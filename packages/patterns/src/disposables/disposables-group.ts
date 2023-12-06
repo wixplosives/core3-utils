@@ -14,7 +14,7 @@ export class DisposablesGroup {
                 await timeout(
                     disposeOf(disposable),
                     details.timeout,
-                    `Disposal timed out: "${details.name}" after ${details.timeout}ms`,
+                    `Disposal timed out: "${details.name}" after ${details.timeout}ms`
                 );
             } catch (e) {
                 throw new Error(`Disposal failed: "${details.name}"\n${(e as Error)?.stack ?? ''}`);
@@ -36,6 +36,9 @@ export class DisposablesGroup {
 
     list() {
         return Array.from(this.disposables.values()).map((d) => ({ name: d.name, timeout: d.timeout }));
+    }
+    get size() {
+        return this.disposables.size;
     }
 }
 
