@@ -38,7 +38,7 @@ describe('disposables', () => {
                     await sleep(100);
                 },
             });
-            await expect(disposables.dispose()).to.eventually.be.rejectedWith('Disposal timed out: "slow"');
+            await expect(disposables.dispose()).to.eventually.be.rejectedWith('Disposal timed out: "[test]: slow"');
         });
         it('fail with the name of specific dispose', async () => {
             const disposables = createDisposables('test');
@@ -55,7 +55,7 @@ describe('disposables', () => {
             } catch (e) {
                 const message = (e as Error).message;
                 expect(message, 'error message match pattern').to.matches(
-                    /Disposal failed: "disposing with error"\nError: failed!/
+                    /Disposal failed: "\[test\]: disposing with error"\nError: failed!/
                 );
             }
         });
@@ -127,7 +127,7 @@ describe('disposables', () => {
                 });
                 expect(groups.list().groups[0]?.disposables).to.eql([
                     {
-                        name: 'lucky',
+                        name: '[test]: lucky',
                         timeout: 1,
                     },
                 ]);
