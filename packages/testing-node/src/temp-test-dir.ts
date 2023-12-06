@@ -18,22 +18,22 @@ try {
  */
 export function createTestDir(
     prefix?: string | undefined,
-    disposalOptions: DisposableOptions | string = DISPOSE_OF_TEMP_DIRS,
+    disposalOptions?: string | Omit<DisposableOptions, 'dispose'>,
     disposeAfter = disposeAfterTest
 ) {
     const dir = createTempDirectorySync(prefix);
+    const isOptions = typeof disposalOptions !== 'string';
 
-    if (typeof disposalOptions === 'string') {
-        disposalOptions = {
-            group: disposalOptions,
-        };
-    }
+    // we don't want to allow empty strings as ids or group names hence the "||"
+    const group = (isOptions ? disposalOptions?.group : disposalOptions) || DISPOSE_OF_TEMP_DIRS;
+    const name = (isOptions ? disposalOptions?.name : undefined) || `creating test dir: ${dir.path}`;
+    // on numbers we can accept 0 as a valid timeout
+    const timeout = (isOptions ? disposalOptions?.timeout : undefined) ?? 2_000;
 
     disposeAfter(() => retry(() => dir.remove(), { retries: Number.POSITIVE_INFINITY, delay: 100 }), {
-        group: DISPOSE_OF_TEMP_DIRS,
-        name: `removing test dir: ${dir.path}`,
-        timeout: 2_000,
-        ...disposalOptions,
+        name,
+        group,
+        timeout,
     });
     return fs.realpathSync.native(dir.path);
 }

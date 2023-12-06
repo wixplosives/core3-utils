@@ -205,7 +205,7 @@ function createDefaults() {
     stepsDefaults = getDefaults();
     disposeAfter(() => {
         stepsCountByTest = new WeakMap();
-    });
+    }, 'steps createDefaults');
 }
 
 createDefaults();

@@ -38,7 +38,7 @@ export class Disposable {
     private intervals = new Set<ReturnType<typeof setInterval>>();
     constructor() {
         this.disposables.registerGroup(DELAY_DISPOSAL, { before: 'default' });
-        this.disposables.add(() => {
+        this.disposables.add('dispose timeouts and intervals', () => {
             this.timeouts.forEach((t) => clearTimeout(t));
             this.intervals.forEach((i) => clearInterval(i));
         });
@@ -112,10 +112,11 @@ export class Disposable {
         }
         if (async) {
             const { promise: canDispose, resolve: done } = deferred();
-            const remove = this.disposables.add(() => canDispose, {
+            const remove = this.disposables.add({
                 group: DELAY_DISPOSAL,
                 name,
                 timeout,
+                dispose: () => canDispose,
             });
             canDispose.then(remove).catch(noop);
             return done;
