@@ -97,16 +97,16 @@ export class Disposables {
      * @returns a function to remove the disposable
      */
 
-    add(...[idOrOptions, disposable]: [id: string, disposable: DisposableItem] | [options: DisposableOptions]) {
-        if (typeof idOrOptions === 'string') {
+    add(...[nameOrOptions, disposable]: [id: string, disposable: DisposableItem] | [options: DisposableOptions]) {
+        if (typeof nameOrOptions === 'string') {
             if (!disposable) {
                 throw new Error(
                     `Invalid disposable: must be a function or object with a dispose method got ${disposable}`
                 );
             }
-            idOrOptions = { name: idOrOptions, dispose: disposable };
+            nameOrOptions = { name: nameOrOptions, dispose: disposable };
         }
-        const { group: groupName = DEFAULT_GROUP, name: id, dispose, timeout = DEFAULT_TIMEOUT } = idOrOptions;
+        const { group: groupName = DEFAULT_GROUP, name: id, dispose, timeout = DEFAULT_TIMEOUT } = nameOrOptions;
         const group = this.groups.find((g) => g.name === groupName);
         if (!group) {
             throw new Error(`Invalid group: "${groupName}" doesn't exists`);
