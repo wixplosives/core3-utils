@@ -49,15 +49,9 @@ describe('disposables', () => {
                 },
             });
 
-            try {
-                await disposables.dispose();
-                expect.fail('should have thrown');
-            } catch (e) {
-                const message = (e as Error).message;
-                expect(message, 'error message match pattern').to.matches(
-                    /Disposal failed: "\[test\]: disposing with error"\nError: failed!/
-                );
-            }
+            await expect(disposables.dispose()).to.be.rejectedWith(
+                /Disposal failed: "\[test\]: disposing with error"\nError: failed!/
+            );
         });
     });
     describe('initial disposal group', () => {
