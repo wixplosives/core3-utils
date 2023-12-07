@@ -187,5 +187,15 @@ describe('disposables', () => {
                 expect(list.groups[1]?.disposables).to.have.length(1);
             });
         });
+        describe('hasGroup', () => {
+            it('returns true if disposables has a groupName', () => {
+                const groups = createDisposables('test');
+                groups.registerGroup('first', { before: 'default' });
+
+                expect(groups.hasGroup('first')).to.be.true;
+                expect(groups.hasGroup('default')).to.be.true;
+                expect(groups.hasGroup('missing')).to.be.false;
+            });
+        });
     });
 });

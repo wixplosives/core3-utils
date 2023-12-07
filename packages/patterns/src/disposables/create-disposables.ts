@@ -161,4 +161,10 @@ export class Disposables {
             totalTimeout: groups.reduce((acc, g) => acc + g.totalTimeout, 0),
         };
     }
+    /**
+     * @returns true if the group exists
+     */
+    hasGroup(groupName: string) {
+        return this.groups.some((g) => g.name === groupName);
+    }
 }
