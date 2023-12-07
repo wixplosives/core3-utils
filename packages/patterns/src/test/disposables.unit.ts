@@ -8,7 +8,7 @@ describe('disposables', () => {
     describe('single disposal group', () => {
         it('disposes in reverse order', async () => {
             const disposed: number[] = [];
-            const disposables = createDisposables();
+            const disposables = createDisposables('test');
             disposables.add('first', () => disposed.push(1));
             disposables.add({ name: 'second', dispose: () => disposed.push(2) });
             await disposables.dispose();
@@ -16,7 +16,7 @@ describe('disposables', () => {
         });
         it('awaits each disposable', async () => {
             const disposed: number[] = [];
-            const disposables = createDisposables();
+            const disposables = createDisposables('test');
             disposables.add('sync 1', () => disposed.push(1));
             disposables.add('sleep 2', async () => {
                 await sleep(10);
@@ -30,7 +30,7 @@ describe('disposables', () => {
             expect(disposed).to.deep.equal([3, 2, 1]);
         });
         it('times out when the disposal takes too long', async () => {
-            const disposables = createDisposables();
+            const disposables = createDisposables('test');
             disposables.add({
                 name: 'slow',
                 timeout: 1,
@@ -38,10 +38,10 @@ describe('disposables', () => {
                     await sleep(100);
                 },
             });
-            await expect(disposables.dispose()).to.eventually.be.rejectedWith('Disposal timed out: "slow"');
+            await expect(disposables.dispose()).to.eventually.be.rejectedWith('Disposal timed out: "[test]: slow"');
         });
         it('fail with the name of specific dispose', async () => {
-            const disposables = createDisposables();
+            const disposables = createDisposables('test');
             disposables.add({
                 name: 'disposing with error',
                 dispose: () => {
@@ -55,7 +55,7 @@ describe('disposables', () => {
             } catch (e) {
                 const message = (e as Error).message;
                 expect(message, 'error message match pattern').to.matches(
-                    /Disposal failed: "disposing with error"\nError: failed!/
+                    /Disposal failed: "\[test\]: disposing with error"\nError: failed!/
                 );
             }
         });
@@ -63,7 +63,7 @@ describe('disposables', () => {
     describe('initial disposal group', () => {
         it('disposes in insertion order', async () => {
             const disposed: number[] = [];
-            const disposables = createDisposables(['A', 'B']);
+            const disposables = createDisposables('test', ['A', 'B']);
             disposables.add('B', () => disposed.push(2));
             disposables.add('A', () => disposed.push(1));
             await disposables.dispose();
@@ -71,7 +71,7 @@ describe('disposables', () => {
         });
         it('allow adding additional groups', async () => {
             const disposed: number[] = [];
-            const disposables = createDisposables(['A', 'C']);
+            const disposables = createDisposables('test', ['A', 'C']);
             disposables.registerGroup('B', { before: 'C' });
             disposables.add({ name: 'A', group: 'A', dispose: () => disposed.push(1) });
             disposables.add({ name: 'B', group: 'B', dispose: () => disposed.push(2) });
@@ -83,19 +83,19 @@ describe('disposables', () => {
     describe('disposal groups', () => {
         describe('constraints validation', () => {
             it('throws for missing groups', () => {
-                const groups = createDisposables();
+                const groups = createDisposables('test');
                 expect(() => groups.registerGroup('group1', { before: 'group2' })).to.throw(
                     `Invalid constraint: "before: group2" - group not found`
                 );
             });
             it('throws for no constraints', () => {
-                const groups = createDisposables();
+                const groups = createDisposables('test');
                 expect(() => groups.registerGroup('group1', [])).to.throw(
                     `Invalid disposal group: must have at least one constraint`
                 );
             });
             it('throws for contradictory constraints', () => {
-                const groups = createDisposables();
+                const groups = createDisposables('test');
                 groups.registerGroup('before', { before: 'default' });
                 groups.registerGroup('after', { after: 'default' });
                 expect(() => groups.registerGroup('valid', { before: 'after', after: 'default' })).not.to.throw();
@@ -104,7 +104,7 @@ describe('disposables', () => {
                 );
             });
             it('requires a unique group name', () => {
-                const groups = createDisposables();
+                const groups = createDisposables('test');
                 expect(() => groups.registerGroup('default', { before: 'default' })).to.throw(
                     `Invalid group: "default" already exists`
                 );
@@ -112,12 +112,12 @@ describe('disposables', () => {
         });
         describe('add and remove', () => {
             it('add (with a string as options)', () => {
-                const groups = createDisposables();
+                const groups = createDisposables('test');
                 groups.add('first', () => void 0);
                 expect(groups.list().groups[0]?.disposables).to.have.length(1);
             });
             it('add (with options obj)', () => {
-                const groups = createDisposables();
+                const groups = createDisposables('test');
                 groups.registerGroup('first', { before: 'default' });
                 groups.add({
                     name: 'lucky',
@@ -127,13 +127,13 @@ describe('disposables', () => {
                 });
                 expect(groups.list().groups[0]?.disposables).to.eql([
                     {
-                        name: 'lucky',
+                        name: '[test]: lucky',
                         timeout: 1,
                     },
                 ]);
             });
             it('add returns a remove func', () => {
-                const disposables = createDisposables();
+                const disposables = createDisposables('test');
                 const remove = disposables.add('no effect', () => void 0);
 
                 expect(disposables.list().groups[0]?.disposables).to.have.length(1);
@@ -142,7 +142,7 @@ describe('disposables', () => {
                 expect(disposables.list().groups[0]?.disposables).to.have.length(0);
             });
             it('added disposables can be removed by reference', () => {
-                const disposables = createDisposables();
+                const disposables = createDisposables('test');
                 const disposable = () => void 0;
                 disposables.add('no effect', disposable);
 
@@ -152,7 +152,7 @@ describe('disposables', () => {
                 expect(disposables.list().groups[0]?.disposables).to.have.length(0);
             });
             it('removing missing disposables have no effect', () => {
-                const disposables = createDisposables();
+                const disposables = createDisposables('test');
                 const disposable = () => void 0;
                 disposables.add('no effect', disposable);
 
@@ -164,7 +164,7 @@ describe('disposables', () => {
         });
         describe('list', () => {
             it('returns the list of groups', () => {
-                const groups = createDisposables();
+                const groups = createDisposables('test');
                 groups.registerGroup('first', { before: 'default' });
                 groups.add({
                     name: '1',
