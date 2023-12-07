@@ -187,14 +187,20 @@ describe('disposables', () => {
                 expect(list.groups[1]?.disposables).to.have.length(1);
             });
         });
-        describe('hasGroup', () => {
-            it('returns true if disposables has a groupName', () => {
+        describe('ensureGroup', () => {
+            it('register a group', () => {
                 const groups = createDisposables('test');
-                groups.registerGroup('first', { before: 'default' });
+                groups.registerGroupIfNotExists('first', { before: 'default' });
 
-                expect(groups.hasGroup('first')).to.be.true;
-                expect(groups.hasGroup('default')).to.be.true;
-                expect(groups.hasGroup('missing')).to.be.false;
+                expect(groups.list().groups[0]?.name).to.eql('first');
+            });
+            it('ignore if group exist', () => {
+                const groups = createDisposables('test');
+                groups.registerGroupIfNotExists('first', { after: 'default' });
+                groups.registerGroupIfNotExists('first', { before: 'default' });
+
+                expect(groups.list().groups[0]?.name).to.eql('default');
+                expect(groups.list().groups[1]?.name).to.eql('first');
             });
         });
     });
