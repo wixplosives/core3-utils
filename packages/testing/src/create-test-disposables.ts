@@ -10,7 +10,7 @@ export function createTestDisposables(disposeHook = afterEach) {
     if (mochaCtx()?.currentTest) {
         throw new Error('createMochaDisposables must not be called inside a test only at describe or module');
     }
-    const disposables = createDisposables();
+    const disposables = createDisposables('dispose');
     disposeHook('createTestDisposables', () => disposables.dispose());
     return disposables;
 }
