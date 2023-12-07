@@ -79,8 +79,8 @@ export class Disposables {
      * register a new constrained disposal group
      * @param constraints - constraints for the group must contain {before: groupName} or {after: groupName}
      */
-    registerGroup(groupName: string, _constraints: GroupConstraints[] | GroupConstraints) {
-        const nConstraints = normalizeConstraints(_constraints, groupName, this.groups);
+    registerGroup(groupName: string, constraints: GroupConstraints[] | GroupConstraints) {
+        const nConstraints = normalizeConstraints(constraints, groupName, this.groups);
         const { lastAfter, firstBefore } = getGroupConstrainedIndex(nConstraints, this.groups);
         this.constrains.push(...nConstraints);
 
@@ -88,6 +88,16 @@ export class Disposables {
             this.groups.splice(lastAfter + 1, 0, createGroup(groupName));
         } else {
             this.groups.splice(firstBefore, 0, createGroup(groupName));
+        }
+    }
+    /**
+     * register a new constrained disposal group if it doesn't exist ignore otherwise
+     * @param constraints - constraints for the group must contain {before: groupName} or {after: groupName}
+     */
+    registerGroupIfNotExists(groupName: string, constraints: GroupConstraints[] | GroupConstraints) {
+        const existing = this.groups.some((g) => g.name === groupName);
+        if (!existing) {
+            this.registerGroup(groupName, constraints);
         }
     }
 
