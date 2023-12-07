@@ -40,7 +40,7 @@ export type DisposableOptions = {
  *
  * @example
  * ```ts
- * const disposables = createDisposables();
+ * const disposables = createDisposables('sample');
  * disposables.add(() => console.log('disposable 1'));
  * disposables.add({dispose: () => console.log('disposable 2')});
  * disposables.dispose();
@@ -50,7 +50,7 @@ export type DisposableOptions = {
  *
  * @example disposal groups
  * ```ts
- * const disposables = createDisposables();
+ * const disposables = createDisposables('sample');
  * disposables.registerGroup('first', {before: DEFAULT_GROUP});
  * disposables.registerGroup('last', {after: DEFAULT_GROUP});
  * disposables.registerGroup('beforeDefault', {before: DEFAULT_GROUP, after: 'first'});
@@ -65,29 +65,29 @@ export type DisposableOptions = {
  * // last
  * ```
  */
-export function createDisposables(initialGroups: string[] = []) {
-    return new Disposables(initialGroups);
+export function createDisposables(name: string, initialGroups: string[] = []) {
+    return new Disposables(name, initialGroups);
 }
 
 export class Disposables {
     private readonly groups: DisposalGroup[] = [createGroup(DEFAULT_GROUP)];
     private readonly constrains: GroupConstraints[] = [];
-    constructor(initialGroups: string[] = []) {
+    constructor(private name: string, initialGroups: string[] = []) {
         this.groups.push(...initialGroups.map(createGroup));
     }
     /**
      * register a new constrained disposal group
      * @param constraints - constraints for the group must contain {before: groupName} or {after: groupName}
      */
-    registerGroup(name: string, _constraints: GroupConstraints[] | GroupConstraints) {
-        const nConstraints = normalizeConstraints(_constraints, name, this.groups);
+    registerGroup(groupName: string, _constraints: GroupConstraints[] | GroupConstraints) {
+        const nConstraints = normalizeConstraints(_constraints, groupName, this.groups);
         const { lastAfter, firstBefore } = getGroupConstrainedIndex(nConstraints, this.groups);
         this.constrains.push(...nConstraints);
 
         if (lastAfter > 0) {
-            this.groups.splice(lastAfter + 1, 0, createGroup(name));
+            this.groups.splice(lastAfter + 1, 0, createGroup(groupName));
         } else {
-            this.groups.splice(firstBefore, 0, createGroup(name));
+            this.groups.splice(firstBefore, 0, createGroup(groupName));
         }
     }
 
@@ -106,13 +106,13 @@ export class Disposables {
             }
             nameOrOptions = { name: nameOrOptions, dispose: disposable };
         }
-        const { group: groupName = DEFAULT_GROUP, name: id, dispose, timeout = DEFAULT_TIMEOUT } = nameOrOptions;
+        const { group: groupName = DEFAULT_GROUP, name, dispose, timeout = DEFAULT_TIMEOUT } = nameOrOptions;
         const group = this.groups.find((g) => g.name === groupName);
         if (!group) {
             throw new Error(`Invalid group: "${groupName}" doesn't exists`);
         }
 
-        group.disposables.add(dispose, timeout, id);
+        group.disposables.add(dispose, timeout, `[${this.name}]: ${name}`);
         return () => group.disposables.remove(dispose);
     }
 

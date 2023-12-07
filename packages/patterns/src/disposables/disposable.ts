@@ -33,10 +33,11 @@ const DISPOSAL_GUARD_DEFAULTS = {
 export class Disposable {
     private _isDisposed = false;
     private _isDisposing = false;
-    public readonly disposables = new Disposables();
+    public readonly disposables: Disposables;
     private timeouts = new Set<ReturnType<typeof setTimeout>>();
     private intervals = new Set<ReturnType<typeof setInterval>>();
-    constructor() {
+    constructor(name?: string) {
+        this.disposables = new Disposables(name ?? this.constructor.name);
         this.disposables.registerGroup(DELAY_DISPOSAL, { before: 'default' });
         this.disposables.add('dispose timeouts and intervals', () => {
             this.timeouts.forEach((t) => clearTimeout(t));

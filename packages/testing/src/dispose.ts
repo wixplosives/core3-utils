@@ -7,7 +7,7 @@ import {
 } from '@wixc3/patterns';
 import { _afterEach } from './mocha-helpers';
 
-const disposables = createDisposables();
+const disposables = createDisposables('global afterDispose');
 export const DEFAULT_DISPOSAL_GROUP = DEFAULT_GROUP;
 
 /**
