@@ -50,6 +50,7 @@ export function createDisposalGroup(name: string, constraints: GroupConstraints[
 }
 
 /**
+ * @deprecated just call init and add to test disposables
  * Runs target.init and disposes of it after the test is done
  *  * @example
  * ```ts
