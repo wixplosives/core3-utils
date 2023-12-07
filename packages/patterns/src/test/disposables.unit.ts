@@ -50,7 +50,7 @@ describe('disposables', () => {
             });
 
             await expect(disposables.dispose()).to.be.rejectedWith(
-                /Disposal failed: "disposing with error"\nError: failed!/
+                /Disposal failed: "\[test\]: disposing with error"\nError: failed!/
             );
         });
     });
