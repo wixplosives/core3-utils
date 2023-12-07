@@ -4,7 +4,7 @@ import { createTestDisposables } from '../create-test-disposables';
  * NOTE: these tests assume to run in order! and order of creation matter!.
  * this is because we test the integration itself to mocha, during mocha tests.
  */
-describe('createTestDisposables', () => {
+describe('createTestDisposables (afterEach)', () => {
     const disposed = [] as string[];
     // before we create the disposables
     afterEach(() => {
@@ -17,15 +17,15 @@ describe('createTestDisposables', () => {
         expect(disposed.length, 'one handler after the each test').to.eql(1);
         disposed.length = 0;
     });
-    it('test1', () => {
+    it('add one disposable 1', () => {
         td.add('test1', () => disposed.push('test1'));
     });
-    it('test2', () => {
+    it('add one disposable 2', () => {
         td.add('test2', () => disposed.push('test2'));
     });
 });
 
-describe('createTestDisposables', () => {
+describe('createTestDisposables (after)', () => {
     const disposed = [] as string[];
     // after before we create the disposables
     after(() => {
@@ -42,10 +42,10 @@ describe('createTestDisposables', () => {
         expect(disposed.length, 'two handlers after the all test').to.eql(2);
         disposed.length = 0;
     });
-    it('test1', () => {
+    it('add one disposable 1', () => {
         td.add('test1', () => disposed.push('test1'));
     });
-    it('test2', () => {
+    it('add one disposable 2', () => {
         td.add('test2', () => disposed.push('test2'));
     });
 });
