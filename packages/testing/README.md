@@ -28,7 +28,6 @@ describe('test disposables', () => {
     const resource = { dispose() {} };
     disposables.add(resource); // will be dispose after the test
   });
-
 });
 ```
 

@@ -20,13 +20,13 @@ describe('init', function () {
         const base = loadJson(_config(config, 'api-extractor.base.json'));
         // input
         expect(base?.mainEntryPointFilePath).to.equal(
-            `<projectFolder>/${_packages(config)}/<unscopedPackageName>/dist/cjs/index.d.ts`
+            `<projectFolder>/${_packages(config)}/<unscopedPackageName>/dist/cjs/index.d.ts`,
         );
         // temp dir
         expect(base?.apiReport?.reportFolder).to.equal(`<projectFolder>/${_temp(config)}/`);
         expect(base?.apiReport?.reportTempFolder).to.equal(`<projectFolder>/${_temp(config)}/`);
         expect(base?.docModel?.apiJsonFilePath).to.equal(
-            `<projectFolder>/${_temp(config)}/<unscopedPackageName>.api.json`
+            `<projectFolder>/${_temp(config)}/<unscopedPackageName>.api.json`,
         );
         // output
     });

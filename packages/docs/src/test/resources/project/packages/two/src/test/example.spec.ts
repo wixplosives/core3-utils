@@ -12,7 +12,7 @@ describe('@example ref', () => {
     it('tests the example', () => {
         expect(
             // {@label Example3
-            test3() // => 3
+            test3(), // => 3
             // @}
         ).to.equal(3);
     });

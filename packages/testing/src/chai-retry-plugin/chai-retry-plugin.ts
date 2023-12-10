@@ -88,7 +88,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, { flag, inspect }: Chai
                             description,
                         }).then(resolve, reject);
                     },
-                }
+                },
             ) as unknown as PromiseLikeAssertion;
 
             return assertionProxy;
