@@ -7,7 +7,7 @@ describe('stripComments', () => {
         expect(
             naiveStripComments(`no /* 
         success removing
-         */comments`)
+         */comments`),
         ).to.equal('no comments');
     });
     it('removes // comments', () => {

@@ -93,10 +93,10 @@ export function chain<T>(value: T) {
         value === undefined
             ? []
             : value === null
-            ? [null]
-            : typeof value === 'object' && Symbol.iterator in value
-            ? value
-            : [value]
+              ? [null]
+              : typeof value === 'object' && Symbol.iterator in value
+                ? value
+                : [value]
     ) as Iter<T>;
 
     return iterable === value ? chainIter(iterable) : chainElement(value);
@@ -110,14 +110,14 @@ function chainIter<T>(iterable: Iterable<T>): IterableChain<T> {
         (v) =>
             (...args: unknown[]) =>
                 chainIter(
-                    (v as (iterable: Iterable<unknown>, ...args: unknown[]) => Iterable<unknown>)(iterable, ...args)
-                )
+                    (v as (iterable: Iterable<unknown>, ...args: unknown[]) => Iterable<unknown>)(iterable, ...args),
+                ),
     );
     const boundToElm = mapValues(
         toElm,
         (v) =>
             (...args: unknown[]) =>
-                chainElement((v as (iterable: Iterable<unknown>, ...args: unknown[]) => unknown)(iterable, ...args))
+                chainElement((v as (iterable: Iterable<unknown>, ...args: unknown[]) => unknown)(iterable, ...args)),
     );
 
     return {
