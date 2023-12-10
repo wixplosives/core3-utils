@@ -1,10 +1,13 @@
-import { defaults, noop } from '@wixc3/common';
 import { Disposables } from '.';
 import { deferred } from 'promise-assist';
 
-const DELAY_DISPOSAL = 'DELAY_DISPOSAL';
+export type IDisposable = {
+    dispose: () => unknown;
+};
+
+const DELAY_DISPOSAL = 'unreleased disposal guard - did you forget to use "using _ = this.guard()"?';
 const DISPOSAL_GUARD_DEFAULTS = {
-    name: 'disposalGuard',
+    name: 'unsafe execution: instance was disposed',
     timeout: 5_000,
     usedWhileDisposing: false,
 };
@@ -12,34 +15,33 @@ const DISPOSAL_GUARD_DEFAULTS = {
  * A base class for disposable objects
  * @example
  * ```ts
- * class MyDisposable extends Disposable {
- *    constructor() {
- *       super();
- *       this.disposables.add(() => console.log('disposed'));
- *       this.setTimeout(() => console.log('will be canceled upon disposal'), 1000);
- *    }
- *    async doSomething() {
- *      // will throw if disposed, delays disposal until done is called
- *      const done = this.disposalGuard(false, true);
- *      try {
- *         // do something
- *      } finally {
- *        // disposal can begin (if dispose was called)
- *        done();
- *      }
- *    }
+ * export class MyDisposable implements IDisposable {
+ *     private disposables = new SafeDisposable(MyDisposable.name)
+ *     dispose: () => Promise<void>;
+ *
+ *     constructor() {
+ *         this.disposables.add('log', () => console.log('disposed'));
+ *         this.disposables.setTimeout(() => console.log('will be canceled upon disposal'), 1000);
+ *         this.dispose = () => this.disposables.dispose()
+ *     }
+ *
+ *     async doSomething() {
+ *         // will throw if disposed, delays disposal until done is called
+ *         using _ = this.disposables.guard()
+ *         await somePromise // if dispose is called while the code awaits, new guards will throw, but actual disposal will not begin
+ *     } // after the method exists, disposal may begin
  * }
+ * ```
  */
-export class Disposable {
+export class SafeDisposable extends Disposables implements IDisposable {
     private _isDisposed = false;
     private _isDisposing = false;
-    public readonly disposables: Disposables;
     private timeouts = new Set<ReturnType<typeof setTimeout>>();
     private intervals = new Set<ReturnType<typeof setInterval>>();
-    constructor(name?: string) {
-        this.disposables = new Disposables(name ?? this.constructor.name);
-        this.disposables.registerGroup(DELAY_DISPOSAL, { before: 'default' });
-        this.disposables.add('dispose timeouts and intervals', () => {
+    constructor(name: string) {
+        super(name);
+        this.registerGroup(DELAY_DISPOSAL, { before: 'default' });
+        this.add('dispose timeouts and intervals', () => {
             this.timeouts.forEach((t) => clearTimeout(t));
             this.intervals.forEach((i) => clearInterval(i));
         });
@@ -50,17 +52,18 @@ export class Disposable {
      *
      * **phase 1: disposing**
      * - isDisposed === true
-     * - disposalGuard() will throw
-     * - disposalGuard(true) will not throw (for methods that are used in the disposal process)
+     * - guard() // will throw
+     * - guard({usedWhileDisposing:true}) // will not throw (for methods that are used in the disposal process)
+     * - all guards are awaited
      * - disposable.dispose is awaited
      *
      * **phase 2: disposed done**
-     * - disposalGuard(true) will throw
+     * - guard({usedWhileDisposing:true}) // will throw
      */
-    async dispose() {
+    override async dispose() {
         if (!this.isDisposed && !this._isDisposing) {
             this._isDisposing = true;
-            await this.disposables.dispose();
+            await super.dispose();
             this._isDisposed = true;
             this._isDisposing = false;
         }
@@ -74,55 +77,56 @@ export class Disposable {
     }
 
     /**
+     * After disposal starts, it's necessary to avoid executing some code. `guard` is used for those cases.
+     *
+     * <b>for example:</b> after fileRemover.dispose(), fileRemover.remove() should throw.
+     *
+     * `guard` will:
+     *
      * - throws if disposal started/finished
-     * - in async mode, delays disposal until the returned fn called
-     * @example async mode
+     * - delays disposal actual until the current flow is done
+     * @example with "using" keyword
+     * ```ts
+     * {
+     *      // this will throw if disposed
+     *      using _ = this.guard({timeout: 1000, name:'something'});
+     *      // do something
+     * }
+     * // disposal may begin
+     * ```
+     *
+     * @example without THE "using" keyword
      * ```ts
      *  // this will throw if disposed
-     * const done = this.disposalGuard({timeout: 1000, name:'something'});
+     * const done = this.guard({timeout: 1000, name:'something'});
      * try {
      *    // do something
      * } finally {
      *    // disposal can begin (if dispose was called)
      *    done();
+     *    // disposal may begin
      * }
-     * @example sync mode
-     * ```ts
-     *  // will throw if disposed
-     * this.disposalGuard({async:false});
-     * @example usedWhileDisposing
-     * ```ts
-     *  // will not throw if disposal didn't finished yet, even if dispose was called
-     * this.disposalGuard({usedWhileDisposing:true, async:false});
+     * ```
      */
-    disposalGuard(
-        options: {
-            async: never;
-        } & Partial<typeof DISPOSAL_GUARD_DEFAULTS>
-    ): () => void;
-    disposalGuard(): () => void;
-    disposalGuard(options: { async: false; usedWhileDisposing?: boolean }): void;
-    disposalGuard(options?: { async?: boolean } & Partial<typeof DISPOSAL_GUARD_DEFAULTS>) {
-        const { async, usedWhileDisposing, name, timeout } = defaults(options || {}, {
+    guard(options?: Partial<typeof DISPOSAL_GUARD_DEFAULTS>) {
+        const { usedWhileDisposing, name, timeout } = {
             ...DISPOSAL_GUARD_DEFAULTS,
-            async: true,
-        });
+            ...(options ?? {}),
+        };
 
         if (this.isDisposed && !(this._isDisposing && usedWhileDisposing)) {
             throw new Error('Instance was disposed');
         }
-        if (async) {
-            const { promise: canDispose, resolve: done } = deferred();
-            const remove = this.disposables.add({
-                group: DELAY_DISPOSAL,
-                name,
-                timeout,
-                dispose: () => canDispose,
-            });
-            canDispose.then(remove).catch(noop);
-            return done;
-        }
-        return;
+        const { promise: canDispose, resolve: done } = deferred();
+        const removeGuard = this.add({
+            group: DELAY_DISPOSAL,
+            name,
+            timeout,
+            dispose: () => canDispose,
+        });
+        canDispose.then(removeGuard, removeGuard);
+
+        return Object.assign(done, { [Symbol.dispose]: done });
     }
 
     /**
@@ -130,8 +134,8 @@ export class Disposable {
      * checks disposal before execution and clears the timeout when the instance is disposed
      */
     setTimeout(fn: () => void, timeout: number): ReturnType<typeof setTimeout> {
-        this.disposalGuard({ async: false });
-        const handle = globalThis.setTimeout(() => {
+        using _ = this.guard();
+        const handle = setTimeout(() => {
             this.timeouts.delete(handle);
             if (!this.isDisposed) {
                 fn();
@@ -146,8 +150,8 @@ export class Disposable {
      * checks disposal before execution and clears the interval when the instance is disposed
      */
     setInterval(fn: () => void, interval: number): ReturnType<typeof setInterval> {
-        this.disposalGuard({ async: false });
-        const handle = globalThis.setInterval(() => {
+        using _ = this.guard();
+        const handle = setInterval(() => {
             if (!this.isDisposed) {
                 fn();
             }
