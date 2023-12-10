@@ -9,13 +9,13 @@ export function createWaitForCall<F extends (...args: any[]) => any>(name?: stri
     return {
         waitForCall: async (
             cb: (...argsHistory: Parameters<F>[]) => void,
-            message = addName(`waiting for call ${callNum}`)
+            message = addName(`waiting for call ${callNum}`),
         ) => {
             await waitFor(
                 () => {
                     expect(spy.callCount, message).to.equal(callNum);
                 },
-                { timeout: 100 }
+                { timeout: 100 },
             );
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             const argsHistory = [...spy.getCalls()].reverse().map<Parameters<F>>((call) => call.args as Parameters<F>);

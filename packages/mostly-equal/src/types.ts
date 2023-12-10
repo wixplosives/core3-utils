@@ -10,7 +10,7 @@ export type ExpandedValues<T> = Array<{ value: T | undefined; path: LookupPath; 
 export type ExpectSingleMatcher<T> = (value: T, fieldDefinedInParent: boolean, path: LookupPath) => void | string;
 export type ExpectMultiMatcher<T> = (
     values: readonly T[],
-    expandedValues: ExpandedValues<T>
+    expandedValues: ExpandedValues<T>,
 ) => void | Array<undefined | Error>;
 
 export type UnknownObjectRecord = Record<string | number, unknown>;
@@ -34,7 +34,7 @@ export type AllowMarkersObj<T> =
       };
 
 export function allowMarkersInFactory<F extends (...args: any[]) => any>(
-    f: F
+    f: F,
 ): F extends (...args: infer A) => infer R ? (...args: AllowMarkersObj<A>) => AllowMarkers<R> : never {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return f as any;

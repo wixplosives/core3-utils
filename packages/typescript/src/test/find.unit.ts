@@ -19,15 +19,15 @@ describe(`findNode`, function () {
                     (n) =>
                         ts.isIdentifier(n) &&
                         ts.isVariableDeclaration(n.parent) &&
-                        n.parent.initializer?.getText() === 'false'
-                )
-            )
+                        n.parent.initializer?.getText() === 'false',
+                ),
+            ),
         ).to.equal('c');
     });
     it('Throws a helpful error when parents are not set', () => {
         const code = ts.createSourceFile('a.tsx', `const c=false`, ts.ScriptTarget.Latest);
         expect(() => findNode(code, () => true)).to.throw(
-            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile',
         );
     });
 });
@@ -45,7 +45,7 @@ describe(`findAllNodes`, function () {
     it('Throws a helpful error when parents are not set', () => {
         const code = ts.createSourceFile('a.tsx', `const c=false`, ts.ScriptTarget.Latest);
         expect(() => findAllNodes(code, () => true)).to.throw(
-            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile',
         );
     });
 });
@@ -121,7 +121,7 @@ describe(`findNodeAfterComment`, function () {
     it('Throws a helpful error when parents are not set', () => {
         const code = ts.createSourceFile('a.tsx', `const c=false`, ts.ScriptTarget.Latest);
         expect(() => findNodeAfterComment(code, 'test')).to.throw(
-            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile',
         );
     });
 });

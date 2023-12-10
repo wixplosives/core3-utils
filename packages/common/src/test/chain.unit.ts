@@ -48,7 +48,7 @@ describe('chain', () => {
                 .skip(2)
                 .map((i) => [i, 2 * i])
                 .flatMap((i) => i)
-                .filter((i) => i < 10).array
+                .filter((i) => i < 10).array,
         ).to.eql([2, 4, 3, 6, 4, 8, 5, 6, 7, 8, 9]);
     });
 });

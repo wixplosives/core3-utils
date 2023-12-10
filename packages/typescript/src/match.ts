@@ -47,19 +47,19 @@ export function isSame(
     a?: ts.Node,
     b?: ts.Node,
     ignore: Predicate<ts.Node | undefined> = () => false,
-    reportDiff: (a?: string, b?: string) => void = () => void 0
+    reportDiff: (a?: string, b?: string) => void = () => void 0,
 ) {
     if (ignore(a) || ignore(b)) {
         return true;
     }
     if (a && !a?.parent && !ts.isSourceFile(a)) {
         throw new Error(
-            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile',
         );
     }
     if (b && !b?.parent && !ts.isSourceFile(b)) {
         throw new Error(
-            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile',
         );
     }
 

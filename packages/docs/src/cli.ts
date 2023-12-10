@@ -29,7 +29,7 @@ export function cli() {
                     console.error((e as Error).stack);
                     process.exit(1);
                 }
-            }
+            },
         )
         .command(
             'init',
@@ -40,7 +40,7 @@ export function cli() {
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const { force, ...rest } = params;
                     const config = Object.fromEntries(
-                        filter(Object.entries(rest), ([key, _]) => key in args)
+                        filter(Object.entries(rest), ([key, _]) => key in args),
                     ) as UserConfig;
                     init(config, force);
                 } catch (e) {
@@ -48,7 +48,7 @@ export function cli() {
                     console.error((e as Error).stack);
                     process.exit(1);
                 }
-            }
+            },
         )
         .command(
             'readme',
@@ -62,7 +62,7 @@ export function cli() {
                     console.error((e as Error).stack);
                     process.exit(1);
                 }
-            }
+            },
         )
         .command('validate', 'validate `@example`s for all the packages', { conf }, ({ conf }) => {
             try {

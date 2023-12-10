@@ -6,14 +6,14 @@ import type { Info, PromiseWithTimeout } from './types';
 export function createTimeoutStep<T>(
     src: Promise<T>,
     rejectAfterTimeout: boolean,
-    adjustTestTime = true
+    adjustTestTime = true,
 ): PromiseWithTimeout<T> {
     let timerId: number;
     const clearPromiseTimeout = () => clearTimeout(timerId);
     const { p, resolve, reject } = wrapPromise<T, Info & { timeout: number }, PromiseWithTimeout<T>>(
         src,
         { timeout: 0 },
-        clearPromiseTimeout
+        clearPromiseTimeout,
     );
 
     p.timeout = (ms: number) => {

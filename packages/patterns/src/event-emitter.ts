@@ -1,7 +1,28 @@
 import { Signal } from './signal';
 
 /**
- * A simple event emitter
+ * Basic type safe event emitter
+
+ * @example
+ * ```ts
+ * const ms = new EventEmitter<{ onChange: { id: 'onChange' }; onDelete: { id: 'onDelete' } }>();
+ * ms.subscribe('onChange', (event) => {
+ *    event.id; // 'onChange'
+ * });
+ * ms.subscribe('onDelete', (event) => {
+ *   event.id; // 'onDelete'
+ * });
+ *
+ * ms.notify('onChange', { id: 'onChange' }); // event is type safe
+ * ```
+ * @example <caption>payload type mismatch</caption>
+ * ```ts
+ * ms.notify('onChange', { id: 'onDelete' }); // ERROR!!!
+ * ```
+ * @example <caption>payload type mismatch</caption>
+ * ```ts
+ * ms.notify('onSomethingElse', { id: 'onDelete' }); // ERROR!!!
+ * ```
  */
 export class EventEmitter<Events extends object, EventId extends keyof Events = keyof Events> {
     protected events = new Map<EventId, Signal<any>>();

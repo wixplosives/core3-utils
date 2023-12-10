@@ -48,7 +48,7 @@ describe('cli', function () {
                         github: 'https://github.com/test/docs',
                     },
                 },
-                'failed docs init'
+                'failed docs init',
             );
         });
     });

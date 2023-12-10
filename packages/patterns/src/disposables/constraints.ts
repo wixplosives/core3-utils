@@ -34,7 +34,7 @@ export const getGroupConstrainedIndex = (newGroupConstrains: GroupConstraints[],
     if (firstBefore !== Number.MAX_SAFE_INTEGER && lastAfter !== -1) {
         if (lastAfter >= firstBefore) {
             throw new Error(
-                `Invalid constraints: ${existingGroups[lastAfter]?.name} runs after ${existingGroups[firstBefore]?.name}, which contradicts prior constraints`
+                `Invalid constraints: ${existingGroups[lastAfter]?.name} runs after ${existingGroups[firstBefore]?.name}, which contradicts prior constraints`,
             );
         }
     }
@@ -44,7 +44,7 @@ export const getGroupConstrainedIndex = (newGroupConstrains: GroupConstraints[],
 export const normalizeConstraints = (
     constraints: GroupConstraints | GroupConstraints[],
     name: string,
-    groups: DisposalGroup[]
+    groups: DisposalGroup[],
 ) => {
     const _constraints: GroupConstraints[] = Array.isArray(constraints) ? constraints : [constraints];
     if (_constraints.length < 1) {

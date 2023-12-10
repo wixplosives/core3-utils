@@ -108,13 +108,13 @@ describe('buildDocs', function () {
 
         it('github', () => {
             expect(runMacro(macros.github, 'two.md')).to.equal(
-                '[@test/two on Github](https://github.com/org/repo/tree/master/packages/two)'
+                '[@test/two on Github](https://github.com/org/repo/tree/master/packages/two)',
             );
             expect(runMacro(macros.github, 'two.test1.md')).to.equal(
-                '[@test/two on Github](https://github.com/org/repo/tree/master/packages/two)'
+                '[@test/two on Github](https://github.com/org/repo/tree/master/packages/two)',
             );
             expect(runMacro(macros.github)).to.equal(
-                '[main on Github](https://github.com/org/repo/tree/master/packages/main)'
+                '[main on Github](https://github.com/org/repo/tree/master/packages/main)',
             );
         });
         it('githubPages', () => {
@@ -130,12 +130,12 @@ describe('buildDocs', function () {
         });
         it('npmBadge', () => {
             expect(runMacro(macros.npmBadge, 'one.md')).to.equal(
-                '[![npm version](https://badge.fury.io/js/@test%2Fone.svg)](https://badge.fury.io/js/@test%2Fone)'
+                '[![npm version](https://badge.fury.io/js/@test%2Fone.svg)](https://badge.fury.io/js/@test%2Fone)',
             );
         });
         it('githubBuildStatus', () => {
             expect(runMacro(macros.githubBuildStatus)).to.equal(
-                '[![Build Status](https://github.com/org/repo/workflows/tests/badge.svg)](https://github.com/org/repo/actions)'
+                '[![Build Status](https://github.com/org/repo/workflows/tests/badge.svg)](https://github.com/org/repo/actions)',
             );
         });
     });

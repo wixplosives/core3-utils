@@ -4,7 +4,7 @@ import type { Info, StepBase } from './types';
 export function wrapPromise<T, I extends Info, S extends StepBase<I, T>>(
     src: Promise<T>,
     info: Omit<I, keyof Info>,
-    dispose: () => void = () => void 0
+    dispose: () => void = () => void 0,
 ) {
     let resolve!: (value: T) => void;
     let reject!: (reason?: any) => Promise<void>;

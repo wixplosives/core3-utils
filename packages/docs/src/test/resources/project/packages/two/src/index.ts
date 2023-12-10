@@ -13,7 +13,7 @@ export function test1() {
 /**
  * @example
  * ```ts
- * test2() // => 2
+ * test2(), // => 2
  * ```
  */
 export function test2() {
@@ -23,7 +23,7 @@ export function test2() {
 /**
  * @example
  * ```ts (Example3)
- * test3() // => 3
+ * test3(), // => 3
  * ```
  */
 export function test3() {

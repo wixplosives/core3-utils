@@ -8,7 +8,7 @@ export function findAllNodes(source: ts.Node | ts.Node[], predicate: Predicate<t
     const findInNodes = (nodes: ReadonlyArray<ts.Node>) =>
         nodes.reduce(
             (found: Iterable<ts.Node>, n: ts.Node): Iterable<ts.Node> => concat(found, findAllNodes(n, predicate)),
-            [] as Iterable<ts.Node>
+            [] as Iterable<ts.Node>,
         );
 
     if (Array.isArray(source)) {
@@ -16,7 +16,7 @@ export function findAllNodes(source: ts.Node | ts.Node[], predicate: Predicate<t
     } else {
         if (!source.parent && !ts.isSourceFile(source)) {
             throw new Error(
-                'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+                'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile',
             );
         }
     }
@@ -34,7 +34,7 @@ export function findNode(source: ts.Node | ts.Node[], predicate: Predicate<ts.No
     const findInNodes = (nodes: ReadonlyArray<ts.Node>) =>
         nodes.reduce(
             (found: ts.Node | undefined, n: ts.Node): ts.Node | undefined => found || findNode(n, predicate),
-            undefined
+            undefined,
         );
 
     if (source instanceof Array) {
@@ -45,7 +45,7 @@ export function findNode(source: ts.Node | ts.Node[], predicate: Predicate<ts.No
     } else {
         if (!source.parent) {
             throw new Error(
-                'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+                'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile',
             );
         }
     }
