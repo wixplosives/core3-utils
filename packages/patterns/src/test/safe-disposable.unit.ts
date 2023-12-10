@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { SafeDisposable } from '../disposables/safe-disposable';
 import { deferred, sleep } from 'promise-assist';
+import sinon from 'sinon';
 
 describe('SafeDisposable class', () => {
     describe('dispose', () => {
@@ -110,6 +111,16 @@ describe('SafeDisposable class', () => {
             triggerCount = 0;
             await sleep(20);
             expect(triggerCount).to.equal(0);
+        });
+    });
+    describe('"using" keyword', () => {
+        it('disposes when the using block exists', async () => {
+            const spy = sinon.spy();
+            {
+                await using disposable = new SafeDisposable('test');
+                disposable.add('wasDisposed', spy);
+            }
+            expect(spy.callCount).to.equal(1);
         });
     });
 });

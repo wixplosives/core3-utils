@@ -162,4 +162,9 @@ export class SafeDisposable extends Disposables implements IDisposable {
         this.intervals.add(handle);
         return handle;
     }
+
+    /**
+     * Support for the "using" keyword
+     */
+    [Symbol.asyncDispose] = () => this.dispose();
 }
