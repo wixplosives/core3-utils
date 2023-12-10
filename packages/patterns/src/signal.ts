@@ -38,6 +38,7 @@ export class Signal<T> extends Set<Listener<T>> {
      */
     subscribe = (handler: Listener<T>) => {
         this.add(handler);
+        return () => this.unsubscribe(handler);
     };
     /**
      * Unsubscribe an existing callback
