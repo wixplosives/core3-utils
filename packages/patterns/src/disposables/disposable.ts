@@ -9,6 +9,7 @@ const DISPOSAL_GUARD_DEFAULTS = {
     usedWhileDisposing: false,
 };
 /**
+ * @deprecated
  * A base class for disposable objects
  * @example
  * ```ts
