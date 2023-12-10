@@ -6,7 +6,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [20]
+        node-version: [18]
         os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
