@@ -114,13 +114,13 @@ describe('SafeDisposable class', () => {
         });
     });
     describe('"using" keyword', () => {
-        it('disposes when the using block exists',  async () => {
-            const spy = sinon.spy();    
+        it('disposes when the using block exists', async () => {
+            const spy = sinon.spy();
             {
                 await using disposable = new SafeDisposable('test');
                 disposable.add('wasDisposed', spy);
             }
             expect(spy.callCount).to.equal(1);
         });
-    })
+    });
 });
