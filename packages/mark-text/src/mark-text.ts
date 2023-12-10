@@ -16,14 +16,17 @@ export interface Pos {
 }
 
 const mergeTemplateArrs = <T1, T2>(content: readonly T1[], subs: readonly T2[]): Array<T1 | T2> => {
-    return content.reduce((acc, contentItem, idx) => {
-        acc.push(contentItem);
-        const sub = subs[idx];
-        if (sub) {
-            acc.push(sub);
-        }
-        return acc;
-    }, [] as Array<T1 | T2>);
+    return content.reduce(
+        (acc, contentItem, idx) => {
+            acc.push(contentItem);
+            const sub = subs[idx];
+            if (sub) {
+                acc.push(sub);
+            }
+            return acc;
+        },
+        [] as Array<T1 | T2>,
+    );
 };
 
 export const createMarkers = <KEYS extends string>(...markKeys: KEYS[]): Markers<KEYS> => {

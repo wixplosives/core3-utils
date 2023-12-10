@@ -49,7 +49,7 @@ describe(`match`, function () {
     it('Throws a helpful error when parents are not set', () => {
         const code = ts.createSourceFile('a.tsx', `const c=false`, ts.ScriptTarget.Latest);
         expect(() => match(code, `const a=1;`)).to.throw(
-            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile',
         );
     });
 });
@@ -83,7 +83,7 @@ describe(`isSame`, function () {
     it('Throws a helpful error when parents are not set', () => {
         const code = ts.createSourceFile('a.tsx', `const c=false`, ts.ScriptTarget.Latest);
         expect(() => isSame(code, code)).to.throw(
-            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile'
+            'AST Node has no parent. use compileCode or make sure the "setParentNodes" (3rd argument) is set to true in ts.createSourceFile',
         );
     });
 });

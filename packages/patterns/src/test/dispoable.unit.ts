@@ -34,7 +34,7 @@ describe('Disposable class', () => {
             expect(() => disposable.disposalGuard({ async: false, usedWhileDisposing: true })).not.to.throw();
             await disposing;
             expect(() => disposable.disposalGuard({ async: false, usedWhileDisposing: true })).to.throw(
-                'Instance was disposed'
+                'Instance was disposed',
             );
         });
         describe('sync/async', () => {

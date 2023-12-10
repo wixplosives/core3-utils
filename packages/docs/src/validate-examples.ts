@@ -29,13 +29,13 @@ function validateSameCode(a?: string, b?: string, message = '') {
             (code || '')
                 .split(/\r?\n\s*\*?\s*?/)
                 .filter((i) => i)
-                .join('\n')
+                .join('\n'),
         );
         isSame(
             compileCode(ma || ''),
             compileCode(mb || ''),
             () => false,
-            (a, b) => expect(a).to.equal(b, message)
+            (a, b) => expect(a).to.equal(b, message),
         );
     }
 }
@@ -45,7 +45,7 @@ function validateNode(config: UserConfig, item: ApiItem, pkg: Package, examples:
         const docs = item.tsdocComment?.emitAsTsdoc();
         if (docs) {
             for (const [_all, type, ref, exampleCode] of docs.matchAll(
-                /@example\s*\*\s*```(tsx?|jsx?|javascript|typescript)\s*\((\S+)\)(.*)\*\s*```/gs
+                /@example\s*\*\s*```(tsx?|jsx?|javascript|typescript)\s*\((\S+)\)(.*)\*\s*```/gs,
             )) {
                 if (ref) {
                     findAllExamples(config, pkg, type, examples);
@@ -55,7 +55,7 @@ function validateNode(config: UserConfig, item: ApiItem, pkg: Package, examples:
                     validateSameCode(
                         exampleCode,
                         examples.get(ref),
-                        `Outdated example "${ref}" in package ${pkg.name} in ${item.canonicalReference}`
+                        `Outdated example "${ref}" in package ${pkg.name} in ${item.canonicalReference}`,
                     );
                 }
             }

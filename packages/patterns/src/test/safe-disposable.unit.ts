@@ -36,7 +36,7 @@ describe('SafeDisposable class', () => {
                 await disposing;
                 expect(() => disposable.guard({ usedWhileDisposing: true })).to.throw('Instance was disposed');
             });
-        })
+        });
         describe('sync/async', () => {
             it('sync does not delay disposal', async () => {
                 const disposable = new SafeDisposable('name');

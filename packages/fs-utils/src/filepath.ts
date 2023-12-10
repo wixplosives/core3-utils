@@ -70,7 +70,7 @@ export function getRelativeImportPath(sourceFilePath: string, filePathToImport: 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const { relative, dirname } = posixPath;
     const newImportPath = getImportPath(
-        relative(dirname(replaceWinSlashes(sourceFilePath)), replaceWinSlashes(filePathToImport))
+        relative(dirname(replaceWinSlashes(sourceFilePath)), replaceWinSlashes(filePathToImport)),
     );
     return isRelativeModuleRequest(newImportPath) ? newImportPath : `./${newImportPath}`;
 }
@@ -85,12 +85,12 @@ export function getRelativeImportPath(sourceFilePath: string, filePathToImport: 
 export function getBareImportSpecifier(
     absoluteImportPath: string,
     packageJsonPath: string,
-    packageJsonName: string
+    packageJsonName: string,
 ): string {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const { dirname } = posixPath;
     return getImportPath(
-        replaceWinSlashes(absoluteImportPath).replace(dirname(replaceWinSlashes(packageJsonPath)), packageJsonName)
+        replaceWinSlashes(absoluteImportPath).replace(dirname(replaceWinSlashes(packageJsonPath)), packageJsonName),
     );
 }
 

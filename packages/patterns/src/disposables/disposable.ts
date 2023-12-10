@@ -99,7 +99,7 @@ export class Disposable {
     disposalGuard(
         options: {
             async: never;
-        } & Partial<typeof DISPOSAL_GUARD_DEFAULTS>
+        } & Partial<typeof DISPOSAL_GUARD_DEFAULTS>,
     ): () => void;
     disposalGuard(): () => void;
     disposalGuard(options: { async: false; usedWhileDisposing?: boolean }): void;

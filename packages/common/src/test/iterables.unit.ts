@@ -113,9 +113,9 @@ describe('iterables', () => {
                 (function* () {
                     yield 1;
                     yield 1;
-                })()
+                })(),
             ),
-            'generated iterator'
+            'generated iterator',
         ).to.eql(2);
     });
     it(`map`, () => {
@@ -161,7 +161,7 @@ describe('iterables', () => {
                     ],
                 ],
                 [2, [{ a: 2 }]],
-            ])
+            ]),
         );
     });
 });

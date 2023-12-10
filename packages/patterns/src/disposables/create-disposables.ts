@@ -72,7 +72,10 @@ export function createDisposables(name: string, initialGroups: string[] = []) {
 export class Disposables {
     private readonly groups: DisposalGroup[] = [createGroup(DEFAULT_GROUP)];
     private readonly constrains: GroupConstraints[] = [];
-    constructor(private name: string, initialGroups: string[] = []) {
+    constructor(
+        private name: string,
+        initialGroups: string[] = [],
+    ) {
         this.groups.push(...initialGroups.map(createGroup));
     }
     /**
@@ -111,7 +114,7 @@ export class Disposables {
         if (typeof nameOrOptions === 'string') {
             if (!disposable) {
                 throw new Error(
-                    `Invalid disposable: must be a function or object with a dispose method got ${disposable}`
+                    `Invalid disposable: must be a function or object with a dispose method got ${disposable}`,
                 );
             }
             nameOrOptions = { name: nameOrOptions, dispose: disposable };

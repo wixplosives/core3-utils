@@ -19,7 +19,7 @@ try {
 export function createTestDir(
     prefix?: string | undefined,
     disposalOptions?: string | Omit<DisposableOptions, 'dispose'>,
-    disposeAfter = disposeAfterTest
+    disposeAfter = disposeAfterTest,
 ) {
     const dir = createTempDirectorySync(prefix);
     const isOptions = typeof disposalOptions !== 'string';

@@ -42,10 +42,10 @@ export function init(config: UserConfig, force = false) {
                 true,
                 config.origin === origin.default
                     ? undefined
-                    : `origin	${config.origin} (fetch)\norigin	${config.origin} (push)`
+                    : `origin	${config.origin} (fetch)\norigin	${config.origin} (push)`,
             ),
         },
-        force
+        force,
     );
     template('api-extractor.base.json');
     template('api-extractor.json');

@@ -13,7 +13,7 @@ const DISPOSAL_GUARD_DEFAULTS = {
 };
 /**
  * Adds dispose-safe methods to Disposables:
- *  
+ *
  *  - setInterval/setTimeout
  *  - guard
  * @example

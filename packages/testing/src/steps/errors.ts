@@ -21,7 +21,7 @@ export class TimeoutError<T extends Info & { timeout: number }> extends StepErro
             `Timed out in step "${p.info.description}" after ${p.info.timeout}ms${
                 p.info ? `\nInfo: ${p._parseInfoForErrorMessage(p.info)}` : ''
             }`,
-            p
+            p,
         );
     }
 }
@@ -37,7 +37,7 @@ export class RejectedError<T extends Info> extends StepError<T> {
                 reason?.message || reason
             }\n${p.stack}`,
             p,
-            reason
+            reason,
         );
     }
 }

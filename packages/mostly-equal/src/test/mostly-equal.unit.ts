@@ -307,7 +307,7 @@ describe('mostly equal', () => {
                         {},
                         {
                             formatters: [reversedFormatter],
-                        }
+                        },
                     );
                 }).to.throw('cba');
             });
