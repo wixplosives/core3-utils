@@ -6,9 +6,9 @@ describe('dispose', () => {
         const events = [] as string[];
 
         it('setup dispose after', () => {
-            disposeAfter(() => events.push('first in default group'));
-            disposeAfter(() => events.push('second in default group'));
-            disposeAfter(() => events.push('last in default group'));
+            disposeAfter(() => events.push('first in default group'), 'first default');
+            disposeAfter(() => events.push('second in default group'), 'second default');
+            disposeAfter(() => events.push('last in default group'), 'last default');
         });
 
         it('runs the dispose functions in reverse order', () => {
@@ -24,12 +24,12 @@ describe('dispose', () => {
         });
 
         it('setup dispose after', () => {
-            disposeAfter(() => events.push('first in default group'));
-            disposeAfter(() => events.push('last in default group'));
-            disposeAfter(() => events.push('first in before'), { group: 'before' });
-            disposeAfter(() => events.push('last in before'), { group: 'before' });
-            disposeAfter(() => events.push('first in after'), { group: 'after' });
-            disposeAfter(() => events.push('last in after'), { group: 'after' });
+            disposeAfter(() => events.push('first in default group'), 'first default');
+            disposeAfter(() => events.push('last in default group'), 'last default');
+            disposeAfter(() => events.push('first in before'), { group: 'before', name: 'first in before' });
+            disposeAfter(() => events.push('last in before'), { group: 'before', name: 'last in before' });
+            disposeAfter(() => events.push('first in after'), { group: 'after', name: 'first in after' });
+            disposeAfter(() => events.push('last in after'), { group: 'after', name: 'last in after' });
         });
 
         it('runs the dispose functions of a group in reverse order', () => {
@@ -56,7 +56,7 @@ describe('initAndDisposeAfter', () => {
             },
             dispose: () => events.push('dispose'),
         };
-        expect(await initAndDisposeAfter(initiable, {}, 'arg')).to.eql('initialized');
+        expect(await initAndDisposeAfter(initiable, { name: 'dispose initiable' }, 'arg')).to.eql('initialized');
     });
 
     it('disposed of the target', () => {

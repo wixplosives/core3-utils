@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/performance",
-  "version": "13.3.2",
+  "version": "14.0.0",
   "description": "Performance utils, usable in all environments",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -17,7 +17,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@file-services/path": "^8.3.1",
-    "@file-services/types": "^8.3.1"
+    "@file-services/path": "^8.3.3",
+    "@file-services/types": "^8.3.3"
   }
 }

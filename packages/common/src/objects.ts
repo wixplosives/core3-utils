@@ -39,10 +39,10 @@ export function mapObject(obj: object, mapping: (entry: [string, any]) => [strin
  */
 export function mapValues<T extends object, R>(
     obj: T,
-    mapping: (value: T[keyof T], k?: keyof T) => R
+    mapping: (value: T[keyof T], k?: keyof T) => R,
 ): { [_ in keyof T]: R } {
     return Object.fromEntries(
-        Object.entries(obj).map(([k, v]: [string, T[keyof T]]) => [k, mapping(v, k as keyof T)])
+        Object.entries(obj).map(([k, v]: [string, T[keyof T]]) => [k, mapping(v, k as keyof T)]),
     ) as { [_ in keyof T]: R };
 }
 
@@ -51,10 +51,10 @@ export function mapValues<T extends object, R>(
  */
 export function mapKeys<T extends object, R extends string>(
     obj: object,
-    mapping: (key: keyof T, value?: T[keyof T]) => R
+    mapping: (key: keyof T, value?: T[keyof T]) => R,
 ): Record<R, T[keyof T]> {
     return Object.fromEntries(
-        Object.entries(obj).map(([k, v]: [string, T[keyof T]]) => [mapping(k as keyof T, v), v])
+        Object.entries(obj).map(([k, v]: [string, T[keyof T]]) => [mapping(k as keyof T, v), v]),
     ) as Record<R, T[keyof T]>;
 }
 
@@ -99,7 +99,7 @@ export async function awaitRecord<
         // https://github.com/microsoft/TypeScript/pull/37610 should solve the problem in future
         [K in keyof In]: In[K] extends Promise<infer U> ? U : never;
     },
-    Key extends string
+    Key extends string,
 >(obj: In): Promise<Out> {
     const out = {} as Record<string, any>;
     for (const [key, promise] of Object.entries(obj)) {
@@ -163,7 +163,7 @@ export function defaults<S extends object, D extends object>(
     _source: S,
     _defaultValues: D,
     deep = true,
-    shouldUseDefault = (v: unknown, _key: string) => v === undefined
+    shouldUseDefault = (v: unknown, _key: string) => v === undefined,
 ): S & D {
     const parseObj = (src: unknown, dft: unknown, parentKey = ''): Record<string, unknown> => {
         if (isPlainObject(src)) {
@@ -240,8 +240,8 @@ export const remap: RemapFunc = <T extends object, R extends Remap<T>>(obj: T, r
             .map(
                 ([key, value]) =>
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    [(rename as any)[key] || key, value] as [string, any]
-            ).iterable
+                    [(rename as any)[key] || key, value] as [string, any],
+            ).iterable,
     ) as Remapped<T, R>;
 // @ts-expect-error setting the DELETE const
 remap.DELETE = DELETE;

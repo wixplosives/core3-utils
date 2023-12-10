@@ -44,7 +44,7 @@ export function once<T extends (...args: any[]) => any>(fn: T): T {
  */
 export function delayed<T extends (...args: any[]) => any>(
     fn: T,
-    wait: number
+    wait: number,
 ): (...args: Parameters<T>) => Promise<ReturnType<T>> {
     let queue: Promise<ReturnType<T> | void> | null = null;
     return ((...args: Parameters<T>) => {
@@ -54,7 +54,7 @@ export function delayed<T extends (...args: any[]) => any>(
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
             queue = queue.then(
                 () => fn(...args) as ReturnType<T>,
-                () => fn(...args) as ReturnType<T>
+                () => fn(...args) as ReturnType<T>,
             );
         }
         const tmp = queue;
@@ -85,7 +85,7 @@ export function enforceSequentialExecution<P, T extends (...args: any[]) => Prom
     return ((...args: Parameters<T>) => {
         queue = queue.then(
             () => fn(...args),
-            () => fn(...args)
+            () => fn(...args),
         );
         return queue;
     }) as T;

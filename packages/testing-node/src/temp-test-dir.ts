@@ -2,7 +2,6 @@ import { createTempDirectorySync } from 'create-temp-directory';
 import { createDisposalGroup, disposeAfter as disposeAfterTest, DEFAULT_DISPOSAL_GROUP } from '@wixc3/testing';
 import fs from '@file-services/node';
 import { DisposableOptions } from '@wixc3/patterns';
-import { defaults } from '@wixc3/common';
 import { retry } from 'promise-assist';
 export const DISPOSE_OF_TEMP_DIRS = 'DISPOSE_OF_TEMP_DIRS';
 try {
@@ -19,20 +18,22 @@ try {
  */
 export function createTestDir(
     prefix?: string | undefined,
-    disposalOptions: DisposableOptions | string = DISPOSE_OF_TEMP_DIRS,
-    disposeAfter = disposeAfterTest
+    disposalOptions?: string | Omit<DisposableOptions, 'dispose'>,
+    disposeAfter = disposeAfterTest,
 ) {
     const dir = createTempDirectorySync(prefix);
-    const options = defaults<DisposableOptions, DisposableOptions>(
-        typeof disposalOptions === 'string'
-            ? {
-                  group: disposalOptions,
-                  name: `removing test dir: ${dir.path}`,
-                  timeout: 2_000,
-              }
-            : disposalOptions,
-        { group: DISPOSE_OF_TEMP_DIRS }
-    );
-    disposeAfter(() => retry(() => dir.remove(), { retries: Number.POSITIVE_INFINITY, delay: 100 }), options);
+    const isOptions = typeof disposalOptions !== 'string';
+
+    // we don't want to allow empty strings as ids or group names hence the "||"
+    const group = (isOptions ? disposalOptions?.group : disposalOptions) || DISPOSE_OF_TEMP_DIRS;
+    const name = (isOptions ? disposalOptions?.name : undefined) || `creating test dir: ${dir.path}`;
+    // on numbers we can accept 0 as a valid timeout
+    const timeout = (isOptions ? disposalOptions?.timeout : undefined) ?? 2_000;
+
+    disposeAfter(() => retry(() => dir.remove(), { retries: Number.POSITIVE_INFINITY, delay: 100 }), {
+        name,
+        group,
+        timeout,
+    });
     return fs.realpathSync.native(dir.path);
 }

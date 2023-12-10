@@ -325,6 +325,6 @@ export function groupBy<T, K extends keyof T>(elements: Iterable<T>, property: K
 
             return acc;
         },
-        new Map<T[K], T[]>()
+        new Map<T[K], T[]>(),
     );
 }

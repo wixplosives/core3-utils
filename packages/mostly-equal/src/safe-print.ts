@@ -16,7 +16,7 @@ export const registerChildSet = (
     target: unknown,
     path: Array<string | number>,
     passedMap: Map<unknown, LookupPath>,
-    passedSet = new Set<unknown>()
+    passedSet = new Set<unknown>(),
 ) => {
     const childSet = new Set(passedSet);
     childSet.add(target);
@@ -37,7 +37,7 @@ export const safePrint = (
     depth = 0,
     passedMap = new Map<unknown, LookupPath>(),
     passedSet = new Set<unknown>(),
-    path: LookupPath = []
+    path: LookupPath = [],
 ): string => {
     if (passedSet.has(target)) {
         return JSON.stringify(`circular data removed, path: ${printPath(path)}`);
@@ -83,7 +83,7 @@ export const safePrint = (
                     depth + 1,
                     passedMap,
                     childSet,
-                    [...path, key]
+                    [...path, key],
                 )}`;
             })
             .join(',');

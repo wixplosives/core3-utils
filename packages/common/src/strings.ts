@@ -104,7 +104,7 @@ export function toPascalCaseJsIdentifier(str: string): string {
  */
 export function toCamelCase(str: string): string {
     const words = splitIntoWords(str).map((word, index) =>
-        index > 0 ? capitalizeFirstLetter(word.toLowerCase()) : word.toLowerCase()
+        index > 0 ? capitalizeFirstLetter(word.toLowerCase()) : word.toLowerCase(),
     );
     return words.join('');
 }
@@ -156,7 +156,7 @@ export function toCSSCamelCase(str: string): string {
 export function indexToLineAndColumn(
     content: string,
     pos: number,
-    newline = '\n'
+    newline = '\n',
 ): { character: number; line: number } {
     if (pos > content.length) {
         return {

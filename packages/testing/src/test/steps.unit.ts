@@ -41,14 +41,14 @@ describe('withTimeout step', () => {
     const SHORT_TIME = 1;
     it('times out with the description', async () => {
         await expect(withTimeout(sleep(LONG_TIME)).timeout(SHORT_TIME).description('test')).to.eventually.rejectedWith(
-            'test'
+            'test',
         );
     });
     it('times out with extra info', async () => {
         await expect(
             withTimeout(sleep(LONG_TIME))
                 .timeout(SHORT_TIME)
-                .description('test', () => Promise.resolve({ data: 1 }))
+                .description('test', () => Promise.resolve({ data: 1 })),
         ).to.eventually.rejectedWith(`"data": 1`);
     });
     it('fulfils the promise in the allotted time', async () => {
@@ -68,17 +68,17 @@ describe('allWithTimeout step', () => {
             allWithTimeout(
                 sleep(LONG_TIME).then(() => 1),
                 sleep(SHORT_TIME).then(() => 'a'),
-                sleep(SHORT_TIME).then(() => [])
+                sleep(SHORT_TIME).then(() => []),
             )
                 .timeout(SHORT_TIME)
-                .description('test')
+                .description('test'),
         ).to.eventually.rejectedWith('test');
     });
     it('fulfils the promise in the allotted time', async () => {
         const actual: [number, string, any[]] = await allWithTimeout(
             sleep(SHORT_TIME).then(() => 1),
             sleep(SHORT_TIME).then(() => 'a'),
-            sleep(SHORT_TIME).then(() => [])
+            sleep(SHORT_TIME).then(() => []),
         );
         expect(actual).to.eql([1, 'a', []]);
     });
@@ -87,10 +87,10 @@ describe('allWithTimeout step', () => {
 describe('step', () => {
     it('rejects with a step error', async () => {
         await expect(step(Promise.reject('source info')).description('step info')).to.eventually.rejectedWith(
-            'step info'
+            'step info',
         );
         await expect(step(Promise.reject('source info')).description('step info')).to.eventually.rejectedWith(
-            'source info'
+            'source info',
         );
     });
 });
@@ -114,7 +114,7 @@ describe('firstCall', () => {
     });
     it('times out if not called', async () => {
         await expect(waitForSpyCall(target, 'method').timeout(1).description('timeout')).to.eventually.rejectedWith(
-            'timeout'
+            'timeout',
         );
     });
     it('calls thru to the original method', async () => {
@@ -139,7 +139,7 @@ describe('waitForStubCall', () => {
                 await sleep(1);
                 stub('success');
                 return 'action!';
-            })
+            }),
         ).to.eql({
             callArgs: ['success'],
             returned: 'action!',
@@ -151,7 +151,7 @@ describe('waitForStubCall', () => {
             waitForStubCall(async (stub) => {
                 await sleep(100);
                 stub('success');
-            }).timeout(10)
+            }).timeout(10),
         ).to.eventually.rejectedWith('Timed out');
     });
 

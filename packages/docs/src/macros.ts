@@ -28,8 +28,8 @@ export const packageName: Macro = (config, name) =>
     name === 'index.md'
         ? readPackageJson(_packages(config, '..'), nodeFs).name!
         : isWixDocs(config) && name.startsWith('docs-macros')
-        ? '@wixc3/docs'
-        : getPackageByUnscopedName(config, stripName(name)).name;
+          ? '@wixc3/docs'
+          : getPackageByUnscopedName(config, stripName(name)).name;
 
 /**
  *
@@ -75,7 +75,7 @@ export const gitRepo: Macro = (config, name, field = 'github') => {
     }
     throw new Error(
         `Invalid argument "${field}" options are:
-        ${Object.keys(git).join(', ')}`
+        ${Object.keys(git).join(', ')}`,
     );
 };
 

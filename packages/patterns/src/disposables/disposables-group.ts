@@ -10,11 +10,15 @@ export class DisposablesGroup {
         const _disposables = Array.from(this.disposables).reverse();
         this.disposables.clear();
         for (const [disposable, details] of _disposables) {
-            await timeout(
-                disposeOf(disposable),
-                details.timeout,
-                `Disposal timed out: "${details.name}" after ${details.timeout}ms`
-            );
+            try {
+                await timeout(
+                    disposeOf(disposable),
+                    details.timeout,
+                    `Disposal timed out: "${details.name}" after ${details.timeout}ms`,
+                );
+            } catch (e) {
+                throw new Error(`Disposal failed: "${details.name}"\n${(e as Error)?.stack ?? ''}`);
+            }
         }
     }
 
