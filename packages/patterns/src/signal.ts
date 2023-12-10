@@ -65,4 +65,9 @@ export class Signal<T> extends Set<Listener<T>> {
             this.onceHandlers.delete(handler);
         }
     };
+
+    override clear(): void {
+        super.clear();
+        this.onceHandlers.clear();
+    }
 }

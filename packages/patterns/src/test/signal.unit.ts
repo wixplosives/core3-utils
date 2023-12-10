@@ -73,4 +73,18 @@ describe('Signal', () => {
         signal.notify({ a: 'value', b: 5 });
         expect(listener.callCount, 'no new calls after unsubscribe').to.eql(0);
     });
+    describe('clear', () => {
+        it('removes all listeners', () => {
+            signal.subscribe(listener);
+            signal.clear();
+            signal.notify({ a: 'value', b: 5 });
+            expect(listener.callCount, 'no new calls after clear').to.eql(0);
+        });
+        it('removes all "once" listeners', () => {
+            signal.once(listener);
+            signal.clear();
+            signal.notify({ a: 'value', b: 5 });
+            expect(listener.callCount, 'no new calls after clear').to.eql(0);
+        });
+    });
 });
