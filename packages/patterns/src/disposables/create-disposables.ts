@@ -76,6 +76,7 @@ export class Disposables {
         private name: string,
         initialGroups: string[] = [],
     ) {
+        this.dispose = this.dispose.bind(this);
         this.groups.push(...initialGroups.map(createGroup));
     }
     /**
@@ -109,7 +110,6 @@ export class Disposables {
      * @param options if string, will be used as group name
      * @returns a function to remove the disposable
      */
-
     add(...[nameOrOptions, disposable]: [id: string, disposable: DisposableItem] | [options: DisposableOptions]) {
         if (typeof nameOrOptions === 'string') {
             if (!disposable) {

@@ -29,6 +29,12 @@ describe('disposables', () => {
             await disposables.dispose();
             expect(disposed).to.deep.equal([3, 2, 1]);
         });
+        it('dispose() should be bound', async () => {
+            // eslint-disable-next-line @typescript-eslint/unbound-method
+            const { dispose } = createDisposables('test');
+            // will throw if unbound
+            await dispose();
+        });
         it('times out when the disposal takes too long', async () => {
             const disposables = createDisposables('test');
             disposables.add({
