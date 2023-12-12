@@ -39,11 +39,9 @@ export class Signal<T> extends Set<Listener<T>> {
      */
     subscribe = (handler: Listener<T>) => {
         this.add(handler);
-        return () => this.unsubscribe(handler);
     };
     once = (handler: Listener<T>) => {
         this.onceHandlers.add(handler);
-        return () => this.unsubscribe(handler);
     };
 
     /**

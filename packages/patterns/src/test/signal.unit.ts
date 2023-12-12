@@ -67,12 +67,6 @@ describe('Signal', () => {
         signal.notify({ a: 'value', b: 5 });
         expect(listener.callCount, 'no new calls after unsubscribe').to.eql(0);
     });
-    it(`doesn't call listeners after unsubscribing using subscribe return value`, () => {
-        const unsubscribe = signal.subscribe(listener);
-        unsubscribe();
-        signal.notify({ a: 'value', b: 5 });
-        expect(listener.callCount, 'no new calls after unsubscribe').to.eql(0);
-    });
     describe('clear', () => {
         it('removes all listeners', () => {
             signal.subscribe(listener);
