@@ -31,33 +31,55 @@ export type Listener<T> = (data: T) => void;
  * Notice that the Signals are public.
  * We don't need to implement specific subscriptions on the class, unless we need to expose it as a remote service.
  */
-export class Signal<T> extends Set<Listener<T>> {
+export class Signal<T> {
     private onceHandlers = new Set<Listener<T>>();
+    private handlers = new Set<Listener<T>>();
+    constructor(handlers?: Listener<T>[], once?: Listener<T>[]) {
+        handlers?.forEach((handler) => this.subscribe(handler));
+        once?.forEach((handler) => this.once(handler));
+    }
+
     /**
      * Subscribe a notification callback
      * @param handler - Will be executed with a data arg when a notification occurs
      */
     subscribe = (handler: Listener<T>) => {
-        this.add(handler);
-        return () => this.unsubscribe(handler);
+        this.unsubscribe(handler);
+        this.handlers.add(handler);
+        // TODO: uncomment when engine COM is ready
+        // return () => this.unsubscribe(handler);
     };
     once = (handler: Listener<T>) => {
+        this.unsubscribe(handler);
         this.onceHandlers.add(handler);
-        return () => this.unsubscribe(handler);
+        // TODO: uncomment when engine COM is ready
+        // return () => this.unsubscribe(handler);
     };
+
+    /**
+     * @returns true if a listener is subscribed
+     */
+    has(value: Listener<T>): boolean {
+        return this.handlers.has(value) || this.onceHandlers.has(value);
+    }
 
     /**
      * Unsubscribe an existing callback
      */
     unsubscribe = (handler: Listener<T>) => {
+        this.handlers.delete(handler);
         this.onceHandlers.delete(handler);
-        this.delete(handler);
     };
+
+    get size(): number {
+        return this.handlers.size + this.onceHandlers.size;
+    }
+
     /**
      * Notify all subscribers with arg data
      */
     notify = (data: T) => {
-        for (const handler of this) {
+        for (const handler of this.handlers) {
             handler(data);
         }
         for (const handler of this.onceHandlers) {
@@ -66,8 +88,8 @@ export class Signal<T> extends Set<Listener<T>> {
         }
     };
 
-    override clear(): void {
-        super.clear();
+    clear(): void {
+        this.handlers.clear();
         this.onceHandlers.clear();
     }
 }
