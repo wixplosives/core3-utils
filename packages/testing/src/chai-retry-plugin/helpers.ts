@@ -5,6 +5,24 @@ import { adjustTestTime } from '../mocha-ctx';
 import { deferred, timeout } from 'promise-assist';
 import { isDebugMode } from '../debug-tests';
 
+/**
+ * filters out error stack rows containing calls of `chai-retry-plugin` and `promise-assist` methods
+ */
+const filterAssertionStack = (stack: string | undefined) =>
+    stack
+        ?.split('\n')
+        .filter(
+            (row) =>
+                ![
+                    'initialAssertion',
+                    'updateAssertion',
+                    'performRetries',
+                    'process.processTimers',
+                    'runNextTicks',
+                ].some((hiddenMethods) => row.trim().startsWith(`at ${hiddenMethods}`))
+        )
+        .join('\n');
+
 export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArguments): Promise<void> => {
     const { options, assertionStack } = retryParams;
     let assertionError: Error | undefined;
@@ -52,10 +70,12 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
             cancel();
             didTimeout = true;
             if (err instanceof Error) {
-                const retryStack = new Error().stack;
-                const assertionStack = assertionError?.stack;
+                const assertionStack = filterAssertionStack(assertionError?.stack) ?? '';
+                // removing first two rows of current stack trace, first is empty message and second is internal anonymous call
+                const currentStack = new Error().stack?.split('\n').slice(2).join('\n');
+                const retryStack = filterAssertionStack(currentStack) ?? '';
 
-                err.stack = '\nRetry stack:\n\n' + retryStack + '\n\nAssertion stack:\n\n' + assertionStack;
+                err.stack = assertionStack + '\n' + retryStack;
             }
             throw err;
         });
