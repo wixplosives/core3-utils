@@ -58,7 +58,8 @@ describe('chai-retry-plugin', () => {
             try {
                 await expect(resultFunction).retry({ delay: 50, timeout: 500 }).to.equal(5);
             } catch (error: unknown) {
-                expect((error as Error).message).includes('Timed out after 500ms. Error: Im throwing');
+                expect((error as Error).message).includes('Timed out after 500ms.');
+                expect((error as Error).stack).includes('Error: Im throwing');
                 expect(getCallCount()).to.be.within(8, 10);
             }
         });
