@@ -43,7 +43,7 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
         throw new Error(`Limit of ${options.retries} retries exceeded! ${assertionError}`);
     };
 
-    const getTimeoutError = () => `Timed out after ${options.timeout}ms. ${assertionError ?? ''}`;
+    const getTimeoutError = () => `Timed out after ${options.timeout}ms.`;
 
     if (isDebugMode()) {
         return performRetries();
@@ -51,6 +51,12 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
         return timeout(performRetries(), options.timeout, getTimeoutError).catch((err) => {
             cancel();
             didTimeout = true;
+            if (err instanceof Error) {
+                const retryStack = new Error().stack;
+                const assertionStack = assertionError?.stack;
+
+                err.stack = '\nRetry stack:\n\n' + retryStack + '\n\nAssertion stack:\n\n' + assertionStack;
+            }
             throw err;
         });
     }
