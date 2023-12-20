@@ -19,7 +19,7 @@ const filterAssertionStack = (stack: string | undefined) =>
                     'performRetries',
                     'process.processTimers',
                     'runNextTicks',
-                ].some((hiddenMethods) => row.trim().startsWith(`at ${hiddenMethods}`))
+                ].some((hiddenMethods) => row.trim().startsWith(`at ${hiddenMethods}`)),
         )
         .join('\n');
 

@@ -11,6 +11,12 @@ const DISPOSAL_GUARD_DEFAULTS = {
     timeout: 5_000,
     usedWhileDisposing: false,
 };
+
+type OPTIONS = Partial<typeof DISPOSAL_GUARD_DEFAULTS>;
+type GUARDED_FN_ASYNC<T> = () => Promise<T>;
+type GUARDED_FN_SYNC<T> = () => T;
+type GUARDED_FN<T> = GUARDED_FN_SYNC<T> | GUARDED_FN_ASYNC<T>;
+
 /**
  * Adds dispose-safe methods to Disposables:
  *
@@ -30,9 +36,12 @@ const DISPOSAL_GUARD_DEFAULTS = {
  *
  *     async doSomething() {
  *         // will throw if disposed, delays disposal until done is called
- *         using _ = this.disposables.guard()
- *         await somePromise // if dispose is called while the code awaits, new guards will throw, but actual disposal will not begin
- *     } // after the method exists, disposal may begin
+ *         return await this.disposables.guard(async () =>{
+ *              // do something
+ *              return await somePromise // if dispose is called while the code awaits, new guards will throw, but actual disposal will not begin
+ *         })
+ *         // disposal may begin
+ *     } 
  * }
  * ```
  */
@@ -88,34 +97,28 @@ export class SafeDisposable extends Disposables implements IDisposable {
      *
      * - throws if disposal started/finished
      * - delays disposal actual until the current flow is done
-     * @example with "using" keyword
-     * ```ts
-     * {
-     *      // this will throw if disposed
-     *      using _ = this.guard({timeout: 1000, name:'something'});
-     *      // do something
-     * }
-     * // disposal may begin
-     * ```
      *
-     * @example without THE "using" keyword
+     * @example
      * ```ts
      *  // this will throw if disposed
-     * const done = this.guard({timeout: 1000, name:'something'});
-     * try {
-     *    // do something
-     * } finally {
-     *    // disposal can begin (if dispose was called)
-     *    done();
-     *    // disposal may begin
-     * }
+     *  this.guard(()=> {
+     *      // do something
+     *      // if dispose is called while the code executes,
+     *      // new guards will throw, but actual disposal will not begin
+     *  }, {timeout: 1000, name:'something'});
+     *  // disposal may begin
      * ```
      */
-    guard(options?: Partial<typeof DISPOSAL_GUARD_DEFAULTS>) {
-        const { usedWhileDisposing, name, timeout } = {
-            ...DISPOSAL_GUARD_DEFAULTS,
-            ...(options ?? {}),
-        };
+    guard<T>(fn: GUARDED_FN_ASYNC<T>, options?: OPTIONS): Promise<T>;
+    guard<T>(fn: GUARDED_FN_SYNC<T>, options?: OPTIONS): T;
+    guard<_T>(options?: OPTIONS): void;
+    // guard<T>(options?: OPTIONS): { [Symbol.dispose]: () => void };
+    // @internal
+    guard<T>(fnOrOptions?: OPTIONS | GUARDED_FN<T>, options?: OPTIONS) {
+        const {
+            fn,
+            options: { name, timeout, usedWhileDisposing },
+        } = extractArgs<T>(fnOrOptions, options);
 
         if (this.isDisposed && !(this._isDisposing && usedWhileDisposing)) {
             throw new Error('Instance was disposed');
@@ -129,7 +132,13 @@ export class SafeDisposable extends Disposables implements IDisposable {
         });
         canDispose.then(removeGuard, removeGuard);
 
-        return Object.assign(done, { [Symbol.dispose]: done });
+        return executeCode(fn, done);
+
+        /**
+         * Support for the "using" keyword
+         * uncomment when supported in browsers
+         */
+        // || { [Symbol.dispose]: done };
     }
 
     /**
@@ -137,15 +146,16 @@ export class SafeDisposable extends Disposables implements IDisposable {
      * checks disposal before execution and clears the timeout when the instance is disposed
      */
     setTimeout(fn: () => void, timeout: number): ReturnType<typeof setTimeout> {
-        using _ = this.guard();
-        const handle = setTimeout(() => {
-            this.timeouts.delete(handle);
-            if (!this.isDisposed) {
-                fn();
-            }
-        }, timeout);
-        this.timeouts.add(handle);
-        return handle;
+        return this.guard(() => {
+            const handle = setTimeout(() => {
+                this.timeouts.delete(handle);
+                if (!this.isDisposed) {
+                    fn();
+                }
+            }, timeout);
+            this.timeouts.add(handle);
+            return handle;
+        });
     }
 
     /**
@@ -153,18 +163,65 @@ export class SafeDisposable extends Disposables implements IDisposable {
      * checks disposal before execution and clears the interval when the instance is disposed
      */
     setInterval(fn: () => void, interval: number): ReturnType<typeof setInterval> {
-        using _ = this.guard();
-        const handle = setInterval(() => {
-            if (!this.isDisposed) {
-                fn();
-            }
-        }, interval);
-        this.intervals.add(handle);
-        return handle;
+        return this.guard(() => {
+            const handle = setInterval(() => {
+                if (!this.isDisposed) {
+                    fn();
+                }
+            }, interval);
+            this.intervals.add(handle);
+            return handle;
+        });
     }
 
     /**
      * Support for the "using" keyword
+     * uncomment when supported in browsers
      */
-    [Symbol.asyncDispose] = () => this.dispose();
+    // [Symbol.asyncDispose] = () => this.dispose();
+}
+
+function extractArgs<T>(fnOrOptions?: OPTIONS | GUARDED_FN<T>, options?: OPTIONS) {
+    if (fnOrOptions instanceof Function) {
+        return {
+            fn: fnOrOptions,
+            options: {
+                ...DISPOSAL_GUARD_DEFAULTS,
+                ...(options ?? {}),
+            },
+        };
+    } else {
+        return {
+            fn: null,
+            options: {
+                ...DISPOSAL_GUARD_DEFAULTS,
+                ...(fnOrOptions ?? {}),
+            },
+        };
+    }
+}
+
+function executeCode<T>(fn: GUARDED_FN<T> | null, done: () => void) {
+    let result: T | Promise<T>;
+    if (fn) {
+        try {
+            result = fn();
+            if (!(result instanceof Promise)) {
+                done();
+                return result;
+            }
+        } catch (e) {
+            done();
+            throw e;
+        }
+
+        return result.finally(done);
+    }
+    /**
+     * Support for the "using" keyword
+     * uncomment when supported in browsers
+     */
+    // return
+    // TODO remove when "using" is supported in browsers
+    return done();
 }

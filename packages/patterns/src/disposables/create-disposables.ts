@@ -104,12 +104,18 @@ export class Disposables {
             this.registerGroup(groupName, constraints);
         }
     }
-
     /**
-     * @param disposable a function or object with a dispose method
-     * @param options if string, will be used as group name
+     * @param name - disposable name for error messages
+     * @param disposable - a function or object with a dispose method
      * @returns a function to remove the disposable
      */
+    add(name: string, disposable: DisposableItem): () => void;
+    /**
+     * @param options must include a [dispose] function or object with a dispose method
+     * @returns a function to remove the disposable
+     */
+    add(options: DisposableOptions): () => void;
+    // @internal
     add(...[nameOrOptions, disposable]: [id: string, disposable: DisposableItem] | [options: DisposableOptions]) {
         if (typeof nameOrOptions === 'string') {
             if (!disposable) {
