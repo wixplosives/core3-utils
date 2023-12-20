@@ -36,9 +36,9 @@ type GUARDED_FN<T> = GUARDED_FN_SYNC<T> | GUARDED_FN_ASYNC<T>;
  *
  *     async doSomething() {
  *         // will throw if disposed, delays disposal until done is called
- *         await this.disposables.guard(() =>{
+ *         return await this.disposables.guard(async () =>{
  *              // do something
- *              await somePromise // if dispose is called while the code awaits, new guards will throw, but actual disposal will not begin
+ *              return await somePromise // if dispose is called while the code awaits, new guards will throw, but actual disposal will not begin
  *         })
  *         // disposal may begin
  *     } 
@@ -217,5 +217,11 @@ function executeCode<T>(fn: GUARDED_FN<T> | null, done: () => void) {
 
         return result.finally(done);
     }
+    /**
+     * Support for the "using" keyword
+     * uncomment when supported in browsers
+     */
+    // return
+    // TODO remove when "using" is supported in browsers
     return done();
 }
