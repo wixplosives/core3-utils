@@ -111,7 +111,8 @@ export class SafeDisposable extends Disposables implements IDisposable {
      */
     guard<T>(fn: GUARDED_FN_ASYNC<T>, options?: OPTIONS): Promise<T>;
     guard<T>(fn: GUARDED_FN_SYNC<T>, options?: OPTIONS): T;
-    guard<_T>(options?: OPTIONS): { [Symbol.dispose]: () => void };
+    guard<_T>(options?: OPTIONS): void;
+    // guard<T>(options?: OPTIONS): { [Symbol.dispose]: () => void };
     // @internal
     guard<T>(fnOrOptions?: OPTIONS | GUARDED_FN<T>, options?: OPTIONS) {
         const {
@@ -216,5 +217,5 @@ function executeCode<T>(fn: GUARDED_FN<T> | null, done: () => void) {
 
         return result.finally(done);
     }
-    return;
+    return done();
 }

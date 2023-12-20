@@ -37,6 +37,14 @@ describe('SafeDisposable class', () => {
                 expect(() => disposable.guard({ usedWhileDisposing: true })).to.throw('Instance was disposed');
             });
         });
+        describe('when no function is passed', () => {
+            it('it does not block disposal', async () => {
+                const disposable = new SafeDisposable('test');
+                disposable.guard();
+                await disposable.dispose();
+            });
+        });
+
         /*
             The following suite tests the behavior of the "using" keyword, 
             which is not supported in browsers.
