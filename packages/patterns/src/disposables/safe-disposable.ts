@@ -36,9 +36,12 @@ type GUARDED_FN<T> = GUARDED_FN_SYNC<T> | GUARDED_FN_ASYNC<T>;
  *
  *     async doSomething() {
  *         // will throw if disposed, delays disposal until done is called
- *         using _ = this.disposables.guard()
- *         await somePromise // if dispose is called while the code awaits, new guards will throw, but actual disposal will not begin
- *     } // after the method exists, disposal may begin
+ *         await this.disposables.guard(() =>{
+ *              // do something
+ *              await somePromise // if dispose is called while the code awaits, new guards will throw, but actual disposal will not begin
+ *         })
+ *         // disposal may begin
+ *     } 
  * }
  * ```
  */
@@ -129,6 +132,7 @@ export class SafeDisposable extends Disposables implements IDisposable {
         canDispose.then(removeGuard, removeGuard);
 
         return executeCode(fn, done);
+
         /**
          * Support for the "using" keyword
          * uncomment when supported in browsers
