@@ -1,3 +1,4 @@
+import { errorWithTrace, getStackTrace } from '@wixc3/common';
 import { Disposables } from '.';
 import { deferred } from 'promise-assist';
 
@@ -41,7 +42,7 @@ type GUARDED_FN<T> = GUARDED_FN_SYNC<T> | GUARDED_FN_ASYNC<T>;
  *              return await somePromise // if dispose is called while the code awaits, new guards will throw, but actual disposal will not begin
  *         })
  *         // disposal may begin
- *     } 
+ *     }
  * }
  * ```
  */
@@ -121,7 +122,7 @@ export class SafeDisposable extends Disposables implements IDisposable {
         } = extractArgs<T>(fnOrOptions, options);
 
         if (this.isDisposed && !(this._isDisposing && usedWhileDisposing)) {
-            throw new Error('Instance was disposed');
+            throw errorWithTrace('Instance was disposed', getStackTrace());
         }
         const { promise: canDispose, resolve: done } = deferred();
         const removeGuard = this.add({

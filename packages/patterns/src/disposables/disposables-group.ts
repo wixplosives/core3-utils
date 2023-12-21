@@ -1,3 +1,4 @@
+import { errorWithTrace } from '@wixc3/common';
 import { timeout } from 'promise-assist';
 
 /**
@@ -11,22 +12,23 @@ export class DisposablesGroup {
         this.disposables.clear();
         for (const [disposable, details] of _disposables) {
             try {
-                await timeout(
-                    disposeOf(disposable),
-                    details.timeout,
-                    `Disposal timed out: "${details.name}" after ${details.timeout}ms`,
-                );
+                await timeout(disposeOf(disposable), details.timeout, message(details));
             } catch (e) {
-                throw new Error(`Disposal failed: "${details.name}"\n${(e as Error)?.stack ?? ''}`);
+                if ((e as Error).message === message(details)) {
+                    throw errorWithTrace(message(details), details.trace);
+                }
+                throw errorWithTrace(`Disposal failed: "${details.name}"`, details.trace, {
+                    cause: e,
+                });
             }
         }
     }
 
-    add(disposable: DisposableItem, timeout: number, name: string) {
+    add(disposable: DisposableItem, timeout: number, name: string, trace: string) {
         if (this.disposables.has(disposable)) {
             throw new Error(`Disposable already added`);
         }
-        this.disposables.set(disposable, { timeout, name });
+        this.disposables.set(disposable, { timeout, name, trace });
         return () => this.disposables.delete(disposable);
     }
 
@@ -45,7 +47,12 @@ export type DisposableItem = { dispose: DisposeFunction } | DisposeFunction;
 export type NamedDisposable = {
     timeout: number;
     name: string;
+    trace: string;
 };
+
+function message(details: NamedDisposable): string {
+    return `Disposal timed out: "${details.name}" after ${details.timeout}ms`;
+}
 
 async function disposeOf(dispose: DisposableItem) {
     if (typeof dispose === 'function') {

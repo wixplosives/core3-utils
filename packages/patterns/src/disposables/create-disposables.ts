@@ -1,3 +1,4 @@
+import { getStackTrace } from '@wixc3/common';
 import { DisposalGroup, getGroupConstrainedIndex, GroupConstraints, normalizeConstraints } from './constraints';
 import { DisposableItem, DisposablesGroup } from './disposables-group';
 
@@ -72,10 +73,7 @@ export function createDisposables(name: string, initialGroups: string[] = []) {
 export class Disposables {
     private readonly groups: DisposalGroup[] = [createGroup(DEFAULT_GROUP)];
     private readonly constrains: GroupConstraints[] = [];
-    constructor(
-        private name: string,
-        initialGroups: string[] = [],
-    ) {
+    constructor(private name: string, initialGroups: string[] = []) {
         this.dispose = this.dispose.bind(this);
         this.groups.push(...initialGroups.map(createGroup));
     }
@@ -120,7 +118,7 @@ export class Disposables {
         if (typeof nameOrOptions === 'string') {
             if (!disposable) {
                 throw new Error(
-                    `Invalid disposable: must be a function or object with a dispose method got ${disposable}`,
+                    `Invalid disposable: must be a function or object with a dispose method got ${disposable}`
                 );
             }
             nameOrOptions = { name: nameOrOptions, dispose: disposable };
@@ -131,7 +129,7 @@ export class Disposables {
             throw new Error(`Invalid group: "${groupName}" doesn't exists`);
         }
 
-        group.disposables.add(dispose, timeout, `[${this.name}]: ${name}`);
+        group.disposables.add(dispose, timeout, `[${this.name}]: ${name}`, getStackTrace({ skipLines: 3 }));
         return () => group.disposables.remove(dispose);
     }
 

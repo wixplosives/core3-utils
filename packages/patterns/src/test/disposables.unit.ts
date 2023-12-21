@@ -50,14 +50,25 @@ describe('disposables', () => {
             const disposables = createDisposables('test');
             disposables.add({
                 name: 'disposing with error',
-                dispose: () => {
+                // eslint-disable-next-line @typescript-eslint/require-await
+                dispose: async () => {
                     throw new Error('failed!');
                 },
             });
 
-            await expect(disposables.dispose()).to.be.rejectedWith(
-                /Disposal failed: "\[test\]: disposing with error"\nError: failed!/,
-            );
+            try {
+                await disposables.dispose();
+            } catch (e) {
+                const { message, stack, cause } = e as Error;
+                expect(message, 'message').to.equal('Disposal failed: "[test]: disposing with error"');
+                expect((cause as Error).message, 'cause').to.equal('failed!');
+                const [_, disposeFn, mocha] = stack?.split('\n') ?? [];
+                expect(disposeFn, 'dispose fn').to.match(/at Context\.<anonymous>.*disposables\.unit\.ts:\d+:\d+/);
+                expect(mocha, 'mocha').to.match(/at Context\.runnable\.fn/);
+                return;
+            }
+
+            throw new Error('Expected error to be throws');
         });
     });
     describe('initial disposal group', () => {
