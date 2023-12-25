@@ -1,4 +1,3 @@
-import { getStackTrace } from '@wixc3/common';
 import { DisposalGroup, getGroupConstrainedIndex, GroupConstraints, normalizeConstraints } from './constraints';
 import { DisposableItem, DisposablesGroup } from './disposables-group';
 
@@ -129,7 +128,7 @@ export class Disposables {
             throw new Error(`Invalid group: "${groupName}" doesn't exists`);
         }
 
-        group.disposables.add(dispose, timeout, `[${this.name}]: ${name}`, getStackTrace({ skipLines: 3 }));
+        group.disposables.add(dispose, timeout, `[${this.name}]: ${name}`);
         return () => group.disposables.remove(dispose);
     }
 

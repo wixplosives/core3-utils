@@ -1,4 +1,3 @@
-import { errorWithTrace, getStackTrace } from '@wixc3/common';
 import { Disposables } from '.';
 import { deferred } from 'promise-assist';
 
@@ -122,7 +121,7 @@ export class SafeDisposable extends Disposables implements IDisposable {
         } = extractArgs<T>(fnOrOptions, options);
 
         if (this.isDisposed && !(this._isDisposing && usedWhileDisposing)) {
-            throw errorWithTrace('Instance was disposed', getStackTrace());
+            throw new Error('Instance was disposed');
         }
         const { promise: canDispose, resolve: done } = deferred();
         const removeGuard = this.add({

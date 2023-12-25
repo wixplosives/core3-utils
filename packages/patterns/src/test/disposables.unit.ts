@@ -50,25 +50,25 @@ describe('disposables', () => {
             const disposables = createDisposables('test');
             disposables.add({
                 name: 'disposing with error',
-                // eslint-disable-next-line @typescript-eslint/require-await
-                dispose: async () => {
+                dispose: () => {
                     throw new Error('failed!');
                 },
             });
 
+            let error: Error | undefined = undefined;
             try {
                 await disposables.dispose();
             } catch (e) {
-                const { message, stack, cause } = e as Error;
-                expect(message, 'message').to.equal('Disposal failed: "[test]: disposing with error"');
-                expect((cause as Error).message, 'cause').to.equal('failed!');
-                const [_, disposeFn, mocha] = stack?.split('\n') ?? [];
-                expect(disposeFn, 'dispose fn').to.match(/at Context\.<anonymous>.*disposables\.unit\.ts:\d+:\d+/);
-                expect(mocha, 'mocha').to.match(/at Context\.runnable\.fn/);
-                return;
+                error = e as Error;
+            }
+            if (!error) {
+                throw new Error('expected error');
             }
 
-            throw new Error('Expected error to be throws');
+            expect(error).to.be.instanceOf(Error);
+            expect(error.message).to.eql('Disposal failed: "[test]: disposing with error"');
+            expect(error.cause).to.be.instanceOf(Error);
+            expect((error.cause as Error).message).to.eql('failed!');
         });
     });
     describe('initial disposal group', () => {
@@ -96,13 +96,13 @@ describe('disposables', () => {
             it('throws for missing groups', () => {
                 const groups = createDisposables('test');
                 expect(() => groups.registerGroup('group1', { before: 'group2' })).to.throw(
-                    `Invalid constraint: "before: group2" - group not found`,
+                    `Invalid constraint: "before: group2" - group not found`
                 );
             });
             it('throws for no constraints', () => {
                 const groups = createDisposables('test');
                 expect(() => groups.registerGroup('group1', [])).to.throw(
-                    `Invalid disposal group: must have at least one constraint`,
+                    `Invalid disposal group: must have at least one constraint`
                 );
             });
             it('throws for contradictory constraints', () => {
@@ -111,13 +111,13 @@ describe('disposables', () => {
                 groups.registerGroup('after', { after: 'default' });
                 expect(() => groups.registerGroup('valid', { before: 'after', after: 'default' })).not.to.throw();
                 expect(() => groups.registerGroup('invalid', { before: 'before', after: 'after' })).to.throw(
-                    'Invalid constraints: after runs after before, which contradicts prior constraints',
+                    'Invalid constraints: after runs after before, which contradicts prior constraints'
                 );
             });
             it('requires a unique group name', () => {
                 const groups = createDisposables('test');
                 expect(() => groups.registerGroup('default', { before: 'default' })).to.throw(
-                    `Invalid group: "default" already exists`,
+                    `Invalid group: "default" already exists`
                 );
             });
         });
