@@ -87,9 +87,3 @@ export function errorToPlainObject<T extends Error>(error: T) {
 export function isErrorLikeObject(error: unknown): error is Error {
     return isObject(error) && typeof error.name === 'string' && typeof error.message === 'string';
 }
-
-export const TRACE_DEFAULTS = {
-    noTraceMessage: 'no stack trace',
-    skipLines: 2,
-    filterPattern: null as RegExp | null,
-};
