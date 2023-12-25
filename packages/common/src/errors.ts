@@ -87,27 +87,3 @@ export function errorToPlainObject<T extends Error>(error: T) {
 export function isErrorLikeObject(error: unknown): error is Error {
     return isObject(error) && typeof error.name === 'string' && typeof error.message === 'string';
 }
-
-export const TRACE_DEFAULTS = {
-    noTraceMessage: 'no stack trace',
-    skipLines: 2,
-    filterPattern: null as RegExp | null,
-};
-
-export function getStackTrace(options: Partial<typeof TRACE_DEFAULTS> = TRACE_DEFAULTS) {
-    const { filterPattern, noTraceMessage, skipLines } = { ...TRACE_DEFAULTS, ...options };
-    const { stack } = new Error();
-    return (
-        stack
-            ?.split('\n')
-            .slice(skipLines)
-            .filter((l) => (filterPattern ? filterPattern.test(l) : true))
-            .join('\n') ?? noTraceMessage
-    );
-}
-
-export function errorWithTrace(message: string, trace: string, options?: ErrorOptions) {
-    const err = new Error(message, options);
-    err.stack = (err.stack?.split('\n')[0] ?? `Error: ${message}`) + '\n' + trace;
-    return err;
-}

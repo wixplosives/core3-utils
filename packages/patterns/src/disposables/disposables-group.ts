@@ -1,4 +1,3 @@
-import { errorWithTrace } from '@wixc3/common';
 import { timeout } from 'promise-assist';
 
 /**
@@ -15,20 +14,19 @@ export class DisposablesGroup {
                 await timeout(disposeOf(disposable), details.timeout, message(details));
             } catch (e) {
                 if ((e as Error).message === message(details)) {
-                    throw errorWithTrace(message(details), details.trace);
+                    throw e;
+                } else {
+                    throw new Error(`Disposal failed: "${details.name}"`, { cause: e });
                 }
-                throw errorWithTrace(`Disposal failed: "${details.name}"`, details.trace, {
-                    cause: e,
-                });
             }
         }
     }
 
-    add(disposable: DisposableItem, timeout: number, name: string, trace: string) {
+    add(disposable: DisposableItem, timeout: number, name: string) {
         if (this.disposables.has(disposable)) {
             throw new Error(`Disposable already added`);
         }
-        this.disposables.set(disposable, { timeout, name, trace });
+        this.disposables.set(disposable, { timeout, name });
         return () => this.disposables.delete(disposable);
     }
 
@@ -47,7 +45,6 @@ export type DisposableItem = { dispose: DisposeFunction } | DisposeFunction;
 export type NamedDisposable = {
     timeout: number;
     name: string;
-    trace: string;
 };
 
 function message(details: NamedDisposable): string {
