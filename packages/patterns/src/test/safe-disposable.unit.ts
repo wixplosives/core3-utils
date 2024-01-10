@@ -6,9 +6,9 @@ describe('SafeDisposable class', () => {
     describe('dispose', () => {
         it('sets isDisposed to true', async () => {
             const disposable = new SafeDisposable('test');
-            expect(disposable.isDisposed).to.be.false;
+            expect(disposable.isDisposed()).to.be.false;
             await disposable.dispose();
-            expect(disposable.isDisposed).to.be.true;
+            expect(disposable.isDisposed()).to.be.true;
         });
         it('executes inner disposal functions', async () => {
             const disposables = new SafeDisposable('test');
@@ -97,7 +97,7 @@ describe('SafeDisposable class', () => {
                 });
                 expect(
                     disposable.guard(() => 'guarded return value'),
-                    'guard return value',
+                    'guard return value'
                 ).to.eql('guarded return value');
                 const disposing = disposable.dispose();
                 await sleep(1);
@@ -117,7 +117,7 @@ describe('SafeDisposable class', () => {
                     disposing = disposables.dispose();
                     await sleep(1);
 
-                    expect(disposables.isDisposed, 'isDisposed').to.be.true;
+                    expect(disposables.isDisposed(), 'isDisposed').to.be.true;
                     expect(disposeCalled, 'disposeCalled').to.be.false;
                     return 'guarded return value';
                 });
