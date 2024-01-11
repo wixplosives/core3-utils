@@ -66,7 +66,7 @@ describe('disposables', () => {
             }
 
             expect(error).to.be.instanceOf(Error);
-            expect(error.message).to.eql('Disposal failed: "[test]: disposing with error"');
+            expect(error.message).to.eql('Disposal failed: "[test]: disposing with error"\nCause: Error: failed!');
             expect(error.cause).to.be.instanceOf(Error);
             expect((error.cause as Error).message).to.eql('failed!');
         });
