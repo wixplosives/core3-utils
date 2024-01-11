@@ -44,7 +44,7 @@ type GUARDED_FN<T> = GUARDED_FN_SYNC<T> | GUARDED_FN_ASYNC<T>;
  */
 export class SafeDisposable extends Disposables implements IDisposable {
     private _isDisposed = false;
-    private _isDisposing = false;
+    private _isDisposing?: Promise<void>;
     private timeouts = new Set<ReturnType<typeof setTimeout>>();
     private intervals = new Set<ReturnType<typeof setInterval>>();
     constructor(name: string) {
@@ -70,18 +70,20 @@ export class SafeDisposable extends Disposables implements IDisposable {
      * - guard({usedWhileDisposing:true}) // will throw
      */
     override async dispose() {
-        if (!this.isDisposed() && !this._isDisposing) {
-            this._isDisposing = true;
-            await super.dispose();
+        if (this.isDisposed()) {
+            return this._isDisposing;
+        } else {
+            this._isDisposing = super.dispose();
+            await this._isDisposing;
             this._isDisposed = true;
-            this._isDisposing = false;
+            this._isDisposing = undefined;
         }
     }
 
     /**
      * returns true if the disposal process started
      */
-    isDisposed = () => this._isDisposed || this._isDisposing;
+    isDisposed = () => !!(this._isDisposed || this._isDisposing);
 
     /**
      * After disposal starts, it's necessary to avoid executing some code. `guard` is used for those cases.
@@ -115,7 +117,7 @@ export class SafeDisposable extends Disposables implements IDisposable {
             options: { name, timeout, usedWhileDisposing },
         } = extractArgs<T>(fnOrOptions, options);
 
-        if (this.isDisposed() && !(this._isDisposing && usedWhileDisposing)) {
+        if (this.isDisposed() && !(usedWhileDisposing && this._isDisposing)) {
             throw new Error('Instance was disposed');
         }
         const { promise: canDispose, resolve: done } = deferred();
