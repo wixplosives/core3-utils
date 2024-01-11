@@ -16,7 +16,7 @@ export class DisposablesGroup {
                 if ((e as Error).message === message(details)) {
                     throw e;
                 } else {
-                    throw new Error(`Disposal failed: "${details.name}"`, { cause: e });
+                    throw new Error(`Disposal failed: "${details.name}"\nCause: ${e}`, { cause: e });
                 }
             }
         }
