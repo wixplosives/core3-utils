@@ -19,6 +19,18 @@ describe('SafeDisposable class', () => {
             await disposables.dispose();
             expect(wasDisposed).to.be.true;
         });
+        describe('when called multiple times', () => {
+            it('returns a promise that resolves when all disposals are done', async () => {
+                const resolved: string[] = [];
+                const disposable = new SafeDisposable('test');
+                disposable.add('sleep', () => sleep(20));
+                void disposable.dispose().then(() => resolved.push('initial'));
+                await disposable.dispose().then(() => resolved.push('before completion'));
+                expect(resolved).to.eql(['initial', 'before completion']);
+                await disposable.dispose().then(() => resolved.push('after completion'));
+                expect(resolved).to.eql(['initial', 'before completion', 'after completion']);
+            });
+        });
     });
     describe('guard', () => {
         it('throws if isDisposed is true', () => {
