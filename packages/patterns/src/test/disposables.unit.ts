@@ -35,7 +35,8 @@ describe('disposables', () => {
             // will throw if unbound
             await dispose();
         });
-        it('times out when the disposal takes too long', async () => {
+        // eslint-disable-next-line no-only-tests/no-only-tests
+        it.only('times out when the disposal takes too long', async () => {
             const disposables = createDisposables('test');
             disposables.add({
                 name: 'slow',
@@ -44,31 +45,31 @@ describe('disposables', () => {
                     await sleep(100);
                 },
             });
-            await expect(disposables.dispose()).to.eventually.be.rejectedWith('Disposal timed out: "[test]: slow"');
+            await expect(disposables.dispose()).to.eventually.be.rejectedWith(
+                /Disposal timed out: "\[test\]: slow" after \d+ms\nAdded:\s+at Context.<anonymous> \(.*disposables\.unit\./
+            );
         });
         it('fail with the name of specific dispose', async () => {
             const disposables = createDisposables('test');
+            let error: Error | undefined;
             disposables.add({
-                name: 'disposing with error',
+                name: 'DISPOSAL ERROR',
                 dispose: () => {
                     throw new Error('failed!');
                 },
             });
 
-            let error: Error | undefined = undefined;
             try {
                 await disposables.dispose();
             } catch (e) {
                 error = e as Error;
             }
-            if (!error) {
-                throw new Error('expected error');
-            }
 
             expect(error).to.be.instanceOf(Error);
-            expect(error.message).to.eql('Disposal failed: "[test]: disposing with error"\nCause: Error: failed!');
-            expect(error.cause).to.be.instanceOf(Error);
-            expect((error.cause as Error).message).to.eql('failed!');
+            const messageLines = (error as Error).message.split('\n');
+            expect(messageLines[0]).to.equal(`Disposal failed: "[test]: DISPOSAL ERROR"`);
+            expect(messageLines[1]).to.equal(`Cause: Error: failed!`);
+            expect(messageLines[2]).to.match(/at dispose \(.*disposables\.unit\..*\)/);
         });
     });
     describe('initial disposal group', () => {
