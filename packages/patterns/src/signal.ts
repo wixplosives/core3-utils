@@ -32,8 +32,7 @@ export type Listener<T> = (data: T) => void;
  * We don't need to implement specific subscriptions on the class, unless we need to expose it as a remote service.
  */
 export class Signal<T> {
-    private onceHandlers = new Set<Listener<T>>();
-    private handlers = new Set<Listener<T>>();
+    private handlers = new Map<Listener<T>, boolean>();
     constructor(handlers?: Listener<T>[], once?: Listener<T>[]) {
         handlers?.forEach((handler) => this.subscribe(handler));
         once?.forEach((handler) => this.once(handler));
@@ -44,23 +43,23 @@ export class Signal<T> {
      * @param handler - Will be executed with a data arg when a notification occurs
      */
     subscribe = (handler: Listener<T>) => {
-        this.unsubscribe(handler);
-        this.handlers.add(handler);
-        // TODO: uncomment when engine COM is ready
-        // return () => this.unsubscribe(handler);
+        this.handlers.set(handler, false);
     };
+
+    /**
+     * Subscribe to only the next notification
+     * @param handler - Will be executed with a data arg when a notification occurs
+     */
     once = (handler: Listener<T>) => {
         this.unsubscribe(handler);
-        this.onceHandlers.add(handler);
-        // TODO: uncomment when engine COM is ready
-        // return () => this.unsubscribe(handler);
+        this.handlers.set(handler, true);
     };
 
     /**
      * @returns true if a listener is subscribed
      */
     has(value: Listener<T>): boolean {
-        return this.handlers.has(value) || this.onceHandlers.has(value);
+        return this.handlers.has(value);
     }
 
     /**
@@ -68,28 +67,25 @@ export class Signal<T> {
      */
     unsubscribe = (handler: Listener<T>) => {
         this.handlers.delete(handler);
-        this.onceHandlers.delete(handler);
     };
 
     get size(): number {
-        return this.handlers.size + this.onceHandlers.size;
+        return this.handlers.size;
     }
 
     /**
      * Notify all subscribers with arg data
      */
     notify = (data: T) => {
-        for (const handler of this.handlers) {
+        for (const [handler, isOnce] of this.handlers) {
             handler(data);
-        }
-        for (const handler of this.onceHandlers) {
-            handler(data);
-            this.onceHandlers.delete(handler);
+            if (isOnce) {
+                this.handlers.delete(handler);
+            }
         }
     };
 
     clear(): void {
         this.handlers.clear();
-        this.onceHandlers.clear();
     }
 }
