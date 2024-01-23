@@ -53,7 +53,7 @@ export const stripName = (name: string) => {
 export const unscopedPackageName = (name: string) => name.split('/')[1] || name;
 
 export function parseMacro(match: RegExpMatchArray) {
-    const all = match[0]!;
+    const all = match[0];
     const m = match[3]?.split(/\s+/).filter((i) => i);
     const [macro, ...args] = (m || []) as [string, ...string[]];
     return { all, macro, args };
