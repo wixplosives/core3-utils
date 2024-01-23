@@ -90,3 +90,24 @@ export function enforceSequentialExecution<P, T extends (...args: any[]) => Prom
         return queue;
     }) as T;
 }
+
+/**
+ * 
+ * @param fn a function to memoize
+ * @param argsHash a function that returns a string hash for the arguments, defaults to JSON.stringify
+ * @returns a memoized version of `fn`
+ */
+export function memoize<T extends (...args: any[]) => any>(
+    fn: T,
+    argsHash: (args: Parameters<T>) => string = JSON.stringify
+): T {
+    const cache = new Map<string, ReturnType<T>>();
+    return ((...args: Parameters<T>) => {
+        const key = argsHash(args);
+        if (!cache.has(key)) {
+            cache.set(key, fn(...args) as ReturnType<T>);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return cache.get(key);
+    }) as T;
+}

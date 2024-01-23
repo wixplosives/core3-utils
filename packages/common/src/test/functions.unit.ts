@@ -1,5 +1,5 @@
 import chai, { expect } from 'chai';
-import { delayed, enforceSequentialExecution, once } from '..';
+import { delayed, enforceSequentialExecution, memoize, once } from '..';
 import Sinon, { stub } from 'sinon';
 import sinonChai from 'sinon-chai';
 import { sleep } from 'promise-assist';
@@ -82,5 +82,33 @@ describe('delayed', () => {
         await clock.tickAsync(100);
         expect(await r1).to.equal(1);
         expect(await r2).to.equal(2);
+    });
+});
+
+describe('memoize', () => {
+    it('runs fn only once per given args', () => {
+        let callCount = 0;
+        const fn = (num: number) => {
+            callCount++;
+            return `${num}-${callCount}`;
+        };
+        const memoized = memoize(fn);
+        expect(memoized(1)).to.equal('1-1');
+        expect(memoized(1)).to.equal('1-1');
+        expect(memoized(2)).to.equal('2-2');
+        expect(memoized(2)).to.equal('2-2');
+    });
+    describe('with a custom cache', () => {
+        let callCount = 0;
+        const fn = (num: number, ..._args: any[]) => {
+            callCount++;
+            return `${num}-${callCount}`;
+        };
+        const hashOnlyFirstArg = (args: any[]) => `${args[0]}`;
+        const memoized = memoize(fn, hashOnlyFirstArg);
+        expect(memoized(1, 1)).to.equal('1-1');
+        expect(memoized(1, 2)).to.equal('1-1');
+        expect(memoized(2, 1)).to.equal('2-2');
+        expect(memoized(2, 2)).to.equal('2-2');
     });
 });
