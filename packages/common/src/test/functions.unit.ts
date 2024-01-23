@@ -98,7 +98,7 @@ describe('memoize', () => {
         expect(memoized(2)).to.equal('2-2');
         expect(memoized(2)).to.equal('2-2');
     });
-    describe('with a custom cache', () => {
+    it('with a custom hash', () => {
         let callCount = 0;
         const fn = (num: number, ..._args: any[]) => {
             callCount++;
@@ -110,5 +110,16 @@ describe('memoize', () => {
         expect(memoized(1, 2)).to.equal('1-1');
         expect(memoized(2, 1)).to.equal('2-2');
         expect(memoized(2, 2)).to.equal('2-2');
+    });
+    it('uses __cache property', () => {
+        let callCount = 0;
+        const fn = (num: number) => {
+            callCount++;
+            return `${num}-${callCount}`;
+        };
+        const memoized = memoize(fn);
+        expect(memoized(1)).to.equal('1-1');
+        memoized.__cache.clear();
+        expect(memoized(1)).to.equal('1-2');
     });
 });

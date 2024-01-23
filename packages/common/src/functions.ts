@@ -100,14 +100,17 @@ export function enforceSequentialExecution<P, T extends (...args: any[]) => Prom
 export function memoize<T extends (...args: any[]) => any>(
     fn: T,
     argsHash: (args: Parameters<T>) => string = JSON.stringify
-): T {
-    const cache = new Map<string, ReturnType<T>>();
-    return ((...args: Parameters<T>) => {
-        const key = argsHash(args);
-        if (!cache.has(key)) {
-            cache.set(key, fn(...args) as ReturnType<T>);
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return cache.get(key);
-    }) as T;
+): T & { __cache: Map<string, ReturnType<T>> } {
+    const __cache = new Map<string, ReturnType<T>>();
+    return Object.assign(
+        ((...args: Parameters<T>) => {
+            const key = argsHash(args);
+            if (!__cache.has(key)) {
+                __cache.set(key, fn(...args) as ReturnType<T>);
+            }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return __cache.get(key);
+        }) as T,
+        { __cache }
+    );
 }
