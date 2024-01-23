@@ -103,7 +103,7 @@ export function getLeadingComments(node: ts.Node): Iterable<Comment> {
         comments = chain(lineCom)
             .concat(mlCom)
             .map((f) => {
-                const text = f[0]!;
+                const text = f[0];
                 const pos = file.indexOf(text, node.pos);
                 const end = pos + text.length;
                 return { text, pos, end };
