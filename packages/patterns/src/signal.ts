@@ -1,4 +1,5 @@
 export type Listener<T> = (data: T) => void;
+type IS_ONCE = boolean;
 
 /**
  * Signal is a simple event emitter for one type of event.
@@ -32,7 +33,7 @@ export type Listener<T> = (data: T) => void;
  * We don't need to implement specific subscriptions on the class, unless we need to expose it as a remote service.
  */
 export class Signal<T> {
-    private handlers = new Map<Listener<T>, boolean>();
+    private handlers = new Map<Listener<T>, IS_ONCE>();
     constructor(handlers?: Listener<T>[], once?: Listener<T>[]) {
         handlers?.forEach((handler) => this.subscribe(handler));
         once?.forEach((handler) => this.once(handler));
