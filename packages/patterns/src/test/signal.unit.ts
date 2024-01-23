@@ -36,6 +36,18 @@ describe('Signal', () => {
 
         expect(listener.callCount, 'ignore double subscriptions').to.eql(1);
     });
+    it('notifies handlers in the order they were subscribed', () => {
+        const listener1 = stub();
+        const listener2 = stub();
+        const listener3 = stub();
+        signal.subscribe(listener1);
+        signal.once(listener2);
+        signal.subscribe(listener3);
+        signal.notify({ a: 'value', b: 5 });
+
+        expect(listener1.calledBefore(listener2), 'listener1 called before listener2').to.eql(true);
+        expect(listener2.calledBefore(listener3), 'listener2 called before listener3').to.eql(true);
+    });
     describe('once', () => {
         it('calls "once" listeners only one time', () => {
             signal.once(listener);
