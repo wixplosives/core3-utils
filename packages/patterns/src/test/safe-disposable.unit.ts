@@ -1,15 +1,14 @@
 import { expect } from 'chai';
 import { SafeDisposable } from '../disposables/safe-disposable';
 import { deferred, sleep } from 'promise-assist';
-import sinon from 'sinon';
 
 describe('SafeDisposable class', () => {
     describe('dispose', () => {
         it('sets isDisposed to true', async () => {
             const disposable = new SafeDisposable('test');
-            expect(disposable.isDisposed).to.be.false;
+            expect(disposable.isDisposed()).to.be.false;
             await disposable.dispose();
-            expect(disposable.isDisposed).to.be.true;
+            expect(disposable.isDisposed()).to.be.true;
         });
         it('executes inner disposal functions', async () => {
             const disposables = new SafeDisposable('test');
@@ -19,6 +18,18 @@ describe('SafeDisposable class', () => {
             expect(wasDisposed).to.be.false;
             await disposables.dispose();
             expect(wasDisposed).to.be.true;
+        });
+        describe('when called multiple times', () => {
+            it('returns a promise that resolves when all disposals are done', async () => {
+                const resolved: string[] = [];
+                const disposable = new SafeDisposable('test');
+                disposable.add('sleep', () => sleep(20));
+                void disposable.dispose().then(() => resolved.push('initial'));
+                await disposable.dispose().then(() => resolved.push('before completion'));
+                expect(resolved).to.eql(['initial', 'before completion']);
+                await disposable.dispose().then(() => resolved.push('after completion'));
+                expect(resolved).to.eql(['initial', 'before completion', 'after completion']);
+            });
         });
     });
     describe('guard', () => {
@@ -38,7 +49,21 @@ describe('SafeDisposable class', () => {
                 expect(() => disposable.guard({ usedWhileDisposing: true })).to.throw('Instance was disposed');
             });
         });
-        describe('sync/async', () => {
+        describe('when no function is passed', () => {
+            it('it does not block disposal', async () => {
+                const disposable = new SafeDisposable('test');
+                disposable.guard();
+                await disposable.dispose();
+            });
+        });
+
+        /*
+            The following suite tests the behavior of the "using" keyword, 
+            which is not supported in browsers.
+            Uncomment when they are supported.
+
+
+        describe('sync/async with "using" keyword', () => {
             it('sync does not delay disposal', async () => {
                 const disposable = new SafeDisposable('name');
                 let disposeCalled = false;
@@ -54,7 +79,7 @@ describe('SafeDisposable class', () => {
 
                 await disposing;
             });
-            it('async (default) delays disposal until the guard is done', async () => {
+            it('async delays disposal until the guard is done', async () => {
                 const disposables = new SafeDisposable('test');
                 let disposeCalled = false;
                 disposables.add('disposeCalled', () => {
@@ -70,6 +95,45 @@ describe('SafeDisposable class', () => {
                     expect(disposables.isDisposed, 'isDisposed').to.be.true;
                     expect(disposeCalled, 'disposeCalled').to.be.false;
                 }
+                await disposing;
+                expect(disposeCalled, 'disposeCalled after done()').to.be.true;
+            });
+        });
+        */
+        describe('sync/async without "using" keyword', () => {
+            it('sync does not delay disposal', async () => {
+                const disposable = new SafeDisposable('name');
+                let disposeCalled = false;
+                disposable.add('disposeCalled', () => {
+                    disposeCalled = true;
+                });
+                expect(
+                    disposable.guard(() => 'guarded return value'),
+                    'guard return value'
+                ).to.eql('guarded return value');
+                const disposing = disposable.dispose();
+                await sleep(1);
+                expect(disposeCalled).to.be.true;
+
+                await disposing;
+            });
+            it('async delays disposal until the guard is done', async () => {
+                const disposables = new SafeDisposable('test');
+                let disposeCalled = false;
+                disposables.add('disposeCalled', () => {
+                    disposeCalled = true;
+                });
+
+                let disposing!: Promise<void>;
+                const result = disposables.guard(async () => {
+                    disposing = disposables.dispose();
+                    await sleep(1);
+
+                    expect(disposables.isDisposed(), 'isDisposed').to.be.true;
+                    expect(disposeCalled, 'disposeCalled').to.be.false;
+                    return 'guarded return value';
+                });
+                expect(await result, 'guard return value').to.eql('guarded return value');
                 await disposing;
                 expect(disposeCalled, 'disposeCalled after done()').to.be.true;
             });
@@ -113,14 +177,14 @@ describe('SafeDisposable class', () => {
             expect(triggerCount).to.equal(0);
         });
     });
-    describe('"using" keyword', () => {
-        it('disposes when the using block exists', async () => {
-            const spy = sinon.spy();
-            {
-                await using disposable = new SafeDisposable('test');
-                disposable.add('wasDisposed', spy);
-            }
-            expect(spy.callCount).to.equal(1);
-        });
-    });
+    // describe('"using" keyword', () => {
+    //     it('disposes when the using block exists', async () => {
+    //         const spy = sinon.spy();
+    //         {
+    //             await using disposable = new SafeDisposable('test');
+    //             disposable.add('wasDisposed', spy);
+    //         }
+    //         expect(spy.callCount).to.equal(1);
+    //     });
+    // });
 });

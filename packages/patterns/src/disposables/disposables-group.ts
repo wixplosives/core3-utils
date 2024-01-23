@@ -11,13 +11,13 @@ export class DisposablesGroup {
         this.disposables.clear();
         for (const [disposable, details] of _disposables) {
             try {
-                await timeout(
-                    disposeOf(disposable),
-                    details.timeout,
-                    `Disposal timed out: "${details.name}" after ${details.timeout}ms`,
-                );
+                await timeout(disposeOf(disposable), details.timeout, message(details));
             } catch (e) {
-                throw new Error(`Disposal failed: "${details.name}"\n${(e as Error)?.stack ?? ''}`);
+                if ((e as Error).message === message(details)) {
+                    throw e;
+                } else {
+                    throw new Error(`Disposal failed: "${details.name}"\nCause: ${e}`, { cause: e });
+                }
             }
         }
     }
@@ -46,6 +46,10 @@ export type NamedDisposable = {
     timeout: number;
     name: string;
 };
+
+function message(details: NamedDisposable): string {
+    return `Disposal timed out: "${details.name}" after ${details.timeout}ms`;
+}
 
 async function disposeOf(dispose: DisposableItem) {
     if (typeof dispose === 'function') {
