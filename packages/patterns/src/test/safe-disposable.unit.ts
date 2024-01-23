@@ -37,7 +37,14 @@ describe('SafeDisposable class', () => {
             const disposable = new SafeDisposable('test');
             disposable.add('sleep', () => sleep(20));
             void disposable.dispose();
-            expect(() => disposable.guard()).to.throw('Instance was disposed');
+            try {
+                disposable.guard();
+                throw new Error('expected guard to throw');
+            } catch (e) {
+                expect(`${(e as Error).stack}`).to.match(
+                    /Error: Instance was disposed(\n\s+at.*)+\nDisposed:\n\s+at Context\.<anonymous> \(.*safe-disposable\.unit.*\)/
+                );
+            }
         });
         describe('while disposing', () => {
             it('does not throws if usedWhileDisposing is true and disposal did not finish', async () => {

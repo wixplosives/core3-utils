@@ -35,8 +35,7 @@ describe('disposables', () => {
             // will throw if unbound
             await dispose();
         });
-        // eslint-disable-next-line no-only-tests/no-only-tests
-        it.only('times out when the disposal takes too long', async () => {
+        it('times out when the disposal takes too long', async () => {
             const disposables = createDisposables('test');
             disposables.add({
                 name: 'slow',
@@ -45,6 +44,7 @@ describe('disposables', () => {
                     await sleep(100);
                 },
             });
+            await expect(disposables.dispose()).to.eventually.be.rejectedWith('sssss');
             await expect(disposables.dispose()).to.eventually.be.rejectedWith(
                 /Disposal timed out: "\[test\]: slow" after \d+ms\nAdded:\s+at Context.<anonymous> \(.*disposables\.unit\./
             );

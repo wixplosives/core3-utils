@@ -1,6 +1,7 @@
 import { Disposables } from '.';
 import { deferred } from 'promise-assist';
 import { IDisposable } from './types';
+import { getStackTrace } from '@wixc3/common';
 
 const DELAY_DISPOSAL = 'unreleased disposal guard, an async guarded task is still running';
 const DISPOSAL_GUARD_DEFAULTS = {
@@ -47,6 +48,7 @@ export class SafeDisposable extends Disposables implements IDisposable {
     private _isDisposing?: Promise<void>;
     private timeouts = new Set<ReturnType<typeof setTimeout>>();
     private intervals = new Set<ReturnType<typeof setInterval>>();
+    private disposeTrace?: string;
     constructor(name: string) {
         super(name);
         this.registerGroup(DELAY_DISPOSAL, { before: 'default' });
@@ -73,6 +75,7 @@ export class SafeDisposable extends Disposables implements IDisposable {
         if (this.isDisposed()) {
             return this._isDisposing;
         } else {
+            this.disposeTrace = getStackTrace({ skipLines: 3 });
             this._isDisposing = super.dispose();
             await this._isDisposing;
             this._isDisposed = true;
@@ -118,7 +121,9 @@ export class SafeDisposable extends Disposables implements IDisposable {
         } = extractArgs<T>(fnOrOptions, options);
 
         if (this.isDisposed() && !(usedWhileDisposing && this._isDisposing)) {
-            throw new Error('Instance was disposed');
+            const err = new Error('Instance was disposed');
+            err.stack = `${err.stack}\nDisposed:\n${this.disposeTrace}`;
+            throw err;
         }
         const { promise: canDispose, resolve: done } = deferred();
         const removeGuard = this.add({
