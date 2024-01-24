@@ -40,6 +40,7 @@ describe('Signal', () => {
         const listener1 = stub();
         const listener2 = stub();
         const listener3 = stub();
+        signal.subscribe(listener3); // will be re-added
         signal.subscribe(listener1);
         signal.once(listener2);
         signal.subscribe(listener3);
