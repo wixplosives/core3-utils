@@ -53,8 +53,13 @@ export class EventEmitter<Events extends object, EventId extends keyof Events = 
      * @returns unsubscribe fn
      */
     once = <Event extends EventId>(event: Event, handler: (data: Events[Event]) => void) => {
-        const bucket = this.events.get(event);
-        bucket ? bucket.once(handler) : this.events.set(event, new Signal(undefined, [handler]));
+        let bucket = this.events.get(event);
+        if (!bucket) {
+            bucket = new Signal();
+            this.events.set(event, bucket);
+        }
+        bucket.once(handler);
+
         return () => this.unsubscribe(event, handler);
     };
 

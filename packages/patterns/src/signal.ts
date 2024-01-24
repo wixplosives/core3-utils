@@ -34,9 +34,8 @@ type IS_ONCE = boolean;
  */
 export class Signal<T> {
     private handlers = new Map<Listener<T>, IS_ONCE>();
-    constructor(handlers?: Listener<T>[], once?: Listener<T>[]) {
+    constructor(handlers?: Listener<T>[]) {
         handlers?.forEach((handler) => this.subscribe(handler));
-        once?.forEach((handler) => this.once(handler));
     }
 
     /**
