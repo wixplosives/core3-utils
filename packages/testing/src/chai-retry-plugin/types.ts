@@ -15,7 +15,7 @@ declare global {
     }
 }
 
-export type AssertionMethod = (...args: unknown[]) => Chai.Assertion;
+export type AssertionMethod = (...args: unknown[]) => Chai.Assertion | Promise<Chai.Assertion>;
 
 // Function provided as argument of `expect`
 export type FunctionToRetry = (...args: unknown[]) => unknown;
