@@ -36,9 +36,6 @@ export class EventEmitter<Events extends object, EventId extends keyof Events = 
     /**
      * Subscribe a handler for event
      *
-     * Handlers are called in the order they were added.
-     * (re-adding a handler will ensure it's called last)
-     *
      * @returns unsubscribe fn
      */
     subscribe = <Event extends EventId>(event: Event, handler: (data: Events[Event]) => void) => {
@@ -54,9 +51,6 @@ export class EventEmitter<Events extends object, EventId extends keyof Events = 
 
     /**
      * Adds a handler that will be called at most once.
-     *
-     * Handlers are called in the order they were added.
-     * (re-adding a handler will ensure it's called last)
      *
      * @returns unsubscribe fn
      */
