@@ -41,27 +41,27 @@ export class Signal<T> {
     /**
      * Subscribe a notification callback
      *
-     * Handlers are called in the order they were added.
-     * (re-adding a handler will ensure it's called last)
-     *
      * @param handler - Will be executed with a data arg when a notification occurs
      */
     subscribe = (handler: Listener<T>) => {
-        this.unsubscribe(handler);
-        this.handlers.set(handler, false);
+        if (this.handlers.get(handler) !== true) {
+            this.handlers.set(handler, false);
+        } else {
+            throw new Error(`handler already exists as "once" listener`);
+        }
     };
 
     /**
      * Subscribe to only the next notification
      *
-     * Handlers are called in the order they were added.
-     * (re-adding a handler will ensure it's called last)
-     *
      * @param handler - Will be executed with a data arg when a notification occurs
      */
     once = (handler: Listener<T>) => {
-        this.unsubscribe(handler);
-        this.handlers.set(handler, true);
+        if (this.handlers.get(handler) !== false) {
+            this.handlers.set(handler, true);
+        } else {
+            throw new Error(`handler already exists as persistent listener`);
+        }
     };
 
     /**

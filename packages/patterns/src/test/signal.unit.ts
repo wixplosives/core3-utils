@@ -40,10 +40,10 @@ describe('Signal', () => {
         const listener1 = stub();
         const listener2 = stub();
         const listener3 = stub();
-        signal.subscribe(listener3); // will be re-added
         signal.subscribe(listener1);
         signal.once(listener2);
         signal.subscribe(listener3);
+        signal.subscribe(listener1); // should have no effect
         signal.notify({ a: 'value', b: 5 });
 
         expect(listener1.calledBefore(listener2), 'listener1 called before listener2').to.eql(true);
@@ -72,6 +72,14 @@ describe('Signal', () => {
             signal.unsubscribe(listener);
             signal.notify({ a: 'value', b: 5 });
             expect(listener.callCount, 'no new calls after unsubscribe').to.eql(0);
+        });
+        it('throws when a handler changes from "once" to persistent', () => {
+            signal.once(listener);
+            expect(() => signal.subscribe(listener)).to.throw(`handler already exists as "once" listener`);
+        });
+        it('throws when a handler changes from persistent to "once"', () => {
+            signal.subscribe(listener);
+            expect(() => signal.once(listener)).to.throw(`handler already exists as persistent listener`);
         });
     });
     it(`doesn't call listeners after "unsubscribe"`, () => {
