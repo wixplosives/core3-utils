@@ -44,7 +44,7 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
                 let assertion = await initialAssertion(retryParams);
 
                 for (const { propertyName, method, args } of assertionStack) {
-                    assertion = updateAssertion(method, args, assertion, propertyName);
+                    assertion = await updateAssertion(method, args, assertion, propertyName);
                 }
 
                 return;
