@@ -26,7 +26,6 @@ import { Signal } from './signal';
  */
 export class EventEmitter<Events extends object, EventId extends keyof Events = keyof Events> {
     protected events = new Map<EventId, Signal<any>>();
-    protected emitOnce = new Map<EventId, Signal<any>>();
 
     /**
      * Check if an event has subscribers
@@ -36,11 +35,12 @@ export class EventEmitter<Events extends object, EventId extends keyof Events = 
 
     /**
      * Subscribe a handler for event
+     *
      * @returns unsubscribe fn
      */
     subscribe = <Event extends EventId>(event: Event, handler: (data: Events[Event]) => void) => {
         const bucket = this.events.get(event);
-        bucket ? bucket.add(handler) : this.events.set(event, new Signal([handler]));
+        bucket ? bucket.subscribe(handler) : this.events.set(event, new Signal([handler]));
         return () => this.unsubscribe(event, handler);
     };
 
@@ -50,13 +50,18 @@ export class EventEmitter<Events extends object, EventId extends keyof Events = 
     on = this.subscribe;
 
     /**
-     * Adds a handler that will be called at most once
+     * Adds a handler that will be called at most once.
+     *
      * @returns unsubscribe fn
      */
     once = <Event extends EventId>(event: Event, handler: (data: Events[Event]) => void) => {
-        this.off(event, handler);
-        const bucket = this.emitOnce.get(event);
-        bucket ? bucket.add(handler) : this.emitOnce.set(event, new Signal([handler]));
+        let bucket = this.events.get(event);
+        if (!bucket) {
+            bucket = new Signal();
+            this.events.set(event, bucket);
+        }
+        bucket.once(handler);
+
         return () => this.unsubscribe(event, handler);
     };
 
@@ -64,12 +69,11 @@ export class EventEmitter<Events extends object, EventId extends keyof Events = 
      * Unsubscribe a handler from event
      */
     unsubscribe = <Event extends EventId>(event: Event, handler: (data: Events[Event]) => void) => {
-        let bucket = this.events.get(event);
-        bucket?.delete(handler);
-        bucket?.size === 0 && this.events.delete(event);
-        bucket = this.emitOnce.get(event);
-        bucket?.delete(handler);
-        bucket?.size === 0 && this.events.delete(event);
+        const bucket = this.events.get(event);
+        bucket?.unsubscribe(handler);
+        if (bucket?.size === 0) {
+            this.events.delete(event);
+        }
     };
 
     /**
@@ -83,15 +87,14 @@ export class EventEmitter<Events extends object, EventId extends keyof Events = 
      */
     delete = <Event extends EventId>(event: Event) => {
         this.events.delete(event);
-        this.emitOnce.delete(event);
     };
 
     /**
      * Drop all subscriptions
      */
     clear = () => {
+        this.events.forEach((bucket) => bucket.clear());
         this.events = new Map<EventId, Signal<any>>();
-        this.emitOnce = new Map<EventId, Signal<any>>();
     };
 
     /**
@@ -101,8 +104,6 @@ export class EventEmitter<Events extends object, EventId extends keyof Events = 
      */
     notify = <Event extends EventId>(event: Event, data: Events[Event]) => {
         this.events.get(event)?.notify(data);
-        this.emitOnce.get(event)?.notify(data);
-        this.emitOnce.delete(event);
     };
 
     /**
