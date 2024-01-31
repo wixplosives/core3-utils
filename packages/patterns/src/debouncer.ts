@@ -34,7 +34,11 @@ export class Debouncer<T extends (...args: any[]) => any> {
      * @param waitTime - time to wait before invoking cb
      * @param maxWaitTime - maximum wait time from first triggering
      */
-    constructor(private cb: T, private waitTime: number, private maxWaitTime: number) {}
+    constructor(
+        private cb: T,
+        private waitTime: number,
+        private maxWaitTime: number,
+    ) {}
 
     private execute() {
         try {

@@ -22,7 +22,7 @@ export const setGlobalOptions = (maxDepth: number, formatters?: Formatter[]) => 
 export const setSuiteOptions = (
     before: (msg: string, cb: () => void) => void,
     after: (msg: string, cb: () => void) => void,
-    options: MostlyEqualOptions
+    options: MostlyEqualOptions,
 ) => {
     before('setting mostly equal global options', () => {
         const depthBefore = globalOptions.maxDepth;
@@ -40,7 +40,7 @@ export const mostlyEqlChaiPlugin: Chai.ChaiPlugin = (c) => {
         const formatters = (options as MostlyEqualOptions)?.formatters || globalOptions.formatters || [];
         const res = checkExpectValues(
             errorString(expected, this._obj, maxDepth, formatters, 0, [], new Map(), new Set()),
-            formatters
+            formatters,
         );
         let error = false;
         const message = res.map((item) => {
@@ -60,7 +60,7 @@ ${item.message}
             message.join(''),
             `expected ${safePrint(this._obj, maxDepth)} to not eql expected`,
             this._obj,
-            expected
+            expected,
         );
     });
 };

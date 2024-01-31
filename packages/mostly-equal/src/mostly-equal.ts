@@ -143,7 +143,7 @@ export const checkExpectValues = (input: ErrorOrTextOrExpect, formatters: Format
                     path: item.path,
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     value: item.value,
-                }))
+                })),
             );
             if (res && Array.isArray(res)) {
                 const errorMap = new Map<ExpectValuesInfo, Error>();
@@ -185,7 +185,7 @@ const tryExpectVal = (
     path: LookupPath,
     passedMap: Map<any, LookupPath>,
     passedSet: Set<any>,
-    existsInParent: boolean
+    existsInParent: boolean,
 ): ErrorOrTextOrExpect => {
     let matcherRes: undefined | string | void = undefined;
     try {
@@ -207,7 +207,7 @@ export const errorString: (
     depth: number,
     path: LookupPath,
     passedMap: Map<unknown, LookupPath>,
-    passedSet: Set<unknown>
+    passedSet: Set<unknown>,
 ) => ErrorOrTextOrExpect = (expected, actual, maxDepth, formatters, depth, path, passedMap, passedSet) => {
     if (isExpectVal(expected)) {
         return tryExpectVal(expected, actual, maxDepth, formatters, depth, path, passedMap, passedSet, true);
@@ -248,9 +248,9 @@ export const errorString: (
                         depth + 1,
                         [...path, i],
                         passedMap,
-                        childSet
+                        childSet,
                     ),
-                    ','
+                    ',',
                 );
             }
             res.push(`\n${spaces(depth)}]\n${spaces(depth)}`);
@@ -265,8 +265,8 @@ export const errorString: (
                         0,
                         passedMap,
                         passedSet,
-                        path
-                    )} but got ${safePrint(actual, maxDepth, formatters, 0, passedMap, passedSet, path)}`
+                        path,
+                    )} but got ${safePrint(actual, maxDepth, formatters, 0, passedMap, passedSet, path)}`,
                 ),
                 safePrint(actual, maxDepth, formatters, depth),
             ];
@@ -284,7 +284,7 @@ export const errorString: (
                     `\n ${spaces(depth + 1)}${name}: `,
                     ...value,
                     ...(errorMessage ? [anyToError(errorMessage)] : []),
-                    ','
+                    ',',
                 );
             for (const name of allNames) {
                 const stringProp = [safePrint(actual[name], depth + 1, formatters)];
@@ -309,7 +309,7 @@ export const errorString: (
                         path,
                         passedMap,
                         passedSet,
-                        false
+                        false,
                     );
                     addPropToRes(name, fieldRes);
                 } else if (!isGetter(actual, name)) {
@@ -328,8 +328,8 @@ export const errorString: (
                                 depth + 1,
                                 [...path, name],
                                 passedMap,
-                                childSet
-                            )
+                                childSet,
+                            ),
                         );
                     }
                 }
@@ -346,8 +346,8 @@ export const errorString: (
                 actual,
                 maxDepth,
                 formatters,
-                0
-            )}`
+                0,
+            )}`,
         ),
     ];
 };

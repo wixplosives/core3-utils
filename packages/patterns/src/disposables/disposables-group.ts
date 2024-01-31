@@ -10,11 +10,15 @@ export class DisposablesGroup {
         const _disposables = Array.from(this.disposables).reverse();
         this.disposables.clear();
         for (const [disposable, details] of _disposables) {
-            await timeout(
-                disposeOf(disposable),
-                details.timeout,
-                `Disposal timed out: "${details.name}" after ${details.timeout}ms`
-            );
+            try {
+                await timeout(disposeOf(disposable), details.timeout, message(details));
+            } catch (e) {
+                if ((e as Error).message === message(details)) {
+                    throw e;
+                } else {
+                    throw new Error(`Disposal failed: "${details.name}"\nCause: ${e}`, { cause: e });
+                }
+            }
         }
     }
 
@@ -42,6 +46,10 @@ export type NamedDisposable = {
     timeout: number;
     name: string;
 };
+
+function message(details: NamedDisposable): string {
+    return `Disposal timed out: "${details.name}" after ${details.timeout}ms`;
+}
 
 async function disposeOf(dispose: DisposableItem) {
     if (typeof dispose === 'function') {

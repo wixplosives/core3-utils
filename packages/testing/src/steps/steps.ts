@@ -45,7 +45,7 @@ const getStack = () => {
     return stack
         .split('\n')
         .filter(
-            (i) => !i.match(/testing[\\/](dist|src)[\\/]steps[\\/]\w+\.(js|ts)/) && !i.match(/captureStackTrace\(.*/)
+            (i) => !i.match(/testing[\\/](dist|src)[\\/]steps[\\/]\w+\.(js|ts)/) && !i.match(/captureStackTrace\(.*/),
         )
         .join('\n');
 };
@@ -168,7 +168,7 @@ export function waitForSpyCall<S extends object>(scope: S, method: keyof S | S[k
  */
 export function waitForStubCall<T>(
     action: (stub: Stub) => T,
-    waitForAction = true
+    waitForAction = true,
 ): PromiseWithTimeout<{
     returned: T;
     callArgs: any[];
@@ -178,7 +178,7 @@ export function waitForStubCall<T>(
     const step = withTimeout(
         waitForAction
             ? Promise.all([returned, d.promise]).then(([returned, callArgs]) => ({ returned, callArgs }))
-            : d.promise.then((callArgs) => ({ returned, callArgs }))
+            : d.promise.then((callArgs) => ({ returned, callArgs })),
     );
     return step;
 }
@@ -205,7 +205,7 @@ function createDefaults() {
     stepsDefaults = getDefaults();
     disposeAfter(() => {
         stepsCountByTest = new WeakMap();
-    });
+    }, 'steps createDefaults');
 }
 
 createDefaults();

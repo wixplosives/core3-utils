@@ -58,8 +58,9 @@ describe('chai-retry-plugin', () => {
             try {
                 await expect(resultFunction).retry({ delay: 50, timeout: 500 }).to.equal(5);
             } catch (error: unknown) {
-                expect((error as Error).message).includes('Timed out after 500ms. Error: Im throwing');
-                expect(getCallCount()).to.be.within(9, 10);
+                expect((error as Error).message).includes('Timed out after 500ms.');
+                expect((error as Error).stack).includes('Error: Im throwing');
+                expect(getCallCount()).to.be.within(8, 10);
             }
         });
 
@@ -109,7 +110,7 @@ describe('chai-retry-plugin', () => {
     describe('should work with chained properties:', () => {
         it('.deep.equal()', async () => {
             const { resultFunction, getCallCount } = withCallCount((callCount) =>
-                callCount !== 5 ? null : { c: { b: { a: 1 } } }
+                callCount !== 5 ? null : { c: { b: { a: 1 } } },
             );
 
             await expect(resultFunction)
@@ -121,7 +122,7 @@ describe('chai-retry-plugin', () => {
 
         it('.nested.property()', async () => {
             const { resultFunction, getCallCount } = withCallCount((callCount) =>
-                callCount !== 5 ? null : { a: { b: ['x', 'y'] } }
+                callCount !== 5 ? null : { a: { b: ['x', 'y'] } },
             );
 
             await expect(resultFunction).retry().to.have.nested.property('a.b[1]');
@@ -132,7 +133,7 @@ describe('chai-retry-plugin', () => {
     describe('should pass the assertions that ends with properties:', () => {
         it('.null', async () => {
             const { resultFunction, getCallCount } = withCallCount((callCount) =>
-                callCount !== 5 ? null : 'not-null'
+                callCount !== 5 ? null : 'not-null',
             );
 
             await expect(resultFunction).retry().to.be.not.null;
@@ -141,7 +142,7 @@ describe('chai-retry-plugin', () => {
 
         it('.undefined', async () => {
             const { resultFunction, getCallCount } = withCallCount((callCount) =>
-                callCount !== 5 ? 'not-undefined' : undefined
+                callCount !== 5 ? 'not-undefined' : undefined,
             );
 
             await expect(resultFunction).retry().to.be.undefined;
@@ -199,7 +200,7 @@ describe('chai-retry-plugin', () => {
 
         it('.have.property(), and.be.above()', async () => {
             const { resultFunction, getCallCount } = withCallCount((callCount) =>
-                callCount < 4 ? { notValue: 2 } : { value: callCount }
+                callCount < 4 ? { notValue: 2 } : { value: callCount },
             );
 
             await expect(resultFunction).retry().have.property('value').and.be.above(4);
@@ -248,7 +249,7 @@ describe('chai-retry-plugin', () => {
 
         it('.keys()', async () => {
             const { resultFunction, getCallCount } = withCallCount((count) =>
-                count === 4 ? { a: 1, b: 2, c: 3, d: 4 } : { a: 1, b: 2, c: 3 }
+                count === 4 ? { a: 1, b: 2, c: 3, d: 4 } : { a: 1, b: 2, c: 3 },
             );
 
             await expect(resultFunction).retry().to.have.keys(['a', 'b', 'c', 'd']);

@@ -44,7 +44,7 @@ export function once<T extends (...args: any[]) => any>(fn: T): T {
  */
 export function delayed<T extends (...args: any[]) => any>(
     fn: T,
-    wait: number
+    wait: number,
 ): (...args: Parameters<T>) => Promise<ReturnType<T>> {
     let queue: Promise<ReturnType<T> | void> | null = null;
     return ((...args: Parameters<T>) => {
@@ -54,7 +54,7 @@ export function delayed<T extends (...args: any[]) => any>(
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
             queue = queue.then(
                 () => fn(...args) as ReturnType<T>,
-                () => fn(...args) as ReturnType<T>
+                () => fn(...args) as ReturnType<T>,
             );
         }
         const tmp = queue;
@@ -85,8 +85,32 @@ export function enforceSequentialExecution<P, T extends (...args: any[]) => Prom
     return ((...args: Parameters<T>) => {
         queue = queue.then(
             () => fn(...args),
-            () => fn(...args)
+            () => fn(...args),
         );
         return queue;
     }) as T;
+}
+
+/**
+ * 
+ * @param fn a function to memoize
+ * @param argsHash a function that returns a string hash for the arguments, defaults to JSON.stringify
+ * @returns a memoized version of `fn`
+ */
+export function memoize<T extends (...args: any[]) => any>(
+    fn: T,
+    argsHash: (args: Parameters<T>) => string = JSON.stringify
+): T & { __cache: Map<string, ReturnType<T>> } {
+    const __cache = new Map<string, ReturnType<T>>();
+    return Object.assign(
+        ((...args: Parameters<T>) => {
+            const key = argsHash(args);
+            if (!__cache.has(key)) {
+                __cache.set(key, fn(...args) as ReturnType<T>);
+            }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return __cache.get(key);
+        }) as T,
+        { __cache }
+    );
 }

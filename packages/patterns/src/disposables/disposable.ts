@@ -9,6 +9,7 @@ const DISPOSAL_GUARD_DEFAULTS = {
     usedWhileDisposing: false,
 };
 /**
+ * @deprecated
  * A base class for disposable objects
  * @example
  * ```ts
@@ -33,12 +34,13 @@ const DISPOSAL_GUARD_DEFAULTS = {
 export class Disposable {
     private _isDisposed = false;
     private _isDisposing = false;
-    public readonly disposables = new Disposables();
+    public readonly disposables: Disposables;
     private timeouts = new Set<ReturnType<typeof setTimeout>>();
     private intervals = new Set<ReturnType<typeof setInterval>>();
-    constructor() {
+    constructor(name?: string) {
+        this.disposables = new Disposables(name ?? this.constructor.name);
         this.disposables.registerGroup(DELAY_DISPOSAL, { before: 'default' });
-        this.disposables.add(() => {
+        this.disposables.add('dispose timeouts and intervals', () => {
             this.timeouts.forEach((t) => clearTimeout(t));
             this.intervals.forEach((i) => clearInterval(i));
         });
@@ -97,7 +99,7 @@ export class Disposable {
     disposalGuard(
         options: {
             async: never;
-        } & Partial<typeof DISPOSAL_GUARD_DEFAULTS>
+        } & Partial<typeof DISPOSAL_GUARD_DEFAULTS>,
     ): () => void;
     disposalGuard(): () => void;
     disposalGuard(options: { async: false; usedWhileDisposing?: boolean }): void;
@@ -112,10 +114,11 @@ export class Disposable {
         }
         if (async) {
             const { promise: canDispose, resolve: done } = deferred();
-            const remove = this.disposables.add(() => canDispose, {
+            const remove = this.disposables.add({
                 group: DELAY_DISPOSAL,
                 name,
                 timeout,
+                dispose: () => canDispose,
             });
             canDispose.then(remove).catch(noop);
             return done;

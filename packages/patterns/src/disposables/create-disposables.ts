@@ -1,6 +1,5 @@
 import { DisposalGroup, getGroupConstrainedIndex, GroupConstraints, normalizeConstraints } from './constraints';
 import { DisposableItem, DisposablesGroup } from './disposables-group';
-import { defaults } from '@wixc3/common';
 
 export const DEFAULT_GROUP = 'default';
 export const DEFAULT_TIMEOUT = 1000;
@@ -12,27 +11,23 @@ const createGroup = (name: string): DisposalGroup => ({
 
 export type DisposableOptions = {
     /**
+     * disposable name, used in error or when timed out
+     */
+    name: string;
+    /**
+     * the subject to dispose
+     */
+    dispose: DisposableItem;
+    /**
      * @default DEFAULT_TIMEOUT
      */
     timeout?: number;
-    /**
-     * disposable name, used in error when timed out
-     */
-    name?: string;
     /**
      * disposal group name
      * @default DEFAULT_GROUP
      */
     group?: string;
 };
-
-let count = 0;
-const withDefaults = (d?: DisposableOptions): Required<DisposableOptions> =>
-    defaults(d || {}, {
-        timeout: DEFAULT_TIMEOUT,
-        group: DEFAULT_GROUP,
-        name: `unnamed-${count++}`,
-    });
 
 /**
  * Disposables allow adding of disposal async functions,
@@ -45,7 +40,7 @@ const withDefaults = (d?: DisposableOptions): Required<DisposableOptions> =>
  *
  * @example
  * ```ts
- * const disposables = createDisposables();
+ * const disposables = createDisposables('sample');
  * disposables.add(() => console.log('disposable 1'));
  * disposables.add({dispose: () => console.log('disposable 2')});
  * disposables.dispose();
@@ -55,7 +50,7 @@ const withDefaults = (d?: DisposableOptions): Required<DisposableOptions> =>
  *
  * @example disposal groups
  * ```ts
- * const disposables = createDisposables();
+ * const disposables = createDisposables('sample');
  * disposables.registerGroup('first', {before: DEFAULT_GROUP});
  * disposables.registerGroup('last', {after: DEFAULT_GROUP});
  * disposables.registerGroup('beforeDefault', {before: DEFAULT_GROUP, after: 'first'});
@@ -70,46 +65,71 @@ const withDefaults = (d?: DisposableOptions): Required<DisposableOptions> =>
  * // last
  * ```
  */
-export function createDisposables() {
-    return new Disposables();
+export function createDisposables(name: string, initialGroups: string[] = []) {
+    return new Disposables(name, initialGroups);
 }
 
 export class Disposables {
     private readonly groups: DisposalGroup[] = [createGroup(DEFAULT_GROUP)];
     private readonly constrains: GroupConstraints[] = [];
-
+    constructor(private name: string, initialGroups: string[] = []) {
+        this.dispose = this.dispose.bind(this);
+        this.groups.push(...initialGroups.map(createGroup));
+    }
     /**
      * register a new constrained disposal group
      * @param constraints - constraints for the group must contain {before: groupName} or {after: groupName}
      */
-    registerGroup(name: string, _constraints: GroupConstraints[] | GroupConstraints) {
-        const nConstraints = normalizeConstraints(_constraints, name, this.groups);
+    registerGroup(groupName: string, constraints: GroupConstraints[] | GroupConstraints) {
+        const nConstraints = normalizeConstraints(constraints, groupName, this.groups);
         const { lastAfter, firstBefore } = getGroupConstrainedIndex(nConstraints, this.groups);
         this.constrains.push(...nConstraints);
 
         if (lastAfter > 0) {
-            this.groups.splice(lastAfter + 1, 0, createGroup(name));
+            this.groups.splice(lastAfter + 1, 0, createGroup(groupName));
         } else {
-            this.groups.splice(firstBefore, 0, createGroup(name));
+            this.groups.splice(firstBefore, 0, createGroup(groupName));
         }
     }
-
     /**
-     * @param disposable a function or object with a dispose method
-     * @param options if string, will be used as group name
+     * register a new constrained disposal group if it doesn't exist ignore otherwise
+     * @param constraints - constraints for the group must contain {before: groupName} or {after: groupName}
+     */
+    registerGroupIfNotExists(groupName: string, constraints: GroupConstraints[] | GroupConstraints) {
+        const existing = this.groups.some((g) => g.name === groupName);
+        if (!existing) {
+            this.registerGroup(groupName, constraints);
+        }
+    }
+    /**
+     * @param name - disposable name for error messages
+     * @param disposable - a function or object with a dispose method
      * @returns a function to remove the disposable
      */
-    add(disposable: DisposableItem, options?: DisposableOptions | string) {
-        if (typeof options === 'string') {
-            options = { group: options };
+    add(name: string, disposable: DisposableItem): () => void;
+    /**
+     * @param options must include a [dispose] function or object with a dispose method
+     * @returns a function to remove the disposable
+     */
+    add(options: DisposableOptions): () => void;
+    // @internal
+    add(...[nameOrOptions, disposable]: [id: string, disposable: DisposableItem] | [options: DisposableOptions]) {
+        if (typeof nameOrOptions === 'string') {
+            if (!disposable) {
+                throw new Error(
+                    `Invalid disposable: must be a function or object with a dispose method got ${disposable}`
+                );
+            }
+            nameOrOptions = { name: nameOrOptions, dispose: disposable };
         }
-        const { group: groupName, name, timeout } = withDefaults(options);
+        const { group: groupName = DEFAULT_GROUP, name, dispose, timeout = DEFAULT_TIMEOUT } = nameOrOptions;
         const group = this.groups.find((g) => g.name === groupName);
         if (!group) {
             throw new Error(`Invalid group: "${groupName}" doesn't exists`);
         }
-        group.disposables.add(disposable, timeout, name);
-        return () => group.disposables.remove(disposable);
+
+        group.disposables.add(dispose, timeout, `[${this.name}]: ${name}`);
+        return () => group.disposables.remove(dispose);
     }
 
     /**
@@ -131,11 +151,11 @@ export class Disposables {
      * Disposes all disposables in all groups one at the time,
      * order based on constraints
      */
-    dispose = async () => {
+    async dispose() {
         for (const { disposables } of this.groups) {
             await disposables.dispose();
         }
-    };
+    }
 
     /**
      *

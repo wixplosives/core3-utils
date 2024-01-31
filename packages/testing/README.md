@@ -11,6 +11,26 @@ Utils for making mocha + chai testing easy and fun
 
 ## Remarks
 
+### Test Disposables
+
+Test disposables are a convenient way to create and dispose of test resources.
+
+### Example
+
+```ts
+import { createTestDisposables } from '@wixc3/testing';
+
+describe('test disposables', () => {
+  // passing the mocha "after" hook to createTestDisposables will dispose after all tests
+  const disposables = createTestDisposables();
+
+  it('should create and dispose of test resources', () => {
+    const resource = { dispose() {} };
+    disposables.add(resource); // will be dispose after the test
+  });
+});
+```
+
 ### Steps
 
 Steps are a convenient way to craft async tests. A step has a timeout and a description, making test timeouts easy to understand and debug. Each step timeout auto increases the test timeout, assuring the step will time out before the test
