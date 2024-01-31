@@ -11,26 +11,6 @@ Utils for making mocha + chai testing easy and fun
 
 ## Remarks
 
-### Test Disposables
-
-Test disposables are a convenient way to create and dispose of test resources.
-
-### Example
-
-```ts
-import { createTestDisposables } from '@wixc3/testing';
-
-describe('test disposables', () => {
-  // passing the mocha "after" hook to createTestDisposables will dispose after all tests
-  const disposables = createTestDisposables();
-
-  it('should create and dispose of test resources', () => {
-    const resource = { dispose() {} };
-    disposables.add(resource); // will be dispose after the test
-  });
-});
-```
-
 ### Steps
 
 Steps are a convenient way to craft async tests. A step has a timeout and a description, making test timeouts easy to understand and debug. Each step timeout auto increases the test timeout, assuring the step will time out before the test
@@ -61,31 +41,32 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 ## Functions
 
-| Function                                                                                                        | Description                                                                                                                                                                                                                |
-| --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [adjustTestTime(ms, allowTimeDilation)](https://wixplosives.github.io/core3-utils/testing.adjusttesttime)       | Add ms to current test timeout                                                                                                                                                                                             |
-| [allWithTimeout(actions)](https://wixplosives.github.io/core3-utils/testing.allwithtimeout)                     | <p>Limits the time a list of promises can take</p><p>- Note: useable only within a mocha test/hook. The total test timeout will be adjusted to make sure the test will not time out waiting for this step</p>              |
-| [createDisposalGroup(name, constraints)](https://wixplosives.github.io/core3-utils/testing.createdisposalgroup) | Creates a new disposal group                                                                                                                                                                                               |
-| [defaults()](https://wixplosives.github.io/core3-utils/testing.defaults)                                        | default values for steps of the current test                                                                                                                                                                               |
-| [disposeAfter(disposable, group)](https://wixplosives.github.io/core3-utils/testing.disposeafter)               | Disposes of test resources after the test is done                                                                                                                                                                          |
-| [initAndDisposeAfter(target, args)](https://wixplosives.github.io/core3-utils/testing.initanddisposeafter)      | Runs target.init and disposes of it after the test is done \*                                                                                                                                                              |
-| [locatorTimeout(ms)](https://wixplosives.github.io/core3-utils/testing.locatortimeout)                          | Creates a playwright locator options with timeout and adjust the current test timeout accordingly                                                                                                                          |
-| [mochaCtx()](https://wixplosives.github.io/core3-utils/testing.mochactx)                                        | Active mocha context                                                                                                                                                                                                       |
-| [randomizeTestsOrder(shouldRandomize)](https://wixplosives.github.io/core3-utils/testing.randomizetestsorder)   | <p>Randomizes tests order</p><p>To avoid confusion, it can only be set once, before the testing begins (i.e. not in a running test)</p>                                                                                    |
-| [sleep(ms)](https://wixplosives.github.io/core3-utils/testing.sleep)                                            | Resolves after ms milliseconds                                                                                                                                                                                             |
-| [step(action)](https://wixplosives.github.io/core3-utils/testing.step)                                          | <p>Adds a step description to a promise if it's rejected</p><p>\* - Note: useable only within a mocha test/hook. The total test timeout will be adjusted to make sure the test will not time out waiting for this step</p> |
-| [timeDilation()](https://wixplosives.github.io/core3-utils/testing.timedilation)                                | <p>Get current test step time dilation</p><p>- All timeout set in tests will be multiplied by timeDilation()</p>                                                                                                           |
-| [timeDilation(value)](https://wixplosives.github.io/core3-utils/testing.timedilation_1)                         | <p>Set current test step time dilation</p><p>- All timeout set in tests will be multiplied by timeDilation()</p>                                                                                                           |
-| [useSafeFakeTimers()](https://wixplosives.github.io/core3-utils/testing.usesafefaketimers)                      | Makes it easy to safely use fake timers                                                                                                                                                                                    |
-| [waitForSpyCall(scope, method)](https://wixplosives.github.io/core3-utils/testing.waitforspycall)               | Spies on an object method, waiting until it's called. The spy is removed once called                                                                                                                                       |
-| [waitForStubCall(action, waitForAction)](https://wixplosives.github.io/core3-utils/testing.waitforstubcall)     | Creates a stub, then waits for it to be called                                                                                                                                                                             |
-| [withTimeout(action)](https://wixplosives.github.io/core3-utils/testing.withtimeout)                            | <p>Limits the time a promise can take</p><p>- Note: useable only within a mocha test/hook. The total test timeout will be adjusted to make sure the test will not time out waiting for this step</p>                       |
+| Function                                                                                                            | Description                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [adjustTestTime(ms)](https://wixplosives.github.io/core3-utils/testing.adjusttesttime)                              | Add ms to current test timeout                                                                                                                                                                                             |
+| [allWithTimeout(actions)](https://wixplosives.github.io/core3-utils/testing.allwithtimeout)                         | <p>Limits the time a list of promises can take</p><p>- Note: useable only within a mocha test/hook. The total test timeout will be adjusted to make sure the test will not time out waiting for this step</p>              |
+| [createDisposalGroup(name, constraints)](https://wixplosives.github.io/core3-utils/testing.createdisposalgroup)     | Creates a new disposal group                                                                                                                                                                                               |
+| [createTestDisposables(disposeHook)](https://wixplosives.github.io/core3-utils/testing.createtestdisposables)       | Creates a disposable group that will be disposed after the test is done                                                                                                                                                    |
+| [defaults()](https://wixplosives.github.io/core3-utils/testing.defaults)                                            | default values for steps of the current test                                                                                                                                                                               |
+| [disposeAfter(disposable, options)](https://wixplosives.github.io/core3-utils/testing.disposeafter)                 |                                                                                                                                                                                                                            |
+| [initAndDisposeAfter(target, options, args)](https://wixplosives.github.io/core3-utils/testing.initanddisposeafter) |                                                                                                                                                                                                                            |
+| [isDebugMode()](https://wixplosives.github.io/core3-utils/testing.isdebugmode)                                      |                                                                                                                                                                                                                            |
+| [locatorTimeout(ms)](https://wixplosives.github.io/core3-utils/testing.locatortimeout)                              | Creates a playwright locator options with timeout and adjust the current test timeout accordingly                                                                                                                          |
+| [mochaCtx()](https://wixplosives.github.io/core3-utils/testing.mochactx)                                            | Active mocha context                                                                                                                                                                                                       |
+| [randomizeTestsOrder(shouldRandomize)](https://wixplosives.github.io/core3-utils/testing.randomizetestsorder)       | <p>Randomizes tests order</p><p>To avoid confusion, it can only be set once, before the testing begins (i.e. not in a running test)</p>                                                                                    |
+| [sleep(ms)](https://wixplosives.github.io/core3-utils/testing.sleep)                                                | Resolves after ms milliseconds                                                                                                                                                                                             |
+| [step(action)](https://wixplosives.github.io/core3-utils/testing.step)                                              | <p>Adds a step description to a promise if it's rejected</p><p>\* - Note: useable only within a mocha test/hook. The total test timeout will be adjusted to make sure the test will not time out waiting for this step</p> |
+| [useSafeFakeTimers()](https://wixplosives.github.io/core3-utils/testing.usesafefaketimers)                          | Makes it easy to safely use fake timers                                                                                                                                                                                    |
+| [waitForSpyCall(scope, method)](https://wixplosives.github.io/core3-utils/testing.waitforspycall)                   | Spies on an object method, waiting until it's called. The spy is removed once called                                                                                                                                       |
+| [waitForStubCall(action, waitForAction)](https://wixplosives.github.io/core3-utils/testing.waitforstubcall)         | Creates a stub, then waits for it to be called                                                                                                                                                                             |
+| [withTimeout(action)](https://wixplosives.github.io/core3-utils/testing.withtimeout)                                | <p>Limits the time a promise can take</p><p>- Note: useable only within a mocha test/hook. The total test timeout will be adjusted to make sure the test will not time out waiting for this step</p>                       |
 
 ## Interfaces
 
 | Interface                                                                                  | Description                       |
 | ------------------------------------------------------------------------------------------ | --------------------------------- |
 | [Info](https://wixplosives.github.io/core3-utils/testing.info)                             | Step info base, added step errors |
+| [PollDefaults](https://wixplosives.github.io/core3-utils/testing.polldefaults)             | Defaults for poll steps           |
 | [PromiseStep](https://wixplosives.github.io/core3-utils/testing.promisestep)               |                                   |
 | [PromiseWithTimeout](https://wixplosives.github.io/core3-utils/testing.promisewithtimeout) | WithTimeout API                   |
 | [StepBase](https://wixplosives.github.io/core3-utils/testing.stepbase)                     | Common step props                 |
@@ -94,63 +75,18 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 ## Variables
 
-| Variable                                                                                           | Description |
-| -------------------------------------------------------------------------------------------------- | ----------- |
-| [DEFAULT_DISPOSAL_GROUP](https://wixplosives.github.io/core3-utils/testing.default_disposal_group) |             |
+| Variable                                                                                           | Description                                                                                                                                                                                                                                                                                                                        |
+| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [chaiRetryPlugin](https://wixplosives.github.io/core3-utils/testing.chairetryplugin)               | Plugin that allows to re-run function passed to <code>expect</code>, in order to achieve that use new <code>retry</code> method, retrying would be performed until the result will pass the chained assertion or timeout exceeded or retries limit reached. Should be applied through <code>Chai.use</code> function, for example: |
+| [codeMatchers](https://wixplosives.github.io/core3-utils/testing.codematchers)                     |                                                                                                                                                                                                                                                                                                                                    |
+| [DEFAULT_DISPOSAL_GROUP](https://wixplosives.github.io/core3-utils/testing.default_disposal_group) |                                                                                                                                                                                                                                                                                                                                    |
 
 ## Type Aliases
 
-| Type Alias                                                                   | Description                                                                                                                       |
-| ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| [Description](https://wixplosives.github.io/core3-utils/testing.description) | Sets step description                                                                                                             |
-| [Predicate](https://wixplosives.github.io/core3-utils/testing.predicate)     | <p>A predicate function</p><p>Any return value other than \*\*false\*\* or throwing is considered as satisfying the predicate</p> |
-| [Stub](https://wixplosives.github.io/core3-utils/testing.stub)               | A generated stub                                                                                                                  |
-| [Timeout](https://wixplosives.github.io/core3-utils/testing.timeout)         | Sets step timeout                                                                                                                 |
-
-## Chai Retry Plugin
-
-Plugin that allows to re-run function passed to `expect` until the result will pass the chained assertion or timeout exceeded or retries limit reached.
-
-### Usage
-
-```ts
-import Chai from 'chai';
-import { chaiRetryPlugin } from '@wixc3/testing';
-
-Chai.use(chaiRetryPlugin);
-```
-
-### Example
-
-Just retrying function until it passes
-
-```ts
-let count = 0;
-await expect(() => {
-  if (count < 10) throw new Error('Failed. Try again');
-  count++;
-}).retry({ retries: 15, timeout: 2000, delay: 10 });
-```
-
-Retrying function and asserting result
-
-```ts
-let count = 0;
-await expect(() => count++)
-  .retry()
-  .to.equal(4);
-```
-
-### Functions
-
-| Function                         | Description                                                                             |
-| -------------------------------- | --------------------------------------------------------------------------------------- |
-| `.retry(options?: RetryOptions)` | Retrying function passed to `expect` according to passed options and chained assertions |
-
-### Retry Options
-
-| Option    | Description                                                                      | Default    |
-| --------- | -------------------------------------------------------------------------------- | ---------- |
-| `timeout` | The maximum duration in milliseconds to wait before failing the retry operation. | `5000`     |
-| `retries` | The number of times to retry the function before failing.                        | `Infinity` |
-| `delay`   | The delay in milliseconds between retries.                                       | `0`        |
+| Type Alias                                                                     | Description                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Description](https://wixplosives.github.io/core3-utils/testing.description)   | Sets step description                                                                                                                                                                                                                                                                                                                                                                                                |
+| [Predicate](https://wixplosives.github.io/core3-utils/testing.predicate)       | <p>A predicate function</p><p>Any return value other than \*\*false\*\* or throwing is considered as satisfying the predicate</p>                                                                                                                                                                                                                                                                                    |
+| [RetryOptions](https://wixplosives.github.io/core3-utils/testing.retryoptions) | <p>The retry options for the <code>chaiRetryPlugin</code>.</p><p> {<!-- -->Object<!-- -->} RetryOptions {<!-- -->number<!-- -->} \[timeout\] - The maximum duration in milliseconds to wait before failing the retry operation. {<!-- -->number<!-- -->} \[retries\] - The number of times to retry the function before failing. {<!-- -->number<!-- -->} \[delay\] - The delay in milliseconds between retries.</p> |
+| [Stub](https://wixplosives.github.io/core3-utils/testing.stub)                 | A generated stub                                                                                                                                                                                                                                                                                                                                                                                                     |
+| [Timeout](https://wixplosives.github.io/core3-utils/testing.timeout)           | Sets step timeout                                                                                                                                                                                                                                                                                                                                                                                                    |
