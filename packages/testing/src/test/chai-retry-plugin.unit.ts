@@ -302,12 +302,17 @@ describe('chai-retry-plugin', () => {
     });
 
     describe('async assertion', () => {
-        it('FALSE POSITIVE', async () => {
+        it('times out for failed async assertion', async () => {
             await expect(
                 expect(() => `const source = true;`)
-                    .retry()
+                    .retry({ timeout: 50 })
                     .to.matchCode(`const expected = 'wrong';`),
-            ).to.be.rejectedWith(`codes don't match`);
+            ).to.be.rejectedWith(`Timed out after 50ms`);
+        });
+        it('passes async assertion', async () => {
+            await expect(() => `const source = true;`)
+                .retry({ timeout: 50 })
+                .to.matchCode(`const source = true;`);
         });
     });
 });
