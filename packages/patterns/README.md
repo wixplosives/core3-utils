@@ -11,33 +11,46 @@ Useful data structures such as LRU-Cache, set-multi-map, Signal, EventEmitter, D
 
 ## Classes
 
-| Class                                                                           | Description                                             |
-| ------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| [Debouncer](https://wixplosives.github.io/core3-utils/patterns.debouncer)       | Cancelable debouncing of calls to trigger               |
-| [EventEmitter](https://wixplosives.github.io/core3-utils/patterns.eventemitter) | A simple event emitter                                  |
-| [LRUCache](https://wixplosives.github.io/core3-utils/patterns.lrucache)         | BASIC (not optimal) implementation of the LRU cache     |
-| [SetMultiMap](https://wixplosives.github.io/core3-utils/patterns.setmultimap)   | Maps keys to a set of values                            |
-| [Signal](https://wixplosives.github.io/core3-utils/patterns.signal)             | Signal is a simple event emitter for one type of event. |
+| Class                                                                               | Description                                                                             |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| [Debouncer](https://wixplosives.github.io/core3-utils/patterns.debouncer)           | Cancelable debouncing of calls to trigger                                               |
+| [Disposable_2](https://wixplosives.github.io/core3-utils/patterns.disposable_2)     |                                                                                         |
+| [Disposables](https://wixplosives.github.io/core3-utils/patterns.disposables)       |                                                                                         |
+| [EventEmitter](https://wixplosives.github.io/core3-utils/patterns.eventemitter)     | Basic type safe event emitter                                                           |
+| [LRUCache](https://wixplosives.github.io/core3-utils/patterns.lrucache)             | BASIC (not optimal) implementation of the LRU cache                                     |
+| [SafeDisposable](https://wixplosives.github.io/core3-utils/patterns.safedisposable) | <p>Adds dispose-safe methods to Disposables:</p><p>- setInterval/setTimeout - guard</p> |
+| [SetMultiMap](https://wixplosives.github.io/core3-utils/patterns.setmultimap)       | Maps keys to a set of values                                                            |
+| [Signal](https://wixplosives.github.io/core3-utils/patterns.signal)                 | Signal is a simple event emitter for one type of event.                                 |
 
 ## Functions
 
-| Function                                                                                    | Description                                                                                                            |
-| ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| [createDisposables()](https://wixplosives.github.io/core3-utils/patterns.createdisposables) | Disposables allow adding of disposal async functions, when dispose is called, these functions will be run sequentially |
-| [isSetMultiMap(x)](https://wixplosives.github.io/core3-utils/patterns.issetmultimap)        |                                                                                                                        |
+| Function                                                                                                       | Description                                                                                                                                                                                                                                                                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [createDisposables(name, initialGroups)](https://wixplosives.github.io/core3-utils/patterns.createdisposables) | <p>Disposables allow adding of disposal async functions, when dispose is called, these functions will be run sequentially</p><p>Disposal groups: You can set disposal groups with constraints (before, after) to ensure that disposal groups are disposed in the correct order</p><p>within each group disposables are disposed in the reverse order they were added</p> |
+| [isDisposable(value)](https://wixplosives.github.io/core3-utils/patterns.isdisposable)                         |                                                                                                                                                                                                                                                                                                                                                                          |
+| [isSetMultiMap(x)](https://wixplosives.github.io/core3-utils/patterns.issetmultimap)                           |                                                                                                                                                                                                                                                                                                                                                                          |
 
 ## Interfaces
 
 | Interface                                                                           | Description |
 | ----------------------------------------------------------------------------------- | ----------- |
+| [DisposalGroup](https://wixplosives.github.io/core3-utils/patterns.disposalgroup)   |             |
+| [IDisposable](https://wixplosives.github.io/core3-utils/patterns.idisposable)       |             |
 | [LRUCacheConfig](https://wixplosives.github.io/core3-utils/patterns.lrucacheconfig) |             |
+
+## Variables
+
+| Variable                                                                              | Description |
+| ------------------------------------------------------------------------------------- | ----------- |
+| [DEFAULT_GROUP](https://wixplosives.github.io/core3-utils/patterns.default_group)     |             |
+| [DEFAULT_TIMEOUT](https://wixplosives.github.io/core3-utils/patterns.default_timeout) |             |
 
 ## Type Aliases
 
-| Type Alias                                                                            | Description |
-| ------------------------------------------------------------------------------------- | ----------- |
-| [Disposable](https://wixplosives.github.io/core3-utils/patterns.disposable)           |             |
-| [Disposables](https://wixplosives.github.io/core3-utils/patterns.disposables)         |             |
-| [DisposeFunction](https://wixplosives.github.io/core3-utils/patterns.disposefunction) |             |
-| [IEventEmitter](https://wixplosives.github.io/core3-utils/patterns.ieventemitter)     |             |
-| [Listener](https://wixplosives.github.io/core3-utils/patterns.listener)               |             |
+| Type Alias                                                                                | Description |
+| ----------------------------------------------------------------------------------------- | ----------- |
+| [DisposableItem](https://wixplosives.github.io/core3-utils/patterns.disposableitem)       |             |
+| [DisposableOptions](https://wixplosives.github.io/core3-utils/patterns.disposableoptions) |             |
+| [GroupConstraints](https://wixplosives.github.io/core3-utils/patterns.groupconstraints)   |             |
+| [IEventEmitter](https://wixplosives.github.io/core3-utils/patterns.ieventemitter)         |             |
+| [Listener](https://wixplosives.github.io/core3-utils/patterns.listener)                   |             |
