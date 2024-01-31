@@ -4,7 +4,6 @@ import * as esTreePlugin from 'prettier/plugins/estree';
 import * as parserTypeScript from 'prettier/plugins/typescript';
 import { format } from 'prettier/standalone';
 
-type ChaiPluginProperty = (this: Chai.AssertionStatic) => unknown;
 type ChaiPluginMethod = (this: Chai.AssertionStatic, ...args: unknown[]) => unknown;
 
 const prettify: (code: string) => Promise<string> = (code) =>
@@ -46,16 +45,6 @@ const validateToBeString: (testedExpression: unknown, semanticName?: string) => 
     }
 };
 export const codeMatchers: Chai.ChaiPlugin = (chai, { flag }) => {
-    const formatted: ChaiPluginProperty = async function () {
-        const testedExpression = flag(this, 'object') as object;
-
-        validateToBeString(testedExpression);
-
-        const formatted = alignComments(await prettify(testedExpression));
-
-        flag(this, 'object', formatted);
-    };
-
     const matchCode: ChaiPluginMethod = async function (expectedCode) {
         const testedExpression = flag(this, 'object') as object;
 
@@ -86,7 +75,6 @@ export const codeMatchers: Chai.ChaiPlugin = (chai, { flag }) => {
         );
     };
 
-    chai.Assertion.addProperty('formatted', formatted);
     chai.Assertion.addMethod('matchCode', matchCode);
     chai.Assertion.addMethod('matchesCode', matchCode);
     chai.Assertion.addMethod('includeCode', includeCode);
