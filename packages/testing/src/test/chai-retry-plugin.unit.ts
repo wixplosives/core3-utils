@@ -298,6 +298,15 @@ describe('chai-retry-plugin', () => {
                 .to.eql(12);
         }).timeout(0);
     });
+    describe('should work with assertions with signatures and nested assertions', function () {
+        it('should allow use of both include and include.members as assertion', async () => {
+            const getExpected = () => [1, 2, 3];
+
+            await expect(getExpected).retry().to.include(2);
+
+            await expect(getExpected).retry().to.include.members([1, 2, 2, 1]);
+        });
+    });
 });
 
 const withCallCount = (func: (callCount: number) => unknown) => {
