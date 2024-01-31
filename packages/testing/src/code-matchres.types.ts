@@ -5,26 +5,26 @@ declare global {
     namespace Chai {
         export interface Assertion {
             /**
-             * Asserts that the expression that will be tested fully matches the expected expression.
-             * Both expected and actual expressions are formatted using prettier.
+             * Asserts that the codes matches
+             *
+             * Both actual and expected are formatted with prettier
              */
             matchCode(code: string): PromiseLikeAssertion;
 
             /**
-             * @see matchCode
+             * {@inheritDocs Assertion.matchCode}
              */
             matchesCode(code: string): PromiseLikeAssertion;
 
             /**
-             * Asserts that the expression that will be tested includes the expected expression.
-             * Both expected and actual expressions are formatted using prettier.
+             * Asserts that the code in included in the expected
              *
-             * If you don't want the expected expression to be formatted, use `.formatted.to.include()`
+             * Both actual and expected are formatted with prettier
              */
             includeCode(code: string): PromiseLikeAssertion;
 
             /**
-             * @see includeCode
+             * {@inheritDocs Assertion.includeCode}
              */
             includesCode(code: string): PromiseLikeAssertion;
         }
