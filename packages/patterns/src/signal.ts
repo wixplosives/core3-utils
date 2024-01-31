@@ -1,4 +1,5 @@
 export type Listener<T> = (data: T) => void;
+type IS_ONCE = boolean;
 
 /**
  * Signal is a simple event emitter for one type of event.
@@ -31,41 +32,69 @@ export type Listener<T> = (data: T) => void;
  * Notice that the Signals are public.
  * We don't need to implement specific subscriptions on the class, unless we need to expose it as a remote service.
  */
-export class Signal<T> extends Set<Listener<T>> {
-    private onceHandlers = new Set<Listener<T>>();
+export class Signal<T> {
+    private handlers = new Map<Listener<T>, IS_ONCE>();
+    constructor(handlers?: Listener<T>[]) {
+        handlers?.forEach((handler) => this.subscribe(handler));
+    }
+
     /**
      * Subscribe a notification callback
+     *
      * @param handler - Will be executed with a data arg when a notification occurs
      */
     subscribe = (handler: Listener<T>) => {
-        this.add(handler);
+        if (this.handlers.get(handler) !== true) {
+            this.handlers.set(handler, false);
+        } else {
+            throw new Error(`handler already exists as "once" listener`);
+        }
     };
+
+    /**
+     * Subscribe to only the next notification
+     *
+     * @param handler - Will be executed with a data arg when a notification occurs
+     */
     once = (handler: Listener<T>) => {
-        this.onceHandlers.add(handler);
+        if (this.handlers.get(handler) !== false) {
+            this.handlers.set(handler, true);
+        } else {
+            throw new Error(`handler already exists as persistent listener`);
+        }
     };
+
+    /**
+     * @returns true if a listener is subscribed
+     */
+    has(value: Listener<T>): boolean {
+        return this.handlers.has(value);
+    }
 
     /**
      * Unsubscribe an existing callback
      */
     unsubscribe = (handler: Listener<T>) => {
-        this.onceHandlers.delete(handler);
-        this.delete(handler);
+        this.handlers.delete(handler);
     };
+
+    get size(): number {
+        return this.handlers.size;
+    }
+
     /**
      * Notify all subscribers with arg data
      */
     notify = (data: T) => {
-        for (const handler of this) {
+        for (const [handler, isOnce] of this.handlers) {
             handler(data);
-        }
-        for (const handler of this.onceHandlers) {
-            handler(data);
-            this.onceHandlers.delete(handler);
+            if (isOnce) {
+                this.handlers.delete(handler);
+            }
         }
     };
 
-    override clear(): void {
-        super.clear();
-        this.onceHandlers.clear();
+    clear(): void {
+        this.handlers.clear();
     }
 }
