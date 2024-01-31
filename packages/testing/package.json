@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/testing",
-  "version": "16.0.0",
+  "version": "16.1.0",
   "description": "Making mocha/chai testing easier",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -18,10 +18,14 @@
   },
   "dependencies": {
     "@file-services/types": "^8.3.3",
-    "@wixc3/common": "^16.0.0",
-    "@wixc3/patterns": "^16.0.0",
+    "@wixc3/common": "^16.1.0",
+    "@wixc3/patterns": "^16.1.0",
     "chai": "^4.4.1",
     "create-temp-directory": "^2.4.0",
+    "prettier": "^3.2.4",
     "promise-assist": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/prettier": "^3.0.0"
   }
 }

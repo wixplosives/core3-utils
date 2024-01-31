@@ -1,3 +1,5 @@
+import { Assertion, PromiseLikeAssertion } from '../types';
+
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace Chai {
@@ -15,10 +17,7 @@ declare global {
     }
 }
 
-export interface Assertion extends Chai.Assertion {
-    (...args: unknown[]): Chai.Assertion;
-}
-export type AssertionMethod = (...args: unknown[]) => Chai.Assertion;
+export type AssertionMethod = (...args: unknown[]) => Assertion | Promise<Assertion>;
 
 // Function provided as argument of `expect`
 export type FunctionToRetry = (...args: unknown[]) => unknown;
@@ -49,15 +48,3 @@ export type RetryOptions = {
     delay?: number;
     timeout?: number;
 };
-
-// Helper type to convert a type T into a Promise-like version of itself
-type Promisify<T> = {
-    [Key in keyof T]: T[Key] extends (...args: any) => any
-        ? keyof T[Key] extends never
-            ? (...args: Parameters<T[Key]>) => Promisify<ReturnType<T[Key]>> & PromiseLike<any>
-            : Promisify<T[Key]> &
-                  PromiseLike<any> & { (...args: Parameters<T[Key]>): Promisify<ReturnType<T[Key]>> & PromiseLike<any> }
-        : Promisify<T[Key]> & PromiseLike<any>;
-};
-
-export type PromiseLikeAssertion = Promisify<Assertion> & PromiseLike<void>;

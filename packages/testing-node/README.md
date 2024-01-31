@@ -17,8 +17,6 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 #### Available steps:
 
-- until a predicate is satisfied
-
 - adds timeout and description to a promise\]
 
 - time limited Promise.all
@@ -41,32 +39,14 @@ Steps are a convenient way to craft async tests. A step has a timeout and a desc
 
 - creates a locator timeout and adjust the current test
 
-## Classes
-
-| Class                                                               | Description                  |
-| ------------------------------------------------------------------- | ---------------------------- |
-| [Path](https://wixplosives.github.io/core3-utils/testing-node.path) | Handy predicate creators for |
-
 ## Functions
 
-| Function                                                                                                     | Description                                                                                                                |
-| ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| [createTestDir(prefix, disposalGroup)](https://wixplosives.github.io/core3-utils/testing-node.createtestdir) | Creates a test temporary directory The directory will be deleted after the test, thus not suitable for suites ("describe") |
-
-## Interfaces
-
-| Interface                                                               | Description |
-| ----------------------------------------------------------------------- | ----------- |
-| [FsStep](https://wixplosives.github.io/core3-utils/testing-node.fsstep) |             |
+| Function                                                                                                                     | Description                                                                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| [createTestDir(prefix, disposalOptions, disposeAfter)](https://wixplosives.github.io/core3-utils/testing-node.createtestdir) | Creates a test temporary directory The directory will be deleted after the test, thus not suitable for suites ("describe") |
 
 ## Variables
 
 | Variable                                                                                            | Description |
 | --------------------------------------------------------------------------------------------------- | ----------- |
 | [DISPOSE_OF_TEMP_DIRS](https://wixplosives.github.io/core3-utils/testing-node.dispose_of_temp_dirs) |             |
-
-## Type Aliases
-
-| Type Alias                                                                        | Description |
-| --------------------------------------------------------------------------------- | ----------- |
-| [FsPredicate](https://wixplosives.github.io/core3-utils/testing-node.fspredicate) |             |
