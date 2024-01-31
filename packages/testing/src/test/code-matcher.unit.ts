@@ -40,7 +40,7 @@ describe('matchCode', () => {
     });
 });
 
-describe('codeInclude', () => {
+describe('includeCode', () => {
     it('assert code is contained', async () => {
         await expect(MULTILINE).to.includeCode(MULTILINE);
         await expect(MULTILINE).to.includeCode(`const a = 1;`);

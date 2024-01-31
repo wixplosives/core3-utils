@@ -5,11 +5,6 @@ declare global {
     namespace Chai {
         export interface Assertion {
             /**
-             * Formats the expression that will be tested using prettier, allowing generic assertions, i.e.: `.to.include`
-             */
-            formatted: PromiseLikeAssertion;
-
-            /**
              * Asserts that the expression that will be tested fully matches the expected expression.
              * Both expected and actual expressions are formatted using prettier.
              */
