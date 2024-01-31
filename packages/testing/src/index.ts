@@ -38,3 +38,4 @@ export * from './mocha-ctx';
 export * from './chai-retry-plugin';
 export * from './debug-tests';
 export * from './create-test-disposables';
+export * from './code-matchers';

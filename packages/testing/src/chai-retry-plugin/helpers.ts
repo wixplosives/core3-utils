@@ -44,7 +44,7 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
                 let assertion = await initialAssertion(retryParams);
 
                 for (const { propertyName, method, args } of assertionStack) {
-                    assertion = updateAssertion(method, args, assertion, propertyName);
+                    assertion = await updateAssertion(method, args, assertion, propertyName);
                 }
 
                 return;
@@ -90,12 +90,12 @@ const initialAssertion = async ({ assertionStack, description, functionToRetry: 
     return Chai.expect(valueToAssert, description);
 };
 
-const updateAssertion = (
+const updateAssertion = async (
     method: AssertionMethod | undefined,
     args: unknown[] | undefined,
     assertion: Chai.Assertion,
     propertyName: keyof Chai.Assertion,
-) => (method && args ? method.apply(assertion, args) : (assertion[propertyName] as Chai.Assertion));
+) => (method && args ? await method.apply(assertion, args) : (assertion[propertyName] as Chai.Assertion));
 
 const adjustTest = (time: number, delay: number): number => {
     const now = Date.now();

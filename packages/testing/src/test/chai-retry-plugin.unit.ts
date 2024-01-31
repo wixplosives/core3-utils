@@ -3,10 +3,12 @@ import chaiAsPromised from 'chai-as-promised';
 import { sleep } from 'promise-assist';
 
 import { chaiRetryPlugin } from '../chai-retry-plugin/chai-retry-plugin';
+import { codeMatchers } from '../code-matchers';
 
 Chai.use(chaiRetryPlugin);
 // `chai-as-promised` should be used in order to test collision between plugins
 Chai.use(chaiAsPromised);
+Chai.use(codeMatchers);
 
 describe('chai-retry-plugin', () => {
     it('should retry a function that eventually succeeds', async () => {
@@ -297,6 +299,21 @@ describe('chai-retry-plugin', () => {
                 .retry({ retries: 10 })
                 .to.eql(12);
         }).timeout(0);
+    });
+
+    describe('async assertion', () => {
+        it('times out for failed async assertion', async () => {
+            await expect(
+                expect(() => `const source = true;`)
+                    .retry({ timeout: 50 })
+                    .to.matchCode(`const expected = 'wrong';`),
+            ).to.be.rejectedWith(`Timed out after 50ms`);
+        });
+        it('passes async assertion', async () => {
+            await expect(() => `const source = true;`)
+                .retry({ timeout: 50 })
+                .to.matchCode(`const source = true;`);
+        });
     });
 });
 

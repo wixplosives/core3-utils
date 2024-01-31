@@ -1,7 +1,8 @@
 import Chai from 'chai';
 
 import { retryFunctionAndAssertions } from './helpers';
-import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions, PromiseLikeAssertion } from './types';
+import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions } from './types';
+import { PromiseLikeAssertion } from '../types';
 
 /**
  * Plugin that allows to re-run function passed to `expect`, in order to achieve that use new `retry` method, retrying would be performed until
