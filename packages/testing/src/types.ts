@@ -1,10 +1,15 @@
 // Helper type to convert a type T into a Promise-like version of itself
-export type Promisify<T> = {
-    [Key in keyof T]: T[Key] extends T
-        ? Promisify<T[Key]> & PromiseLike<any>
-        : T[Key] extends (...args: any) => any
-          ? (...args: Parameters<T[Key]>) => Promisify<ReturnType<T[Key]>> & PromiseLike<any>
-          : Promisify<T[Key]> & PromiseLike<any>;
+type Promisify<T> = {
+    [Key in keyof T]: T[Key] extends (...args: any) => any
+        ? keyof T[Key] extends never
+            ? (...args: Parameters<T[Key]>) => Promisify<ReturnType<T[Key]>> & PromiseLike<any>
+            : Promisify<T[Key]> &
+                  PromiseLike<any> & { (...args: Parameters<T[Key]>): Promisify<ReturnType<T[Key]>> & PromiseLike<any> }
+        : Promisify<T[Key]> & PromiseLike<any>;
 };
 
-export type PromiseLikeAssertion = Promisify<Chai.Assertion> & PromiseLike<void>;
+export interface Assertion extends Chai.Assertion {
+    (...args: unknown[]): Chai.Assertion;
+}
+
+export type PromiseLikeAssertion = Promisify<Assertion> & PromiseLike<void>;
