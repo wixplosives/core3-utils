@@ -8,8 +8,4 @@ type Promisify<T> = {
         : Promisify<T[Key]> & PromiseLike<any>;
 };
 
-export interface Assertion extends Chai.Assertion {
-    (...args: unknown[]): Chai.Assertion;
-}
-
-export type PromiseLikeAssertion = Promisify<Assertion> & PromiseLike<void>;
+export type PromiseLikeAssertion<T extends Chai.Assertion = Chai.Assertion> = Promisify<T> & PromiseLike<void>;

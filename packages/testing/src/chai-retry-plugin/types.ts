@@ -1,4 +1,4 @@
-import { Assertion, PromiseLikeAssertion } from '../types';
+import { PromiseLikeAssertion } from '../types';
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -12,9 +12,13 @@ declare global {
              * - `delay`: The delay in milliseconds between retries.
              * @default { timeout: 5000, delay: 0, retries: Infinity }
              */
-            retry(options?: RetryOptions): PromiseLikeAssertion;
+            retry(options?: RetryOptions): PromiseLikeAssertion<Assertion>;
         }
     }
+}
+
+export interface Assertion extends Chai.Assertion {
+    (...args: unknown[]): Chai.Assertion;
 }
 
 export type AssertionMethod = (...args: unknown[]) => Assertion | Promise<Assertion>;
