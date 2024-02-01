@@ -78,8 +78,10 @@ export const chaiRetryPlugin = function (_: typeof Chai, { flag, inspect }: Chai
                 const assertionStackItem: AssertionStackItem = {
                     propertyName: key as keyof Chai.Assertion,
                 };
-                assertionStack.push(assertionStackItem);
                 if (typeof value === 'function') {
+                    if (key !== 'then') {
+                        assertionStack.push(assertionStackItem);
+                    }
                     return new Proxy(value, {
                         get: function (target, key: string) {
                             return proxyGetter(target as Assertion, key as keyof Chai.Assertion, proxySelf);
@@ -95,6 +97,8 @@ export const chaiRetryPlugin = function (_: typeof Chai, { flag, inspect }: Chai
                             return proxySelf;
                         },
                     }) as Assertion;
+                } else {
+                    assertionStack.push(assertionStackItem);
                 }
 
                 return proxySelf;
