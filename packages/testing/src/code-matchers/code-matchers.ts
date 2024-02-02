@@ -1,18 +1,22 @@
 /* eslint-disable no-useless-escape */
 import { noIdents } from '@wixc3/common';
+import { Options } from 'prettier';
 import * as esTreePlugin from 'prettier/plugins/estree';
 import * as parserTypeScript from 'prettier/plugins/typescript';
 import { format } from 'prettier/standalone';
 
-type ChaiPluginMethod = (this: Chai.AssertionStatic, ...args: unknown[]) => unknown;
-
-const prettify: (code: string) => Promise<string> = (code) =>
-    format(code, {
-        parser: 'typescript',
-        plugins: [esTreePlugin, parserTypeScript],
-        endOfLine: 'lf',
-        singleQuote: true,
-    });
+const prettify = async (code: string, options?: Options | false) =>
+    options === false
+        ? code
+        : await format(
+              code,
+              options || {
+                  parser: 'typescript',
+                  plugins: [esTreePlugin, parserTypeScript],
+                  endOfLine: 'lf',
+                  singleQuote: true,
+              },
+          );
 
 const regex = /(\/\*)([^\/\*]*)(\*\/)/g;
 
@@ -45,26 +49,31 @@ const validateToBeString: (testedExpression: unknown, semanticName?: string) => 
     }
 };
 export const codeMatchers: Chai.ChaiPlugin = (chai, { flag }) => {
-    const matchCode: ChaiPluginMethod = async function (expectedCode) {
+    async function matchCode(this: Chai.AssertionStatic, expectedCode: string, options?: Options | false) {
         const testedExpression = flag(this, 'object') as object;
 
         validateToBeString(testedExpression, 'Actual code');
         validateToBeString(expectedCode, 'Expected code');
 
-        const actual = alignComments(await prettify(testedExpression));
-        const expected = alignComments(await prettify(expectedCode));
+        const actual = alignComments(await prettify(testedExpression, options));
+        const expected = alignComments(await prettify(expectedCode, options));
 
         this.assert(actual === expected, `Expected code to match`, `Expected code to not match`, expected, actual);
-    };
+    }
 
-    const includeCode: ChaiPluginMethod = async function (expectedCode) {
+    async function includeCode(
+        this: Chai.AssertionStatic,
+        expectedCode: string,
+        formatExpected = false,
+        options?: Options | false,
+    ) {
         const testedExpression = flag(this, 'object') as object;
 
         validateToBeString(testedExpression, 'Actual code');
         validateToBeString(expectedCode, 'Expected code');
 
-        const actual = noIdents(alignComments(await prettify(testedExpression)));
-        const expected = noIdents(alignComments(await prettify(expectedCode)));
+        const actual = noIdents(alignComments(await prettify(testedExpression, options)));
+        const expected = formatExpected ? noIdents(alignComments(await prettify(expectedCode, options))) : expectedCode;
 
         this.assert(
             actual.includes(expected),
@@ -73,7 +82,7 @@ export const codeMatchers: Chai.ChaiPlugin = (chai, { flag }) => {
             expected,
             actual,
         );
-    };
+    }
 
     chai.Assertion.addMethod('matchCode', matchCode);
     chai.Assertion.addMethod('matchesCode', matchCode);
