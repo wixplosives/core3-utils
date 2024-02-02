@@ -1,9 +1,13 @@
 /* eslint-disable no-useless-escape */
 import { noIdents } from '@wixc3/common';
+import { use } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import { Options } from 'prettier';
 import * as esTreePlugin from 'prettier/plugins/estree';
 import * as parserTypeScript from 'prettier/plugins/typescript';
 import { format } from 'prettier/standalone';
+
+use(chaiAsPromised);
 
 const prettify = async (code: string, options?: Options | false) =>
     options === false
