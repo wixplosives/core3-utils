@@ -42,12 +42,21 @@ describe('matchCode', () => {
 
 describe('includeCode', () => {
     it('assert code is contained', async () => {
-        await expect(MULTILINE).to.includeCode(MULTILINE);
         await expect(MULTILINE).to.includeCode(`const a = 1;`);
         await expect(MULTILINE).to.includeCode(`const b = 2;`);
     });
-    it('assert equivalent code is contained', async () => {
-        await expect(MULTILINE).to.includeCode(`const      b= 2;`);
+    describe('when formatContained = true', () => {
+        it('assert equivalent code is contained', async () => {
+            await expect(MULTILINE).to.includeCode(MULTILINE, true);
+            await expect(MULTILINE).to.includeCode(`const      b= 2;`, true);
+        });
+    });
+    it('contained code is not formatted', async () => {
+        await expect(`const a = {
+            a: 1,
+            b: 2
+        }
+        `).to.includeCode(`b: 2`);
     });
     it('assert equivalent code is not contained', async () => {
         await expect(MULTILINE).not.to.includeCode(`const NOT='included';`);
