@@ -81,8 +81,12 @@ export function toKebabCase(str: string): string {
 
  */
 export function toPascalCase(str: string): string {
-    const words = splitIntoWords(str).map((word) => capitalizeFirstLetter(word.toLowerCase()));
-    return words.join('');
+    const originalWords = splitIntoWords(str);
+    const strNoConversionToLower = originalWords.map((word) => capitalizeFirstLetter(word)).join('');
+    if (/[a-z]/.test(strNoConversionToLower)) {
+        return strNoConversionToLower;
+    }
+    return originalWords.map((word) => capitalizeFirstLetter(word.toLowerCase())).join('');
 }
 
 /**
