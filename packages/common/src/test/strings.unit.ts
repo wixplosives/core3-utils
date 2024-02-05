@@ -24,8 +24,9 @@ describe('String Utils', () => {
 
     it('toPascalCase', () => {
         expect(toPascalCase('camelCaseWords')).to.equal('CamelCaseWords');
-        expect(toPascalCase('HTMLAcronymHTML')).to.equal('HtmlAcronymHtml');
+        expect(toPascalCase('HTMLAcronymHTML')).to.equal('HTMLAcronymHTML');
         expect(toPascalCase('HOW_BOUT_DAT')).to.equal('HowBoutDat');
+        expect(toPascalCase('myHTML')).to.equal('MyHTML');
     });
 
     it('toCamelCase', () => {
