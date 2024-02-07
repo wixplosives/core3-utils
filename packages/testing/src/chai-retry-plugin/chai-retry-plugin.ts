@@ -65,7 +65,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, { flag, inspect }: Chai
 
             return assertionProxy;
 
-            function proxyGetter(target: Assertion, key: string, proxySelf: Assertion): Assertion {
+            function proxyGetter(target: Assertion, key: string, proxySelf: Assertion): Chai.Assertion {
                 let value: Chai.Assertion | undefined;
 
                 try {
