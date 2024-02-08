@@ -2,7 +2,7 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "types": ["node", "mocha"],
-    "outDir": "../dist/cjs"
+    "outDir": "../dist/cjs",
   },
-  "references": [{ "path": "../../common/src" }, { "path": "../../fs-utils/src" }, { "path": "../../typescript/src" }]
+  "references": [{ "path": "../../common/src" }, { "path": "../../fs-utils/src" }, { "path": "../../typescript/src" }],
 }
