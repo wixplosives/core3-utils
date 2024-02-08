@@ -1,8 +1,7 @@
 import { expect } from 'chai';
-import { partition } from '../partition';
+import { partition } from '..';
 
-// eslint-disable-next-line no-only-tests/no-only-tests
-describe.only('partition', () => {
+describe('partition', () => {
     it('one item', () => {
         expect(partition([1], 1, (i) => i)).to.eql([[1]]);
         expect(partition([1], 3, (i) => i)).to.eql([[1], [], []]);
