@@ -92,14 +92,14 @@ export function enforceSequentialExecution<P, T extends (...args: any[]) => Prom
 }
 
 /**
- * 
+ *
  * @param fn a function to memoize
  * @param argsHash a function that returns a string hash for the arguments, defaults to JSON.stringify
  * @returns a memoized version of `fn`
  */
 export function memoize<T extends (...args: any[]) => any>(
     fn: T,
-    argsHash: (args: Parameters<T>) => string = JSON.stringify
+    argsHash: (args: Parameters<T>) => string = JSON.stringify,
 ): T & { __cache: Map<string, ReturnType<T>> } {
     const __cache = new Map<string, ReturnType<T>>();
     return Object.assign(
@@ -111,6 +111,6 @@ export function memoize<T extends (...args: any[]) => any>(
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return __cache.get(key);
         }) as T,
-        { __cache }
+        { __cache },
     );
 }
