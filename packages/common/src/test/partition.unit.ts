@@ -22,16 +22,17 @@ describe('partition', () => {
         expect(partition([1, 2, 3], 4, (i) => i)).to.eql([[3], [2], [1], []]);
     });
     it('large input', () => {
-        const length = 100000;
+        const length = 10 ** 5;
         const buckets = 5;
         const expected = (0.5 * length) / buckets;
+        const tolerance = expected / 100;
         const data = Array.from({ length }, () => Math.random());
         const result = partition(data, buckets, (i) => i);
         expect(result).to.have.length(5);
-        expect(result[0]?.reduce((acc, i) => acc + i, 0)).to.be.closeTo(expected, expected / 100);
-        expect(result[1]?.reduce((acc, i) => acc + i, 0)).to.be.closeTo(expected, expected / 100);
-        expect(result[2]?.reduce((acc, i) => acc + i, 0)).to.be.closeTo(expected, expected / 100);
-        expect(result[3]?.reduce((acc, i) => acc + i, 0)).to.be.closeTo(expected, expected / 100);
-        expect(result[4]?.reduce((acc, i) => acc + i, 0)).to.be.closeTo(expected, expected / 100);
+        expect(result[0]?.reduce((acc, i) => acc + i, 0)).to.be.closeTo(expected, tolerance);
+        expect(result[1]?.reduce((acc, i) => acc + i, 0)).to.be.closeTo(expected, tolerance);
+        expect(result[2]?.reduce((acc, i) => acc + i, 0)).to.be.closeTo(expected, tolerance);
+        expect(result[3]?.reduce((acc, i) => acc + i, 0)).to.be.closeTo(expected, tolerance);
+        expect(result[4]?.reduce((acc, i) => acc + i, 0)).to.be.closeTo(expected, tolerance);
     });
 });
