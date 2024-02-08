@@ -12,12 +12,16 @@ declare global {
              * - `delay`: The delay in milliseconds between retries.
              * @default { timeout: 5000, delay: 0, retries: Infinity }
              */
-            retry(options?: RetryOptions): PromiseLikeAssertion;
+            retry(options?: RetryOptions): PromiseLikeAssertion<Assertion>;
         }
     }
 }
 
-export type AssertionMethod = (...args: unknown[]) => Chai.Assertion | Promise<Chai.Assertion>;
+export interface Assertion extends Chai.Assertion {
+    (...args: unknown[]): Chai.Assertion;
+}
+
+export type AssertionMethod = (...args: unknown[]) => Assertion | Promise<Assertion>;
 
 // Function provided as argument of `expect`
 export type FunctionToRetry = (...args: unknown[]) => unknown;

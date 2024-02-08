@@ -1,8 +1,8 @@
 import Chai from 'chai';
 
 import { retryFunctionAndAssertions } from './helpers';
-import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions } from './types';
-import { PromiseLikeAssertion } from '../types';
+import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions, Assertion } from './types';
+import type { PromiseLikeAssertion } from '../types';
 
 /**
  * Plugin that allows to re-run function passed to `expect`, in order to achieve that use new `retry` method, retrying would be performed until
@@ -49,36 +49,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, { flag, inspect }: Chai
 
             const assertionProxy: PromiseLikeAssertion = Object.assign(
                 new Proxy(proxyTarget, {
-                    get: function (target: Chai.Assertion, key: string, proxySelf: Chai.Assertion) {
-                        let value: Chai.Assertion | undefined;
-
-                        try {
-                            // if `value` is a getter property that may immediately perform the assertion and throw the AssertionError
-                            value = target[key as keyof Chai.Assertion] as Chai.Assertion;
-                        } catch {
-                            //
-                        }
-
-                        if (typeof value === 'function') {
-                            return (...args: unknown[]) => {
-                                if (key === 'then') {
-                                    return (value as unknown as AssertionMethod)(...args);
-                                }
-
-                                assertionStack.push({
-                                    propertyName: key as keyof Chai.Assertion,
-                                    method: value as unknown as AssertionMethod,
-                                    args,
-                                });
-
-                                return proxySelf;
-                            };
-                        } else {
-                            assertionStack.push({ propertyName: key as keyof Chai.Assertion });
-                        }
-
-                        return proxySelf;
-                    },
+                    get: proxyGetter,
                 }),
                 {
                     then: (resolve: () => void, reject: () => void) => {
@@ -93,6 +64,45 @@ export const chaiRetryPlugin = function (_: typeof Chai, { flag, inspect }: Chai
             ) as unknown as PromiseLikeAssertion;
 
             return assertionProxy;
+
+            function proxyGetter(target: Assertion, key: string, proxySelf: Assertion): Chai.Assertion {
+                let value: Chai.Assertion | undefined;
+
+                try {
+                    // if `value` is a getter property that may immediately perform the assertion and throw the AssertionError
+                    value = target[key as keyof Chai.Assertion] as Assertion;
+                } catch {
+                    //
+                }
+
+                const assertionStackItem: AssertionStackItem = {
+                    propertyName: key as keyof Chai.Assertion,
+                };
+                if (typeof value === 'function') {
+                    if (key !== 'then') {
+                        assertionStack.push(assertionStackItem);
+                    }
+                    return new Proxy(value, {
+                        get: function (target, key: string) {
+                            return proxyGetter(target as Assertion, key as keyof Chai.Assertion, proxySelf);
+                        },
+                        apply: function (_, __, args: unknown[]) {
+                            if (key === 'then') {
+                                return (value as unknown as AssertionMethod)(...args);
+                            }
+
+                            assertionStackItem.method = value as unknown as AssertionMethod;
+                            assertionStackItem.args = args;
+
+                            return proxySelf;
+                        },
+                    }) as Assertion;
+                } else {
+                    assertionStack.push(assertionStackItem);
+                }
+
+                return proxySelf;
+            }
         },
         writable: false,
         configurable: false,
