@@ -10,3 +10,4 @@ export * from './lru-cache';
 export * from './set-multi-map';
 export * from './debouncer';
 export * from './disposables';
+export * from './partition';
