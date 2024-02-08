@@ -98,6 +98,7 @@ typeof value === 'object' && value !== null && 'foo' in value && value.foo === '
 | [normToRage(normal, min, max)](https://wixplosives.github.io/core3-utils/common.normtorage) | |
 | [noWhiteSpace(str)](https://wixplosives.github.io/core3-utils/common.nowhitespace) | Remove white spaces including empty lines |
 | [once(fn)](https://wixplosives.github.io/core3-utils/common.once) | Make a function executable only once, following calls are ignored |
+| [partition(data, bucketsCount, predicate)](https://wixplosives.github.io/core3-utils/common.partition) | Partition unordered data into buckets of similar total weight |
 | [pick(record, keys)](https://wixplosives.github.io/core3-utils/common.pick) | returns an object composed of the picked object properties |
 | [prev(iterable, item)](https://wixplosives.github.io/core3-utils/common.prev) | Find the element before an item |
 | [randomizedOrder(size)](https://wixplosives.github.io/core3-utils/common.randomizedorder) | |

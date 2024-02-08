@@ -16,3 +16,4 @@ export * from './platform';
 export * from './functions';
 export * from './types';
 export * from './maps';
+export * from './partition';
