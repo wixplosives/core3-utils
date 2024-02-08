@@ -109,7 +109,7 @@ describe('SafeDisposable class', () => {
                 });
                 expect(
                     disposable.guard(() => 'guarded return value'),
-                    'guard return value'
+                    'guard return value',
                 ).to.eql('guarded return value');
                 const disposing = disposable.dispose();
                 await sleep(1);
