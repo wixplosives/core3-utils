@@ -1,4 +1,4 @@
-import { PromiseLikeAssertion } from '../types';
+import type { PromiseLikeAssertion } from '../types';
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
