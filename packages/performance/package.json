@@ -4,6 +4,7 @@
   "description": "Performance utils, usable in all environments",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
   "author": "Wix.com",
   "files": [
     "dist",
