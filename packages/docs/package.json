@@ -3,7 +3,7 @@
   "version": "16.2.0",
   "description": "API ",
   "main": "dist/cjs/index.js",
-  "module": "esm/index.js",
+  "module": "dist/esm/index.js",
   "author": "Wix.com",
   "files": [
     "resources",
