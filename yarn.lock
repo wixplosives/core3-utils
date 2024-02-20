@@ -223,7 +223,7 @@
     js-yaml "~3.13.1"
     resolve "~1.22.1"
 
-"@microsoft/api-extractor-model@7.28.9", "@microsoft/api-extractor-model@^7.28.9":
+"@microsoft/api-extractor-model@7.28.9":
   version "7.28.9"
   resolved "https://registry.yarnpkg.com/@microsoft/api-extractor-model/-/api-extractor-model-7.28.9.tgz#97ba8c74aa0e95da0ef43489b2bd7aceff2b953e"
   integrity sha512-lM77dV+VO46MGp5lu4stUBnO3jyr+CrDzU+DtapcOQEZUqJxPYUoK5zjeD+gRZ9ckgGMZC94ch6FBkpmsjwQgw==
@@ -231,6 +231,15 @@
     "@microsoft/tsdoc" "0.14.2"
     "@microsoft/tsdoc-config" "~0.16.1"
     "@rushstack/node-core-library" "3.66.0"
+
+"@microsoft/api-extractor-model@^7.28.11":
+  version "7.28.11"
+  resolved "https://registry.yarnpkg.com/@microsoft/api-extractor-model/-/api-extractor-model-7.28.11.tgz#f6621c0f4249d627db5dd0fa6c37b7508b7eba49"
+  integrity sha512-iyYqSH4gI3dFj4GLTTvi4Usgd5bILc9bbB5m2xul5tJ0JQ9G9lc1rY67rSD6O0hU62E1WRHOai9GUUVXMgCTdA==
+  dependencies:
+    "@microsoft/tsdoc" "0.14.2"
+    "@microsoft/tsdoc-config" "~0.16.1"
+    "@rushstack/node-core-library" "4.0.0"
 
 "@microsoft/api-extractor@^7.40.1":
   version "7.40.1"
@@ -553,6 +562,19 @@
   version "3.66.0"
   resolved "https://registry.yarnpkg.com/@rushstack/node-core-library/-/node-core-library-3.66.0.tgz#88fb1a9632221847d84298f9d7899ef58b5b2704"
   integrity sha512-nXyddNe3T9Ph14TrIfjtLZ+GDzC7HL/wF+ZKC18qmRVtz2xXLd1ZzreVgiAgGDwn8ZUWZ/7q//gQJk96iWjSrg==
+  dependencies:
+    colors "~1.2.1"
+    fs-extra "~7.0.1"
+    import-lazy "~4.0.0"
+    jju "~1.4.0"
+    resolve "~1.22.1"
+    semver "~7.5.4"
+    z-schema "~5.0.2"
+
+"@rushstack/node-core-library@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@rushstack/node-core-library/-/node-core-library-4.0.0.tgz#8ee3549e6a98519326a6e868c1b1df4fbbe41fdf"
+  integrity sha512-4ocU3K2NtpILEWG6LjSMRSwrb0CjvYOioVTzqvIOj6vc5yD0BcscfpVp5dkHGLZxnqdmkBrTKvyg6AmqhWnw1w==
   dependencies:
     colors "~1.2.1"
     fs-extra "~7.0.1"
