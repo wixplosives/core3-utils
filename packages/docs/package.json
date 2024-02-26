@@ -22,7 +22,7 @@
     "tsdocs": "bin/build-docs"
   },
   "dependencies": {
-    "@microsoft/api-documenter": "^7.23.23",
+    "@microsoft/api-documenter": "^7.23.31",
     "@microsoft/api-extractor": "^7.40.1",
     "@microsoft/api-extractor-model": "^7.28.9",
     "@wixc3/common": "^16.2.0",
