@@ -1,9 +1,9 @@
 import Chai from 'chai';
 import { chaiMethodsThatHandleFunction } from './constants';
 import type { AssertionMethod, RetryAndAssertArguments } from './types';
-import { adjustTestTime } from '../mocha-ctx';
 import { deferred, timeout } from 'promise-assist';
 import { isDebugMode } from '../debug-tests';
+import { adjustTestTime } from '../timeouts';
 
 /**
  * filters out error stack rows containing calls of `chai-retry-plugin` and `promise-assist` methods

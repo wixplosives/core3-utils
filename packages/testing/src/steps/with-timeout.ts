@@ -1,7 +1,8 @@
 import { wrapPromise } from './common';
 import { TimeoutError } from './errors';
-import { adjustTestTime, mochaCtx } from '../mocha-ctx';
+import { mochaCtx } from '../mocha-ctx';
 import type { Info, PromiseWithTimeout } from './types';
+import { adjustTestTime } from '../timeouts';
 
 export function createTimeoutStep<T>(
     src: Promise<T>,

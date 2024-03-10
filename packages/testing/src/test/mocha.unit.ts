@@ -1,6 +1,7 @@
 import { expect } from 'chai';
-import { adjustTestTime, mochaCtx } from '../mocha-ctx';
+import { mochaCtx } from '../mocha-ctx';
 import { isDebugMode } from '../debug-tests';
+import { adjustTestTime } from '../timeouts';
 
 describe('adjustTestTime', () => {
     it('increases the running test timeout', function () {
