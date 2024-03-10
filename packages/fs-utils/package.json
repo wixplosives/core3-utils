@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/fs-utils",
-  "version": "16.2.0",
+  "version": "16.2.1",
   "description": "Filesystem utils, usable in all environments",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -20,6 +20,6 @@
   "dependencies": {
     "@file-services/path": "^9.0.0",
     "@file-services/types": "^9.0.0",
-    "@wixc3/common": "^16.2.0"
+    "@wixc3/common": "^16.2.1"
   }
 }
