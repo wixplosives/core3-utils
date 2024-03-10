@@ -17,8 +17,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@file-services/node": "^8.3.3",
-    "@file-services/types": "^8.3.3",
+    "@file-services/node": "^9.0.0",
     "@wixc3/common": "^16.2.0",
     "@wixc3/patterns": "^16.2.0",
     "chai": "^4.4.1",
