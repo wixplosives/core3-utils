@@ -5,6 +5,7 @@ import {
     defaults,
     isDebugMode,
     mochaCtx,
+    overrideDebugMode,
     sleep,
     step,
     waitForSpyCall,
@@ -41,10 +42,7 @@ describe('steps', () => {
             await sleep(1);
         });
         it(`does not share step count with beforeEach`, async function () {
-            if (isDebugMode()) {
-                // in DEBUG mode steps won't time out
-                return this.skip();
-            }
+            overrideDebugMode(false);
             await expect(withTimeout(sleep(100)).timeout(1)).to.be.eventually.rejectedWith('step 1');
         });
         it(`share defaults with beforeEach`, () => {
@@ -194,10 +192,7 @@ describe('waitForStubCall', () => {
 
     describe('sleep', () => {
         it('sleep', async function () {
-            if (isDebugMode()) {
-                // in DEBUG mode steps won't time out
-                return this.skip();
-            }
+            overrideDebugMode(false);
             defaults().step.timeout = 50;
             expect(await withTimeout(sleep(1))).not.to.throw;
             await expect(withTimeout(sleep(1000))).to.eventually.rejectedWith('Timed out');

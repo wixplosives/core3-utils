@@ -1,4 +1,5 @@
 import { isDebugMode } from './debug-tests';
+import { mochaCtx } from './mocha-ctx';
 
 const getTimeoutScale = () => {
     const multiplierEnv = (globalThis as { process?: { env: { TIMEOUT_SCALE?: string } } })?.process?.env
@@ -18,14 +19,32 @@ if (getTimeoutScale() !== 1) {
     console.log(`Timeout scaling: ${getTimeoutScale()}`);
 }
 
+const forcedTimeoutScale = new Map<Mocha.Context, number>();
+
 /**
  * Scales a timeout based on the TIMEOUT_SCALE and DEBUG environment variable
  * @param timeout
  * @returns 0 in debug mode, or timeout * TIMEOUT_SCALE
  */
 export function scaleTimeout(timeout: number) {
+    const ctx = mochaCtx();
+    if (ctx && forcedTimeoutScale.has(ctx)) {
+        return forcedTimeoutScale.get(ctx);
+    }
     if (isDebugMode()) {
         return 0;
     }
     return timeout * getTimeoutScale();
+}
+
+/**
+ * overrides the TIMEOUT_SCALE for the current test
+ * @param timeout
+ */
+export function overrideTimeoutScale(scale: number) {
+    const ctx = mochaCtx();
+    if (!ctx) {
+        throw new Error('No mocha context');
+    }
+    forcedTimeoutScale.set(ctx, scale);
 }

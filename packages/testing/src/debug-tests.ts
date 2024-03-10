@@ -15,10 +15,28 @@ if (getDebug()) {
     });
 }
 
+const forcedDebugModes = new Map<Mocha.Context, boolean>();
+
 /**
  *
  * @returns true if DEBUG=positive int/true or mocha is running in debug mode
  */
 export function isDebugMode() {
+    const ctx = mochaCtx();
+    if (ctx && forcedDebugModes.has(ctx)) {
+        return forcedDebugModes.get(ctx);
+    }
     return getDebug() || mochaCtx()?.timeout() === 0;
+}
+
+/**
+ * override the DEBUG environment variable for the current test
+ * @param value
+ */
+export function overrideDebugMode(value: boolean) {
+    const ctx = mochaCtx();
+    if (!ctx) {
+        throw new Error('No mocha context');
+    }
+    forcedDebugModes.set(ctx, value);
 }
