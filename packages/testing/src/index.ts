@@ -22,9 +22,9 @@
  * - {@link sleep} sleep (and adjust test time)
  *
  * [[[h 3 Test timeout manipulation]]]
- * - DEBUG=true env variable will set test timeouts and time dilation to infinity so tests (that don't explicitly override timeout) will not time out on breakpoints
+ * - DEBUG=true/positive number env variable will set test timeouts and time scale to infinity so tests (that don't explicitly override timeout) will not time out on breakpoints
  *
- * - {@link timeDilation} multiplies {@link step} timeouts when debugging or running on slow CI machines
+ * - {@link scaleTimeout} multiplies timeouts when debugging or running on slow CI machines, based on TIMEOUT_SCALE and DEBUG env variables
  *
  * - {@link adjustTestTime} adjusts current test timeout (for use in non step async actions)
  *
@@ -39,3 +39,4 @@ export * from './chai-retry-plugin';
 export * from './debug-tests';
 export * from './create-test-disposables';
 export * from './code-matchers';
+export * from './timeouts';

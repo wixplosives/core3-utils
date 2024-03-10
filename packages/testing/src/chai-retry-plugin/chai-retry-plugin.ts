@@ -3,6 +3,7 @@ import Chai from 'chai';
 import { retryFunctionAndAssertions } from './helpers';
 import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions, Assertion } from './types';
 import type { PromiseLikeAssertion } from '../types';
+import { scaleTimeout } from '../timeouts';
 
 /**
  * Plugin that allows to re-run function passed to `expect`, in order to achieve that use new `retry` method, retrying would be performed until
@@ -42,6 +43,8 @@ export const chaiRetryPlugin = function (_: typeof Chai, { flag, inspect }: Chai
 
             const defaultRetryOptions: Required<RetryOptions> = { timeout: 8_000, retries: Infinity, delay: 0 };
             const options: Required<RetryOptions> = { ...defaultRetryOptions, ...retryOptions };
+            options.delay = scaleTimeout(options.delay);
+            options.timeout = scaleTimeout(options.timeout);
 
             const assertionStack: AssertionStackItem[] = [];
             // Fake assertion object for catching calls of chained methods

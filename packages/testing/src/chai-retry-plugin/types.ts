@@ -10,7 +10,9 @@ declare global {
              * - `timeout`: The maximum duration in milliseconds to wait before failing the retry operation.
              * - `retries`: The number of times to retry the function before failing.
              * - `delay`: The delay in milliseconds between retries.
-             * @default { timeout: 5000, delay: 0, retries: Infinity }
+             * @default { timeout: 8000, delay: 0, retries: Infinity }
+             *
+             * **Times are affected by DEBUG and TIME_SCALE environment variables**
              */
             retry(options?: RetryOptions): PromiseLikeAssertion<Assertion>;
         }
