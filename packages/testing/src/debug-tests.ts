@@ -9,12 +9,6 @@ if (getDebug()) {
     console.log('Testing in debug mode');
 }
 
-if (getDebug()) {
-    beforeEach('wrap mocha runnables to save ctx', function () {
-        this.currentTest?.timeout(0);
-    });
-}
-
 const forcedDebugModes = new Map<Mocha.Context, boolean>();
 
 /**
@@ -39,4 +33,13 @@ export function overrideDebugMode(value: boolean) {
         throw new Error('No mocha context');
     }
     forcedDebugModes.set(ctx, value);
+}
+
+/**
+ * Manipulate mocha timeouts based on the DEBUG environment variable
+ */
+if (getDebug()) {
+    beforeEach('wrap mocha runnables to save ctx', function () {
+        this.currentTest?.timeout(0);
+    });
 }

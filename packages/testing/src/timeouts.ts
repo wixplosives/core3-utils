@@ -2,7 +2,11 @@ import { isDebugMode } from './debug-tests';
 import { mochaCtx } from './mocha-ctx';
 
 const forcedTimeoutScale = new Map<Mocha.Context, number>();
-const getTimeoutScale = () => {
+/**
+ * 
+ * @returns the TIMEOUT_SCALE environment variable, or 1 if not set
+ */
+export function getTimeoutScale  ()  {
     const ctx = mochaCtx();
     if (ctx && forcedTimeoutScale.has(ctx)) {
         return forcedTimeoutScale.get(ctx)!;
@@ -38,7 +42,7 @@ export function scaleTimeout(timeout: number) {
 }
 
 /**
- * overrides the TIMEOUT_SCALE for the current test
+ * Overrides the TIMEOUT_SCALE for the current test
  * @param timeout
  */
 export function overrideTimeoutScale(scale: number) {
@@ -47,4 +51,31 @@ export function overrideTimeoutScale(scale: number) {
         throw new Error('No mocha context');
     }
     forcedTimeoutScale.set(ctx, scale);
+}
+
+/**
+ * Add ms to current test timeout
+ */
+export function adjustTestTime(ms: number) {
+    if (isDebugMode()) return 0;
+    const ctx = mochaCtx();
+    ctx?.timeout(ctx?.timeout() + scaleTimeout(ms));
+    return ms;
+}
+
+/**
+ * Creates a playwright locator options with {@link scaleTimeout| scaled } timeout
+ * and adjust the current test timeout accordingly
+ */
+export function locatorTimeout(ms = 10_000) {
+    return { timeout: adjustTestTime(scaleTimeout(ms)) };
+}
+
+/**
+ * Manipulates the default timeouts for tests
+ */
+if (!isDebugMode() && getTimeoutScale() !== 1) {
+    beforeEach('wrap mocha runnables to save ctx', function () {
+        this.currentTest?.timeout(this.currentTest?.timeout() *  getTimeoutScale());
+    });
 }
