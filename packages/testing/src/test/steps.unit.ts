@@ -3,7 +3,6 @@ import asPromised from 'chai-as-promised';
 import {
     allWithTimeout,
     defaults,
-    isDebugMode,
     mochaCtx,
     overrideDebugMode,
     sleep,
@@ -17,10 +16,7 @@ use(asPromised);
 
 describe('steps', () => {
     it('each step timeout extends the test timeout', async function () {
-        if (isDebugMode()) {
-            // in DEBUG mode steps won't time out
-            return this.skip();
-        }
+        overrideDebugMode(false);
         const TIMEOUT = 30;
         const SAFETY_MARGIN = 20;
         mochaCtx()?.timeout(1_000);
@@ -55,19 +51,13 @@ describe('withTimeout step', () => {
     const LONG_TIME = 10;
     const SHORT_TIME = 1;
     it('times out with the description', async function () {
-        if (isDebugMode()) {
-            // in DEBUG mode steps won't time out
-            return this.skip();
-        }
+        overrideDebugMode(false);
         await expect(withTimeout(sleep(LONG_TIME)).timeout(SHORT_TIME).description('test')).to.eventually.rejectedWith(
             'test',
         );
     });
     it('times out with extra info', async function () {
-        if (isDebugMode()) {
-            // in DEBUG mode steps won't time out
-            return this.skip();
-        }
+        overrideDebugMode(false);
         await expect(
             withTimeout(sleep(LONG_TIME))
                 .timeout(SHORT_TIME)
@@ -87,10 +77,7 @@ describe('allWithTimeout step', () => {
     const LONG_TIME = 10;
     const SHORT_TIME = 1;
     it('times out with the description', async function () {
-        if (isDebugMode()) {
-            // in DEBUG mode steps won't time out
-            return this.skip();
-        }
+        overrideDebugMode(false);
         await expect(
             allWithTimeout(
                 sleep(LONG_TIME).then(() => 1),
@@ -140,10 +127,7 @@ describe('firstCall', () => {
         expect(await call).to.eql([1, 'success']);
     });
     it('times out if not called', async function () {
-        if (isDebugMode()) {
-            // in DEBUG mode steps won't time out
-            return this.skip();
-        }
+        overrideDebugMode(false);
         await expect(waitForSpyCall(target, 'method').timeout(1).description('timeout')).to.eventually.rejectedWith(
             'timeout',
         );
@@ -178,10 +162,7 @@ describe('waitForStubCall', () => {
     });
 
     it('times out when the stub is not called', async function () {
-        if (isDebugMode()) {
-            // in DEBUG mode steps won't time out
-            return this.skip();
-        }
+        overrideDebugMode(false);
         await expect(
             waitForStubCall(async (stub) => {
                 await sleep(100);
