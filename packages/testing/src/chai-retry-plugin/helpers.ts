@@ -2,8 +2,7 @@ import Chai from 'chai';
 import { chaiMethodsThatHandleFunction } from './constants';
 import type { AssertionMethod, RetryAndAssertArguments } from './types';
 import { deferred, timeout } from 'promise-assist';
-import { isDebugMode } from '../debug-tests';
-import { adjustTestTime } from '../timeouts';
+import { adjustTestTime, isDebugMode } from '../timeouts';
 
 /**
  * filters out error stack rows containing calls of `chai-retry-plugin` and `promise-assist` methods
@@ -63,7 +62,7 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
 
     const getTimeoutError = () => `Timed out after ${options.timeout}ms.`;
 
-    if (isDebugMode() || options.timeout === 0) {
+    if (isDebugMode() || !options.timeout) {
         return performRetries();
     } else {
         return timeout(performRetries(), options.timeout, getTimeoutError).catch((err) => {

@@ -309,7 +309,7 @@ describe('chai-retry-plugin', () => {
         }).timeout(0);
     });
 
-    describe('TIMEOUT_SCALE env variable', () => {
+    describe('TIMEOUT_MULTIPLIER env variable', () => {
         it('scales the timeout', async function () {
             overrideDebugMode(false);
             overrideTimeoutScale(3);

@@ -39,7 +39,7 @@ export function overrideDebugMode(value: boolean) {
 const forcedTimeoutScale = new Map<Mocha.Context, number>();
 /**
  *
- * @returns the TIMEOUT_SCALE environment variable, or 1 if not set
+ * @returns the TIMEOUT_MULTIPLIER environment variable, or 1 if not set
  */
 export function getTimeoutScale() {
     const ctx = mochaCtx();
@@ -47,12 +47,12 @@ export function getTimeoutScale() {
         return forcedTimeoutScale.get(ctx)!;
     }
 
-    const multiplierEnv = (globalThis as { process?: { env: { TIMEOUT_SCALE?: string } } })?.process?.env
-        ?.TIMEOUT_SCALE;
+    const multiplierEnv = (globalThis as { process?: { env: { TIMEOUT_MULTIPLIER?: string } } })?.process?.env
+        ?.TIMEOUT_MULTIPLIER;
     const multiplier = parseFloat(multiplierEnv || '1');
 
     if (multiplier <= 0 || isNaN(multiplier)) {
-        throw new Error(`Invalid TIMEOUT_SCALE: "${multiplierEnv}" (must be a positive number)
+        throw new Error(`Invalid TIMEOUT_MULTIPLIER: "${multiplierEnv}" (must be a positive number)
         To disable timeouts, use DEBUG=1`);
     }
 
@@ -65,9 +65,9 @@ if (getTimeoutScale() !== 1) {
 }
 
 /**
- * Scales a timeout based on the TIMEOUT_SCALE and DEBUG environment variable
+ * Scales a timeout based on the TIMEOUT_MULTIPLIER and DEBUG environment variable
  * @param timeout
- * @returns 0 in debug mode, or timeout * TIMEOUT_SCALE
+ * @returns 0 in debug mode, or timeout * TIMEOUT_MULTIPLIER
  */
 export function scaleTimeout(timeout: number) {
     if (isDebugMode()) {
@@ -77,7 +77,7 @@ export function scaleTimeout(timeout: number) {
 }
 
 /**
- * Overrides the TIMEOUT_SCALE for the current test
+ * Overrides the TIMEOUT_MULTIPLIER for the current test
  * @param timeout
  */
 export function overrideTimeoutScale(scale: number) {
@@ -107,10 +107,10 @@ export function locatorTimeout(ms = 10_000) {
 }
 
 /**
- * Adjust tests timeouts based on DEBUG and TIMEOUT_SCALE environment variables
+ * Adjust tests timeouts based on DEBUG and TIMEOUT_MULTIPLIER environment variables
  */
 export function adjustTestsTimeouts() {
-    beforeEach(`adjust test timeout to env: DEBUG & TIMEOUT_SCALE `, function () {
+    beforeEach(`adjust test timeout to env: DEBUG & TIMEOUT_MULTIPLIER `, function () {
         if (isDebugMode()) {
             this.timeout(0);
         } else {
