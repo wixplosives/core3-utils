@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/mark-text",
-  "version": "16.2.1",
+  "version": "16.3.0",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "scripts": {
