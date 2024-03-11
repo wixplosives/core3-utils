@@ -15,7 +15,7 @@ import {
 use(asPromised);
 
 describe('steps', () => {
-    it('each step timeout extends the test timeout', async function () {
+    it('each step timeout extends the test timeout', async () => {
         overrideDebugMode(false);
         const TIMEOUT = 30;
         const SAFETY_MARGIN = 20;
@@ -37,7 +37,7 @@ describe('steps', () => {
             await sleep(1);
             await sleep(1);
         });
-        it(`does not share step count with beforeEach`, async function () {
+        it(`does not share step count with beforeEach`, async () => {
             overrideDebugMode(false);
             await expect(withTimeout(sleep(100)).timeout(1)).to.be.eventually.rejectedWith('step 1');
         });
@@ -50,13 +50,13 @@ describe('steps', () => {
 describe('withTimeout step', () => {
     const LONG_TIME = 10;
     const SHORT_TIME = 1;
-    it('times out with the description', async function () {
+    it('times out with the description', async () => {
         overrideDebugMode(false);
         await expect(withTimeout(sleep(LONG_TIME)).timeout(SHORT_TIME).description('test')).to.eventually.rejectedWith(
             'test',
         );
     });
-    it('times out with extra info', async function () {
+    it('times out with extra info', async () => {
         overrideDebugMode(false);
         await expect(
             withTimeout(sleep(LONG_TIME))
@@ -76,7 +76,7 @@ describe('withTimeout step', () => {
 describe('allWithTimeout step', () => {
     const LONG_TIME = 10;
     const SHORT_TIME = 1;
-    it('times out with the description', async function () {
+    it('times out with the description', async () => {
         overrideDebugMode(false);
         await expect(
             allWithTimeout(
@@ -121,12 +121,12 @@ describe('firstCall', () => {
             },
         };
     });
-    it('resolves with the call arguments', async function () {
+    it('resolves with the call arguments', async () => {
         const call = waitForSpyCall(target, 'method');
         target.method(1, 'success');
         expect(await call).to.eql([1, 'success']);
     });
-    it('times out if not called', async function () {
+    it('times out if not called', async () => {
         overrideDebugMode(false);
         await expect(waitForSpyCall(target, 'method').timeout(1).description('timeout')).to.eventually.rejectedWith(
             'timeout',
@@ -161,7 +161,7 @@ describe('waitForStubCall', () => {
         });
     });
 
-    it('times out when the stub is not called', async function () {
+    it('times out when the stub is not called', async () => {
         overrideDebugMode(false);
         await expect(
             waitForStubCall(async (stub) => {
@@ -172,7 +172,7 @@ describe('waitForStubCall', () => {
     });
 
     describe('sleep', () => {
-        it('sleep', async function () {
+        it('sleep', async () => {
             overrideDebugMode(false);
             defaults().step.timeout = 50;
             expect(await withTimeout(sleep(1))).not.to.throw;

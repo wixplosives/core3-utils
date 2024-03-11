@@ -25,7 +25,7 @@ describe('chai-retry-plugin', () => {
     });
 
     describe('options', () => {
-        it('timeout after the specified duration', async function () {
+        it('timeout after the specified duration', async () => {
             overrideDebugMode(false);
             const funcToRetry = async () => {
                 await sleep(150);
@@ -40,7 +40,7 @@ describe('chai-retry-plugin', () => {
             }
         });
 
-        it('throw an error when retries limit exceeded', async function () {
+        it('throw an error when retries limit exceeded', async () => {
             overrideDebugMode(false);
 
             const { resultFunction } = withCallCount((callCount) => callCount);
@@ -56,7 +56,7 @@ describe('chai-retry-plugin', () => {
             }
         });
 
-        it('should apply delay correctly', async function () {
+        it('should apply delay correctly', async () => {
             overrideDebugMode(false);
             const { resultFunction, getCallCount } = withCallCount(() => {
                 throw new Error('Im throwing');
@@ -181,7 +181,7 @@ describe('chai-retry-plugin', () => {
             await expect(() => sealedObject).retry().to.be.sealed;
         });
 
-        it('.not.sealed', async function () {
+        it('.not.sealed', async () => {
             overrideDebugMode(false);
             const notSealedObject = { prop1: 'value1', prop2: 'value2' };
 
@@ -309,7 +309,7 @@ describe('chai-retry-plugin', () => {
     });
 
     describe('TIMEOUT_MULTIPLIER env variable', () => {
-        it('scales the timeout', async function () {
+        it('scales the timeout', async () => {
             overrideDebugMode(false);
             overrideTimeoutScale(3);
             const e = expect(() => false, 'should time out').retry({ timeout: 30 }).to.be.true;
@@ -321,7 +321,7 @@ describe('chai-retry-plugin', () => {
     });
 
     describe('async assertion', () => {
-        it('times out for failed async assertion', async function () {
+        it('times out for failed async assertion', async () => {
             overrideDebugMode(false);
             await expect(
                 expect(() => `const source = true;`)

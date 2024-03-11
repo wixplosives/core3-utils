@@ -3,7 +3,7 @@ import { mochaCtx } from '../mocha-ctx';
 import { adjustCurrentTestTimeout, overrideDebugMode } from '../timeouts';
 
 describe('adjustTestTime', () => {
-    it('increases the running test timeout', function () {
+    it('increases the running test timeout', () => {
         overrideDebugMode(false);
         const originalTimeout = this.timeout();
         expect(adjustCurrentTestTimeout(100)).to.equal(100);
@@ -12,7 +12,7 @@ describe('adjustTestTime', () => {
 });
 
 describe('mochaCtx', () => {
-    it('returns the running test context', function () {
+    it('returns the running test context', () => {
         expect(mochaCtx()).to.equal(this);
     });
 });
