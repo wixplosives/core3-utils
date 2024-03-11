@@ -15,8 +15,8 @@ Browser utilities
 | ---------------------------------------------------------------------------------------------------- | ----------- |
 | [AnimationFrameScheduler](https://wixplosives.github.io/core3-utils/browser.animationframescheduler) |             |
 
-## Variables
+## Functions
 
-| Variable                                                                   | Description               |
-| -------------------------------------------------------------------------- | ------------------------- |
-| [loadScript](https://wixplosives.github.io/core3-utils/browser.loadscript) | Loads a script in browser |
+| Function                                                                                  | Description               |
+| ----------------------------------------------------------------------------------------- | ------------------------- |
+| [loadScript(src, document)](https://wixplosives.github.io/core3-utils/browser.loadscript) | Loads a script in browser |

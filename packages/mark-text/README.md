@@ -7,6 +7,12 @@
 
 ## mark-text package
 
+## Functions
+
+| Function                                                                                     | Description |
+| -------------------------------------------------------------------------------------------- | ----------- |
+| [createMarkers(markKeys)](https://wixplosives.github.io/core3-utils/mark-text.createmarkers) |             |
+
 ## Interfaces
 
 | Interface                                                                        | Description |
@@ -16,10 +22,9 @@
 
 ## Variables
 
-| Variable                                                                           | Description |
-| ---------------------------------------------------------------------------------- | ----------- |
-| [createMarkers](https://wixplosives.github.io/core3-utils/mark-text.createmarkers) |             |
-| [markText](https://wixplosives.github.io/core3-utils/mark-text.marktext)           |             |
+| Variable                                                                 | Description |
+| ------------------------------------------------------------------------ | ----------- |
+| [markText](https://wixplosives.github.io/core3-utils/mark-text.marktext) |             |
 
 ## Type Aliases
 
