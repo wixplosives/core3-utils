@@ -4,8 +4,7 @@ import { sleep } from 'promise-assist';
 
 import { chaiRetryPlugin } from '../chai-retry-plugin/chai-retry-plugin';
 import { codeMatchers } from '../code-matchers';
-import { overrideDebugMode } from '../debug-tests';
-import { overrideTimeoutScale } from '../timeouts';
+import { overrideTimeoutScale, overrideDebugMode } from '../timeouts';
 
 Chai.use(chaiRetryPlugin);
 // `chai-as-promised` should be used in order to test collision between plugins

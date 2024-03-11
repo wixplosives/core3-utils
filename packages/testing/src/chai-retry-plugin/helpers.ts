@@ -2,7 +2,7 @@ import Chai from 'chai';
 import { chaiMethodsThatHandleFunction } from './constants';
 import type { AssertionMethod, RetryAndAssertArguments } from './types';
 import { deferred, timeout } from 'promise-assist';
-import { adjustTestTime, isDebugMode } from '../timeouts';
+import { adjustCurrentTestTimeout, isDebugMode } from '../timeouts';
 
 /**
  * filters out error stack rows containing calls of `chai-retry-plugin` and `promise-assist` methods
@@ -100,7 +100,7 @@ const adjustTest = (time: number, delay: number): number => {
     const now = Date.now();
     const diff = now - time;
 
-    adjustTestTime(diff + delay);
+    adjustCurrentTestTimeout(diff + delay);
     return now + delay;
 };
 

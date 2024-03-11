@@ -91,8 +91,11 @@ export function overrideTimeoutScale(scale: number) {
 /**
  * Add ms to current test timeout
  */
-export function adjustTestTime(ms: number) {
-    if (isDebugMode()) return 0;
+export function adjustCurrentTestTimeout(ms: number) {
+    if (isDebugMode()) {
+        mochaCtx()?.timeout(0);
+        return 0;
+    }
     const ctx = mochaCtx();
     ctx?.timeout(ctx?.timeout() + scaleTimeout(ms));
     return ms;
@@ -103,7 +106,7 @@ export function adjustTestTime(ms: number) {
  * and adjust the current test timeout accordingly
  */
 export function locatorTimeout(ms = 10_000) {
-    return { timeout: adjustTestTime(scaleTimeout(ms)) };
+    return { timeout: adjustCurrentTestTimeout(scaleTimeout(ms)) };
 }
 
 /**

@@ -6,7 +6,7 @@ import { createTimeoutStep } from './with-timeout';
 import type { _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep } from './types';
 import { createPromiseStep } from './no-timeout';
 import { setFirstHook, _beforeEach } from '../mocha-helpers';
-import { adjustTestTime } from '../timeouts';
+import { adjustCurrentTestTimeout } from '../timeouts';
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
  * A generated stub
@@ -51,7 +51,7 @@ const getStack = () => {
         .join('\n');
 };
 
-const addTimeoutSafetyMargin = () => mochaCtx() && adjustTestTime(defaults().step.safetyMargin);
+const addTimeoutSafetyMargin = () => mochaCtx() && adjustCurrentTestTimeout(defaults().step.safetyMargin);
 
 /**
  * Limits the time a promise can take
