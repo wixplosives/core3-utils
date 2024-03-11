@@ -3,6 +3,19 @@
  * Utils for making mocha + chai testing easy and fun
  *
  * @remarks
+ * [[[h 3 Env variables]]]
+ * - DEBUG=true/positive number env variable will set test timeouts and time scale to infinity so tests (that don't explicitly override timeout) will not time out on breakpoints
+ * 
+ * - TIMEOUT_SCALE=number env variable will multiply all test timeouts by the given number
+ * 
+ * [[[h 3 Test timeout manipulation]]]
+ *
+ * - {@link scaleTimeout} multiplies timeouts when debugging or running on slow CI machines, based on TIMEOUT_SCALE and DEBUG env variables
+ *
+ * - {@link adjustTestTime} adjusts current test timeout (for use in non step async actions)
+ *
+ * - {@link locatorTimeout} creates a locator timeout and adjust the current test
+ *
  * [[[h 3 Steps]]]
  * Steps are a convenient way to craft async tests.
  * A step has a timeout and a description, making test timeouts easy to understand and debug.
@@ -21,14 +34,6 @@
  *
  * - {@link sleep} sleep (and adjust test time)
  *
- * [[[h 3 Test timeout manipulation]]]
- * - DEBUG=true/positive number env variable will set test timeouts and time scale to infinity so tests (that don't explicitly override timeout) will not time out on breakpoints
- *
- * - {@link scaleTimeout} multiplies timeouts when debugging or running on slow CI machines, based on TIMEOUT_SCALE and DEBUG env variables
- *
- * - {@link adjustTestTime} adjusts current test timeout (for use in non step async actions)
- *
- * - {@link locatorTimeout} creates a locator timeout and adjust the current test
  */
 export * from './steps';
 export * from './safe-fake-timer';
