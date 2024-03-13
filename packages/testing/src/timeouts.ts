@@ -113,7 +113,7 @@ export function locatorTimeout(ms = 10_000) {
  * Creates an object with {@link scaleTimeout| scaled } timeout
  * and adjust the current test timeout accordingly
  */
-export function timeoutObj(ms = 10_000, rest:object = {}) {
+export function timeoutObj<T extends { timeout?: number }>(ms = 10_000, rest = {} as T): T & { timeout: number } {
     return { ...rest, timeout: adjustCurrentTestTimeout(scaleTimeout(ms)) };
 }
 
