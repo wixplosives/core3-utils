@@ -4,7 +4,7 @@ import { sleep } from 'promise-assist';
 
 import { chaiRetryPlugin } from '../chai-retry-plugin/chai-retry-plugin';
 import { codeMatchers } from '../code-matchers';
-import { overrideTimeoutScale, overrideDebugMode } from '../timeouts';
+import { overrideTimeoutScale, overrideDebugMode, debugSafeTimeout } from '../timeouts';
 
 Chai.use(chaiRetryPlugin);
 // `chai-as-promised` should be used in order to test collision between plugins
@@ -54,6 +54,14 @@ describe('chai-retry-plugin', () => {
                 expect(msg).to.includes('Limit of 10 retries exceeded!');
                 expect(msg).to.include('to be above 100');
             }
+        });
+
+        it(`throws when used with debugSafeTimeout`, () => {
+            expect(() =>
+                expect(() => 0)
+                    .retry(debugSafeTimeout())
+                    .to.equal(0),
+            ).to.throw(`retry is debug safe, don't use it with debugSafeTimeout, use { timeout: X, ... } instead.`);
         });
 
         it('should apply delay correctly', async () => {
