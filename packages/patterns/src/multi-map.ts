@@ -4,7 +4,7 @@ import { forEach, chain } from '@wixc3/common';
  * Maps two keys to a value
  * @example
  * ```ts
- * const m = new SetMultiMap([['a', 1, 'one'],['a', 2, 'two'])
+ * const m = new MultiMap([['a', 1, 'one'],['a', 2, 'two'])
  * m.add('a', 3, 'three')
  *
  * m.has('a', 1) // => true
