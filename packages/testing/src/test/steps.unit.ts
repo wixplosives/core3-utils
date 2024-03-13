@@ -1,12 +1,22 @@
 import { expect, use } from 'chai';
 import asPromised from 'chai-as-promised';
-import { allWithTimeout, defaults, mochaCtx, sleep, step, waitForSpyCall, waitForStubCall, withTimeout } from '..';
+import {
+    allWithTimeout,
+    defaults,
+    mochaCtx,
+    overrideDebugMode,
+    sleep,
+    step,
+    waitForSpyCall,
+    waitForStubCall,
+    withTimeout,
+} from '..';
 
 use(asPromised);
 
 describe('steps', () => {
-    // eslint-disable-next-line @typescript-eslint/require-await
     it('each step timeout extends the test timeout', async () => {
+        overrideDebugMode(false);
         const TIMEOUT = 30;
         const SAFETY_MARGIN = 20;
         mochaCtx()?.timeout(1_000);
@@ -28,6 +38,7 @@ describe('steps', () => {
             await sleep(1);
         });
         it(`does not share step count with beforeEach`, async () => {
+            overrideDebugMode(false);
             await expect(withTimeout(sleep(100)).timeout(1)).to.be.eventually.rejectedWith('step 1');
         });
         it(`share defaults with beforeEach`, () => {
@@ -40,11 +51,13 @@ describe('withTimeout step', () => {
     const LONG_TIME = 10;
     const SHORT_TIME = 1;
     it('times out with the description', async () => {
+        overrideDebugMode(false);
         await expect(withTimeout(sleep(LONG_TIME)).timeout(SHORT_TIME).description('test')).to.eventually.rejectedWith(
             'test',
         );
     });
     it('times out with extra info', async () => {
+        overrideDebugMode(false);
         await expect(
             withTimeout(sleep(LONG_TIME))
                 .timeout(SHORT_TIME)
@@ -64,6 +77,7 @@ describe('allWithTimeout step', () => {
     const LONG_TIME = 10;
     const SHORT_TIME = 1;
     it('times out with the description', async () => {
+        overrideDebugMode(false);
         await expect(
             allWithTimeout(
                 sleep(LONG_TIME).then(() => 1),
@@ -113,6 +127,7 @@ describe('firstCall', () => {
         expect(await call).to.eql([1, 'success']);
     });
     it('times out if not called', async () => {
+        overrideDebugMode(false);
         await expect(waitForSpyCall(target, 'method').timeout(1).description('timeout')).to.eventually.rejectedWith(
             'timeout',
         );
@@ -147,6 +162,7 @@ describe('waitForStubCall', () => {
     });
 
     it('times out when the stub is not called', async () => {
+        overrideDebugMode(false);
         await expect(
             waitForStubCall(async (stub) => {
                 await sleep(100);
@@ -157,6 +173,7 @@ describe('waitForStubCall', () => {
 
     describe('sleep', () => {
         it('sleep', async () => {
+            overrideDebugMode(false);
             defaults().step.timeout = 50;
             expect(await withTimeout(sleep(1))).not.to.throw;
             await expect(withTimeout(sleep(1000))).to.eventually.rejectedWith('Timed out');

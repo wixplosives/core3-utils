@@ -1,6 +1,5 @@
 import { forEach } from '@wixc3/common';
 import { getCtxRoot, getMochaRunnables, _beforeEach, _before } from './mocha-helpers';
-import { isDebugMode } from './debug-tests';
 
 let currentMochaCtx: Mocha.Context | undefined;
 
@@ -9,25 +8,6 @@ let currentMochaCtx: Mocha.Context | undefined;
  */
 export function mochaCtx() {
     return currentMochaCtx;
-}
-
-/**
- * Add ms to current test timeout
- * @param allowTimeDilation when true (default) ms is multiplied by {@link timeDilation | timeDilation() }
- */
-export function adjustTestTime(ms: number) {
-    if (isDebugMode()) return 0;
-    const ctx = mochaCtx();
-    ctx?.timeout(ctx?.timeout() + ms);
-    return ms;
-}
-
-/**
- * Creates a playwright locator options with timeout
- * and adjust the current test timeout accordingly
- */
-export function locatorTimeout(ms = 10_000) {
-    return { timeout: adjustTestTime(ms) };
 }
 
 function saveMochaCtx(this: Mocha.Context) {
