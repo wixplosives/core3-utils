@@ -1,4 +1,5 @@
 import { mochaCtx } from './mocha-ctx';
+import { setAdjustedTimeout } from './timeouts.helpers';
 
 const getDebug = () => {
     const debug = (globalThis as { process?: { env: { DEBUG?: string } } })?.process?.env?.DEBUG;
@@ -102,19 +103,27 @@ export function adjustCurrentTestTimeout(ms: number) {
 }
 
 /**
+ * @deprecated use {@link debugSafeTimeout} instead
  * Creates a playwright locator options with {@link scaleTimeout| scaled } timeout
  * and adjust the current test timeout accordingly
  */
 export function locatorTimeout(ms = 10_000) {
-    return { timeout: adjustCurrentTestTimeout(scaleTimeout(ms)) };
+    const timeout = scaleTimeout(ms);
+    adjustCurrentTestTimeout(timeout);
+    return setAdjustedTimeout({ timeout });
 }
 
 /**
  * Creates an object with {@link scaleTimeout| scaled } timeout
  * and adjust the current test timeout accordingly
  */
-export function timeoutObj<T extends { timeout?: number }>(ms = 10_000, rest = {} as T): T & { timeout: number } {
-    return { ...rest, timeout: adjustCurrentTestTimeout(scaleTimeout(ms)) };
+export function debugSafeTimeout<T extends object & { timeout?: number }>(
+    ms = 10_000,
+    rest = {} as T,
+): T & { timeout: number } {
+    const timeout = scaleTimeout(ms);
+    adjustCurrentTestTimeout(timeout);
+    return setAdjustedTimeout({ ...rest, timeout });
 }
 
 /**
