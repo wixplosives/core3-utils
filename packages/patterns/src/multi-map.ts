@@ -22,7 +22,7 @@ import { forEach, chain } from '@wixc3/common';
  *
  * ```
  */
-export class MultiMap<K1, K2, V> implements Iterable<[K1, K2, V]> {
+export class MultiMap<K1, K2, V> implements Iterable<[[K1, K2], V]> {
     private map = new Map<K1, Map<K2, V>>();
 
     constructor(entries?: Iterable<[K1, K2, V]>) {
@@ -72,23 +72,23 @@ export class MultiMap<K1, K2, V> implements Iterable<[K1, K2, V]> {
         return innerMap ? innerMap.has(key2) : false;
     }
 
-    public [Symbol.iterator](): IterableIterator<[K1, K2, V]> {
+    public [Symbol.iterator](): IterableIterator<[[K1, K2], V]> {
         return this.entries();
     }
 
-    public *entries(): IterableIterator<[K1, K2, V]> {
+    public *entries(): IterableIterator<[[K1, K2], V]> {
         const { map } = this;
         for (const [key1, innerMap] of map.entries()) {
             for (const [key2, value] of innerMap.entries()) {
-                yield [key1, key2, value];
+                yield [[key1, key2], value];
             }
         }
     }
 
     public *values(): IterableIterator<V> {
         const { map } = this;
-        for (const innerMaps of map.values()) {
-            yield* innerMaps.values();
+        for (const innerMap of map.values()) {
+            yield* innerMap.values();
         }
     }
 
@@ -99,6 +99,14 @@ export class MultiMap<K1, K2, V> implements Iterable<[K1, K2, V]> {
                 yield [key1, key2];
             }
         }
+    }
+
+    public getInnerMap(key1: K1): Map<K2, V> | undefined {
+        return this.map.get(key1);
+    }
+
+    public deleteInnerMap(key1: K1): boolean {
+        return this.map.delete(key1);
     }
 }
 
