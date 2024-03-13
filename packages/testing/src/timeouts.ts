@@ -1,5 +1,5 @@
 import { mochaCtx } from './mocha-ctx';
-import { setAdjustedTimeout } from './timeouts.helpers';
+import { markAdjustedTimeout } from './timeouts.helpers';
 
 const getDebug = () => {
     const debug = (globalThis as { process?: { env: { DEBUG?: string } } })?.process?.env?.DEBUG;
@@ -110,7 +110,7 @@ export function adjustCurrentTestTimeout(ms: number) {
 export function locatorTimeout(ms = 10_000) {
     const timeout = scaleTimeout(ms);
     adjustCurrentTestTimeout(timeout);
-    return setAdjustedTimeout({ timeout });
+    return markAdjustedTimeout({ timeout });
 }
 
 /**
@@ -123,7 +123,7 @@ export function debugSafeTimeout<T extends object & { timeout?: number }>(
 ): T & { timeout: number } {
     const timeout = scaleTimeout(ms);
     adjustCurrentTestTimeout(timeout);
-    return setAdjustedTimeout({ ...rest, timeout });
+    return markAdjustedTimeout({ ...rest, timeout });
 }
 
 /**
