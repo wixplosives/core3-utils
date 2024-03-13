@@ -1,9 +1,8 @@
 import Chai from 'chai';
 import { chaiMethodsThatHandleFunction } from './constants';
 import type { AssertionMethod, RetryAndAssertArguments } from './types';
-import { adjustTestTime } from '../mocha-ctx';
 import { deferred, timeout } from 'promise-assist';
-import { isDebugMode } from '../debug-tests';
+import { adjustCurrentTestTimeout, isDebugMode } from '../timeouts';
 
 /**
  * filters out error stack rows containing calls of `chai-retry-plugin` and `promise-assist` methods
@@ -32,10 +31,10 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
     };
 
     const performRetries = async () => {
-        let time = Date.now();
         let delay: Promise<void>;
 
         for (let retriesCount = 0; (retriesCount < options.retries && !didTimeout) || isDebugMode(); retriesCount++) {
+            const time = Date.now();
             try {
                 /**
                  * If assertion chain includes such method as `change`, `decrease` or `increase` that means function passed to
@@ -51,7 +50,7 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
             } catch (error: any) {
                 if (!didTimeout) {
                     assertionError = error as Error;
-                    time = adjustTest(time, options.delay);
+                    adjustTest(time, options.delay);
                     ({ cancel, delay } = sleep(options.delay));
                     await delay;
                 }
@@ -63,7 +62,7 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
 
     const getTimeoutError = () => `Timed out after ${options.timeout}ms.`;
 
-    if (isDebugMode()) {
+    if (isDebugMode() || !options.timeout) {
         return performRetries();
     } else {
         return timeout(performRetries(), options.timeout, getTimeoutError).catch((err) => {
@@ -101,7 +100,7 @@ const adjustTest = (time: number, delay: number): number => {
     const now = Date.now();
     const diff = now - time;
 
-    adjustTestTime(diff + delay);
+    adjustCurrentTestTimeout(diff + delay);
     return now + delay;
 };
 

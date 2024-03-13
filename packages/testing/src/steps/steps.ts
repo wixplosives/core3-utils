@@ -1,11 +1,12 @@
 import { isString } from '@wixc3/common';
 import { deferred } from 'promise-assist';
 import { disposeAfter } from '../dispose';
-import { adjustTestTime, mochaCtx } from '../mocha-ctx';
+import { mochaCtx } from '../mocha-ctx';
 import { createTimeoutStep } from './with-timeout';
 import type { _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep } from './types';
 import { createPromiseStep } from './no-timeout';
 import { setFirstHook, _beforeEach } from '../mocha-helpers';
+import { adjustCurrentTestTimeout } from '../timeouts';
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
  * A generated stub
@@ -50,7 +51,7 @@ const getStack = () => {
         .join('\n');
 };
 
-const addTimeoutSafetyMargin = () => mochaCtx() && adjustTestTime(defaults().step.safetyMargin);
+const addTimeoutSafetyMargin = () => mochaCtx() && adjustCurrentTestTimeout(defaults().step.safetyMargin);
 
 /**
  * Limits the time a promise can take

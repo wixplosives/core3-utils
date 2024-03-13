@@ -4,6 +4,7 @@ import { sleep } from 'promise-assist';
 
 import { chaiRetryPlugin } from '../chai-retry-plugin/chai-retry-plugin';
 import { codeMatchers } from '../code-matchers';
+import { overrideTimeoutScale, overrideDebugMode, debugSafeTimeout } from '../timeouts';
 
 Chai.use(chaiRetryPlugin);
 // `chai-as-promised` should be used in order to test collision between plugins
@@ -25,6 +26,7 @@ describe('chai-retry-plugin', () => {
 
     describe('options', () => {
         it('timeout after the specified duration', async () => {
+            overrideDebugMode(false);
             const funcToRetry = async () => {
                 await sleep(150);
                 return 'Success';
@@ -39,6 +41,8 @@ describe('chai-retry-plugin', () => {
         });
 
         it('throw an error when retries limit exceeded', async () => {
+            overrideDebugMode(false);
+
             const { resultFunction } = withCallCount((callCount) => callCount);
 
             try {
@@ -52,7 +56,16 @@ describe('chai-retry-plugin', () => {
             }
         });
 
+        it(`throws when used with debugSafeTimeout`, () => {
+            expect(() =>
+                expect(() => 0)
+                    .retry(debugSafeTimeout())
+                    .to.equal(0),
+            ).to.throw(`retry is debug safe, don't use it with debugSafeTimeout, use { timeout: X, ... } instead.`);
+        });
+
         it('should apply delay correctly', async () => {
+            overrideDebugMode(false);
             const { resultFunction, getCallCount } = withCallCount(() => {
                 throw new Error('Im throwing');
             });
@@ -177,6 +190,7 @@ describe('chai-retry-plugin', () => {
         });
 
         it('.not.sealed', async () => {
+            overrideDebugMode(false);
             const notSealedObject = { prop1: 'value1', prop2: 'value2' };
 
             try {
@@ -264,6 +278,7 @@ describe('chai-retry-plugin', () => {
         const RETRY_TIMEOUT = 100;
 
         it('upon failure', async function () {
+            overrideDebugMode(false);
             this.timeout(BASE_TIMEOUT);
             try {
                 await expect(() => sleep(20))
@@ -301,8 +316,21 @@ describe('chai-retry-plugin', () => {
         }).timeout(0);
     });
 
+    describe('TIMEOUT_MULTIPLIER env variable', () => {
+        it('scales the timeout', async () => {
+            overrideDebugMode(false);
+            overrideTimeoutScale(3);
+            const e = expect(() => false, 'should time out').retry({ timeout: 30 }).to.be.true;
+            await expect(Promise.race([e, sleep(50)]), 'should not time out yet').to.be.fulfilled;
+            await expect(Promise.race([e, sleep(100)]), 'should not time out yet').to.be.rejectedWith(
+                'Timed out after 90ms',
+            );
+        });
+    });
+
     describe('async assertion', () => {
         it('times out for failed async assertion', async () => {
+            overrideDebugMode(false);
             await expect(
                 expect(() => `const source = true;`)
                     .retry({ timeout: 50 })
