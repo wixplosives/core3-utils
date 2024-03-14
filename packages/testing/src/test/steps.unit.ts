@@ -48,7 +48,7 @@ describe('steps', () => {
 });
 
 describe('withTimeout step', () => {
-    const LONG_TIME = 10;
+    const LONG_TIME = 30;
     const SHORT_TIME = 1;
     it('times out with the description', async () => {
         overrideDebugMode(false);
@@ -74,7 +74,7 @@ describe('withTimeout step', () => {
 });
 
 describe('allWithTimeout step', () => {
-    const LONG_TIME = 10;
+    const LONG_TIME = 30;
     const SHORT_TIME = 1;
     it('times out with the description', async () => {
         overrideDebugMode(false);
