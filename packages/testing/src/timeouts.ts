@@ -120,7 +120,8 @@ export function locatorTimeout(ms = 10_000) {
 export function debugSafeTimeout<T extends object & { timeout?: number }>(
     ms = 10_000,
     rest = {} as T,
-): T & { timeout: number } {
+): // Readonly<T> is needed to avoid TS error when using values that extend string (example state?:'visible'|'hidden'...)
+Readonly<T> & { timeout: number } {
     const timeout = scaleTimeout(ms);
     adjustCurrentTestTimeout(timeout);
     return markAdjustedTimeout({ ...rest, timeout });
