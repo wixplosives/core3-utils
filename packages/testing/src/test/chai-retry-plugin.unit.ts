@@ -223,6 +223,13 @@ describe('chai-retry-plugin', () => {
             expect(getCallCount()).to.equal(5);
         });
 
+        it('.match()', async () => {
+            await expect(() => 'abc')
+                .retry()
+                .to.match(/abc/)
+                .and.not.match(/def/);
+        });
+
         it('.to.increase(), .by()', async () => {
             const myObj = { val: 1 };
             const { resultFunction, getCallCount } = withCallCount(() => {
