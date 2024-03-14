@@ -3,6 +3,7 @@
   "compilerOptions": {
     "types": ["node", "mocha"],
     "outDir": "../dist/cjs",
+    "declarationDir": "../dist/types",
   },
   "references": [{ "path": "../../common/src" }, { "path": "../../fs-utils/src" }, { "path": "../../typescript/src" }],
 }

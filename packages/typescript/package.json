@@ -3,7 +3,8 @@
   "version": "17.0.0",
   "description": "API ",
   "main": "dist/cjs/index.js",
-  "module": "esm/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
   "author": "Wix.com",
   "files": [
     "dist",
