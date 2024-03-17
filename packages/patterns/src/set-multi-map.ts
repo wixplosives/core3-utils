@@ -1,5 +1,4 @@
-import { forEach } from '@wixc3/common';
-import { MultiMap } from './multi-map';
+import { forEach, chain } from '@wixc3/common';
 
 /**
  * Maps keys to a set of values
@@ -14,7 +13,7 @@ import { MultiMap } from './multi-map';
  * ```
  */
 export class SetMultiMap<K, V> implements Iterable<[K, V]> {
-    private map = new MultiMap<K, V, boolean>();
+    private map = new Map<K, Set<V>>();
 
     constructor(entries?: Iterable<[K, V]>) {
         forEach(entries, ([key, val]: [K, V]) => {
@@ -23,16 +22,22 @@ export class SetMultiMap<K, V> implements Iterable<[K, V]> {
     }
 
     public get size(): number {
-        return this.map.size;
+        return chain(this.map)
+            .map(([_, { size }]) => size)
+            .reduce((sum: number, size: number) => sum + size, 0).value;
     }
 
     public get(key: K): ReadonlySet<V> | undefined {
-        const innerKeys = this.map.getInnerMap(key)?.keys();
-        return innerKeys ? new Set(innerKeys) : undefined;
+        return this.map.get(key);
     }
 
     public add(key: K, value: V): this {
-        this.map.set(key, value, true);
+        const valueSet = this.map.get(key);
+        if (valueSet) {
+            valueSet.add(value);
+        } else {
+            this.map.set(key, new Set([value]));
+        }
         return this;
     }
 
@@ -41,19 +46,28 @@ export class SetMultiMap<K, V> implements Iterable<[K, V]> {
     }
 
     public delete(key: K, value: V): boolean {
-        return this.map.delete(key, value);
+        const valueSet = this.map.get(key);
+        if (valueSet) {
+            const wasInSet = valueSet.delete(value);
+            if (valueSet.size === 0) {
+                this.map.delete(key);
+            }
+            return wasInSet;
+        }
+        return false;
     }
 
     public deleteKey(key: K): boolean {
-        return this.map.deleteInnerMap(key);
+        return this.map.delete(key);
     }
 
     public has(key: K, value: V): boolean {
-        return this.map.has(key, value);
+        const valueSet = this.map.get(key);
+        return valueSet ? valueSet.has(value) : false;
     }
 
     public hasKey(key: K): boolean {
-        const existingSet = this.get(key);
+        const existingSet = this.map.get(key);
         return !!existingSet && existingSet.size > 0;
     }
 
@@ -63,21 +77,22 @@ export class SetMultiMap<K, V> implements Iterable<[K, V]> {
 
     public *entries(): IterableIterator<[K, V]> {
         const { map } = this;
-        yield* map.keys();
+        for (const [key, valueSet] of map.entries()) {
+            for (const value of valueSet) {
+                yield [key, value];
+            }
+        }
     }
 
     public *values(): IterableIterator<V> {
         const { map } = this;
-        for (const [_key, value] of map.keys()) {
-            yield value;
+        for (const valueSet of map.values()) {
+            yield* valueSet.values();
         }
     }
 
-    public *keys(): IterableIterator<K> {
-        const { map } = this;
-        for (const [key, _value] of map.keys()) {
-            yield key;
-        }
+    public keys(): IterableIterator<K> {
+        return this.map.keys();
     }
 }
 
