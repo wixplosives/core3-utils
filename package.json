@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@file-services/memory": "^9.0.0",
-    "@file-services/types": "^9.0.0",
+    "@file-services/types": "^9.1.0",
     "@types/chai": "^4.3.12",
     "@types/chai-as-promised": "^7.1.8",
     "@types/glob": "^8.1.0",

@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@file-services/path": "^9.0.0",
-    "@file-services/types": "^9.0.0",
+    "@file-services/types": "^9.1.0",
     "@wixc3/common": "^17.1.1"
   }
 }

@@ -85,10 +85,10 @@
   dependencies:
     "@file-services/types" "^9.0.0"
 
-"@file-services/types@^9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@file-services/types/-/types-9.0.0.tgz#27c03831894cb46ac930a23868f2a287a341dea5"
-  integrity sha512-aWTo3bfpI4GMUZE/7EsFIFGcf6VME5RxVQETPt2gCSkHOkIYsht1BuwoFZ21QfM0o+DoeHw8hyuyROSEBNVJCw==
+"@file-services/types@^9.0.0", "@file-services/types@^9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@file-services/types/-/types-9.1.0.tgz#c04a59767ff1ce7aa19b07d939d5e8ad6be0c3f3"
+  integrity sha512-hQMkcQL5yjhO22MRDXx8YzIbhufFIhHuCkM3GHjtvER4w0CQXZoc/BIJcKykjJyCfThXqQ6p/uXV05sSz9DK9w==
 
 "@file-services/utils@^9.0.0":
   version "9.0.0"
