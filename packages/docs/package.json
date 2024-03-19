@@ -22,9 +22,9 @@
     "tsdocs": "bin/build-docs"
   },
   "dependencies": {
-    "@file-services/node": "^9.0.0",
-    "@microsoft/api-documenter": "^7.24.0",
-    "@microsoft/api-extractor": "^7.42.3",
+    "@file-services/node": "^9.1.0",
+    "@microsoft/api-documenter": "^7.24.1",
+    "@microsoft/api-extractor": "^7.43.0",
     "@microsoft/api-extractor-model": "^7.28.13",
     "@wixc3/common": "^17.1.1",
     "@wixc3/fs-utils": "^17.1.1",
