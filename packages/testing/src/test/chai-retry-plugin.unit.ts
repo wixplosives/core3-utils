@@ -331,12 +331,20 @@ describe('chai-retry-plugin', () => {
     describe('async assertion', () => {
         it('times out for failed async assertion', async () => {
             overrideDebugMode(false);
-            await expect(
-                expect(() => `const source = true;`)
-                    .retry({ timeout: 50 })
-                    .to.matchCode(`const expected = 'wrong';`),
-            ).to.be.rejectedWith(`Timed out after 50ms`);
+
+            const matcherToCheck = expect(() => `const source = true;`)
+                .retry({ timeout: 50 })
+                .to.equal(`const expected = "wrong";`);
+
+            await expect(matcherToCheck)
+                .to.be.rejectedWith(`Timed out after 50ms`)
+                .then((error: Error) => {
+                    expect(error.stack).to.include(
+                        `AssertionError: expected 'const source = true;' to equal 'const expected = "wrong";`,
+                    );
+                });
         });
+
         it('passes async assertion', async () => {
             await expect(() => `const source = true;`)
                 .retry({ timeout: 50 })

@@ -65,18 +65,18 @@ export const retryFunctionAndAssertions = async (retryParams: RetryAndAssertArgu
     if (isDebugMode() || !options.timeout) {
         return performRetries();
     } else {
-        return timeout(performRetries(), options.timeout, getTimeoutError).catch((err) => {
+        return timeout(performRetries(), options.timeout, getTimeoutError).catch((err: unknown) => {
             cancel();
             didTimeout = true;
+            const finalError = assertionError || (err instanceof Error ? err : new Error());
+            const assertionStack = filterAssertionStack(assertionError?.stack) ?? '';
+            // removing first two rows of current stack trace, first is empty message and second is internal anonymous call
+            const currentStack = filterAssertionStack(new Error().stack?.split('\n').slice(2).join('\n'));
+            finalError.stack = assertionStack + '\n' + currentStack;
             if (err instanceof Error) {
-                const assertionStack = filterAssertionStack(assertionError?.stack) ?? '';
-                // removing first two rows of current stack trace, first is empty message and second is internal anonymous call
-                const currentStack = new Error().stack?.split('\n').slice(2).join('\n');
-                const retryStack = filterAssertionStack(currentStack) ?? '';
-
-                err.stack = assertionStack + '\n' + retryStack;
+                finalError.message = err.message;
             }
-            throw err;
+            throw finalError;
         });
     }
 };
