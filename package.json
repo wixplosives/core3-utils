@@ -37,7 +37,7 @@
     "rimraf": "^5.0.5",
     "sinon": "^17.0.1",
     "sinon-chai": "^3.7.0",
-    "typescript": "~5.4.4"
+    "typescript": "~5.4.5"
   },
   "license": "MIT",
   "private": true
