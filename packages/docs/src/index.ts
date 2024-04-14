@@ -3,17 +3,17 @@
  * Tool + CLI for docs generation from TSDocs
  * @example <caption>Generate automatically updated github pages</caption>
  * ```bash
- * yarn add [[[packageName]]]
- * yarn docs init
+ * npm i [[[packageName]]]
+ * npx docs init
  * git push
  * ```
  * @example <caption>Build documentation locally</caption>
  * ```bash
- * yarn docs build
+ * npx docs build
  * ```
  * @example <caption>Generate README.md in all packages (after docs build)</caption>
  * ```bash
- * yarn docs readme
+ * npx docs readme
  * ```
  * @remarks
  * [[[h 3 Templates]]]

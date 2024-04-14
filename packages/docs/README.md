@@ -56,8 +56,8 @@ There are many awesome macros you can use in your TDDocs. Using macros look like
 <caption>Generate automatically updated github pages</caption>
 
 ```bash
-yarn add @wixc3/docs
-yarn docs init
+npm i @wixc3/docs
+npx docs init
 git push
 ```
 
@@ -66,7 +66,7 @@ git push
 <caption>Build documentation locally</caption>
 
 ```bash
-yarn docs build
+npx docs build
 ```
 
 ## Example 3
@@ -74,7 +74,7 @@ yarn docs build
 <caption>Generate README.md in all packages (after docs build)</caption>
 
 ```bash
-yarn docs readme
+npx docs readme
 ```
 
 ## Functions
