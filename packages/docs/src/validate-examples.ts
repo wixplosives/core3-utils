@@ -8,7 +8,7 @@ import { compileCode, isSame } from '@wixc3/typescript';
 export function validateExamples(config: Config, apiJsons = '*.api.json') {
     const apiJsonPaths = globSync(_temp(config, apiJsons));
     if (!apiJsonPaths.length) {
-        throw new Error(`No packages api found, make sure you used "yarn docs build" before validating examples`);
+        throw new Error(`No packages api found, make sure you used "npx docs build" before validating examples`);
     }
     for (const apiJson of apiJsonPaths) {
         const api = ApiPackage.loadFromJsonFile(apiJson);

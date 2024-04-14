@@ -32,12 +32,10 @@ jobs:
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org/'
-          cache: yarn
-      - run: npm i -g yarn@1
-      - run: yarn config set network-timeout 300000
-      - run: yarn
-      - run: yarn build
-      - run: yarn docs build
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx docs build
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:

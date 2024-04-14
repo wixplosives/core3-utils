@@ -11,7 +11,7 @@ describe('cli', function () {
     this.timeout(25_000);
     before(() => setup(false));
     before(() => {
-        spawnSync('yarn', [
+        spawnSync('npx', [
             'docs',
             'init',
             ...args,
@@ -55,16 +55,16 @@ describe('cli', function () {
 
     describe('docs build', () => {
         it('validates examples', () => {
-            const execInvalid = spawnSync('yarn', ['docs', 'build', ...args]);
+            const execInvalid = spawnSync('npx', ['docs', 'build', ...args]);
             expect(execInvalid.status, execInvalid.stderr.toString()).to.equal(1);
             removeFailingPackages();
-            const execValid = spawnSync('yarn', ['docs', 'build', '-a', ...args]);
+            const execValid = spawnSync('npx', ['docs', 'build', '-a', ...args]);
             expect(execValid.status, execValid.stderr.toString()).to.equal(0);
         });
         it('generates docs', () => {
             removeFailingPackages();
 
-            const exec = spawnSync('yarn', ['docs', 'build', ...args]);
+            const exec = spawnSync('npx', ['docs', 'build', ...args]);
             expect(exec.status, exec.stderr.toString()).to.equal(0);
             expect(existsSync(_docs(config, 'index.md'))).to.equal(true, 'failed docs build');
             expect(existsSync(_docs(config, 'two.md'))).to.equal(true, 'failed docs build');
@@ -76,11 +76,11 @@ describe('cli', function () {
             rmSync(_packages(config, 'one'), { force: true, recursive: true });
             rmSync(_packages(config, 'weird'), { force: true, recursive: true });
 
-            const exec = spawnSync('yarn', ['docs', 'build', ...args]);
+            const exec = spawnSync('npx', ['docs', 'build', ...args]);
             expect(exec.status, exec.stderr.toString()).to.equal(0);
         });
         it('generated readme in packages root', () => {
-            const exec = spawnSync('yarn', ['docs', 'readme', ...args]);
+            const exec = spawnSync('npx', ['docs', 'readme', ...args]);
             expect(exec.status, exec.stderr.toString()).to.equal(0);
 
             expect(existsSync(_packages(config, '..', 'README.md'))).to.equal(true, 'failed docs readme');
