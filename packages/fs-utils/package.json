@@ -18,7 +18,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@file-services/path": "^9.2.0",
+    "@file-services/path": "^9.2.1",
     "@file-services/types": "^9.2.0",
     "@wixc3/common": "^17.1.1"
   }
