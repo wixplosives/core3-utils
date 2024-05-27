@@ -19,6 +19,6 @@
   },
   "dependencies": {
     "@file-services/node": "^9.2.1",
-    "@file-services/types": "^9.2.1"
+    "@file-services/types": "^9.3.0"
   }
 }
