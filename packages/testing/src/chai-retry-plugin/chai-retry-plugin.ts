@@ -39,7 +39,9 @@ export const chaiRetryPlugin = function (_: typeof Chai, { flag, inspect }: Chai
             const description = flag(this as Chai.AssertStatic, 'message') as string;
 
             if (typeof functionToRetry !== 'function') {
-                throw new TypeError(inspect(functionToRetry) + ' is not a function.');
+                throw new TypeError(
+                    `Please pass function to \`expect\` in order to use \`chaiRetryPlugin\`. ${inspect(functionToRetry)} is not a function.`,
+                );
             }
             if (isAdjustedTimeout(retryOptions)) {
                 throw new Error(
