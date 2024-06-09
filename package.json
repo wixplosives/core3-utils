@@ -14,8 +14,8 @@
     "prettify": "npx prettier . --write"
   },
   "devDependencies": {
-    "@file-services/memory": "^9.3.0",
-    "@file-services/types": "^9.3.0",
+    "@file-services/memory": "^9.3.1",
+    "@file-services/types": "^9.3.1",
     "@types/chai": "^4.3.16",
     "@types/chai-as-promised": "^7.1.8",
     "@types/glob": "^8.1.0",
