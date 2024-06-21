@@ -163,7 +163,7 @@ export function defaults<S extends object, D extends object>(
     _source: S,
     _defaultValues: D,
     deep = true,
-    shouldUseDefault = (v: unknown, _key: string) => v === undefined,
+    shouldUseDefault = (v: unknown, _key: string): boolean => v === undefined,
 ): S & D {
     const parseObj = (src: unknown, dft: unknown, parentKey = ''): Record<string, unknown> => {
         if (isPlainObject(src)) {
