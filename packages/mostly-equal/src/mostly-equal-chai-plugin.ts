@@ -1,4 +1,4 @@
-/// <reference types="chai" />
+/// <reference types="chai" preserve="true" />
 
 import { Formatter } from './types';
 import { checkExpectValues, errorString } from './mostly-equal';

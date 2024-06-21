@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="../mostly-equal-chai.d.ts" />
+/// <reference path="../mostly-equal-chai.d.ts" preserve="true" />
 /**
  * @packageDocumentation
  * Adds chai matches for partial equality of JSONs
