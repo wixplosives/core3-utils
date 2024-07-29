@@ -54,9 +54,9 @@ const validateToBeString: (testedExpression: unknown, semanticName?: string) => 
         throw new Error(`${semanticName} is not a string: ${String(testedExpression)}`);
     }
 };
-export const codeMatchers: Chai.ChaiPlugin = (chai, { flag }) => {
+export const codeMatchers: Chai.ChaiPlugin = (chai, utils) => {
     async function matchCode(this: Chai.AssertionStatic, expectedCode: string, options?: Options | false) {
-        const testedExpression = flag(this, 'object') as object;
+        const testedExpression = utils.flag(this, 'object') as object;
 
         validateToBeString(testedExpression, 'Actual code');
         validateToBeString(expectedCode, 'Expected code');
@@ -73,7 +73,7 @@ export const codeMatchers: Chai.ChaiPlugin = (chai, { flag }) => {
         formatExpected = false,
         options?: Options | false,
     ) {
-        const testedExpression = flag(this, 'object') as object;
+        const testedExpression = utils.flag(this, 'object') as object;
 
         validateToBeString(testedExpression, 'Actual code');
         validateToBeString(expectedCode, 'Expected code');

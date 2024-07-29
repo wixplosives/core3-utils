@@ -32,15 +32,15 @@ import { isAdjustedTimeout } from '../timeouts.helpers';
  * await expect(funcToRetry).retry().and.have.property('success').and.be.true;
  * ```
  */
-export const chaiRetryPlugin = function (_: typeof Chai, { flag, inspect }: Chai.ChaiUtils) {
+export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) {
     Object.defineProperty(Chai.Assertion.prototype, 'retry', {
         value: function (retryOptions: RetryOptions = {}): PromiseLikeAssertion {
-            const functionToRetry: FunctionToRetry = flag(this as Chai.AssertStatic, 'object') as FunctionToRetry;
-            const description = flag(this as Chai.AssertStatic, 'message') as string;
+            const functionToRetry: FunctionToRetry = utils.flag(this as Chai.AssertStatic, 'object') as FunctionToRetry;
+            const description = utils.flag(this as Chai.AssertStatic, 'message') as string;
 
             if (typeof functionToRetry !== 'function') {
                 throw new TypeError(
-                    `Please pass function to \`expect\` in order to use \`chaiRetryPlugin\`. ${inspect(functionToRetry)} is not a function.`,
+                    `Please pass function to \`expect\` in order to use \`chaiRetryPlugin\`. ${utils.inspect(functionToRetry)} is not a function.`,
                 );
             }
             if (isAdjustedTimeout(retryOptions)) {
