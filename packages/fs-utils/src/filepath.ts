@@ -198,7 +198,8 @@ export function getImportPath(filePath: string) {
 }
 
 export const isJsonFile = (filePath: string) => filePath.endsWith('.json');
-export const isTypeScriptFile = (filePath: string) => filePath.endsWith('.ts') || filePath.endsWith('.tsx');
+export const isTypeScriptFile = (filePath: string) =>
+    filePath.endsWith('.ts') || filePath.endsWith('.mts') || filePath.endsWith('.tsx');
 export const isJavaScriptFile = (filePath: string) =>
     filePath.endsWith('.js') || filePath.endsWith('.jsx') || filePath.endsWith('.mjs') || filePath.endsWith('.cjs');
 export const isDirPath = (filePath: string) => extname(filePath).length === 0;
