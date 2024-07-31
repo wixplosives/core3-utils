@@ -8,7 +8,7 @@ export async function spawnAsync(command: string, args: ReadonlyArray<string> = 
     return new Promise<{ exitCode: number; output: string }>((res, rej) => {
         const childProcess = spawn(command, args, options);
         if (!childProcess) {
-            rej(`wasn't able tp launch process`);
+            rej(new Error(`wasn't able to launch process`));
         } else {
             const output: Array<string | Buffer> = [];
             childProcess.once('error', rej);

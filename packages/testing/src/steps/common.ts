@@ -13,13 +13,13 @@ export function wrapPromise<T, I extends Info, S extends StepBase<I, T>>(
 
     const p = new Promise<T>((_resolve, _reject) => {
         resolve = (value: T) => {
-            if (isSettled) throw 'Already settled';
+            if (isSettled) throw new Error('Already settled');
             isSettled = true;
             dispose();
             _resolve(value);
         };
         reject = async (reason: any) => {
-            if (isSettled) throw 'Already settled';
+            if (isSettled) throw new Error('Already settled');
             isSettled = true;
             if (extraInfo) {
                 p.info.extra = await Promise.resolve(extraInfo());

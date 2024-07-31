@@ -15,9 +15,9 @@ export type ExpectMultiMatcher<T> = (
 
 export type UnknownObjectRecord = Record<string | number, unknown>;
 
-const secretMarkerSymbol = Symbol('marker');
+const _secretMarkerSymbol = Symbol('marker');
 export type MarkerSymbol = {
-    __mostlyEqlMarker: typeof secretMarkerSymbol;
+    __mostlyEqlMarker: typeof _secretMarkerSymbol;
 };
 
 export type AllowMarkers<T, NOTFIELDS = '__unknown__'> =

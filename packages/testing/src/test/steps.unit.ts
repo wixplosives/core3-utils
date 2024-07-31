@@ -100,12 +100,12 @@ describe('allWithTimeout step', () => {
 
 describe('step', () => {
     it('rejects with a step error', async () => {
-        await expect(step(Promise.reject('source info')).description('step info')).to.eventually.rejectedWith(
-            'step info',
-        );
-        await expect(step(Promise.reject('source info')).description('step info')).to.eventually.rejectedWith(
-            'source info',
-        );
+        await expect(
+            step(Promise.reject(new Error('source info'))).description('step info'),
+        ).to.eventually.rejectedWith('step info');
+        await expect(
+            step(Promise.reject(new Error('source info'))).description('step info'),
+        ).to.eventually.rejectedWith('source info');
     });
 });
 
