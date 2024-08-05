@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf -g \"./packages/*/dist*\" dist temp _docs",
     "build": "tsc --build",
-    "lint": "eslint .",
+    "lint": "eslint",
     "pretest": "npm run lint && npm run build",
     "test": "npm run test:no-docs",
     "test:no-docs": "mocha \"packages/{,!(docs)}/dist{,/cjs}/test/**/*.unit.js\"",
@@ -14,6 +14,8 @@
     "prettify": "npx prettier . --write"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.1.1",
+    "@eslint/js": "^9.8.0",
     "@file-services/memory": "^9.4.1",
     "@file-services/types": "^9.4.1",
     "@types/chai": "^4.3.17",
@@ -24,10 +26,9 @@
     "@types/sinon": "^17.0.3",
     "@types/sinon-chai": "^3.2.12",
     "@types/yargs": "^17.0.32",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.2",
-    "eslint": "^8.57.0",
+    "eslint": "^9.8.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-no-only-tests": "^3.1.0",
     "expose-gc": "^1.0.0",
@@ -35,7 +36,8 @@
     "rimraf": "^6.0.1",
     "sinon": "^18.0.0",
     "sinon-chai": "^3.7.0",
-    "typescript": "~5.5.4"
+    "typescript": "~5.5.4",
+    "typescript-eslint": "^8.0.0"
   },
   "license": "MIT",
   "private": true

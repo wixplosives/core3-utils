@@ -174,7 +174,6 @@ export function* concat<T>(...iterables: Nullable<Iterable<T>>[]): Iterable<T> {
 export function forEach<T>(iterable: Nullable<Iterable<T>>, fn: Mapping<T, unknown>): void {
     if (iterable) {
         for (const v of iterable) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             fn(v);
         }
     }

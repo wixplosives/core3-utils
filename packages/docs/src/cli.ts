@@ -37,7 +37,6 @@ export function cli() {
             { packages, conf, docs, siteUrl, base, temp, force, origin, examples },
             (params) => {
                 try {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const { force, ...rest } = params;
                     const config = Object.fromEntries(
                         filter(Object.entries(rest), ([key, _]) => key in args),

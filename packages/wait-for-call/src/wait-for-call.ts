@@ -17,7 +17,6 @@ export function createWaitForCall<F extends (...args: any[]) => any>(name?: stri
                 },
                 { timeout: 100 },
             );
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             const argsHistory = [...spy.getCalls()].reverse().map<Parameters<F>>((call) => call.args as Parameters<F>);
             cb(...argsHistory);
             callNum++;

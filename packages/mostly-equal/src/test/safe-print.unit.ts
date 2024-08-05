@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect } from 'chai';
 import { safePrint } from '../safe-print';
 import { LookupPath, Formatter } from '../types';
@@ -29,7 +27,6 @@ describe('safe print', () => {
             obj.b.push(obj as never);
             const expected = {
                 a: 'a string',
-                // eslint-disable-next-line no-useless-escape
                 b: ['circular data removed, path: actual["b"][0]'],
             };
             const actual = safePrint(obj);

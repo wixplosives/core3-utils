@@ -3,7 +3,6 @@ import { Signal } from '../signal';
 import { stub } from 'sinon';
 import sinonChai from 'sinon-chai';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 chai.use(sinonChai);
 interface ChangeEvent {
     a: string;

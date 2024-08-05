@@ -85,7 +85,7 @@ export function isPlainObject(value: unknown): value is Record<string | number |
  * Logs an error
  */
 export function reportError(ex: unknown) {
-    // eslint-disable-next-line no-console, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+    // eslint-disable-next-line no-console
     console.error(ex);
 }
 
@@ -181,7 +181,6 @@ export function defaults<S extends object, D extends object>(
             if (isPlainObject(dft)) {
                 for (const [key, _default] of Object.entries(dft)) {
                     if (!(key in src)) {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         result[key] = _default;
                     }
                 }

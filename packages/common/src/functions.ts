@@ -51,14 +51,12 @@ export function delayed<T extends (...args: any[]) => any>(
         if (!queue) {
             queue = Promise.resolve(fn(...args));
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
             queue = queue.then(
                 () => fn(...args) as ReturnType<T>,
                 () => fn(...args) as ReturnType<T>,
             );
         }
         const tmp = queue;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         queue = tmp.then(() => sleep(wait));
         return tmp as Promise<ReturnType<T>>;
     }) as T;

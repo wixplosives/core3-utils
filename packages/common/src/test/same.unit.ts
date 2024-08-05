@@ -1,7 +1,4 @@
 import { expect } from 'chai';
-// eslint-disable-next-line
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { same } from '../same';
 import { toMap } from '../types';
 

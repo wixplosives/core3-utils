@@ -40,7 +40,6 @@ export const createMarkers = <KEYS extends string>(...markKeys: KEYS[]): Markers
                 name: key,
                 content: merged.map((item) => {
                     if (typeof item === 'number') {
-                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                         return content[item]!;
                     }
                     return item;

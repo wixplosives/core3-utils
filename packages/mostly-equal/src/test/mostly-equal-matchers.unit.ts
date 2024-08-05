@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import chai, { expect } from 'chai';
 import {
     notImportant,

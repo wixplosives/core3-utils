@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { expect } from 'chai';
 import { buildDocs } from '../build-docs/build-docs';
 import { setup, clean, config, overwriteTemplate, readDoc, docExists, runMacro } from './test-common';

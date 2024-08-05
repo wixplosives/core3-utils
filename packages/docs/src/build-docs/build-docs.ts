@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import type { Config } from '../common';
 import type { Macros } from '../macros.types';
 import { validateExamples } from '../validate-examples';

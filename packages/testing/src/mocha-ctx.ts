@@ -1,5 +1,5 @@
 import { forEach } from '@wixc3/common';
-import { getCtxRoot, getMochaRunnables, _beforeEach, _before } from './mocha-helpers';
+import { getCtxRoot, getMochaRunnables, _before } from './mocha-helpers';
 
 let currentMochaCtx: Mocha.Context | undefined;
 
