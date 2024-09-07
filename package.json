@@ -14,7 +14,7 @@
     "prettify": "npx prettier . --write"
   },
   "devDependencies": {
-    "@eslint/js": "^9.9.1",
+    "@eslint/js": "^9.10.0",
     "@file-services/memory": "^9.4.1",
     "@file-services/types": "^9.4.1",
     "@types/chai": "^4.3.19",
@@ -27,7 +27,7 @@
     "@types/yargs": "^17.0.33",
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.2",
-    "eslint": "^9.9.1",
+    "eslint": "^9.10.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-no-only-tests": "^3.3.0",
     "expose-gc": "^1.0.0",
