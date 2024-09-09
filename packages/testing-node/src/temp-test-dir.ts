@@ -17,7 +17,7 @@ try {
  * @returns temp directory path
  */
 export function createTestDir(
-    prefix?: string | undefined,
+    prefix?: string,
     disposalOptions?: string | Omit<DisposableOptions, 'dispose'>,
     disposeAfter = disposeAfterTest,
 ) {
