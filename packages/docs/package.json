@@ -23,9 +23,9 @@
   },
   "dependencies": {
     "@file-services/node": "^9.4.1",
-    "@microsoft/api-documenter": "^7.25.12",
-    "@microsoft/api-extractor": "^7.47.7",
-    "@microsoft/api-extractor-model": "^7.29.6",
+    "@microsoft/api-documenter": "^7.25.13",
+    "@microsoft/api-extractor": "^7.47.8",
+    "@microsoft/api-extractor-model": "^7.29.7",
     "@wixc3/common": "^17.1.1",
     "@wixc3/fs-utils": "^17.1.1",
     "@wixc3/typescript": "^17.1.1",
