@@ -103,5 +103,6 @@ export const safePrint = (
     if (typeof target === 'function') {
         return JSON.stringify(target.toString());
     }
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     return JSON.stringify(String(target));
 };
