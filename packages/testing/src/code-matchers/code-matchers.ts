@@ -2,7 +2,7 @@
 import { noIdents } from '@wixc3/common';
 import { use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { Options } from 'prettier';
+import type * as prettier from 'prettier';
 import * as esTreePlugin from 'prettier/plugins/estree';
 import * as parserTypeScript from 'prettier/plugins/typescript';
 import { format } from 'prettier/standalone';
@@ -11,14 +11,14 @@ import type * as _ from './types';
 
 use(chaiAsPromised);
 
-const prettify = async (code: string, options?: Options | false) =>
+const prettify = async (code: string, options?: prettier.Options | false) =>
     options === false
         ? code
         : await format(
               code,
               options || {
                   parser: 'typescript',
-                  plugins: [esTreePlugin, parserTypeScript],
+                  plugins: [esTreePlugin as prettier.Plugin, parserTypeScript],
                   endOfLine: 'lf',
                   singleQuote: true,
               },
@@ -55,7 +55,7 @@ const validateToBeString: (testedExpression: unknown, semanticName?: string) => 
     }
 };
 export const codeMatchers: Chai.ChaiPlugin = (chai, utils) => {
-    async function matchCode(this: Chai.AssertionStatic, expectedCode: string, options?: Options | false) {
+    async function matchCode(this: Chai.AssertionStatic, expectedCode: string, options?: prettier.Options | false) {
         const testedExpression = utils.flag(this, 'object') as object;
 
         validateToBeString(testedExpression, 'Actual code');
@@ -71,7 +71,7 @@ export const codeMatchers: Chai.ChaiPlugin = (chai, utils) => {
         this: Chai.AssertionStatic,
         expectedCode: string,
         formatExpected = false,
-        options?: Options | false,
+        options?: prettier.Options | false,
     ) {
         const testedExpression = utils.flag(this, 'object') as object;
 
