@@ -22,7 +22,7 @@
     "@types/mocha": "^10.0.10",
     "@types/node": "20",
     "@types/sinon": "^17.0.3",
-    "@types/sinon-chai": "^3.2.12",
+    "@types/sinon-chai": "^4.0.0",
     "@types/yargs": "^17.0.33",
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.2",
@@ -34,7 +34,7 @@
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
     "sinon": "^19.0.2",
-    "sinon-chai": "^3.7.0",
+    "sinon-chai": "^4.0.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.17.0"
   },
