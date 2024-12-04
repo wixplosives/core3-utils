@@ -11,7 +11,7 @@
     "test": "npm run test:no-docs",
     "test:no-docs": "mocha \"packages/{,!(docs)}/dist{,/cjs}/test/**/*.unit.js\"",
     "test:docs": "mocha \"packages/docs/dist{,/cjs}/test/**/*.unit.js\"",
-    "prettify": "npx prettier . --write"
+    "prettify": "prettier . --write"
   },
   "devDependencies": {
     "@file-services/memory": "^9.4.1",

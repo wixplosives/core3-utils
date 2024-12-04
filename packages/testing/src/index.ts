@@ -5,9 +5,9 @@
  * @remarks
  * [[[h 3 Env variables]]]
  * - DEBUG=true/positive number env variable will set test timeouts and time scale to infinity so tests (that don't explicitly override timeout) will not time out on breakpoints
- * 
+ *
  * - TIMEOUT_MULTIPLIER=number env variable will multiply all test timeouts by the given number
- * 
+ *
  * [[[h 3 Test timeout manipulation]]]
  *
  * - {@link scaleTimeout} multiplies timeouts when debugging or running on slow CI machines, based on TIMEOUT_MULTIPLIER and DEBUG env variables

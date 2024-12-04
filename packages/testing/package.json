@@ -21,7 +21,7 @@
     "@wixc3/patterns": "^17.1.1",
     "chai": "^4.5.0",
     "create-temp-directory": "^2.4.0",
-    "prettier": "^3.4.1",
+    "prettier": "^3.4.2",
     "promise-assist": "^2.0.1"
   }
 }

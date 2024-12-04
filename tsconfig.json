@@ -29,6 +29,6 @@
     { "path": "packages/testing/src" },
     { "path": "packages/testing/src/tsconfig.esm.json" },
     { "path": "packages/testing-node/src" },
-    { "path": "packages/testing-node/src/tsconfig.esm.json" },
-  ],
+    { "path": "packages/testing-node/src/tsconfig.esm.json" }
+  ]
 }

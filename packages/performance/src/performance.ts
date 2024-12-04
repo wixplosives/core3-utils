@@ -26,7 +26,7 @@ function createGenericPerformanceReporter() {
 
     function getMarkTime({ defaultMark, markName }: MarkTimeOptions) {
         // getting latest mark for the given markName (if given one)
-        const { startTime } = markName ? labels.get(markName)?.slice(-1)[0] ?? defaultMark : defaultMark;
+        const { startTime } = markName ? (labels.get(markName)?.slice(-1)[0] ?? defaultMark) : defaultMark;
         return startTime;
     }
 
