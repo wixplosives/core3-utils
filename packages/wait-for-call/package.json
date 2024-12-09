@@ -11,6 +11,7 @@
     "sinon": "*"
   },
   "dependencies": {
+    "chai": "^4.5.0",
     "promise-assist": "^2.0.1"
   },
   "files": [
