@@ -5,7 +5,7 @@ import { isObject } from './objects';
  * an error instance, it's stringified and used as the error message.
  */
 export function toError(value: unknown): Error {
-    return value instanceof Error ? value : new Error(value === undefined ? undefined : String(value));
+    return value instanceof Error ? value : new Error(value === undefined ? undefined : String(value as string));
 }
 
 /**
