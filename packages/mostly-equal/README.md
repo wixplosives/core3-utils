@@ -12,7 +12,8 @@ Adds chai matches for partial equality of JSONs
 ## Example
 
 ```ts
-import chai, { expect } from 'chai';
+import * as chai from 'chai';
+import { expect } from 'chai';
 import { mostlyEqlChaiPlugin, notImportant } from '@wixc3/mostly-equal';
 chai.use(mostlyEqlChaiPlugin);
 expect({ a: 1 }).to.mostlyEqual({

@@ -1,15 +1,16 @@
-import Chai, { expect } from 'chai';
+import * as chai from 'chai';
+import { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { sleep } from 'promise-assist';
 
 import { chaiRetryPlugin } from '../chai-retry-plugin/chai-retry-plugin.js';
 import { codeMatchers } from '../code-matchers/index.js';
-import { overrideTimeoutScale, overrideDebugMode, debugSafeTimeout } from '../timeouts.js';
+import { debugSafeTimeout, overrideDebugMode, overrideTimeoutScale } from '../timeouts.js';
 
-Chai.use(chaiRetryPlugin);
+chai.use(chaiRetryPlugin);
 // `chai-as-promised` should be used in order to test collision between plugins
-Chai.use(chaiAsPromised);
-Chai.use(codeMatchers);
+chai.use(chaiAsPromised);
+chai.use(codeMatchers);
 
 describe('chai-retry-plugin', () => {
     it('should retry a function that eventually succeeds', async () => {

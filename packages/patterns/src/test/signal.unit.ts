@@ -1,9 +1,11 @@
-import chai, { expect } from 'chai';
+import * as chai from 'chai';
+import { expect } from 'chai';
 import { stub } from 'sinon';
 import sinonChai from 'sinon-chai';
 import { Signal } from '../signal.js';
 
 chai.use(sinonChai);
+
 interface ChangeEvent {
     a: string;
     b: number;

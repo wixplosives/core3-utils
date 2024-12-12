@@ -1,4 +1,5 @@
-import chai, { expect } from 'chai';
+import * as chai from 'chai';
+import { expect } from 'chai';
 import { sleep } from 'promise-assist';
 import Sinon, { stub } from 'sinon';
 import sinonChai from 'sinon-chai';

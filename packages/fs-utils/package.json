@@ -8,7 +8,7 @@
     "@file-services/path": "^9.4.1",
     "@file-services/types": "^9.4.1",
     "@wixc3/common": "^17.1.1",
-    "type-fest": "^4.30.0"
+    "type-fest": "^4.30.1"
   },
   "author": "Wix.com",
   "sideEffects": false,

@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import { isAdjustedTimeout } from '../timeouts.helpers.js';
 import { scaleTimeout } from '../timeouts.js';
 import type { PromiseLikeAssertion } from '../types.js';
@@ -31,7 +31,7 @@ import type { Assertion, AssertionMethod, AssertionStackItem, FunctionToRetry, R
  * await expect(funcToRetry).retry().and.have.property('success').and.be.true;
  * ```
  */
-export const chaiRetryPlugin = function (_: typeof chai, utils: Chai.ChaiUtils) {
+export const chaiRetryPlugin = function (_: Chai.ChaiStatic, utils: Chai.ChaiUtils) {
     Object.defineProperty(chai.Assertion.prototype, 'retry', {
         value: function (retryOptions: RetryOptions = {}): PromiseLikeAssertion {
             const functionToRetry: FunctionToRetry = utils.flag(this as Chai.AssertStatic, 'object') as FunctionToRetry;

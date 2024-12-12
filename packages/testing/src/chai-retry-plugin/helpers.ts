@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import { deferred, timeout } from 'promise-assist';
 import { adjustCurrentTestTimeout, isDebugMode } from '../timeouts.js';
 import { chaiMethodsThatHandleFunction } from './constants.js';

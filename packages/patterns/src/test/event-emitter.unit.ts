@@ -1,4 +1,5 @@
-import chai, { expect } from 'chai';
+import * as chai from 'chai';
+import { expect } from 'chai';
 import { EventEmitter } from '../event-emitter.js';
 import { spy } from 'sinon';
 import sinonChai from 'sinon-chai';
