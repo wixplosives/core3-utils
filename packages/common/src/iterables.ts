@@ -1,4 +1,4 @@
-import { isDefined, Nullable } from './types';
+import { isDefined, type Nullable } from './types.js';
 
 export type Mapping<S, T> = (src: S) => T;
 export type Predicate<S, V = boolean> = (src: S) => V;

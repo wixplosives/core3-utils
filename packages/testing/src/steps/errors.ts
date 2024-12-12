@@ -1,4 +1,4 @@
-import type { Info, StepBase } from './types';
+import type { Info, StepBase } from './types.js';
 
 /**
  * Generic error in a test step

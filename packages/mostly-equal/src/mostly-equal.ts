@@ -1,13 +1,13 @@
-import { isGetter } from './safe-print';
-import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print';
-import {
-    type ExpectSingleMatcher,
-    type ExpandedValues,
-    type ExpectMultiMatcher,
-    type LookupPath,
-    type Formatter,
+import { isGetter } from './safe-print.js';
+import { isPlainObj, registerChildSet, safePrint, spaces } from './safe-print.js';
+import type {
+    ExpectSingleMatcher,
+    ExpandedValues,
+    ExpectMultiMatcher,
+    LookupPath,
+    Formatter,
     MarkerSymbol,
-} from './types';
+} from './types.js';
 
 export const expectValueSymb = Symbol('expect');
 export const expectValuesSymb = Symbol('expect-values');

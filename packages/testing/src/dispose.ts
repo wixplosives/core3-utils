@@ -1,11 +1,11 @@
 import {
     createDisposables,
     DEFAULT_GROUP,
-    DisposableOptions,
+    type DisposableOptions,
     type DisposableItem,
     type GroupConstraints,
 } from '@wixc3/patterns';
-import { _afterEach } from './mocha-helpers';
+import { _afterEach } from './mocha-helpers.js';
 
 const disposables = createDisposables('global afterDispose');
 export const DEFAULT_DISPOSAL_GROUP = DEFAULT_GROUP;

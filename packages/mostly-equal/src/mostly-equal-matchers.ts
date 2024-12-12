@@ -2,7 +2,7 @@
  * Sub matchers
  */
 import { expect } from 'chai';
-import { expectValue, expectValues } from './mostly-equal';
+import { expectValue, expectValues } from './mostly-equal.js';
 export const thumbsUp = '👍';
 
 export const notImportant = expectValue(() => undefined);

@@ -1,5 +1,5 @@
-import { RejectedError, StepError } from './errors';
-import type { Info, StepBase } from './types';
+import { RejectedError, StepError } from './errors.js';
+import type { Info, StepBase } from './types.js';
 
 export function wrapPromise<T, I extends Info, S extends StepBase<I, T>>(
     src: Promise<T>,

@@ -1,21 +1,20 @@
-import Chai from 'chai';
-
-import { retryFunctionAndAssertions } from './helpers';
-import type { AssertionMethod, FunctionToRetry, AssertionStackItem, RetryOptions, Assertion } from './types';
-import type { PromiseLikeAssertion } from '../types';
-import { scaleTimeout } from '../timeouts';
-import { isAdjustedTimeout } from '../timeouts.helpers';
+import chai from 'chai';
+import { isAdjustedTimeout } from '../timeouts.helpers.js';
+import { scaleTimeout } from '../timeouts.js';
+import type { PromiseLikeAssertion } from '../types.js';
+import { retryFunctionAndAssertions } from './helpers.js';
+import type { Assertion, AssertionMethod, AssertionStackItem, FunctionToRetry, RetryOptions } from './types.js';
 
 /**
  * Plugin that allows to re-run function passed to `expect`, in order to achieve that use new `retry` method, retrying would be performed until
  * the result will pass the chained assertion or timeout exceeded or retries limit reached.
- * Should be applied through `Chai.use` function, for example:
+ * Should be applied through `chai.use` function, for example:
  * @example
  * ```ts
- * import Chai from 'chai';
+ * import chai from 'chai';
  * import { chaiRetryPlugin } from '@wixc3/testing';
  *
- * Chai.use(chaiRetryPlugin);
+ * chai.use(chaiRetryPlugin);
  * ```
  *
  * Examples of usage:
@@ -32,8 +31,8 @@ import { isAdjustedTimeout } from '../timeouts.helpers';
  * await expect(funcToRetry).retry().and.have.property('success').and.be.true;
  * ```
  */
-export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) {
-    Object.defineProperty(Chai.Assertion.prototype, 'retry', {
+export const chaiRetryPlugin = function (_: typeof chai, utils: Chai.ChaiUtils) {
+    Object.defineProperty(chai.Assertion.prototype, 'retry', {
         value: function (retryOptions: RetryOptions = {}): PromiseLikeAssertion {
             const functionToRetry: FunctionToRetry = utils.flag(this as Chai.AssertStatic, 'object') as FunctionToRetry;
             const description = utils.flag(this as Chai.AssertStatic, 'message') as string;
@@ -56,7 +55,7 @@ export const chaiRetryPlugin = function (_: typeof Chai, utils: Chai.ChaiUtils) 
 
             const assertionStack: AssertionStackItem[] = [];
             // Fake assertion object for catching calls of chained methods
-            const proxyTarget = new Chai.Assertion({});
+            const proxyTarget = new chai.Assertion({});
 
             const assertionProxy: PromiseLikeAssertion = Object.assign(
                 new Proxy(proxyTarget, {

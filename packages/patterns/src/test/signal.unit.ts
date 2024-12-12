@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai';
-import { Signal } from '../signal';
 import { stub } from 'sinon';
 import sinonChai from 'sinon-chai';
+import { Signal } from '../signal.js';
 
 chai.use(sinonChai);
 interface ChangeEvent {

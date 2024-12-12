@@ -1,4 +1,4 @@
-import Sinon from 'sinon';
+import sinon from 'sinon';
 
 /**
  * Makes it easy to safely use fake timers
@@ -17,13 +17,13 @@ import Sinon from 'sinon';
  * })
  * ```
  */
-export function useSafeFakeTimers(): Sinon.SinonFakeTimers {
-    const clocks = [] as Sinon.SinonFakeTimers[];
-    const clock = {} as Sinon.SinonFakeTimers;
+export function useSafeFakeTimers(): sinon.SinonFakeTimers {
+    const clocks = [] as sinon.SinonFakeTimers[];
+    const clock = {} as sinon.SinonFakeTimers;
 
     beforeEach(() => {
         clocks.push({ ...clock });
-        const _clock = Sinon.useFakeTimers();
+        const _clock = sinon.useFakeTimers();
         Object.assign(clock, _clock);
         clock.tick;
     });

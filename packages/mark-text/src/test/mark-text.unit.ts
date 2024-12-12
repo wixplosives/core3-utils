@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { createMarkers, markText } from '../mark-text';
+import { createMarkers, markText } from '../mark-text.js';
 
 describe('mark text', () => {
     it('should return the text and indexes', () => {

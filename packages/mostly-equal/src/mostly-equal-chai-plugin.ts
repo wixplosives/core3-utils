@@ -1,8 +1,8 @@
 /// <reference types="chai" preserve="true" />
 
-import { Formatter } from './types';
-import { checkExpectValues, errorString } from './mostly-equal';
-import { safePrint } from './safe-print';
+import type { Formatter } from './types.js';
+import { checkExpectValues, errorString } from './mostly-equal.js';
+import { safePrint } from './safe-print.js';
 
 export interface MostlyEqualOptions {
     maxDepth?: number;

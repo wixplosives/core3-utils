@@ -1,4 +1,4 @@
-import { performanceMeasures } from './performance-measures';
+import { performanceMeasures } from './performance-measures.js';
 
 export interface IPerformance {
     mark(markName: string): void;

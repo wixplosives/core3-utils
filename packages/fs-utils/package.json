@@ -1,26 +1,26 @@
 {
   "name": "@wixc3/fs-utils",
   "version": "17.1.1",
+  "type": "module",
   "description": "Filesystem utils, usable in all environments",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "author": "Wix.com",
-  "sideEffects": false,
-  "files": [
-    "dist",
-    "src",
-    "!dist/*/test",
-    "!dist/*/tsconfig.tsbuildinfo"
-  ],
-  "license": "MIT",
-  "repository": "git@github.com:wixplosives/core3-utils.git",
-  "publishConfig": {
-    "access": "public"
-  },
+  "exports": "./dist/index.js",
   "dependencies": {
     "@file-services/path": "^9.4.1",
     "@file-services/types": "^9.4.1",
     "@wixc3/common": "^17.1.1",
     "type-fest": "^4.30.0"
+  },
+  "author": "Wix.com",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src",
+    "!dist/test",
+    "!dist/tsconfig.tsbuildinfo"
+  ],
+  "license": "MIT",
+  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "publishConfig": {
+    "access": "public"
   }
 }

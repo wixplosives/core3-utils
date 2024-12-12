@@ -8,7 +8,7 @@ import {
     isPathIncludesDir,
     isSubPath,
     rebaseRelativeModulePath,
-} from '..';
+} from '../index.js';
 
 describe('getRelativeImportPath', () => {
     it('should create relative path', () => {

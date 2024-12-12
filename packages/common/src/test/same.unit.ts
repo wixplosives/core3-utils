@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { same } from '../same';
-import { toMap } from '../types';
+import { same } from '../same.js';
+import { toMap } from '../types.js';
 
 describe('same', () => {
     describe('types unaffected by "unordered" param', () => {

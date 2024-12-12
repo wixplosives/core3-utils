@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { partition } from '..';
+import { partition } from '../partition.js';
 
 describe('partition', () => {
     it('one item', () => {

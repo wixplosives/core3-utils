@@ -1,2 +1,2 @@
-export * from './chai-retry-plugin';
-export { RetryOptions } from './types';
+export * from './chai-retry-plugin.js';
+export type { RetryOptions } from './types.js';

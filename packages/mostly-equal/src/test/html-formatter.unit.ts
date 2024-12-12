@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { safePrint } from '../safe-print';
-import { HTMLFormatter, PseudoElement } from '../html-formatter';
+import { safePrint } from '../safe-print.js';
+import { HTMLFormatter, type PseudoElement } from '../html-formatter.js';
 
 class FakeElement implements PseudoElement {
     constructor(readonly tagName = 'div') {

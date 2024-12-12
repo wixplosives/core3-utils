@@ -1,8 +1,9 @@
 import chai, { expect } from 'chai';
-import { delayed, enforceSequentialExecution, memoize, once } from '..';
+import { sleep } from 'promise-assist';
 import Sinon, { stub } from 'sinon';
 import sinonChai from 'sinon-chai';
-import { sleep } from 'promise-assist';
+import { delayed, enforceSequentialExecution, memoize, once } from '../functions.js';
+
 chai.use(sinonChai);
 
 describe('once', () => {

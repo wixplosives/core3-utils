@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 import { noIdents } from '@wixc3/common';
 import { use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -6,8 +5,9 @@ import type * as prettier from 'prettier';
 import * as esTreePlugin from 'prettier/plugins/estree';
 import * as parserTypeScript from 'prettier/plugins/typescript';
 import { format } from 'prettier/standalone';
+
 // makes ts pick up global augmentation of Chai.Assertion
-import type * as _ from './types';
+import './types.js';
 
 use(chaiAsPromised);
 
@@ -24,7 +24,7 @@ const prettify = async (code: string, options?: prettier.Options | false) =>
               },
           );
 
-const regex = /(\/\*)([^\/\*]*)(\*\/)/g;
+const regex = /(\/\*)([^/*]*)(\*\/)/g;
 
 const mapper = (str: string, idx: number) => {
     if (idx % 4 === 2) {

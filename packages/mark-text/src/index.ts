@@ -1,1 +1,1 @@
-export * from './mark-text';
+export * from './mark-text.js';

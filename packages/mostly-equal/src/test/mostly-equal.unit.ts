@@ -1,7 +1,14 @@
 import chai, { expect } from 'chai';
-import { expectValue, expectValues, mostlyEqlChaiPlugin, setSuiteOptions } from '../index';
-import { clearMatchedValues, getMatchedValues } from '../mostly-equal';
-import type { ExpandedValues, Formatter } from '../types';
+import {
+    clearMatchedValues,
+    expectValue,
+    expectValues,
+    getMatchedValues,
+    mostlyEqlChaiPlugin,
+    setSuiteOptions,
+    type ExpandedValues,
+    type Formatter,
+} from '../index.js';
 
 chai.use(mostlyEqlChaiPlugin);
 

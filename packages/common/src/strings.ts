@@ -1,4 +1,4 @@
-import { getIn } from './objects';
+import { getIn } from './objects.js';
 
 /**
  * Throws if value is not a string

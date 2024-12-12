@@ -1,6 +1,6 @@
 import chai, { expect } from 'chai';
 import sinonChai from 'sinon-chai';
-import { isErrorLikeObject } from '../errors';
+import { isErrorLikeObject } from '../errors.js';
 
 chai.use(sinonChai);
 

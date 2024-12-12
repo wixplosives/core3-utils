@@ -16,9 +16,9 @@
  * ```
  *
  */
-export * from './mostly-equal';
-export * from './mostly-equal-chai-plugin';
-export * from './mostly-equal-matchers';
-export * from './safe-print';
-export * from './html-formatter';
-export * from './types';
+export * from './mostly-equal.js';
+export * from './mostly-equal-chai-plugin.js';
+export * from './mostly-equal-matchers.js';
+export * from './safe-print.js';
+export * from './html-formatter.js';
+export * from './types.js';

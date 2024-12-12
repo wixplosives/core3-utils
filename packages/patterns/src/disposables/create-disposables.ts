@@ -1,5 +1,10 @@
-import { DisposalGroup, getGroupConstrainedIndex, GroupConstraints, normalizeConstraints } from './constraints';
-import { DisposableItem, DisposablesGroup } from './disposables-group';
+import {
+    type DisposalGroup,
+    getGroupConstrainedIndex,
+    type GroupConstraints,
+    normalizeConstraints,
+} from './constraints.js';
+import { type DisposableItem, DisposablesGroup } from './disposables-group.js';
 
 export const DEFAULT_GROUP = 'default';
 export const DEFAULT_TIMEOUT = 1000;

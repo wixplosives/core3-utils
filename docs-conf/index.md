@@ -1,2 +1,0 @@
-# [[[rootPackageName]]]
-[[[githubBuildStatus]]]

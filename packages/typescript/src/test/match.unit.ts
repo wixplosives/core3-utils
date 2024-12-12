@@ -1,46 +1,46 @@
 import { expect } from 'chai';
-import ts from 'typescript';
-import { compileCode } from '../compile';
-import { isSame, match } from '../match';
-import { getText } from './helpers';
+import * as ts from 'typescript';
+import { compileCode } from '../compile.js';
+import { isSame, match } from '../match.js';
+import { getText } from './helpers.js';
 
 describe(`match`, function () {
     this.timeout(8_000);
     it('finds a patten in code', () => {
-        const code = compileCode(`(a)=>{ 
-            const b=true 
+        const code = compileCode(`(a)=>{
+            const b=true
             const c=false
         }`);
 
         expect(getText(match(code, `const b=true`))).to.eql(`const b=true`);
     });
     it('ignores the structure following //[ignore]', () => {
-        const code = compileCode(`(a)=>{ 
-            const b=true 
+        const code = compileCode(`(a)=>{
+            const b=true
             const c=false
         }`);
 
         expect(getText(match(code, `const b= /* [ignore] */ false`))).to.eql(`const b=true`);
     });
     it('returns the node following //[return]', () => {
-        const code = compileCode(`(a)=>{ 
-            const b=true 
+        const code = compileCode(`(a)=>{
+            const b=true
             const c=false
         }`);
 
         expect(getText(match(code, `const /* [return] */b=true`))).to.eql(`b=true`);
     });
     it('throws when patterns contain multiple //[return]', () => {
-        const code = compileCode(`(a)=>{ 
-            const b=true 
+        const code = compileCode(`(a)=>{
+            const b=true
             const c=false
         }`);
 
         expect(() => match(code, `/* [return] */const /* [return] */b=true`)).to.throw();
     });
     it('throws when patterns contain statements', () => {
-        const code = compileCode(`(a)=>{ 
-            const b=true 
+        const code = compileCode(`(a)=>{
+            const b=true
             const c=false
         }`);
 

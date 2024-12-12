@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { createDisposalGroup, disposeAfter, initAndDisposeAfter } from '../dispose';
+import { createDisposalGroup, disposeAfter, initAndDisposeAfter } from '../dispose.js';
 
 describe('dispose', () => {
     describe('disposeAfter default behavior', () => {

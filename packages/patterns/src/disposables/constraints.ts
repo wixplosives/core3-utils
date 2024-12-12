@@ -1,4 +1,4 @@
-import type { DisposablesGroup } from './disposables-group';
+import type { DisposablesGroup } from './disposables-group.js';
 
 export type GroupConstraints = { before: string; after?: string } | { after: string; before?: string };
 

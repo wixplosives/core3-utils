@@ -1,12 +1,12 @@
 import { isString } from '@wixc3/common';
 import { deferred } from 'promise-assist';
-import { disposeAfter } from '../dispose';
-import { mochaCtx } from '../mocha-ctx';
-import { createTimeoutStep } from './with-timeout';
-import type { _PromiseAll, PromiseWithTimeout, StepsDefaults, PromiseStep } from './types';
-import { createPromiseStep } from './no-timeout';
-import { setFirstHook, _beforeEach } from '../mocha-helpers';
-import { adjustCurrentTestTimeout } from '../timeouts';
+import { disposeAfter } from '../dispose.js';
+import { mochaCtx } from '../mocha-ctx.js';
+import { createTimeoutStep } from './with-timeout.js';
+import type { PromiseWithTimeout, StepsDefaults, PromiseStep } from './types.js';
+import { createPromiseStep } from './no-timeout.js';
+import { setFirstHook, _beforeEach } from '../mocha-helpers.js';
+import { adjustCurrentTestTimeout } from '../timeouts.js';
 type CaptureStackFn = (s: { stack: string }) => void;
 /**
  * A generated stub
@@ -107,7 +107,7 @@ export function step<T>(action: Promise<T>): PromiseStep<T> {
  * ```
  * @param action promises that should be settled before the timeout
  */
-export function allWithTimeout<T extends Readonly<any[]>>(...actions: T): PromiseWithTimeout<_PromiseAll<T>> {
+export function allWithTimeout<T extends Readonly<any[]>>(...actions: T) {
     return withTimeout(Promise.all(actions));
 }
 

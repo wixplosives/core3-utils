@@ -7,8 +7,8 @@ import {
     defineSame,
     thumbsUp,
     mostlyEqlChaiPlugin,
-    AllowMarkers,
-} from '../index';
+    type AllowMarkers,
+} from '../index.js';
 chai.use(mostlyEqlChaiPlugin);
 
 describe('mostly equal matchers', () => {

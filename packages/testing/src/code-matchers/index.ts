@@ -1,2 +1,2 @@
-export * from './types';
-export * from './code-matchers';
+export * from './types.js';
+export * from './code-matchers.js';

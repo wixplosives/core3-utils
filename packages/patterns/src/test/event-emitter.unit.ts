@@ -1,5 +1,5 @@
 import chai, { expect } from 'chai';
-import { EventEmitter } from '../event-emitter';
+import { EventEmitter } from '../event-emitter.js';
 import { spy } from 'sinon';
 import sinonChai from 'sinon-chai';
 chai.use(sinonChai);

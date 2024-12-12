@@ -4,7 +4,7 @@
  * @internal
  * Promise.all return type
  */
-export type _PromiseAll<T extends Readonly<any[]>> = { -readonly [P in keyof T]: Awaited<T[P]> };
+export type PromiseAll<T extends Readonly<any[]>> = { -readonly [P in keyof T]: Awaited<T[P]> };
 
 /**
  * Step info base, added step errors

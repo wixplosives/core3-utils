@@ -1,8 +1,6 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../dist/cjs",
-    "lib": ["ES2022"],
-    "types": ["node"]
+    "outDir": "../dist"
   }
 }

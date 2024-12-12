@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { createTestDisposables } from '../create-test-disposables';
+import { createTestDisposables } from '../create-test-disposables.js';
 /**
  * NOTE: these tests assume to run in order! and order of creation matter!.
  * this is because we test the integration itself to mocha, during mocha tests.

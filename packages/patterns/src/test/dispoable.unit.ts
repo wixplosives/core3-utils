@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { Disposable } from '../disposables/disposable';
 import { deferred, sleep } from 'promise-assist';
+import { Disposable } from '../disposables/disposable.js';
 
 describe('Disposable class', () => {
     describe('dispose', () => {

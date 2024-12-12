@@ -1,8 +1,9 @@
 import { expect } from 'chai';
-import { chain } from '../chain';
+import { chain } from '../chain.js';
 // @ts-expect-error no types
-import gc from 'expose-gc/function';
-import { times } from '../iterables-gen';
+import gc from 'expose-gc/function.js';
+import { times } from '../iterables-gen.js';
+
 const forceGc = gc as () => void;
 
 const timer = typeof performance !== 'undefined' ? performance : Date;
