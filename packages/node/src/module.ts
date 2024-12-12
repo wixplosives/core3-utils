@@ -1,4 +1,5 @@
-import Module from 'module';
+import Module from 'node:module';
+
 type M = typeof Module & { _resolveFilename: (...args: unknown[]) => string };
 
 const originalResolveFilename = (Module as M)._resolveFilename;

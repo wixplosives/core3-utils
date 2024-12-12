@@ -1,6 +1,6 @@
-import { Disposables } from '.';
 import { deferred } from 'promise-assist';
-import { IDisposable } from './types';
+import { Disposables } from './create-disposables.js';
+import type { IDisposable } from './types.js';
 
 const DELAY_DISPOSAL = 'unreleased disposal guard, an async guarded task is still running';
 const DISPOSAL_GUARD_DEFAULTS = {

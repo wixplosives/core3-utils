@@ -1,5 +1,5 @@
-import { noWhiteSpace, splitIntoWords, toCamelCase, toKebabCase, toPascalCase } from '..';
 import { expect } from 'chai';
+import { noWhiteSpace, splitIntoWords, toCamelCase, toKebabCase, toPascalCase } from '../strings.js';
 
 describe('String Utils', () => {
     it('splitIntoWords', () => {

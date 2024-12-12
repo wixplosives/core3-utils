@@ -1,5 +1,5 @@
 import { shuffle } from '@wixc3/common';
-import { getCtxRoot, _before } from './mocha-helpers';
+import { getCtxRoot, _before } from './mocha-helpers.js';
 
 let _shouldRandomize = false;
 let wasSet = false;

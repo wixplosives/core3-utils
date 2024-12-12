@@ -1,9 +1,11 @@
+import type { DisposableOptions } from '@wixc3/patterns';
+import { createDisposalGroup, DEFAULT_DISPOSAL_GROUP, disposeAfter as disposeAfterTest } from '@wixc3/testing';
 import { createTempDirectorySync } from 'create-temp-directory';
-import { createDisposalGroup, disposeAfter as disposeAfterTest, DEFAULT_DISPOSAL_GROUP } from '@wixc3/testing';
-import fs from '@file-services/node';
-import { DisposableOptions } from '@wixc3/patterns';
+import fs from 'node:fs';
 import { retry } from 'promise-assist';
+
 export const DISPOSE_OF_TEMP_DIRS = 'DISPOSE_OF_TEMP_DIRS';
+
 try {
     createDisposalGroup(DISPOSE_OF_TEMP_DIRS, { after: DEFAULT_DISPOSAL_GROUP });
 } catch {

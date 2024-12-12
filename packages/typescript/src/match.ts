@@ -1,7 +1,7 @@
 import type { Predicate } from '@wixc3/common';
 import * as ts from 'typescript';
-import { compileCode } from './compile';
-import { findNode, findNodeAfterComment } from './find';
+import { compileCode } from './compile.js';
+import { findNode, findNodeAfterComment } from './find.js';
 
 /**
  * Finds a node matching the pattern.

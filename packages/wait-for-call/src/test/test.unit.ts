@@ -1,6 +1,6 @@
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { createWaitForCall } from '../wait-for-call';
+import { createWaitForCall } from '../wait-for-call.js';
 
 chai.use(chaiAsPromised);
 

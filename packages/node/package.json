@@ -1,24 +1,24 @@
 {
   "name": "@wixc3/node",
   "version": "17.1.1",
+  "type": "module",
   "description": "Common utils, usable in all environments",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "exports": "./dist/index.js",
+  "dependencies": {
+    "@file-services/node": "^9.4.1",
+    "@file-services/types": "^9.4.1"
+  },
   "author": "Wix.com",
   "sideEffects": false,
   "files": [
     "dist",
     "src",
-    "!dist/*/test",
+    "!dist/test",
     "!dist/tsconfig.tsbuildinfo"
   ],
   "license": "MIT",
   "repository": "git@github.com:wixplosives/core3-utils.git",
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "@file-services/node": "^9.4.1",
-    "@file-services/types": "^9.4.1"
   }
 }

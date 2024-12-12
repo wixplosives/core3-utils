@@ -22,7 +22,7 @@ import {
     groupBy,
     join,
     skip,
-} from '../iterables';
+} from '../iterables.js';
 
 describe('iterables', () => {
     it('last', () => {

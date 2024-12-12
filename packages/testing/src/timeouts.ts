@@ -1,5 +1,5 @@
-import { mochaCtx } from './mocha-ctx';
-import { markAdjustedTimeout } from './timeouts.helpers';
+import { mochaCtx } from './mocha-ctx.js';
+import { markAdjustedTimeout } from './timeouts.helpers.js';
 
 const getDebug = () => {
     const debug = (globalThis as { process?: { env: { DEBUG?: string } } })?.process?.env?.DEBUG;

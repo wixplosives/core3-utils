@@ -2,6 +2,6 @@
  * @packageDocumentation
  * TypeScript utilities
  */
-export * from './compile';
-export * from './find';
-export * from './match';
+export * from './compile.js';
+export * from './find.js';
+export * from './match.js';

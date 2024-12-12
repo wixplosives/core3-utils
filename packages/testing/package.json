@@ -1,27 +1,28 @@
 {
   "name": "@wixc3/testing",
   "version": "17.1.1",
+  "type": "module",
   "description": "Making mocha/chai testing easier",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "author": "Wix.com",
-  "files": [
-    "dist",
-    "src",
-    "!dist/*/test",
-    "!dist/*/tsconfig.tsbuildinfo"
-  ],
-  "license": "MIT",
-  "repository": "git@github.com:wixplosives/core3-utils.git",
-  "publishConfig": {
-    "access": "public"
-  },
+  "exports": "./dist/index.js",
   "dependencies": {
     "@wixc3/common": "^17.1.1",
     "@wixc3/patterns": "^17.1.1",
     "chai": "^4.5.0",
     "create-temp-directory": "^2.4.0",
     "prettier": "^3.4.2",
-    "promise-assist": "^2.0.1"
+    "promise-assist": "^2.0.1",
+    "sinon": "^19.0.2"
+  },
+  "author": "Wix.com",
+  "files": [
+    "dist",
+    "src",
+    "!dist/test",
+    "!dist/tsconfig.tsbuildinfo"
+  ],
+  "license": "MIT",
+  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "publishConfig": {
+    "access": "public"
   }
 }

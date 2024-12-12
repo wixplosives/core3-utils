@@ -1,6 +1,6 @@
 import { defaults, noop } from '@wixc3/common';
-import { Disposables } from '.';
 import { deferred } from 'promise-assist';
+import { Disposables } from './create-disposables.js';
 
 const DELAY_DISPOSAL = 'DELAY_DISPOSAL';
 const DISPOSAL_GUARD_DEFAULTS = {

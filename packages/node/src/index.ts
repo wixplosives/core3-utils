@@ -1,3 +1,3 @@
-export * from './spawn-async';
-export * from './module';
-export * from './read-folder-sync';
+export * from './spawn-async.js';
+export * from './module.js';
+export * from './read-folder-sync.js';

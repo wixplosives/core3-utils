@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { SafeDisposable } from '../disposables/safe-disposable';
 import { deferred, sleep } from 'promise-assist';
+import { SafeDisposable } from '../disposables/safe-disposable.js';
 
 describe('SafeDisposable class', () => {
     describe('dispose', () => {
@@ -58,7 +58,7 @@ describe('SafeDisposable class', () => {
         });
 
         /*
-            The following suite tests the behavior of the "using" keyword, 
+            The following suite tests the behavior of the "using" keyword,
             which is not supported in browsers.
             Uncomment when they are supported.
 

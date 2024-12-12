@@ -1,5 +1,6 @@
 import { expect, use } from 'chai';
-import { codeMatchers } from '../code-matchers';
+import { codeMatchers } from '../code-matchers/index.js';
+
 use(codeMatchers);
 
 const CODE = `const a=1;`;

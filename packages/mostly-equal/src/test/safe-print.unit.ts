@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { safePrint } from '../safe-print';
-import { LookupPath, Formatter } from '../types';
+import { safePrint } from '../safe-print.js';
+import type { LookupPath, Formatter } from '../types.js';
 
 describe('safe print', () => {
     describe('simple printing', () => {

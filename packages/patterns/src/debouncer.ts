@@ -24,8 +24,8 @@ import { deferred } from 'promise-assist';
  * ```
  */
 export class Debouncer<T extends (...args: any[]) => any> {
-    private timeout: number | undefined;
-    private maxTimeout: number | undefined;
+    private timeout: ReturnType<typeof setTimeout> | undefined;
+    private maxTimeout: ReturnType<typeof setTimeout> | undefined;
     private args = [] as any as Parameters<T>;
     private defer = deferred<ReturnType<T>>();
     /**

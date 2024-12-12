@@ -1,5 +1,5 @@
 import type { Options } from 'prettier';
-import type { PromiseLikeAssertion } from '../types';
+import type { PromiseLikeAssertion } from '../types.js';
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace

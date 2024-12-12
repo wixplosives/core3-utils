@@ -1,6 +1,6 @@
 import { posix as posixPath, win32 as win32Path, extname } from '@file-services/path';
 import type { IFileSystem } from '@file-services/types';
-import { getPackageJsonPath, getPackageName } from './package-json';
+import { getPackageJsonPath, getPackageName } from './package-json.js';
 
 export const replaceWinSlashes = (str: string) => str.replace(/\\/g, '/');
 export const formatToOSpaths = (str: string) => {

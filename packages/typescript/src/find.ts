@@ -1,5 +1,5 @@
-import { chain, concat, find, isString, map, noWhiteSpace, Predicate } from '@wixc3/common';
-import ts from 'typescript';
+import { chain, concat, find, isString, map, noWhiteSpace, type Predicate } from '@wixc3/common';
+import * as ts from 'typescript';
 
 /**
  * Finds all nodes satisfying the predicate

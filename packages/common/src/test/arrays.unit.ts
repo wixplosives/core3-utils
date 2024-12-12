@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { getCartesianProduct } from '..';
+import { getCartesianProduct } from '../arrays.js';
 
 describe('getCartesianProductOfArrays', () => {
     describe('get all combinations of one from each array', () => {

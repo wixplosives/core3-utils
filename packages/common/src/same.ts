@@ -1,11 +1,11 @@
-import { histogram, isIterable, size } from './iterables';
-import { isPlainObject } from './objects';
-import { isMap, isSet } from './types';
+import { histogram, isIterable, size } from './iterables.js';
+import { isPlainObject } from './objects.js';
+import { isMap, isSet } from './types.js';
 
 /**
  * Deep comparison of two objects
 
- * @example 
+ * @example
  * ```ts
  * same({a:1, b:2},{b:2, a:1}) // => true
  * same(new Map([['a',1],['b',2]]), new Map([['b',2],['a',1]])) // => true
@@ -15,17 +15,17 @@ import { isMap, isSet } from './types';
  * ```
  * @remarks
  * items are "the same" if:
- * 
+ *
  * - a === b (for anything other than iterables & POJO)
 
  * - a and b are POJO with same entries (order ignored, {@link same} used to compare values)
- * 
+ *
  * - a and b are Maps with same entries (order ignored,  {@link same} used to compare keys & values)
- * 
+ *
  * - a and b are Sets with same values (order ignored,  {@link same} used to compare values)
- * 
+ *
  * - a and b are iterable (that are not Set or Map) with the same values, order checked if unordered=false (default)
- * 
+ *
  * @param unordered - [false] Note: relevant only in array like iterables. objects, sets and maps are *never checked for order* of entries
  */
 export function same<T>(a: T, b: T, unordered = false): boolean {

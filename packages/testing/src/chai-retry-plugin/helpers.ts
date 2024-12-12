@@ -1,8 +1,8 @@
-import Chai from 'chai';
-import { chaiMethodsThatHandleFunction } from './constants';
-import type { AssertionMethod, RetryAndAssertArguments } from './types';
+import chai from 'chai';
 import { deferred, timeout } from 'promise-assist';
-import { adjustCurrentTestTimeout, isDebugMode } from '../timeouts';
+import { adjustCurrentTestTimeout, isDebugMode } from '../timeouts.js';
+import { chaiMethodsThatHandleFunction } from './constants.js';
+import type { AssertionMethod, RetryAndAssertArguments } from './types.js';
 
 /**
  * filters out error stack rows containing calls of `chai-retry-plugin` and `promise-assist` methods
@@ -86,7 +86,7 @@ const initialAssertion = async ({ assertionStack, description, functionToRetry: 
         chaiMethodsThatHandleFunction.includes(stackItem.propertyName),
     );
     const valueToAssert = shouldAssertFunctionValue ? fn : await fn();
-    return Chai.expect(valueToAssert, description);
+    return chai.expect(valueToAssert, description);
 };
 
 const updateAssertion = async (

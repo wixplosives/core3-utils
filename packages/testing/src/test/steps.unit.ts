@@ -10,7 +10,7 @@ import {
     waitForSpyCall,
     waitForStubCall,
     withTimeout,
-} from '..';
+} from '../index.js';
 
 use(asPromised);
 

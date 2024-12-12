@@ -31,4 +31,4 @@
  * - {@link locatorTimeout} creates a locator timeout and adjust the current test
  */
 
-export * from './temp-test-dir';
+export * from './temp-test-dir.js';

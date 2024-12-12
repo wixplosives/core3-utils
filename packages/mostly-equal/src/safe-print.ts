@@ -1,4 +1,4 @@
-import type { UnknownObjectRecord, LookupPath, Formatter } from './types';
+import type { UnknownObjectRecord, LookupPath, Formatter } from './types.js';
 
 export const spaces = (indent: number) => ' '.repeat(indent * 2);
 

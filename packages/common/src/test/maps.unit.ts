@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { getValue } from '../maps';
+import { getValue } from '../maps.js';
 
 describe('maps', () => {
     describe('getValue', () => {

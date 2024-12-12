@@ -5,7 +5,7 @@ import {
     filter,
     find,
     first,
-    Flat,
+    type Flat,
     flat,
     flatMap,
     forEach,
@@ -14,9 +14,9 @@ import {
     join,
     last,
     map,
-    Mapping,
+    type Mapping,
     next,
-    Predicate,
+    type Predicate,
     prev,
     reduce,
     size,
@@ -24,8 +24,8 @@ import {
     some,
     sort,
     unique,
-} from './iterables';
-import { mapValues } from './objects';
+} from './iterables.js';
+import { mapValues } from './objects.js';
 
 /**
  * {@label Iter}

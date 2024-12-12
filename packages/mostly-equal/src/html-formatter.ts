@@ -1,5 +1,5 @@
-import { Formatter } from './types';
 import { map } from '@wixc3/common';
+import type { Formatter } from './types.js';
 
 export interface PseudoElement {
     tagName: string;

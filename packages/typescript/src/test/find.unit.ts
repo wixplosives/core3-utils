@@ -1,14 +1,14 @@
 import { expect } from 'chai';
-import ts from 'typescript';
-import { compileCode } from '../compile';
-import { findAllNodes, findNode, findNodeAfterComment } from '../find';
-import { getText } from './helpers';
+import * as ts from 'typescript';
+import { compileCode } from '../compile.js';
+import { findAllNodes, findNode, findNodeAfterComment } from '../find.js';
+import { getText } from './helpers.js';
 
 describe(`findNode`, function () {
     this.timeout(8_000);
     it('finds a node satisfying the predicate', () => {
-        const code = compileCode(`(a)=>{ 
-            const b=true 
+        const code = compileCode(`(a)=>{
+            const b=true
             const c=false
         }`);
         expect(getText(findNode(code, (n) => ts.isIdentifier(n)))).to.equal('a');
@@ -35,8 +35,8 @@ describe(`findNode`, function () {
 describe(`findAllNodes`, function () {
     this.timeout(8_000);
     it('finds all nodes satisfying the predicate', () => {
-        const code = compileCode(`(a)=>{ 
-            const b=true 
+        const code = compileCode(`(a)=>{
+            const b=true
             const c=false
         }`);
         const found = findAllNodes(code, (n) => ts.isIdentifier(n));

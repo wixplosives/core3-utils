@@ -1,15 +1,15 @@
-import { wrapPromise } from './common';
-import { TimeoutError } from './errors';
-import { mochaCtx } from '../mocha-ctx';
-import type { Info, PromiseWithTimeout } from './types';
-import { adjustCurrentTestTimeout } from '../timeouts';
+import { wrapPromise } from './common.js';
+import { TimeoutError } from './errors.js';
+import { mochaCtx } from '../mocha-ctx.js';
+import type { Info, PromiseWithTimeout } from './types.js';
+import { adjustCurrentTestTimeout } from '../timeouts.js';
 
 export function createTimeoutStep<T>(
     src: Promise<T>,
     rejectAfterTimeout: boolean,
     adjustTestTime = true,
 ): PromiseWithTimeout<T> {
-    let timerId: number;
+    let timerId: ReturnType<typeof setTimeout>;
     const clearPromiseTimeout = () => clearTimeout(timerId);
     const { p, resolve, reject } = wrapPromise<T, Info & { timeout: number }, PromiseWithTimeout<T>>(
         src,
@@ -21,6 +21,7 @@ export function createTimeoutStep<T>(
         ms = adjustTimeout<T>(ms, p, adjustTestTime);
         if (mochaCtx()?.timeout() || !rejectAfterTimeout) {
             clearPromiseTimeout();
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             timerId = setTimeout(async () => {
                 if (rejectAfterTimeout) {
                     await reject(TimeoutError);

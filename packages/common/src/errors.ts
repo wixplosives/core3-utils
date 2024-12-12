@@ -1,4 +1,4 @@
-import { isObject } from './objects';
+import { isObject } from './objects.js';
 
 /**
  * Convert any kind of value to an error instance. Unless the value is already

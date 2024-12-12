@@ -35,12 +35,12 @@
  * - {@link sleep} sleep (and adjust test time)
  *
  */
-export * from './steps';
-export * from './safe-fake-timer';
-export * from './dispose';
-export * from './randomize-tests-order';
-export * from './mocha-ctx';
-export * from './chai-retry-plugin';
-export * from './create-test-disposables';
-export * from './code-matchers';
-export * from './timeouts';
+export * from './steps/index.js';
+export * from './safe-fake-timer.js';
+export * from './dispose.js';
+export * from './randomize-tests-order.js';
+export * from './mocha-ctx.js';
+export * from './chai-retry-plugin/index.js';
+export * from './create-test-disposables.js';
+export * from './code-matchers/index.js';
+export * from './timeouts.js';

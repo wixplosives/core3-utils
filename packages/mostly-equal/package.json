@@ -1,16 +1,19 @@
 {
   "name": "@wixc3/mostly-equal",
   "version": "17.1.1",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "type": "module",
+  "exports": "./dist/index.js",
   "scripts": {
-    "test": "mocha \"dist/cjs/test/**/*.unit.js\""
+    "test": "mocha \"dist/test/**/*.unit.js\""
+  },
+  "dependencies": {
+    "@wixc3/common": "^17.1.1"
   },
   "files": [
     "dist",
     "src",
-    "!dist/*/test",
-    "!dist/*/tsconfig.tsbuildinfo",
+    "!dist/test",
+    "!dist/tsconfig.tsbuildinfo",
     "mostly-equal-chai.d.ts"
   ],
   "license": "MIT",
@@ -18,8 +21,5 @@
   "repository": "https://github.com/wixplosives/core3-utils/tree/master/packages/mostly-equal",
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "@wixc3/common": "^17.1.1"
   }
 }

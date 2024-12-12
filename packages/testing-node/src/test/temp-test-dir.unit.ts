@@ -1,6 +1,6 @@
-import fs from '@file-services/node';
+import fs from 'node:fs';
 import { expect } from 'chai';
-import { createTestDir } from '../temp-test-dir';
+import { createTestDir } from '../temp-test-dir.js';
 
 describe('createTestDir', () => {
     let dirPath: string;

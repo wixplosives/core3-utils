@@ -1,4 +1,4 @@
-import { isMap, Nullable } from './types';
+import { isMap, type Nullable } from './types.js';
 
 /**
  * Similar to Map.has, but works for plain objects, and returns false

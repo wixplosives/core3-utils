@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { spy, SinonFakeTimers, useFakeTimers, SinonSpy } from 'sinon';
-import { Debouncer } from '../debouncer';
+import { type SinonFakeTimers, type SinonSpy, spy, useFakeTimers } from 'sinon';
+import { Debouncer } from '../debouncer.js';
 
 describe('Debounce', () => {
     let promises: Promise<any>[];

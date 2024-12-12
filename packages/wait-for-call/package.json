@@ -1,8 +1,8 @@
 {
   "name": "@wixc3/wait-for-call",
   "version": "17.1.1",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "type": "module",
+  "exports": "./dist/index.js",
   "scripts": {
     "test": "mocha \"dist/test/**/*.unit.js\""
   },
@@ -12,13 +12,14 @@
   },
   "dependencies": {
     "chai": "^4.5.0",
-    "promise-assist": "^2.0.1"
+    "promise-assist": "^2.0.1",
+    "sinon": "^19.0.2"
   },
   "files": [
     "dist",
     "src",
-    "!dist/*/test",
-    "!dist/*/tsconfig.tsbuildinfo"
+    "!dist/test",
+    "!dist/tsconfig.tsbuildinfo"
   ],
   "license": "MIT",
   "author": "Wix.com",

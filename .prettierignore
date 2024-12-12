@@ -1,6 +1,2 @@
-dist-*
 dist
-_docs/*
-temp/*
-packages/docs/resources/doc-headers/*.md
-docs-conf/*.md
+/tsconfig.base.json

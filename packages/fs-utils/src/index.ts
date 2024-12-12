@@ -1,3 +1,3 @@
-export * from './filepath';
-export * from './path-to-true-case';
-export * from './package-json';
+export * from './filepath.js';
+export * from './path-to-true-case.js';
+export * from './package-json.js';

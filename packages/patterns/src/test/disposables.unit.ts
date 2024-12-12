@@ -1,8 +1,9 @@
 import { expect, use } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import { sleep } from 'promise-assist';
-import { createDisposables } from '../disposables';
-import asPromised from 'chai-as-promised';
-use(asPromised);
+import { createDisposables } from '../disposables/index.js';
+
+use(chaiAsPromised);
 
 describe('disposables', () => {
     describe('single disposal group', () => {

@@ -1,5 +1,5 @@
 import { createDisposables } from '@wixc3/patterns';
-import { mochaCtx } from './mocha-ctx';
+import { mochaCtx } from './mocha-ctx.js';
 
 /**
  * Creates a disposable group that will be disposed after the test is done
