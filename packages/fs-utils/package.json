@@ -15,7 +15,7 @@
   "files": [
     "dist",
     "src",
-    "!dist/test",
+    "!*/test",
     "!*/tsconfig.{json,tsbuildinfo}"
   ],
   "license": "MIT",
