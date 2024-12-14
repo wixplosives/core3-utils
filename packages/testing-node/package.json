@@ -3,7 +3,10 @@
   "version": "17.1.1",
   "type": "module",
   "description": "Making mocha/chai testing easier",
-  "exports": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
   "author": "Wix.com",
   "files": [
     "dist",

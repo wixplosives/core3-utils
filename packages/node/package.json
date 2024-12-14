@@ -3,7 +3,10 @@
   "version": "17.1.1",
   "type": "module",
   "description": "Common utils, usable in all environments",
-  "exports": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@file-services/node": "^9.4.1",
     "@file-services/types": "^9.4.1"

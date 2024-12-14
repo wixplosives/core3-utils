@@ -3,7 +3,10 @@
   "version": "17.1.1",
   "type": "module",
   "description": "A utility for saving objects to be disposed",
-  "exports": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
   "author": "Wix.com",
   "sideEffects": false,
   "files": [

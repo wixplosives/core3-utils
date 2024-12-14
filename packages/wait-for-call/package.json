@@ -2,7 +2,10 @@
   "name": "@wixc3/wait-for-call",
   "version": "17.1.1",
   "type": "module",
-  "exports": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "test": "mocha \"dist/test/**/*.unit.js\""
   },
