@@ -21,5 +21,6 @@
     "@wixc3/testing": "^17.1.1",
     "create-temp-directory": "^2.4.0",
     "promise-assist": "^2.0.1"
-  }
+  },
+  "sideEffects": false
 }

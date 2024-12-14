@@ -17,5 +17,6 @@
   "repository": "https://github.com/wixplosives/core3-utils/tree/master/packages/mark-text",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "sideEffects": false
 }

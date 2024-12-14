@@ -21,5 +21,6 @@
   "repository": "https://github.com/wixplosives/core3-utils/tree/master/packages/mostly-equal",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "sideEffects": false
 }

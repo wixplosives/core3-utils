@@ -24,5 +24,6 @@
   "repository": "git@github.com:wixplosives/core3-utils.git",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "sideEffects": false
 }
