@@ -6,9 +6,6 @@ import * as esTreePlugin from 'prettier/plugins/estree';
 import * as parserTypeScript from 'prettier/plugins/typescript';
 import { format } from 'prettier/standalone';
 
-// makes ts pick up global augmentation of Chai.Assertion
-import './types.js';
-
 use(chaiAsPromised);
 
 const prettify = async (code: string, options?: prettier.Options | false) =>
