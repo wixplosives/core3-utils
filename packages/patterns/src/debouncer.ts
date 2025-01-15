@@ -95,4 +95,8 @@ export class Debouncer<T extends (...args: any[]) => any> {
             clearTimeout(this.maxTimeout);
         }
     }
+
+    setCb(cb: T): void {
+        this.cb = cb;
+    }
 }

@@ -70,4 +70,14 @@ describe('Debounce', () => {
         clock.tick(1);
         expect(callback).to.have.been.calledOnceWith(5);
     });
+    it('can replace cb on a started timer', () => {
+        const callback2 = spy();
+        const throttle = new Debouncer(callback, 4, 10);
+        promises.push(throttle.trigger(1));
+        throttle.setCb(callback2);
+        promises.push(throttle.trigger(2));
+        clock.tick(4);
+        expect(callback).to.have.callCount(0);
+        expect(callback2).to.have.been.calledOnceWith(2);
+    });
 });
