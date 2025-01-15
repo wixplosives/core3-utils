@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/fs-utils",
-  "version": "18.0.0",
+  "version": "18.1.0",
   "type": "module",
   "description": "Filesystem utils, usable in all environments",
   "exports": {
