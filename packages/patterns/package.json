@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/patterns",
-  "version": "18.1.0",
+  "version": "18.1.1",
   "type": "module",
   "description": "A utility for saving objects to be disposed",
   "exports": {
@@ -21,7 +21,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@wixc3/common": "^18.0.0",
+    "@wixc3/common": "^18.1.1",
     "promise-assist": "^2.0.1"
   }
 }
