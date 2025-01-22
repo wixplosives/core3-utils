@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/wait-for-call",
-  "version": "18.1.1",
+  "version": "18.0.0",
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
