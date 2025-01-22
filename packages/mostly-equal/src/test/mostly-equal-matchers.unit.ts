@@ -182,7 +182,7 @@ describe('mostly equal matchers', () => {
                 });
             }).to.throw(thumbsUp);
         });
-        it('if stricly equal and truncateData is set to true, prints content', () => {
+        it('if strictly equal and truncateData is set to true, prints content', () => {
             const obj = {};
             expect(() => {
                 expect({
