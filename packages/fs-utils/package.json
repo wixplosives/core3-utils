@@ -11,7 +11,7 @@
     "@file-services/path": "^9.4.1",
     "@file-services/types": "^9.4.1",
     "@wixc3/common": "^18.1.1",
-    "type-fest": "^4.33.0"
+    "type-fest": "^4.34.1"
   },
   "author": "Wix.com",
   "sideEffects": false,
