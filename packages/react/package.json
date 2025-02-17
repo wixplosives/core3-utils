@@ -1,0 +1,23 @@
+{
+  "name": "@wixc3/react",
+  "version": "15.3.1",
+  "description": "React utils for applications",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "author": "Wix.com",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src",
+    "!dist/*/test",
+    "!dist/*/tsconfig.tsbuildinfo"
+  ],
+  "license": "MIT",
+  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    
+  }
+}
