@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/fs-utils",
-  "version": "18.1.1",
+  "version": "18.2.0",
   "type": "module",
   "description": "Filesystem utils, usable in all environments",
   "exports": {
@@ -10,7 +10,7 @@
   "dependencies": {
     "@file-services/path": "^9.4.1",
     "@file-services/types": "^9.4.1",
-    "@wixc3/common": "^18.1.1",
+    "@wixc3/common": "^18.2.0",
     "type-fest": "^4.38.0"
   },
   "author": "Wix.com",
