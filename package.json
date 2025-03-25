@@ -17,7 +17,7 @@
   "devDependencies": {
     "@file-services/memory": "^9.4.1",
     "@file-services/types": "^9.4.1",
-    "@types/chai": "^5.2.0",
+    "@types/chai": "^5.2.1",
     "@types/chai-as-promised": "^8.0.2",
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.10",
@@ -27,17 +27,17 @@
     "@types/yargs": "^17.0.33",
     "chai": "^5.2.0",
     "chai-as-promised": "^8.0.1",
-    "eslint": "^9.22.0",
+    "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-no-only-tests": "^3.3.0",
     "expose-gc": "^1.0.0",
     "mocha": "^11.1.0",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
-    "sinon": "^19.0.4",
+    "sinon": "^20.0.0",
     "sinon-chai": "^4.0.0",
     "typescript": "~5.8.2",
-    "typescript-eslint": "^8.26.1"
+    "typescript-eslint": "^8.28.0"
   },
   "license": "MIT"
 }
