@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/testing-node",
-  "version": "18.2.0",
+  "version": "18.3.0",
   "type": "module",
   "description": "Making mocha/chai testing easier",
   "exports": {
@@ -20,8 +20,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@wixc3/patterns": "^18.2.0",
-    "@wixc3/testing": "^18.2.0",
+    "@wixc3/patterns": "^18.3.0",
+    "@wixc3/testing": "^18.3.0",
     "create-temp-directory": "^2.4.0",
     "promise-assist": "^2.0.1"
   },
