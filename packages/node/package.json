@@ -8,8 +8,8 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@file-services/node": "^10.0.0",
-    "@file-services/types": "^10.0.0"
+    "@file-services/node": "^10.0.1",
+    "@file-services/types": "^10.0.1"
   },
   "author": "Wix.com",
   "sideEffects": false,
