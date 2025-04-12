@@ -101,4 +101,15 @@ describe('Signal', () => {
             expect(listener.callCount, 'no new calls after clear').to.eql(0);
         });
     });
+    it('should complete notify synchronously without waiting for promises in handlers', () => {
+        signal.subscribe(() => {
+            listener();
+            void Promise.resolve().then(() => {
+                listener();
+            });
+        });
+        signal.notify({ a: 'value', b: 5 });
+
+        expect(listener.callCount, 'calls listener').to.eql(1);
+    });
 });

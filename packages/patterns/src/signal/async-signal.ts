@@ -23,7 +23,7 @@ export class AsyncSignal<T> extends SignalBase<T, AsyncListener<T>> {
      * Notify all subscribers with arg data and wait for all handlers to complete
      * @returns Promise that resolves when all handlers have completed
      */
-    async notify(data: T) {
+    notify = async (data: T) => {
         const promises: Promise<void>[] = [];
 
         for (const [handler, isOnce] of this.handlers) {
@@ -37,5 +37,5 @@ export class AsyncSignal<T> extends SignalBase<T, AsyncListener<T>> {
         }
 
         await Promise.all(promises);
-    }
+    };
 }

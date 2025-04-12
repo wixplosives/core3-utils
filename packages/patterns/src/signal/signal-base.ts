@@ -1,11 +1,13 @@
 export type Listener<T> = (data: T) => void;
 type IS_ONCE = boolean;
 
-export class SignalBase<T, L extends Listener<T> = Listener<T>> {
+export abstract class SignalBase<T, L extends Listener<T> = Listener<T>> {
     protected handlers = new Map<L, IS_ONCE>();
     constructor(handlers?: L[]) {
         handlers?.forEach((handler) => this.subscribe(handler));
     }
+
+    abstract notify(data: T): ReturnType<L>;
 
     /**
      * Subscribe a notification callback
