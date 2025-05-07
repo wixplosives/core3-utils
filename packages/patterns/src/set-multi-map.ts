@@ -1,5 +1,3 @@
-import { forEach, chain } from '@wixc3/common';
-
 /**
  * Maps keys to a set of values
  * @example
@@ -16,15 +14,19 @@ export class SetMultiMap<K, V> implements Iterable<[K, V]> {
     private map = new Map<K, Set<V>>();
 
     constructor(entries?: Iterable<[K, V]>) {
-        forEach(entries, ([key, val]: [K, V]) => {
-            this.add(key, val);
-        });
+        if (entries) {
+            for (const [key, value] of entries) {
+                this.add(key, value);
+            }
+        }
     }
 
     public get size(): number {
-        return chain(this.map)
-            .map(([_, { size }]) => size)
-            .reduce((sum: number, size: number) => sum + size, 0).value;
+        let total = 0;
+        for (const { size } of this.map.values()) {
+            total += size;
+        }
+        return total;
     }
 
     public get(key: K): ReadonlySet<V> | undefined {
@@ -96,6 +98,6 @@ export class SetMultiMap<K, V> implements Iterable<[K, V]> {
     }
 }
 
-export function isSetMultiMap<K, V>(x: any): x is SetMultiMap<K, V> {
+export function isSetMultiMap<K, V>(x: unknown): x is SetMultiMap<K, V> {
     return x instanceof SetMultiMap;
 }
