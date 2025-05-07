@@ -25,7 +25,11 @@
   ],
   "license": "MIT",
   "author": "Wix.com",
-  "repository": "git@github.com:wixplosives/core3-utils.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wixplosives/core3-utils.git",
+    "directory": "packages/wait-for-call"
+  },
   "publishConfig": {
     "access": "public"
   },

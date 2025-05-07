@@ -21,7 +21,11 @@
   ],
   "license": "MIT",
   "author": "Wix.com",
-  "repository": "https://github.com/wixplosives/core3-utils/tree/master/packages/mostly-equal",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wixplosives/core3-utils.git",
+    "directory": "packages/mostly-equal"
+  },
   "publishConfig": {
     "access": "public"
   },
