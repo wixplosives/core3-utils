@@ -23,7 +23,7 @@
   "author": "Wix.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wixplosives/core3-utils.git",
+    "url": "git+https://github.com/dazl-dev/core3-utils.git",
     "directory": "packages/mostly-equal"
   },
   "publishConfig": {
