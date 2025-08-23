@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/performance",
-  "version": "18.3.0",
+  "version": "18.4.0",
   "type": "module",
   "description": "Performance utils, usable in all environments",
   "exports": {
