@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/browser",
-  "version": "18.4.0",
+  "version": "18.4.1",
   "type": "module",
   "description": "Browser only utils",
   "exports": {

@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/node",
-  "version": "18.4.0",
+  "version": "18.4.1",
   "type": "module",
   "description": "Common utils, usable in all environments",
   "exports": {

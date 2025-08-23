@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/mark-text",
-  "version": "18.4.0",
+  "version": "18.4.1",
   "type": "module",
   "exports": {
     ".": "./dist/index.js",

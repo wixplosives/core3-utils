@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/typescript",
-  "version": "18.4.0",
+  "version": "18.4.1",
   "type": "module",
   "description": "API ",
   "exports": {
@@ -8,7 +8,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@wixc3/common": "^18.4.0"
+    "@wixc3/common": "^18.4.1"
   },
   "author": "Wix.com",
   "files": [

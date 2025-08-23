@@ -1,6 +1,6 @@
 {
   "name": "@wixc3/testing",
-  "version": "18.4.0",
+  "version": "18.4.1",
   "type": "module",
   "description": "Making mocha/chai testing easier",
   "exports": {
@@ -11,8 +11,8 @@
     "sinon": ">=19"
   },
   "dependencies": {
-    "@wixc3/common": "^18.4.0",
-    "@wixc3/patterns": "^18.4.0",
+    "@wixc3/common": "^18.4.1",
+    "@wixc3/patterns": "^18.4.1",
     "chai": "^6.0.1",
     "create-temp-directory": "^2.4.0",
     "prettier": "^3.6.2",
