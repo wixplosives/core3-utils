@@ -5,7 +5,17 @@ import { isObject } from './objects.js';
  * an error instance, it's stringified and used as the error message.
  */
 export function toError(value: unknown): Error {
-    return value instanceof Error ? value : new Error(value === undefined ? undefined : String(value as string));
+    if (value instanceof Error) {
+        return value;
+    }
+    if (typeof value === 'string' || value === undefined) {
+        return new Error(value);
+    }
+    try {
+        return new Error(JSON.stringify(value));
+    } catch {
+        return new Error(String(value as string));
+    }
 }
 
 /**
